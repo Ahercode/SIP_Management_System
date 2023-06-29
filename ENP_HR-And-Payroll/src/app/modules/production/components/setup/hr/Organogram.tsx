@@ -23,7 +23,7 @@ const Organogram = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
   const { data: allEmployees } = useQuery('employees', async () => await fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', async () => await fetchDocument(`organograms`), { cacheTime: 5000 })
+  const { data: allOrganograms } = useQuery('organograms',() => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
   const [treeData, setTreeData] = useState<any>([])
   const [showTree, setShowTree] = useState<boolean>(false)
   const queryClient = useQueryClient()
@@ -58,14 +58,14 @@ const Organogram = () => {
   }
 
   const employeeName = (employeeId: any) => {
-    const employee = allEmployees?.data?.find((employee: any) => employee.employeeId.trim() === employeeId.trim())
+    const employee = allEmployees?.data?.find((employee: any) => employee?.employeeId === employeeId)
     const name = `${employee?.firstName} ${employee?.surname}`
     return name
   }
 
   // jobrole
   const jobRole = (employeeId: any) => {
-    const jobRole = allEmployees?.data?.find((employee: any) => employee.employeeId.trim() === employeeId.trim())
+    const jobRole = allEmployees?.data?.find((employee: any) => employee.employeeId === employeeId)
     const name = `${jobRole?.jobRole}`
     return name
   }
