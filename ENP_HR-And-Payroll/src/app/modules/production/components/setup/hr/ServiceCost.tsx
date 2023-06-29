@@ -215,7 +215,7 @@ const ServiceCost = () => {
     console.log(values)
   }
 
-  const url = `${Api_Endpoint}/ServiceCosts1`
+  const url = `${Api_Endpoint}/ServiceCosts`
   const OnSUbmit = handleSubmit(async (values) => {
     setLoading(true)
     const data = {
