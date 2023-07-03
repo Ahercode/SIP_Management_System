@@ -12,7 +12,7 @@ const ReportViewer = () => {
     const reportUrl = ko.observable(`DeductionTransactionInputReport`);
     const viewerRef = useRef();
     const requestOptions = {
-      host: "http://208.117.44.15/serverside/",
+      host: "https://app.sipconsult.net/ServerSide",
       invokeAction: "DXXRDV"
     };
 

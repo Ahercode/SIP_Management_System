@@ -630,6 +630,10 @@ const AppraisalPerformance = () => {
     updateData(item)
   }
 
+  const testEmail = (e:any) =>{
+    console.log("email");
+  }
+
 
   const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
     onSuccess: (data: any) => {
@@ -857,6 +861,10 @@ const AppraisalPerformance = () => {
                           <Button
                             onClick={showReviewDateModal}
                             className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
+                            type="primary" shape="circle" icon={<PlusOutlined style={{ fontSize: '16px' }} />} size={'middle'} />
+                          <Button
+                            onClick={testEmail}
+                            className="btn btn-light-success me-3 justify-content-center align-items-center d-flex"
                             type="primary" shape="circle" icon={<PlusOutlined style={{ fontSize: '16px' }} />} size={'middle'} />
                         </Space>
                         <Table columns={reviewDatesColumn} dataSource={reviewDateByID} loading={loading} />
