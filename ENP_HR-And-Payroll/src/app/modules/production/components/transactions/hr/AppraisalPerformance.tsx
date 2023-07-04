@@ -200,11 +200,6 @@ const AppraisalPerformance = () => {
 
   ]);
 
-  const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-
 
   const columns: any = [
     {
@@ -257,21 +252,6 @@ const AppraisalPerformance = () => {
         return 0
       },
     },
-    // {
-    //   title: 'DOB',
-    //   render: (row: any) => {
-    //     return getDOB(row.employeeId)
-    //   },
-    //   sorter: (a: any, b: any) => {
-    //     if (a.dob > b.dob) {
-    //       return 1
-    //     }
-    //     if (b.dob > a.dob) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
     {
       title: 'Job Title',
       render: (row: any) => {
@@ -1050,93 +1030,6 @@ const AppraisalPerformance = () => {
 
                     <input {...register("documentUrl")} className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' type="file" />
                   </div>
-
-                  {/* <form>
-                    <hr></hr>
-                  <div>
-                    <div style={{display:"flex", }} className="tabs">
-                      <div
-                        className={`tab ${activeTab === "tab1" ? "active" : ""}`}
-                        onClick={() => handleTabClick("tab1")}
-                      >
-                        Accomplishments
-                      </div>
-
-                      <div className={`tab ${activeTab === "tab2" ? "active" : ""}`}
-                        onClick={() => handleTabClick("tab2")}
-                      >
-                        Areas of Improvements
-                      </div>
-                      <div
-                        className={`tab ${activeTab === "tab3" ? "active" : ""}`}
-                        onClick={() => handleTabClick("tab3")}
-                      >
-                        Goals for Performance
-                      </div>
-                      <div
-                        className={`tab ${activeTab === "tab4" ? "active" : ""}`}
-                        onClick={() => handleTabClick("tab4")}
-                      >
-                        Supporting Documentation
-                      </div>
-                    </div>
-                    <div className="tab-content">
-                      {activeTab === "tab1" && 
-                      <div>
-                        <div className='col-12 mb-3'>
-                          <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Score</label>
-                          <Radio.Group onChange={onRadio1Change} value={radio1Value}>
-                            <Radio value={1}>1</Radio>
-                            <Radio value={2}>2</Radio>
-                            <Radio value={3}>3</Radio>
-                            <Radio value={4}>4</Radio>
-                            <Radio value={5}>5</Radio>
-                          </Radio.Group>
-                          <textarea style={{ margin: "10px 0px 0 0px" }} {...register("accomComment")} className="form-control form-control-solid" placeholder='comments (optional)' aria-label="With textarea"></textarea>
-                        </div>
-                        
-                      </div>}
-                      
-                      {activeTab === "tab2" && 
-                      <div>
-                        <div className='col-12 mb-3'>
-                          <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Score</label>
-                          <Radio.Group onChange={onRadio2Change} value={radio2Value}>
-                            <Radio value={1}>1</Radio>
-                            <Radio value={2}>2</Radio>
-                            <Radio value={3}>3</Radio>
-                            <Radio value={4}>4</Radio>
-                            <Radio value={5}>5</Radio>
-                          </Radio.Group>
-                          <textarea style={{ margin: "10px 0px 0 0px" }} {...register("improvComment")} className="form-control form-control-solid" placeholder='comments (optional)' aria-label="With textarea"></textarea>
-                        </div>
-                      </div>}
-
-                      {activeTab === "tab3" && 
-                      <div>
-                        <div className='col-12 mb-3'>
-                          <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Score</label>
-                          <Radio.Group onChange={onRadio3Change} value={radio3Value}>
-                            <Radio value={1}>1</Radio>
-                            <Radio value={2}>2</Radio>
-                            <Radio value={3}>3</Radio>
-                            <Radio value={4}>4</Radio>
-                            <Radio value={5}>5</Radio>
-                          </Radio.Group>
-                          <textarea style={{ margin: "10px 0px 0 0px" }} {...register("goalComment")} className="form-control form-control-solid" placeholder='comments (optional)' aria-label="With textarea"></textarea>
-                        </div>
-                      </div>}
-
-                      {activeTab === "tab4" && 
-                      <div>
-                        <div className='col-12 mb-3'>
-                          <input {...register("documentUrl")}  className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' type="file" />
-                        
-                        </div>
-                      </div>}
-                    </div>
-                  </div>
-                </form> */}
                 </form>
               </Modal>
               <Modal
