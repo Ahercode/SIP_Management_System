@@ -26,6 +26,13 @@ const EmployeeReportPage = () => {
         { title: "Summary", link: "/EmployeeFamilySummaryReport" },
       ]
     },
+    {
+      title: "Appraisal and Performance",
+      reports: [
+        { title: "Employee", link: "/AppraisalPerformanceByEmployeeReport" },
+        { title: "Appraisal Type", link: "/AppraisalPerformanceByAppraisalTypeReport" },
+      ]
+    },
   ]
 
   return (
@@ -34,7 +41,7 @@ const EmployeeReportPage = () => {
         {
           EmployeeReportData.map((report, index) => {
             return (
-              <div className='col-4' key={index}>
+              <div className='col-4 mt-7' key={index}>
                 <ReportCard data={report} />
               </div>
             )
