@@ -15,6 +15,7 @@ import { useQuery } from 'react-query'
 import { fetchUserApplications } from '../services/ApiCalls'
 import { message } from 'antd'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
+import { ObjectivesForm } from '../modules/production/components/appraisalForms/ObjectivesForm '
 
 /**
  * Base URL of the website.
@@ -41,7 +42,10 @@ const AppRoutes: FC = () => {
         <Route element={<App />}>
           <Route path='error/*' element={<ErrorsPage />} />
           <Route path='logout' element={<Logout />} />
-          <Route path='appraisalForm' element={<AppraisalForm />} />
+          <Route path='appraisalReviewForm' element={<AppraisalForm />} />
+          <Route path='appraisalObjectivesForm'
+            element={<ObjectivesForm />}
+          />
 
           {currentUser && tenant ? (
             <>

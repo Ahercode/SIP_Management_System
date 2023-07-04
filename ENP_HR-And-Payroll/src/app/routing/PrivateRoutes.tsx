@@ -28,7 +28,7 @@ import { Deduction } from '../modules/production/components/setup/payroll/Deduct
 import { Loan } from '../modules/production/components/setup/payroll/Loan'
 import { Overtime } from '../modules/production/components/setup/payroll/Overtime'
 import { Period } from '../modules/production/components/setup/payroll/Period'
-import { Parameter } from '../modules/production/components/setup/payroll/Parameter'
+import { Parameter } from '../modules/production/components/setup/hr/Parameter'
 import { Tax } from '../modules/production/components/setup/payroll/Tax'
 import { SavingScheme } from '../modules/production/components/setup/payroll/SavingScheme'
 import { AppraisalPerformance } from '../modules/production/components/transactions/hr/AppraisalPerformance'
