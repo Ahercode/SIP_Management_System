@@ -169,7 +169,7 @@ const ProjectSchedule = () => {
     currency: 'CEDIS'
   }).format(value);
 
-  const dataByID = gridData.filter((user: any) => {
+  const dataByID = gridData?.filter((user: any) => {
     return user.projectId === parseInt(param.id)
   })
 
@@ -177,7 +177,7 @@ const ProjectSchedule = () => {
   const dataWithIndex = dataByID?.map((item: any) => ({
     ...item,
     amount: item.amount+ ".00",
-    date: item.date.substring(0,10),
+    date: item.date?.substring(0,10),
 }))
 
   const handleInputChange = (e: any) => {

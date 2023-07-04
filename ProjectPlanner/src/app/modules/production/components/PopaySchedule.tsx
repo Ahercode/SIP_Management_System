@@ -211,6 +211,7 @@ const PopaySchedule = () => {
         data: {
           PoId:param.id,
           date: values.date,
+          invoiceNumber:values.invoiceNumber,
           amount:parseFloat(values.amount).toFixed(2)
         },
         url: endpoint

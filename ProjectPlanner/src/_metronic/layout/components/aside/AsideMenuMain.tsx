@@ -27,6 +27,7 @@ export function AsideMenuMain() {
 
           <AsideMenuItemWithSub to='#' icon='/media/icons/duotune/finance/fin008.svg' hasBullet={false} title='Reports'>
             <AsideMenuItem to='cashflow' hasBullet={true} title='Financial Projections'/>
+            <AsideMenuItem to='projectScheduleReport' hasBullet={true} title='Project Schedule Reports'/>
             <AsideMenuItem to='#' hasBullet={true} title='Project Details'/>
             <AsideMenuItem to='#' hasBullet={true} title='Activity Details'/>
             <AsideMenuItem to='#' hasBullet={true} title='Cost Details'/>

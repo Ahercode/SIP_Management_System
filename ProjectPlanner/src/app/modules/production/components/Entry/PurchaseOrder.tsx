@@ -424,7 +424,7 @@ const PurchaseOrder = () => {
 
                 <div className='col-6 mb-7'>
                   <label className="form-label">Date</label>
-                  <input type="date" {...register("date")}
+                  <input type="date"  {...register("date")}
                     defaultValue={isUpdateModalOpen === true ? tempData.date?.substring(0,10) : ''}
                     onChange={handleChange}
                     className="form-control form-control-solid" />

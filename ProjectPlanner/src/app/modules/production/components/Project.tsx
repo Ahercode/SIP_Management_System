@@ -1,15 +1,23 @@
-import { Button, Input, Modal, Space, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { Button, Input, InputRef, Modal, Space, Table, message } from 'antd'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
+import { FilterConfirmProps } from 'antd/es/table/interface'
+// import Highlighter from 'react-highlight-words';
+import { SearchOutlined } from '@ant-design/icons';
+// type DataIndex = keyof DataType;
 
 const Project = () => {
   const [gridData, setGridData] = useState<any>([])
   const [loading, setLoading] = useState(false)
-  const [searchText, setSearchText] = useState('')
+  // const [searchText, setSearchText] = useState('')
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
+
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -57,12 +65,109 @@ const Project = () => {
     deleteData(item)
   }
 
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: any,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+
+  // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }):any => (
+  const getColumnSearchProps = (dataIndex: any) => ({
+    filterDropdown: (setSelectedKeys:any, selectedKeys:any, confirm:any, clearFilters:any, close:any ):any => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          // value={selectedKeys[0]}
+          // onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText((selectedKeys as string[])[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+    ),
+    onFilter: (value:any, record:any) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible:any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text:any) =>
+      searchedColumn === dataIndex ? (
+        <p>Test</p>
+        // <Highlighter
+        //   highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        //   searchWords={[searchText]}
+        //   autoEscape
+        //   textToHighlight={text ? text.toString() : ''}
+        // />
+      ) : (
+        text
+      ),
+  });
+
   const columns: any = [
    
 
     {
       title: 'Code',
       dataIndex: 'code',
+      key:"code",
+      ...getColumnSearchProps("code"),
       sorter: (a: any, b: any) => {
         if (a.code > b.code) {
           return 1
@@ -76,6 +181,7 @@ const Project = () => {
     {
       title: 'Name',
       dataIndex: 'name',
+      ...getColumnSearchProps("code"),
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
           return 1
@@ -89,9 +195,23 @@ const Project = () => {
     {
       title: 'Project Type',
       key: 'projectTypeId',
-      render: (row: any) => {
-        return getProjectType(row.projectTypeId)
+      ...getColumnSearchProps("code"),
+      dataIndex:'typeName',
+      sorter: (a: any, b: any) => {
+        if (a.projectTypeId > b.projectTypeId) {
+          return 1
+        }
+        if (b.projectTypeId > a.projectTypeId) {
+          return -1
+        }
+        return 0
       },
+    },
+    {
+      title: 'Project Category',
+      key: 'projectTypeId',
+      ...getColumnSearchProps("code"),
+      // dataIndex:'typeName',
       sorter: (a: any, b: any) => {
         if (a.projectTypeId > b.projectTypeId) {
           return 1
@@ -105,9 +225,8 @@ const Project = () => {
     {
       title: 'Client',
       key: 'clientId',
-      render: (row: any) => {
-        return getClientName(row.clientId)
-      },
+      dataIndex:'clientName',
+      ...getColumnSearchProps("clientName"),
       sorter: (a: any, b: any) => {
         if (a.clientId > b.clientId) {
           return 1
@@ -148,9 +267,7 @@ const Project = () => {
     {
       title: 'Currency',
       key: 'currencyId',
-      render: (row: any) => {
-        return getCurrencyName(row.currencyId)
-      },
+      dataIndex:'currencyName',
       sorter: (a: any, b: any) => {
         if (a.currencyId > b.currencyId) {
           return 1
@@ -221,7 +338,6 @@ const Project = () => {
         return 0
       },
     },
-
     {
       title: 'Action',
       fixed: 'right',
@@ -261,33 +377,6 @@ const Project = () => {
   const { data: ProjectActivityCosts } = useQuery('projectActivityCosts', ()=> fetchDocument('ProjectActivityCosts'), { cacheTime: 5000 })
   
 
-  const getProjectType = (gradeId: any) => {
-    let ProjectType = null
-    ProjectTypes?.data.map((item: any) => {
-      if (item.id === gradeId) {
-        ProjectType=item.name
-      }
-    })
-    return ProjectType
-  }
-  const getClientName = (gradeId: any) => {
-    let ClientName = null
-    Clients?.data.map((item: any) => {
-      if (item.id === gradeId) {
-        ClientName=item.name
-      }
-    })
-    return ClientName
-  }
-  const getCurrencyName = (gradeId: any) => {
-    let CurrencyName = null
-    Currencies?.data.map((item: any) => {
-      if (item.id === gradeId) {
-        CurrencyName=item.name
-      }
-    })
-    return CurrencyName
-  }
 
   const dataByID = projects?.data.map((item: any) => ({
     ...item,
@@ -295,41 +384,53 @@ const Project = () => {
     endDate: item.endDate.substring(0,10),
   }))
 
-  let projectScheduleData: any =[]
-  projectScheduleData = ProjectSchedules?.data
+  
+  let newTest:any  = []
+  newTest =  ProjectSchedules?.data
 
-  function calculateContractSum(categoryId:any) {
-    let totalPrice:any = 0;
-    if(projectScheduleData?.length!==null){
-      for (const product of projectScheduleData) {
-        if (product?.projectId === categoryId) {
-          totalPrice += product?.amount;
-        }
-      }
-      return totalPrice.toString() + ".00";
+  const calculateContractSum = (projectId:any) => {
+    if (ProjectSchedules?.data?.length !== null) {
+      const projectSchedulesProjectId = newTest?.filter(
+        (product:any) => product?.projectId === projectId
+      );
+
+      const totalAmount = projectSchedulesProjectId?.reduce(
+        (acc:any, product:any) => acc + product?.amount,
+        0
+      );
+  
+      return totalAmount?.toString() + ".00";
     }
-    return totalPrice.toString() + ".00";
-  }
+  
+    return "0.00";
+  };
 
-  let  projectActivityData:any =[]
-  projectActivityData = ProjectActivities?.data
 
-  function calculateBudget(id:any) {
-    let totalAmount:any = 0;
-    console.log('projectActivityData:', projectActivityData);
-    
-    if(projectActivityData?.length!==null){
-      for (const projectActivity  of projectActivityData) {
-        if (projectActivity?.projectId === id) {
-          for (const subProduct of projectActivity?.projectActivityCosts) {
-            totalAmount += subProduct?.amount;
-          }
-        }
-      }
+  let newUU:any  = []
+  newUU =  ProjectActivities?.data
+
+  const calculateBudget = (id:any ) => {
+    if (ProjectActivities?.data?.length !== 0) {
+      const projectActivitiesWithMatchingId = newUU?.filter(
+        (projectActivity:any) => projectActivity?.projectId === id
+      );
+  
+      const totalAmount = projectActivitiesWithMatchingId?.reduce(
+        (acc:any, projectActivity:any) => {
+          const subProductTotal = projectActivity?.projectActivityCosts.reduce(
+            (subAcc:any, subProduct:any) => subAcc + subProduct?.amount,
+            0
+          );
+          return acc + subProductTotal;
+        },
+        0
+      );
+  
       return totalAmount + ".00";
     }
-    return totalAmount + ".00";
-  }
+  
+    return "0.00";
+  };
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
@@ -355,8 +456,6 @@ const Project = () => {
 
   const handleUpdate = (e: any) => {
     e.preventDefault()
-    // object item to be passed down to updateItem function 
-   
       const item = {
         url: 'Projects',
         data: tempData
@@ -364,9 +463,6 @@ const Project = () => {
       updateData(item)
       console.log('update: ', item.data)
     
-    //   setLoading(false)
-    //   message.error('First Name must be more than 5 characters')
-    // }
   }
 
   const showUpdateModal = (values: any) => {
@@ -401,7 +497,7 @@ const Project = () => {
   })
 
   const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries('projectTypes');
       reset()
       setTempData({})
@@ -592,4 +688,5 @@ const Project = () => {
 }
 
 export { Project }
+
 

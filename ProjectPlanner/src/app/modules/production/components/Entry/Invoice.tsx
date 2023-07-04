@@ -77,15 +77,13 @@ function GenerateInvoiceNumber() {
   const columns: any = [
     {
         title: 'Project',
-        key: 'projectId',
-        render: (row: any) => {
-          return getProjectName(row.projectId)
-        },
+        dataIndex: 'projectName',
+        
         sorter: (a: any, b: any) => {
-          if (a.projectId > b.projectId) {
+          if (a.projectName > b.projectName) {
             return 1
           }
-          if (b.projectId > a.projectId) {
+          if (b.projectName > a.projectName) {
             return -1
           }
           return 0
@@ -93,32 +91,25 @@ function GenerateInvoiceNumber() {
     },
     {
       title: 'Supplier',
-      key: 'supplierId',
-      render: (row: any) => {
-        return getSupplierName(row.supplierId)
-      },
+      dataIndex: 'supplierName',
       sorter: (a: any, b: any) => {
-        if (a.supplierId > b.supplierId) {
+        if (a.supplierName > b.supplierName) {
           return 1
         }
-        if (b.supplierId > a.supplierId) {
+        if (b.supplierName > a.supplierName) {
           return -1
         }
         return 0
       },
     },
-    
     {
       title: 'PO Number',
-      key: 'purchaseOrderId',
-      render: (row: any) => {
-        return getPoNumber(row.purchaseOrderId)
-      },
+      dataIndex: 'poNumber',
       sorter: (a: any, b: any) => {
-        if (a.purchaseOrderId > b.purchaseOrderId) {
+        if (a.poNumber > b.poNumber) {
           return 1
         }
-        if (b.purchaseOrderId > a.purchaseOrderId) {
+        if (b.poNumber > a.poNumber) {
           return -1
         }
         return 0

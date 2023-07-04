@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Space, Table } from "antd"
+import { Button, Input, Modal, Skeleton, Space, Table } from "antd"
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useQueryClient, useMutation, useQuery } from "react-query"
@@ -148,11 +148,6 @@ const SharedComponent = (props: any) => {
     //     loadData()
     // }, [])
 
-    const dataWithIndex:any = gridData.map((item: any, index) => ({
-        ...item,
-        key: index,
-    }))
-
     const handleInputChange = (e: any) => {
         setSearchText(e.target.value)
         if (e.target.value === '') {
@@ -171,7 +166,7 @@ const SharedComponent = (props: any) => {
     }
 
     const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(props.data.url)
             reset()
             setTempData({})
@@ -222,7 +217,7 @@ const SharedComponent = (props: any) => {
     })
     
     const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(props.data.url);
             reset()
             setTempData({})
@@ -282,7 +277,11 @@ const SharedComponent = (props: any) => {
                             </button>
                         </Space>
                     </div>
-                    <Table columns={columns} dataSource={GridData?.data} loading={isUpdateModalOpen?postLoading:isLoading} />
+                    {
+                        isLoading?<Skeleton active />:
+                        <Table columns={columns} dataSource={GridData?.data} loading={isUpdateModalOpen?postLoading:isLoading} />
+                    }
+                    
                     <Modal
                         title={isUpdateModalOpen ? `${props.data.title} Update` : `${props.data.title} Setup`}
                         open={isModalOpen}

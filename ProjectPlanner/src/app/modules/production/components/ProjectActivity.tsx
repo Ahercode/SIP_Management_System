@@ -99,6 +99,7 @@ const ProjectActivity = () => {
 
   const { data: Activities } = useQuery('activities', ()=> fetchDocument('Activities'), { cacheTime: 5000 })
   const { data: Projects } = useQuery('projects', ()=> fetchDocument('Projects'), { cacheTime: 5000 })
+  const { data: ProjectActivities } = useQuery('projectActivities', ()=> fetchDocument('ProjectActivities'), { cacheTime: 5000 })
   
   const loadData = async () => {
     setLoading(true)
