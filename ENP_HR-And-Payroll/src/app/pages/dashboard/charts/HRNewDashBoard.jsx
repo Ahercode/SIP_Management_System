@@ -7,6 +7,7 @@ import '../../../../../node_modules/devexpress-dashboard/dist/css/dx-dashboard.l
 import { DashboardControl } from 'devexpress-dashboard-react';
   
 const HRNewDashBoard = () => {
+
     return (
         <div style={{width: '100%', height: '80vh'}}>
             <DashboardControl
@@ -21,6 +22,7 @@ const HRNewDashBoard = () => {
         </div>  
     )
 }
+
 const EmpSummaryDashBoard = () => {
     return (
         <div style={{width: '100%', height: '80vh'}}>

@@ -1,8 +1,6 @@
 
 import react, {FC} from 'react'
 import {PageTitle} from '../../../_metronic/layout/core'
-import { HRChart } from './charts/HRChart'
-import { TestChart } from './charts/TestChart'
 import { useQuery } from 'react-query'
 import {  fetchDashBoardData } from '../../services/ApiCalls'
 import { Table } from 'antd'
@@ -105,8 +103,6 @@ const columns: any = [
 const HRDashboardPage = () => {
   const tenantId = localStorage.getItem('tenant')
   const { data: dashboardData } = useQuery('dashboarddata',()=> fetchDashBoardData(tenantId), { cacheTime: 5000 })
-  
-  
 
   return(
     <div
@@ -115,16 +111,12 @@ const HRDashboardPage = () => {
     {/* begin::Row */}
     <div className='row gy-5 g-xl-8 mb-7'>
       
-      <div className='col-xxl-6'>
+      {/* <div className='col-xxl-6'>
       <HRChart className='mb-xl-8'
           chartColor='primary'
           chartHeight='350px'/>
-      </div>
-      <div className='col-xxl-6'>
-      <TestChart className='mb-xl-8'
-          chartColor='primary'
-          chartHeight='350px'/>
-      </div>
+      </div> */}
+     
 
       <div className='col-12 row mt-7'
         style={{

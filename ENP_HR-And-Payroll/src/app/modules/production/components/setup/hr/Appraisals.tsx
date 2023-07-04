@@ -15,7 +15,7 @@
 
 // export { Appraisals }
 
-import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -131,35 +131,12 @@ const Appraisals = () => {
     },
   ]
 
-  const dataByID = gridData.filter((section: any) => {
-    return section.gradeId?.toString() === param.id
-  })
-
-  const { data: allAppraisals } = useQuery('appraisals', ()=> fetchAppraisals(tenantId), { cacheTime: 5000 })
-  const loadData = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${Api_Endpoint}/Appraisals/tenant/${tenantId}`)
-      setGridData(response.data)
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    loadData()
-  }, [selectedOption])
-
-  const dataWithIndex = gridData.map((item: any, index) => ({
-    ...item,
-    key: index,
-  }))
+  const { data: allAppraisals, isLoading } = useQuery('appraisals', ()=> fetchAppraisals(tenantId), { cacheTime: 5000 })
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
     if (e.target.value === '') {
-      loadData()
+      queryClient.invalidateQueries('appraisals')
     }
   }
 
@@ -174,18 +151,6 @@ const Appraisals = () => {
   }
 
   const queryClient = useQueryClient()
-  const { isLoading, mutate } = useMutation(updateNoteCategory, {
-    onSuccess: (data) => {
-      queryClient.setQueryData(['Appraisals', tempData.id], data);
-      reset()
-      setTempData({})
-      loadData()/*  */
-      setIsUpdateModalOpen(false)
-    },
-    onError: (error) => {
-      console.log('error: ', error)
-    }
-  })
 
   const showUpdateModal = (values: any) => {
     setIsModalOpen(true)
@@ -193,9 +158,6 @@ const Appraisals = () => {
     setTempData(values);
   }
 
-  
-
-  
   const url = `${Api_Endpoint}/Appraisals`
   const urlUpdate = `${Api_Endpoint}/Appraisals/${tempData?.id}`
   const OnSUbmit = handleSubmit(async (values) => {
@@ -222,7 +184,7 @@ const Appraisals = () => {
           setSubmitLoading(false)
           reset()
           setIsModalOpen(false)
-          loadData()
+          queryClient.invalidateQueries('appraisals')
           return response.statusText
         } catch (error: any) {
           setSubmitLoading(false)
@@ -238,7 +200,7 @@ const Appraisals = () => {
       reset()
       setIsModalOpen(false)
       setIsUpdateModalOpen(false)
-      loadData()
+      queryClient.invalidateQueries('appraisals')
       return response.statusText
     } catch (error:any) {
       setSubmitLoading(false)
@@ -285,7 +247,11 @@ const Appraisals = () => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={dataByID} loading={loading} />
+          {
+            isLoading?<Skeleton active />:
+            <Table columns={columns} dataSource={allAppraisals?.data}  loading={isLoading} />
+          }
+          {/* <Table columns={columns} dataSource={dataByID} loading={loading} /> */}
           <Modal
             title={isUpdateModalOpen? "Update Appraisal": 'Add Appraisal'}
             open={isModalOpen}
@@ -320,23 +286,6 @@ const Appraisals = () => {
                   <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
                   <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
-
-                {/* <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Type</label>
-                  <select {...register("type")} value={selectedOption}  onChange={(e)=>{setSelectedOption(e.target.value)}}className="form-select form-select-solid" aria-label="Select example">
-                    {isUpdateModalOpen?null: <option >Select</option>}
-                    <option selected={isUpdateModalOpen && tempData?.type==="Disciplinary"} value="Disciplinary">DISCIPLINARY ACTION</option>
-                    <option selected={isUpdateModalOpen && tempData?.type==="Grievances"} value="Grievances">GRIEVANCES </option>
-                  </select>
-                </div>
-                <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Diary Event</label>
-                  <select {...register("diaryEvent")} value={selectedOption2} onChange={(e)=>{setSelectedOption2(e.target.value)}} className="form-select form-select-solid" aria-label="Select example">
-                    {isUpdateModalOpen? null: <option >Select</option>}
-                    <option selected={isUpdateModalOpen && tempData?.diaryEvent==="true"}  value="true">Yes</option>
-                    <option selected={isUpdateModalOpen && tempData?.diaryEvent==="false"} value="false">No</option>
-                  </select>
-                </div> */}
                 
               </div>
             </form>

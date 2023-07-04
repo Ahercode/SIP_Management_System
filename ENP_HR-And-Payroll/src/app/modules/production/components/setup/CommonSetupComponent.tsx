@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Space, Table } from "antd"
+import { Button, Input, Modal, Skeleton, Space, Table } from "antd"
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useQueryClient, useMutation, useQuery } from "react-query"
@@ -121,6 +121,7 @@ const SetupComponent = (props: any) => {
     if (props.data.title === 'Products') {
         columns.shift()
     }
+    // const { data: GridData, isLoading } = useQuery(`${props.data.url}`, ()=> props.data.url === 'Products' ?  fetchDocument(`${props.data.url}`) : fetchDocument(`${props.data.url}/tenant/${tenantId}`), { cacheTime: 5000 })
 
     const loadData = async () => {
         setLoading(true)
@@ -282,7 +283,12 @@ const SetupComponent = (props: any) => {
                             </button>
                         </Space>
                     </div>
-                    <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+
+                    {
+                        loading?<Skeleton/>:
+                        <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+
+                    }
                     <Modal
                         title={isUpdateModalOpen ? `${props.data.title} Update` : `${props.data.title} Setup`}
                         open={isModalOpen}

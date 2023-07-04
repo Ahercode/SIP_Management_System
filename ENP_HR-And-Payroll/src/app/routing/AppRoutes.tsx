@@ -43,7 +43,7 @@ const AppRoutes: FC = () => {
           <Route path='logout' element={<Logout />} />
           <Route path='appraisalForm' element={<AppraisalForm />} />
 
-          {currentUser && hasApp && tenant && (dateObj > Date.now()) ? (
+          {currentUser && tenant ? (
             <>
               <Route path='/*' element={<PrivateRoutes />} />
               <Route index element={<Navigate to='/hr-dashboard' />} />

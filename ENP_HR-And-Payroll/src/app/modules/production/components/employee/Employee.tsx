@@ -1,4 +1,4 @@
-import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
+import {Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../_metronic/helpers'
@@ -21,11 +21,8 @@ const Employee = () => {
   const [img, setImg] = useState();
   const [imgNew, setImgNew] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('employeeDetail');
+  const tenantId = localStorage.getItem('tenant')
 
-  const handleTabClick = (tab:any) => {
-    setActiveTab(tab);
-  }
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -220,7 +217,7 @@ const Employee = () => {
     },
   ]
 
-  const {data:allEmployee} = useQuery('employee',() =>fetchEmployees(tenantId), {cacheTime:5000})
+  const {data: allEmployee, isLoading} = useQuery('employees',() =>fetchEmployees(tenantId), {cacheTime:5000})
   const {data:allDepartments} = useQuery('department',() => fetchDepartments(tenantId), {cacheTime:5000})
   const {data:allPaygroups} = useQuery('paygroup',() => fetchPaygroups(tenantId), {cacheTime:5000})
   const {data:allNotches} = useQuery('notches',() => fetchNotches(tenantId), {cacheTime:5000})
@@ -262,22 +259,22 @@ const Employee = () => {
     })
     return notchName
   } 
-  const tenantId = localStorage.getItem('tenant')
-  const loadData = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${Api_Endpoint}/Employees/tenant/${tenantId}`,
-      )
-      setGridData(response.data)
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
-  useEffect(() => {
-    loadData()
-  }, [])
+  // const loadData = async () => {
+  //   setLoading(true)
+  //   try {
+  //     const response = await axios.get(`${Api_Endpoint}/Employees/tenant/${tenantId}`,
+  //     )
+  //     setGridData(response.data)
+  //     setLoading(false)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   loadData()
+  // }, [])
 
   
   var out_data:any = {};
@@ -290,17 +287,9 @@ const Employee = () => {
     }
   });
 
-  const handleExport = ()=>{
-    const headings = [["FirstName", "Surname","Gender", "Paygroup", "Salary-Grade", "Unit"]]
-    const wb = utils.book_new()
-    const ws = utils.json_to_sheet([])
-    utils.sheet_add_aoa(ws, headings)
-    utils.sheet_add_json(ws, gridData, {origin: "A2", skipHeader: true})
-    utils.book_append_sheet(wb,ws, "Report")
-    writeFile(wb, "Report.xlsx")
-  }
+
   
-  const dataWithIndex = gridData.map((item: any, index:any) => ({
+  const dataWithIndex = allEmployee?.data.map((item: any, index:any) => ({
     ...item,
     key: index,
   }))
@@ -308,7 +297,7 @@ const Employee = () => {
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
     if (e.target.value === '') {
-      loadData()
+      // loadData()
     }
   }
 
@@ -336,34 +325,6 @@ const Employee = () => {
     >
       <KTCardBody className='py-1 '>
         <div className='table-responsive'>
-        <div className="tabs">
-          
-          <button 
-            className={`tab ${activeTab === 'employeeDetail' ? 'active' : ''}`} 
-            onClick={() => handleTabClick('employeeDetail')}
-          >
-            Details
-          </button>
-          <button 
-            className={`tab ${activeTab === 'roaster' ? 'active' : ''}`} 
-            onClick={() => handleTabClick('roaster')}
-          >
-            Roster
-          </button>
-          <button 
-            className={`tab ${activeTab === 'summary' ? 'active' : ''}`} 
-            onClick={() => handleTabClick('summary')}
-          >
-            Summary
-          </button>        
-          
-          
-        </div>
-          
-          <div className="tab-content">
-
-          {activeTab === 'employeeDetail' && 
-            <>
             
               <div className='d-flex justify-content-between'>
                 <Space style={{marginBottom: 16}}>
@@ -385,31 +346,16 @@ const Employee = () => {
                     Add
                   </button>
                   </Link>
-                  {/* <a onClick={handleExport} className='btn btn-light-primary me-3'>Export Data</a> */}
-                  <button onClick={handleExport} type='button' className='btn btn-light-primary me-3'>
+                  <button  type='button' className='btn btn-light-primary me-3'>
                     <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                     Export
                 </button>
                 </Space>
               </div>
-              <Table columns={columns} dataSource={dataWithIndex}  loading={loading}/>
-            </>
-          }
-
-          {activeTab === 'roaster' && 
-            <div>
-              <Roaster/>
-            </div>
-          }
-
-          {activeTab === 'summary' && 
-            <div>
-              <EmpSummaryDashBoard/>
-            </div>
-          }
-
-        </div>
-          
+              {
+                  isLoading?<Skeleton active />:
+                  <Table columns={columns} dataSource={dataWithIndex}  loading={isLoading} />
+              }
         </div>
       </KTCardBody>
     </div>

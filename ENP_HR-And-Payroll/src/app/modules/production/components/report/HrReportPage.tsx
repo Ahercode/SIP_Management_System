@@ -3,29 +3,7 @@ import { ReportCard } from './ReportCardItem'
 
 
 const  HrReportData = [
-  {
-    title: "Recruitment and Selection",
-    reports: [
-      { title: "Reference #", link: "/RecruitmentSelectionReferenceReport" },
-      { title: "Job Title", link: "/RecruitmentSelectJobTitleRepor" },
-    ]
-  },
-  {
-    title: "Compensation and Benefit",
-    reports: [
-      { title: "Employee", link: "/CompensationBenefitByEmployeeReport" },
-      { title: "Department", link: "/CompensationBenefitByDepartmentReport" },
-      { title: "Job Title", link: "/CompensationBenefitByJobTitleReport" },
-    ]
-  },
-  {
-    title: "Training and Development",
-    reports: [
-      { title: "Reference #", link: "/TrainingDevelopmentByEmployeeReport" },
-      { title: "Training Type", link: "/TrainingDevelopmentByDepartmentReport" },
-      { title: "Summary", link: "/TrainingDevelopmentByJobTitleReport" },
-    ]
-  },
+
   {
     title: "Appraisal and Performance",
     reports: [
@@ -33,31 +11,7 @@ const  HrReportData = [
       { title: "Appraisal Type", link: "/AppraisalPerformanceByAppraisalTypeReport" },
     ]
   },
-  {
-
-    title: "Notes",
-    reports: [
-      { title: "Employee", link: "/NotesEmployeeReport" },
-      { title: "Note Category", link: "/NoteCategoryReport" },
-      { title: "Summary", link: "/NotesSummaryReport" },
-    ]
-  },
-  {
-    title: "Leave",
-    reports: [
-      { title: "Employee", link: "/LeaveEmployeeReport" },
-      { title: "Department", link: "/LeaveDepartmentReport" },
-      { title: "Summary", link: "/LeaveSummaryReport" },
-    ]
-  },
-  {
-    title: "Medical",
-    reports: [
-      { title: "Employee", link: "/MedicalEmployeeReport" },
-      { title: "Medical Type", link: "/MedicalTypeReport" },
-      { title: "Summary", link: "/MedicalSummaryReport" },
-    ]
-  },
+  
 ]
 
 const HrReportPage = () => {
