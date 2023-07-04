@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, Form, Input, InputNumber, Modal, Space, Table, message } from 'antd'
+import { Breadcrumb, Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -26,7 +26,7 @@ const OrgLevel = () => {
   const tenantId = localStorage.getItem('tenant')
   const [supervisorName, setSupervisorName] = useState('')
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms',() => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
   const [breadcrumbs, setBreadcrumbs]: any = useState<any>([])
   const [treeData, setTreeData] = useState<any>([])
 
@@ -388,7 +388,10 @@ const OrgLevel = () => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={gridData} loading={loading} />
+          {
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={gridData} loading={loading} />
+          }
           <Modal
             title={isUpdateModalOpen ? 'Update Organogram ' : 'Add Employee to Organogram'}
             open={isModalOpen}

@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Space, Table, message } from 'antd'
+import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -584,7 +584,10 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={dataByID} loading={loading} />
+          {
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataByID} loading={loading} />
+          }
           <Modal
             title={isUpdateModalOpen ? `Update ${title}` : `Add ${title}`}
             open={isModalOpen}

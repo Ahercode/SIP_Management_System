@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Space, Table, RadioChangeEvent, Select, Divider, message } from 'antd'
+import { Button, Input, Modal, Space, Table, RadioChangeEvent, Select, Divider, message, Skeleton } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -23,9 +23,6 @@ const AppraisalPerformance = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [tabModalOpen, setTabModalOpen] = useState(false)
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
-  const [tab1ModalOpen, setTab1Modal1Open] = useState(false)
-  const [tab2ModalOpen, setTab2ModalOpen] = useState(false)
-  const [tab3ModalOpen, setTab3ModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("tab1");
   const [employeeRecord, setEmployeeRecord] = useState<any>([])
   const [employeeId, setEmployeeId] = useState<any>()
@@ -34,12 +31,6 @@ const AppraisalPerformance = () => {
   const [selectedAppraisalType, setSelectedAppraisaltype] = useState<any>(null);
   const [selectedStartPeriod, setSelectedStartPeriod] = useState<any>(null);
   const [selectedEndPeriod, setSelectedEndPeriod] = useState<any>(null);
-  const [selectedValue5, setSelectedValue5] = useState<any>(null);
-  const [radioValue, setRadioValue] = useState(1);
-  const [radio1Value, setRadio1Value] = useState(1);
-  const [radio2Value, setRadio2Value] = useState(1);
-  const [radio3Value, setRadio3Value] = useState(1);
-  const [radio4Value, setRadio4Value] = useState(1);
   const tenantId = localStorage.getItem('tenant')
   const [fieldInit, setFieldInit] = useState([])
   const [isReviewDateModalOpen, setIsReviewDateModalOpen] = useState(false)
@@ -92,33 +83,6 @@ const AppraisalPerformance = () => {
     setTextareaHeight(`${textarea.style.height}`);
   };
 
-
-  // const handleTabClick = (tab: any) => {
-  //   setActiveTab(tab);
-  // };
-
-
-  // const onRadioChange = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadioValue(e.target.value);
-  // };
-  // const onRadio1Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio1Value(e.target.value);
-  // };
-  // const onRadio2Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio2Value(e.target.value);
-  // };
-  // const onRadio3Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio3Value(e.target.value);
-  // };
-  // const onRadio4Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio4Value(e.target.value);
-  // };
-
   const handleCancel = () => {
     reset()
     setEmployeeRecord([])
@@ -168,8 +132,7 @@ const AppraisalPerformance = () => {
   }
 
   const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
-    onSuccess: (data: any) => {
-      queryClient.setQueryData([data?.url, data], data);
+    onSuccess: () => {
       loadData()
     },
     onError: (error) => {
@@ -182,7 +145,6 @@ const AppraisalPerformance = () => {
       url: 'AppraisalPerfTransactions',
       data: element
     }
-    setLoading(true)
     deleteData(item)
   }
 
@@ -191,7 +153,6 @@ const AppraisalPerformance = () => {
       url: 'AppraisalReviewDates',
       data: element
     }
-    setLoading(true)
     deleteData(item)
   }
 
@@ -333,70 +294,6 @@ const AppraisalPerformance = () => {
         </Space>
       ),
 
-    },
-  ]
-  const columnTab1 = [
-
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
-  const columnTab4 = [
-
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
-  const columnTab2 = [
-
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
-  const columnTab3 = [
-
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
     },
   ]
 
@@ -571,7 +468,7 @@ const AppraisalPerformance = () => {
   useEffect(() => {
     loadData()
     setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
-  
+
   }, [
     allJobTitles?.data, employeeRecord?.jobTitleId, selectedAppraisalType,
     selectedPaygroup, selectedStartPeriod, selectedEndPeriod, allObjectives?.data,
@@ -597,9 +494,12 @@ const AppraisalPerformance = () => {
 
 
 
-  const {mutate: updateData } = useMutation(updateItem, {
+  const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: () => {
       reset()
+      queryClient.invalidateQueries('appraisalPerfTransactions')
+      queryClient.invalidateQueries('reviewDates')
+      queryClient.invalidateQueries('appraisalperfobjectives')
       loadData()
       message.success('Appraisal objective updated successfully')
     },
@@ -642,18 +542,19 @@ const AppraisalPerformance = () => {
       url: endpoint,
     }
     console.log('item: ', item)
-    setLoading(true)
     postData(item)
   })
 
   const { mutate: postData } = useMutation(postItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('appraisalPerfTransactions')
+      queryClient.invalidateQueries('reviewDates')
+      queryClient.invalidateQueries('appraisalperfobjectives')
       reset()
-      isEmailSent && message.success('Email notifications sent successfully')
       setIsReviewDateModalOpen(false)
-      setIsModalOpen(false)
       loadData()
+      isEmailSent && message.success('Email notifications sent successfully')
+      setIsModalOpen(false)
       setSubmitLoading(false)
       setObjValue('')
       setIsEmailSent(false)
@@ -821,7 +722,7 @@ const AppraisalPerformance = () => {
                           name='objectives'
                           id="resizable-textarea"
                           className="form-control mb-0 mt-2"
-                          defaultValue={currentObjective?.description }
+                          defaultValue={currentObjective?.description}
                           // onChange={handleTextareaChange}
                           style={{ height: textareaHeight }}
                         />
@@ -847,7 +748,10 @@ const AppraisalPerformance = () => {
                             className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
                             type="primary" shape="circle" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'middle'} />
                         </Space>
-                        <Table columns={reviewDatesColumn} dataSource={reviewDateByID} loading={loading} />
+                        {
+                          loading ? <Skeleton active /> :
+                            <Table columns={reviewDatesColumn} dataSource={reviewDateByID} loading={loading} />
+                        }
                       </div>
                     </div>
                   </div>
@@ -878,9 +782,10 @@ const AppraisalPerformance = () => {
                   </button>
                 </Space>
               </div>
-
-              <Table columns={columns} dataSource={dataByID} />
-
+              {
+                loading ? <Skeleton active /> :
+                  <Table columns={columns} dataSource={dataByID} loading={loading} />
+              }
               <Modal
                 title='Employee Details '
                 open={isModalOpen}

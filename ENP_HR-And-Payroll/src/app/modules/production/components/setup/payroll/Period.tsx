@@ -1,8 +1,8 @@
-import { Button, Form, Input, InputNumber, Modal, Space, Table } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem,  postItem, updateItem } from '../../../../../services/ApiCalls'
+import { Api_Endpoint, deleteItem, postItem, updateItem } from '../../../../../services/ApiCalls'
 import { useForm } from 'react-hook-form'
 import { useQueryClient, useMutation } from 'react-query'
 
@@ -269,7 +269,10 @@ const Period = () => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+          {
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+          }
           <Modal
             title={isUpdateModalOpen ? 'Period Update' : 'Period Setup'}
             open={isModalOpen}
@@ -298,20 +301,20 @@ const Period = () => {
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Code</label>
-                  <input type="text" {...register("code")} value={ isUpdateModalOpen === true ? tempData?.code : null} onChange={handleChange} className="form-control form-control-solid" />
+                  <input type="text" {...register("code")} value={isUpdateModalOpen === true ? tempData?.code : null} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                  <input type="text" {...register("name")} value={ isUpdateModalOpen === true ? tempData?.name : null} onChange={handleChange} className="form-control form-control-solid" />
+                  <input type="text" {...register("name")} value={isUpdateModalOpen === true ? tempData?.name : null} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
                 <div className='row'>
                   <div className='col-6 mb-7'>
                     <label htmlFor="exampleFormControlInput1" className="form-label">Start Date</label>
-                    <input type="date" {...register("startDate")} value={ isUpdateModalOpen === true ? tempData?.startDate : null} onChange={handleChange} className="form-control form-control-solid" />
+                    <input type="date" {...register("startDate")} value={isUpdateModalOpen === true ? tempData?.startDate : null} onChange={handleChange} className="form-control form-control-solid" />
                   </div>
                   <div className='col-6 mb-7'>
                     <label htmlFor="exampleFormControlInput1" className="form-label">End Date</label>
-                    <input type="date" {...register("endDate")} value={ isUpdateModalOpen === true ? tempData?.endDate : null} onChange={handleChange} className="form-control form-control-solid" />
+                    <input type="date" {...register("endDate")} value={isUpdateModalOpen === true ? tempData?.endDate : null} onChange={handleChange} className="form-control form-control-solid" />
                   </div>
                 </div>
 

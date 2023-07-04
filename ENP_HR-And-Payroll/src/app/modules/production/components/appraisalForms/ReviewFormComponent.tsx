@@ -1,4 +1,4 @@
-import { Collapse, CollapseProps, Space, Table } from "antd"
+import { Collapse, CollapseProps, Skeleton, Space, Table } from "antd"
 import { useEffect, useState } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
@@ -12,6 +12,8 @@ function ReviewFormComponent({ parameterId }: any) {
     const [collapseitems, setCollapseitems] = useState<CollapseProps['items']>([])
     const [itemsData, setItemsData] = useState<CollapseProps['items']>([])
     const { register, reset, handleSubmit } = useForm()
+    const [loading, setLoading] = useState(false)
+
 
     const tenantId = localStorage.getItem('tenant')
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/test`), { cacheTime: 5000 })
@@ -24,6 +26,7 @@ function ReviewFormComponent({ parameterId }: any) {
 
 
     const loadData = async () => {
+        setLoading(true)
         try {
             const objectivesResponse = appraisalobjective?.data.filter((item: any) => item.parameterId === parameterId)
             setObjectivesData(objectivesResponse)
@@ -36,9 +39,11 @@ function ReviewFormComponent({ parameterId }: any) {
             ))
             setItemsData(itemData)
             console.log('itemsData', itemData)
+            setLoading(false)
 
         } catch (error) {
             console.log('loadError: ', error)
+            setLoading(false)
         }
     }
 
@@ -90,6 +95,7 @@ const AppraisalFormDeliverableComponent = ({ appraisalObjectivesData }: any) => 
 
     const [deliverablesData, setDeliverablesData] = useState<any>([])
     const { register, reset, handleSubmit } = useForm()
+    const [loading, setLoading] = useState(false)
 
     const tenantId = localStorage.getItem('tenant')
 
@@ -97,10 +103,13 @@ const AppraisalFormDeliverableComponent = ({ appraisalObjectivesData }: any) => 
     const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable/tenant/test`), { cacheTime: 5000 })
 
     const loadData = async () => {
+        setLoading(true)
         try {
             const deliverablesResponse = appraisaldeliverable?.data?.filter((item: any) => item.objectiveId === appraisalObjectivesData.id)
             setDeliverablesData(deliverablesResponse)
+            setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.log(error)
         }
     }
@@ -150,7 +159,10 @@ const AppraisalFormDeliverableComponent = ({ appraisalObjectivesData }: any) => 
                     <div className="bullet"></div>
                     <span className=' fs-3 fw-bold mb-2 text-primary'>{appraisalObjectivesData?.description}</span>
                 </Space>
-                <Table columns={deliverableColumns} dataSource={deliverablesData} />
+                {
+                    loading ? <Skeleton active /> :
+                        <Table columns={deliverableColumns} dataSource={deliverablesData} loading={loading} />
+                }
             </div>
         </div>
     )

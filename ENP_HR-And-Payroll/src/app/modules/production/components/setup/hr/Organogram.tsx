@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, InputNumber, Modal, Space, Switch, Table, Tree, message } from 'antd'
+import { Button, Divider, Form, Input, InputNumber, Modal, Skeleton, Space, Switch, Table, Tree, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -23,7 +23,7 @@ const Organogram = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
   const { data: allEmployees } = useQuery('employees', async () => await fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms',() => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
   const [treeData, setTreeData] = useState<any>([])
   const [showTree, setShowTree] = useState<boolean>(false)
   const queryClient = useQueryClient()
@@ -342,8 +342,12 @@ const Organogram = () => {
                   showLine
                   treeData={treeData}
                 />
-              </> :
-              <Table columns={columns} dataSource={gridData} loading={loading} />
+              </> : <>
+                {
+                  loading ? <Skeleton active /> :
+                    <Table columns={columns} dataSource={gridData} loading={loading} />
+                }
+              </>
           }
 
           <Modal

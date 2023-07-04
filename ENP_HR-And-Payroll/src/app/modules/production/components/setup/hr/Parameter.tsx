@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Modal, Space, Table, message } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -395,7 +395,10 @@ const Parameter = () => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={dataByID} loading={loading} />
+          {
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataByID} loading={loading} />
+          }
           <Modal
             title={isUpdateModalOpen ? 'Parameter Update' : 'Parameter Setup'}
             open={isModalOpen}
