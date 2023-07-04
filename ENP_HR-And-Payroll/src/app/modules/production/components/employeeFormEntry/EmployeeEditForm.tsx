@@ -218,7 +218,7 @@ const EmployeeEditForm = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(['employees', tempData.id], data);
       navigate('/employee', { replace: true })
-      // queryClient.invalidateQueries(['employees', tempData.id]);
+      queryClient.invalidateQueries(['employees', tempData.id]);
     }
   })
 

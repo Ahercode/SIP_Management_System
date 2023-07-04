@@ -63,20 +63,21 @@ export function AsideMenuMain() {
               />
               : ""
           }
+          <AsideMenuItemWithSub to='#' title='Transactions' icon='/media/icons/duotune/ecommerce/ecm001.svg' hasBullet={false}>
+            <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={true} title='Appraisals and Performances' />
+          </AsideMenuItemWithSub>
           {/* Setups authorizations */}
           {
             currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
               || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
               || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
               ? <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/technology/teh004.svg' hasBullet={false}>
+                <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
                 <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Paygroups' />
-                {/* <AsideMenuItem to='setup/employee/divisions' hasBullet={true} title='Divisions' />
-                <AsideMenuItem to='setup/employee/category' hasBullet={true} title='Categories' /> */}
                 <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
+                <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
+                <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
                 <AsideMenuItem to='setup/employee/nationality' hasBullet={true} title='Nationalities' />
-                {/* <AsideMenuItem to='setup/employee/perks' hasBullet={true} title='Perks' />
-                <AsideMenuItem to='setup/employee/skills' hasBullet={true} title='Skills' />
-                <AsideMenuItem to='setup/employee/qualification' hasBullet={true} title='Qualifications' /> */}
               </AsideMenuItemWithSub>
               : ""
           }
@@ -88,29 +89,28 @@ export function AsideMenuMain() {
         isPayrollHR == true ?
           <>
             {/* HR Section */}
-            <AsideMenuItemWithSub
+            {/* <AsideMenuItemWithSub
               to='#'
               title='Human Resource'
               fontIcon='bi-archive'
               icon='/media/icons/duotune/general/gen019.svg'
             >
-              <>
+              <> */}
                 {/* Transactions authorization*/}
-                {
+                {/* {
                   currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('4'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('6'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('7'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('8'))
                     ? <AsideMenuItemWithSub to='#' title='Transactions' icon='/media/icons/duotune/ecommerce/ecm001.svg' hasBullet={false}>
-                      
                       <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={true} title='Appraisals and Performances' />
                     </AsideMenuItemWithSub>
                     : ""
-                }
+                } */}
 
                 {/* Reports authorization*/}
-                {
+                {/* {
                   currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
@@ -124,10 +124,10 @@ export function AsideMenuMain() {
                       title='Reports'
                     />
                     : ""
-                }
+                } */}
 
                 {/* Setups authorizations */}
-                {
+                {/* {
                   currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
                     || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
@@ -137,9 +137,9 @@ export function AsideMenuMain() {
                       <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
                     </AsideMenuItemWithSub>
                     : ""
-                }
-              </>
-            </AsideMenuItemWithSub>
+                } */}
+              {/* </>
+            </AsideMenuItemWithSub> */}
           </>
           : ""
       }
@@ -160,7 +160,6 @@ export function AsideMenuMain() {
             fontIcon='bi-archive'
             icon='/media/icons/duotune/coding/cod009.svg'
           >
-            {/* <AsideMenuItemWithSub to='#' title='Administration' hasBullet={true}> */}
             <AsideMenuItem to='setup/administration/audit' hasBullet={true} title='Audits' />
             <AsideMenuItem to='setup/administration/company' hasBullet={true} title='Company Infos' />
             <AsideMenuItem to='setup/administration/configurations' hasBullet={true} title='Configurations' />
@@ -168,7 +167,6 @@ export function AsideMenuMain() {
           </AsideMenuItemWithSub>
           : ""
       }
-      {/* <AsideMenuItem to='setup/administration/appraisalForm' hasBullet={true} title='Form Page' /> */}
     </>
   )
 }
