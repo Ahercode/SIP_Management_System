@@ -5,7 +5,8 @@ import axios from 'axios';
 // export const Api_Endpoint = "http://208.117.44.15/hrwebapi/api";
 export const Api_Endpoint = "https://app.sipconsult.net/hrwebapi/api";
 // export const Api_Endpoint = "https://localhost:5001/api";
-export const UsersEndpoint = "http://208.117.44.15/userapi/api";
+export const UsersEndpoint = "https://app.sipconsult.net/userapi/api";
+// export const UsersEndpoint = "http://208.117.44.15/userapi/api";
 
 
 export let axioInstance = axios.create({
