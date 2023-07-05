@@ -4,7 +4,7 @@ import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
 import { ENP_URL } from '../../../urls'
 import { useForm } from 'react-hook-form'
-import { useQueryClient, useMutation } from 'react-query'
+import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { deleteItem, fetchDocument, updateItem, postItem, Api_Endpoint } from '../../../../../services/ApiCalls'
 
 const ApprovalLevel = () => {
@@ -16,6 +16,8 @@ const ApprovalLevel = () => {
   const [form] = Form.useForm()
 
   const { register, reset, handleSubmit } = useForm()
+  const { data: userApplications } = useQuery('ApprovalLevels', () => fetchDocument(`ApprovalLevels`), { cacheTime: 5000 })
+
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [tempData, setTempData] = useState<any>()
@@ -131,9 +133,11 @@ const ApprovalLevel = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await axios.get(`${Api_Endpoint}/ApprovalLevels/tenant/${tenantId}`)
+  
+      const response = userApplications?.data
+
       // const response = await fetchDocument('ApprovalLevels')
-      setGridData(response.data)
+      setGridData(response)
       setLoading(false)
     } catch (error) {
       console.log(error)

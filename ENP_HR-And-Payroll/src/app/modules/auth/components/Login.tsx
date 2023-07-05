@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react'
-import * as Yup from 'yup'
 import clsx from 'clsx'
 import { useFormik } from 'formik'
-import { login, parseJwt } from '../core/_requests'
-import { useAuth } from '../core/Auth'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { fetchCompanies, fetchUserApplications } from '../../../services/ApiCalls'
+import * as Yup from 'yup'
+import { fetchDocument } from '../../../services/ApiCalls'
+import { useAuth } from '../core/Auth'
+import { login, parseJwt } from '../core/_requests'
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
@@ -38,8 +38,10 @@ export function Login() {
   const { saveAuth, setCurrentUser , saveTenant} = useAuth()
   const tenantId = localStorage.getItem('tenant')
 
-  const { data: userApplications } = useQuery('userApplications', fetchUserApplications, { cacheTime: 5000 })
-  const { data: allCompanies } = useQuery('companies', fetchCompanies, { cacheTime: 5000 })
+  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
+  const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
+
+
   // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(currentUser?.id)).map((filteredItem:any) => {
   //   return filteredItem.applicationId.toString()
   // })

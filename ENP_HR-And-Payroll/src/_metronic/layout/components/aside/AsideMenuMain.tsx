@@ -1,16 +1,16 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AsideMenuItemWithSub } from './AsideMenuItemWithSub'
-import { AsideMenuItem } from './AsideMenuItem'
-import { useAuth } from '../../../../app/modules/auth'
 import { useQuery } from 'react-query'
-import { fetchRoles, fetchUserApplications, fetchUserRoles } from '../../../../app/services/ApiCalls'
+import { useAuth } from '../../../../app/modules/auth'
+import { fetchDocument, fetchRoles, fetchUserRoles } from '../../../../app/services/ApiCalls'
+import { AsideMenuItem } from './AsideMenuItem'
+import { AsideMenuItemWithSub } from './AsideMenuItemWithSub'
 
 export function AsideMenuMain() {
   const intl = useIntl()
   const { currentUser } = useAuth()
-  const { data: userApplications } = useQuery('userApplications', fetchUserApplications, { cacheTime: 5000 })
+  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
 
   const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
     return filteredItem?.applicationId?.toString()

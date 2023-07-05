@@ -4,7 +4,7 @@ import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { ENP_URL } from '../../../urls'
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { Api_Endpoint, fetchAppraisals, fetchAppraisalTransactions, fetchEmployees, fetchJobTitles, fetchPaygroups, fetchPeriods, fetchParameters, postItem, deleteItem, fetchDocument, updateItem } from '../../../../../services/ApiCalls'
+import { Api_Endpoint, fetchAppraisals, fetchAppraisalTransactions, fetchEmployees, fetchJobTitles, fetchPaygroups, fetchPeriods, fetchParameters, postItem, deleteItem, fetchDocument, updateItem, FormsBaseUrl } from '../../../../../services/ApiCalls'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import "./cusStyle.css"
 import { useForm } from 'react-hook-form'
@@ -445,7 +445,7 @@ const AppraisalPerformance = () => {
     const item = {
       data: {
         subject: 'Appraisal Review Date',
-        formLink: `http://208.117.44.15/omni-hr/appraisalObjectivesForm`,
+        formLink: `${FormsBaseUrl}/appraisalObjectivesForm`,
         recipients: employeeMailAndName
       },
       url: 'appraisalperftransactions/sendMail',

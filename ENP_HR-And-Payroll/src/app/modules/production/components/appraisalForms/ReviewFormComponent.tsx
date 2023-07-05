@@ -6,19 +6,14 @@ import { useForm } from "react-hook-form"
 
 const ReviewFormComponent: React.FC = ({ parameterId }: any) => {
 
-    const [parametersData, setParametersData] = useState<any>([])
     const [objectivesData, setObjectivesData] = useState<any>([])
-    const [parmObjectsData, setParmObjectsData] = useState<any>([])
-    const [collapseitems, setCollapseitems] = useState<CollapseProps['items']>([])
+
     const [itemsData, setItemsData] = useState<CollapseProps['items']>([])
-    const { register, reset, handleSubmit } = useForm()
     const [loading, setLoading] = useState(false)
 
-
-    const tenantId = localStorage.getItem('tenant')
-    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/test`), { cacheTime: 5000 })
-    const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective/tenant/test`), { cacheTime: 5000 })
-    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable/tenant/test`), { cacheTime: 5000 })
+    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+    const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
 
     const onChange = (key: string | string[]) => {
         console.log(key);

@@ -16,26 +16,25 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
     const [parametersData, setParametersData] = useState<any>([])
     const param: any = useParams();
     const tenantId = localStorage.getItem('tenant')
-    const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments/tenant/test`), { cacheTime: 5000 })
-    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/test`), { cacheTime: 5000 })
-    const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective/tenant/test`), { cacheTime: 5000 })
-    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable/tenant/test`), { cacheTime: 5000 })
-    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
-    const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/test`), { cacheTime: 5000 })
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals/tenant/test`), { cacheTime: 5000 })
+    const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
+    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+    const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
+    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees}`), { cacheTime: 5000 })
+    const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
    
 
     const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const empId = parseInt(employeeData?.id)
-    const lineManager = getSupervisorData({ empId, allEmployees, allOrganograms })
+    console.log('empId: ', empId)
+    const lineManager = getSupervisorData({ employeeId:empId, allEmployees, allOrganograms })
 
     const loadData = async () => {
         try {
             const parametersResponse = parameters?.data?.filter((item: any) => item.appraisalId === 12)
             setParametersData(parametersResponse)
-            console.log('allOrganograms: ', allOrganograms?.data)
-
         } catch (error) {
             console.log('loadError: ', error)
         }
