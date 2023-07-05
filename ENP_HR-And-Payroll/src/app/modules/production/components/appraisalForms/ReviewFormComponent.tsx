@@ -4,7 +4,7 @@ import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
 import { useForm } from "react-hook-form"
 
-function ReviewFormComponent({ parameterId }: any) {
+const ReviewFormComponent: React.FC = ({ parameterId }: any) => {
 
     const [parametersData, setParametersData] = useState<any>([])
     const [objectivesData, setObjectivesData] = useState<any>([])

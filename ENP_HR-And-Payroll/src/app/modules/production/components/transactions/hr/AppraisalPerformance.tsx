@@ -10,7 +10,7 @@ import "./cusStyle.css"
 import { useForm } from 'react-hook-form'
 import { PlusOutlined } from "@ant-design/icons"
 import moment from 'moment'
-import { getTimeLeft } from '../../ComponentsFactory'
+import { getSupervisorData, getTimeLeft } from '../../ComponentsFactory'
 import { AppraisalObjective, ReviewDateComponent } from '../AppraisalPerformaceComponents'
 
 
@@ -201,7 +201,7 @@ const AppraisalPerformance = () => {
       title: 'Line Manager',
       dataIndex: 'employeeId',
       render: (row: any) => {
-        return getSupervisor(row)
+        return getSupervisorName(row)
       },
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
@@ -336,29 +336,9 @@ const AppraisalPerformance = () => {
   }
 
   // get supervisor name from organogram table
-  const getSupervisor = (employeeId: any) => {
-
-    // get employee code from employee table
-    const employeeIdFromEmployee = allEmployees?.data?.find((item: any) => {
-      return item.id === employeeId
-    })
-
-    // get supervisor  id from organogram table
-    const supervisorFromEmployeeInOrganogram = allOrganograms?.data?.find((item: any) => {
-      return item.employeeId === employeeIdFromEmployee?.employeeId
-    })
-
-    const employeeIdOfSupervisorFromOrganogram = parseInt(supervisorFromEmployeeInOrganogram?.supervisorId) === 0 ?
-      supervisorFromEmployeeInOrganogram :
-      allOrganograms?.data.find((item: any) => {
-        return item.id === parseInt(supervisorFromEmployeeInOrganogram?.supervisorId)
-      })
-
-    const supervisorName = allEmployees?.data?.find((item: any) => {
-      return item.employeeId === employeeIdOfSupervisorFromOrganogram?.employeeId
-    })
-
-    return supervisorName === undefined ? 'No Supervisor' : `${supervisorName?.firstName} ${supervisorName?.surname}`
+  const getSupervisorName = (employeeId: any) => {
+    const supervisorName = getSupervisorData({ employeeId, allEmployees, allOrganograms })
+    return supervisorName === undefined ? 'Undefined' : `${supervisorName?.firstName} ${supervisorName?.surname}`
   }
 
   const parameterByAppraisal = allParameters?.data.filter((section: any) => section.appraisalId === parseInt(selectedAppraisalType))

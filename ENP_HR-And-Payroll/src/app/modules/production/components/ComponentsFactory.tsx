@@ -1,3 +1,5 @@
+
+// getTimeLeft function is used to calculate the time left for review given the review date in ISO format
 const getTimeLeft = (reviewDate: any) => {
 
     const currentDate = new Date();
@@ -20,6 +22,39 @@ const getTimeLeft = (reviewDate: any) => {
     }
 }
 
+// getSupervisorData function is used to get the supervisor data given the employee id, all employees and all organograms
+const getSupervisorData = ({ employeeId, allEmployees, allOrganograms }: any) => {
+    // get employee code from employee table
+    const employeeIdFromEmployee = allEmployees?.data?.find((item: any) => {
+        return item.id === employeeId
+    })
+
+    // get supervisor  id from organogram table
+    const supervisorFromEmployeeInOrganogram: any = allOrganograms?.data?.find((item: any) => {
+        return item.employeeId === employeeIdFromEmployee?.employeeId
+    })
+
+    const employeeIdOfSupervisorFromOrganogram = parseInt(supervisorFromEmployeeInOrganogram?.supervisorId) === 0 ?
+        supervisorFromEmployeeInOrganogram :
+        allOrganograms?.data.find((item: any) => {
+            return item.id === parseInt(supervisorFromEmployeeInOrganogram?.supervisorId)
+        })
+
+    const supervisorData = allEmployees?.data?.find((item: any) => {
+        return item.employeeId === employeeIdOfSupervisorFromOrganogram?.employeeId
+    })
+
+    return supervisorData
+}
+
+// getFieldName function is used to get the field name given the field id and field data
+const getFieldName = (fieldId: any, fieldData: any) => {
+    const field = fieldData?.find((item: any) => {
+        return item.id === fieldId
+    })
+    return field?.name
+}
 
 
-export { getTimeLeft }
+
+export { getTimeLeft, getSupervisorData, getFieldName }

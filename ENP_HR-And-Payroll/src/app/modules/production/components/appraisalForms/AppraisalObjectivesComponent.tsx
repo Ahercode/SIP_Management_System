@@ -9,7 +9,7 @@ import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, upd
 import { end } from '@popperjs/core'
 import { ArrowLeftOutlined } from "@ant-design/icons"
 
-function AppraisalObjectivesComponent({ parameterId }: any) {
+const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const [gridData, setGridData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -17,7 +17,6 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
     let [filteredData] = useState([])
     const [submitLoading, setSubmitLoading] = useState(false)
     const { register, reset, handleSubmit } = useForm()
-    const navigate = useNavigate();
     const param: any = useParams();
     const tenantId = localStorage.getItem('tenant')
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -25,7 +24,6 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
     const [secondTempData, setSecondTempData] = useState<any>()
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
     const queryClient = useQueryClient()
-    const statusList = ['Active', 'Inactive']
     let [pathName, setPathName] = useState<any>("")
     const [showDeliverablesEntry, setShowDeliverablesEntry] = useState<any>(false)
     const endPoint = showDeliverablesEntry ? 'appraisaldeliverable' : 'appraisalobjective'

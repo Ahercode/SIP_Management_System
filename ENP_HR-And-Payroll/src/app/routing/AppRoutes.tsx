@@ -43,7 +43,7 @@ const AppRoutes: FC = () => {
           <Route path='error/*' element={<ErrorsPage />} />
           <Route path='logout' element={<Logout />} />
           <Route path='appraisalReviewForm' element={<AppraisalForm />} />
-          <Route path='appraisalObjectivesForm'
+          <Route path='appraisalObjectivesForm/:employeeId'
             element={<ObjectivesForm />}
           />
 
