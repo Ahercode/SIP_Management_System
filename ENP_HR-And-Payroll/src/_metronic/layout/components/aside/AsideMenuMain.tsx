@@ -63,9 +63,10 @@ export function AsideMenuMain() {
               />
               : ""
           }
-          <AsideMenuItemWithSub to='#' title='Transactions' icon='/media/icons/duotune/ecommerce/ecm001.svg' hasBullet={false}>
+          {/* <AsideMenuItemWithSub to='#' title='Transactions' icon='/media/icons/duotune/ecommerce/ecm001.svg' hasBullet={false}>
             <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={true} title='Appraisals and Performances' />
-          </AsideMenuItemWithSub>
+          </AsideMenuItemWithSub> */}
+          <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={true} title='Entries' />
           {/* Setups authorizations */}
           {
             currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
