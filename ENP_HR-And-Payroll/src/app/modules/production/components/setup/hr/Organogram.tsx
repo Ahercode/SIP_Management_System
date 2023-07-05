@@ -341,6 +341,7 @@ const Organogram = () => {
                   className='mt-4'
                   showLine
                   treeData={treeData}
+                  autoExpandParent={true}
                 />
               </> : <>
                 {

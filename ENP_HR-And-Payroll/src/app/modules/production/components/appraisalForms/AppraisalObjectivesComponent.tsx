@@ -93,19 +93,6 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
                 return 0
             },
         },
-        // {
-        //   title: 'Description',
-        //   dataIndex: 'description',
-        //   sorter: (a: any, b: any) => {
-        //     if (a.name > b.name) {
-        //       return 1
-        //     }
-        //     if (b.name > a.name) {
-        //       return -1
-        //     }
-        //     return 0
-        //   },
-        // },
         {
             title: 'Weight(%)',
             dataIndex: 'weight',
@@ -249,11 +236,9 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
     useEffect(() => {
         (async () => {
 
-            console.log('objectivesId: ', objectivesId)
-            console.log('allAppraisalObjectives: ', allAppraisalObjectives?.data)
+            // console.log('objectivesId: ', objectivesId)
+            // console.log('allAppraisalObjectives: ', allAppraisalObjectives?.data)
             let res = showDeliverablesEntry && getItemData(objectivesId, allAppraisalObjectives?.data)
-            console.log('res: ', res)
-
             setPathName(res?.name)
         })();
         loadData()
@@ -420,7 +405,6 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
         setTempData(values);
         setSecondTempData(values);
         showModal()
-        console.log(values)
     }
 
 

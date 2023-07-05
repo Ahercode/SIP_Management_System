@@ -10,6 +10,8 @@ import "./cusStyle.css"
 import { useForm } from 'react-hook-form'
 import { PlusOutlined } from "@ant-design/icons"
 import moment from 'moment'
+import { getTimeLeft } from '../../ComponentsFactory'
+import { AppraisalObjective, ReviewDateComponent } from '../AppraisalPerformaceComponents'
 
 
 const AppraisalPerformance = () => {
@@ -50,38 +52,12 @@ const AppraisalPerformance = () => {
   const { data: allPaygroups } = useQuery('recruitments', () => fetchPaygroups(tenantId), { cacheTime: 5000 })
   const { data: allAppraisalTransactions } = useQuery('appraisalTransactions', () => fetchAppraisalTransactions(tenantId), { cacheTime: 5000 })
   const { data: allParameters } = useQuery('parameters', () => fetchParameters(tenantId), { cacheTime: 5000 })
-  const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/test`), { cacheTime: 5000 })
+  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/test`), { cacheTime: 5000 })
+  const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/test`), { cacheTime: 5000 })
+  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/test`), { cacheTime: 5000 })
 
 
-
-  const [objValue, setObjValue] = useState<any>('');
-  const [textareaHeight, setTextareaHeight] = useState('auto');
-
-  const handleTextareaChange = (event: any) => {
-    event.preventDefault()
-    setObjValue(event.target.value);
-    // setCurrentObjective({ ...currentObjective, [event.target.name]: event.target.value })
-    adjustTextareaHeight();
-  };
-
-  const adjustTextareaHeight = () => {
-    const textarea: any = document.getElementById('resizable-textarea');
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-
-    // Limit height to 10 lines
-    if (textarea.scrollHeight > 10 * parseFloat(getComputedStyle(textarea).lineHeight)) {
-      textarea.style.overflowY = 'scroll';
-      textarea.style.height = `${10 * parseFloat(getComputedStyle(textarea).lineHeight)}px`;
-    } else {
-      textarea.style.overflowY = 'hidden';
-    }
-
-    setTextareaHeight(`${textarea.style.height}`);
-  };
 
   const handleCancel = () => {
     reset()
@@ -96,29 +72,6 @@ const AppraisalPerformance = () => {
     setIsReviewDateModalOpen(false)
   }
 
-  const getTimeLeft = (reviewDate: any) => {
-
-    const currentDate = new Date();
-    const targetDate = new Date(reviewDate);
-    targetDate.setHours(0, 0, 0, 0); // Set targetDate to the start of the day
-
-    if (currentDate > targetDate) {
-      return "Expired";
-    }
-
-    const timeDifference = targetDate.getTime() - currentDate.getTime();
-    const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Calculate days left
-
-    const monthsLeft = Math.floor(daysLeft / 30); // Calculate months left
-
-    if (monthsLeft > 0) {
-      return `${monthsLeft} ${monthsLeft === 1 ? "month" : "months"}`;
-    } else {
-      return `${daysLeft} ${daysLeft === 1 ? "day" : "days"}`;
-    }
-  }
-
-
   const showTabModal = () => {
     setTabModalOpen(true)
   }
@@ -131,7 +84,7 @@ const AppraisalPerformance = () => {
     setEmployeeId(record)
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       loadData()
     },
@@ -147,24 +100,6 @@ const AppraisalPerformance = () => {
     }
     deleteData(item)
   }
-
-  function handleDeleteReviewDate(element: any) {
-    const item = {
-      url: 'AppraisalReviewDates',
-      data: element
-    }
-    deleteData(item)
-  }
-
-  const [fileList, setFileList] = useState<UploadFile[]>([
-
-  ]);
-
-  const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-
 
   const columns: any = [
     {
@@ -304,19 +239,20 @@ const AppraisalPerformance = () => {
       setReviewDatesData(allReviewdates?.data)
       setGridData(response)
       //find objective with matching referenceId from all objectives
-      const objectiveData: any = allObjectives?.data?.filter((item: any) => {
-        return item.referenceId === referenceId
-      })
-      const objText = !objectiveData ? '' : objectiveData[0]?.description
-      setObjValue(objText)
-      setCurrentObjective(objectiveData[0])
-
       setLoading(false)
     } catch (error) {
       console.log(error)
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadData()
+    setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
+  }, [
+    allJobTitles?.data, allObjectives?.data, allReviewdates?.data, selectedAppraisalType,
+    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId
+  ])
 
   const dataByID: any = allAppraisalsPerfTrans?.data?.filter((refId: any) => {
     return refId.paygroupId === parseInt(selectedPaygroup)
@@ -329,10 +265,6 @@ const AppraisalPerformance = () => {
     })?.includes(item.id)
   })
 
-
-  const reviewDateByID: any = allReviewdates?.data?.filter((refId: any) => {
-    return refId?.referenceId === referenceId
-  })
 
   const emplyeesByPaygroup: any = allEmployees?.data?.filter((item: any) => {
     return item.paygroupId === parseInt(selectedPaygroup)
@@ -465,15 +397,7 @@ const AppraisalPerformance = () => {
     setFieldInit(newUsers);
   };
 
-  useEffect(() => {
-    loadData()
-    setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
 
-  }, [
-    allJobTitles?.data, employeeRecord?.jobTitleId, selectedAppraisalType,
-    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, allObjectives?.data,
-    allReviewdates?.data, currentObjective, referenceId
-  ])
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
@@ -492,39 +416,8 @@ const AppraisalPerformance = () => {
     setGridData(filteredData)
   }
 
-
-
-  const { mutate: updateData } = useMutation(updateItem, {
-    onSuccess: () => {
-      reset()
-      queryClient.invalidateQueries('appraisalPerfTransactions')
-      queryClient.invalidateQueries('reviewDates')
-      queryClient.invalidateQueries('appraisalperfobjectives')
-      loadData()
-      message.success('Appraisal objective updated successfully')
-    },
-    onError: (error) => {
-      console.log('error: ', error)
-    }
-  })
-
-  const endpoint = isReviewDateModalOpen ? `AppraisalReviewDates` : `AppraisalPerfTransactions`
   const submitApplicant = handleSubmit(async (values) => {
-    if (isReviewDateModalOpen && !values.reviewDate) {
-      message.error('Please select date')
-      return
-    }
-    const selectedDate = new Date(values.reviewDate);
-    const item = isReviewDateModalOpen ? {
-      data: {
-        appraisalId: parseInt(selectedAppraisalType),
-        reviewDate: selectedDate.toISOString(),
-        description: values.description,
-        tenantId: tenantId,
-        referenceId: referenceId,
-      },
-      url: endpoint,
-    } : {
+    const item = {
       data: {
         paygroupId: parseInt(selectedPaygroup),
         appraisalTypeId: parseInt(selectedAppraisalType),
@@ -539,7 +432,7 @@ const AppraisalPerformance = () => {
         tenantId: tenantId,
         referenceId: referenceId,
       },
-      url: endpoint,
+      url: 'AppraisalPerfTransactions',
     }
     console.log('item: ', item)
     postData(item)
@@ -548,19 +441,14 @@ const AppraisalPerformance = () => {
   const { mutate: postData } = useMutation(postItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('appraisalPerfTransactions')
-      queryClient.invalidateQueries('reviewDates')
-      queryClient.invalidateQueries('appraisalperfobjectives')
       reset()
-      setIsReviewDateModalOpen(false)
       loadData()
       isEmailSent && message.success('Email notifications sent successfully')
       setIsModalOpen(false)
       setSubmitLoading(false)
-      setObjValue('')
       setIsEmailSent(false)
     },
     onError: (error: any) => {
-      setSubmitLoading(false)
       console.log('post error: ', error)
     }
   })
@@ -577,78 +465,79 @@ const AppraisalPerformance = () => {
     const item = {
       data: {
         subject: 'Appraisal Review Date',
-        formLink: `http://208.117.44.15/enp-hr-payroll/appraisalForm'`,
+        formLink: `http://208.117.44.15/omni-hr/appraisalObjectivesForm`,
         recipients: employeeMailAndName
       },
       url: 'appraisalperftransactions/sendMail',
     }
     setIsEmailSent(true)
+    console.log('email sent: ', item)
     postData(item)
   }
 
-  const reviewDatesColumn = [
-    {
-      title: 'Date',
-      dataIndex: 'reviewDate',
-      render: (text: any) => moment(text).format('DD/MM/YYYY')
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-    },
-    {
-      title: 'Count down',
-      dataIndex: 'reviewDate',
-      render: (text: any) => getTimeLeft(text),
-    },
-    {
-      title: 'Action',
-      render: (text: any, record: any) => (
-        <Space>
-          <a className='text-primary me-2' onClick={() => handleNotificationSend()}>
-            Send Notification
-          </a>
-          <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
-            Delete
-          </a>
-        </Space>
-      ),
-    }
-  ]
+  // const reviewDatesColumn = [
+  //   {
+  //     title: 'Date',
+  //     dataIndex: 'reviewDate',
+  //     render: (text: any) => moment(text).format('DD/MM/YYYY')
+  //   },
+  //   {
+  //     title: 'Description',
+  //     dataIndex: 'description',
+  //   },
+  //   {
+  //     title: 'Count down',
+  //     dataIndex: 'reviewDate',
+  //     render: (text: any) => getTimeLeft(text),
+  //   },
+  //   {
+  //     title: 'Action',
+  //     render: (text: any, record: any) => (
+  //       <Space>
+  //         <a className='text-primary me-2' onClick={() => handleNotificationSend()}>
+  //           Send Notification
+  //         </a>
+  //         <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
+  //           Delete
+  //         </a>
+  //       </Space>
+  //     ),
+  //   }
+  // ]
 
-  const handleObjectiveSave = handleSubmit(async (values) => {
-    if (objValue === '') {
-      message.error('Please enter objective description')
-      return
-    }
+  // const handleObjectiveSave = handleSubmit(async (values) => {
+  //   if (objValue === '') {
+  //     message.error('Please enter objective description')
+  //     return
+  //   }
 
-    // check if current objective exist allObjectives using referenceId
-    const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
-    if (currentObjective) {
-      const item = {
-        data: currentObjective,
-        url: 'appraisalperfobjectives'
-      }
-      console.log('objItem: ', item)
-      updateData(item)
-      return
-    } else {
-      const item = {
-        data: {
-          description: values.description,
-          tenantId: tenantId,
-          referenceId: referenceId,
-        },
-        url: 'appraisalperfobjectives',
-      }
-      console.log('objItem: ', item)
-      postData(item)
-    }
-  })
+  //   // check if current objective exist allObjectives using referenceId
+  //   const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
+  //   if (currentObjective) {
+  //     const item = {
+  //       data: currentObjective,
+  //       url: 'appraisalperfobjectives'
+  //     }
+  //     console.log('objItem: ', item)
+  //     updateData(item)
+  //     return
+  //   } else {
+  //     const item = {
+  //       data: {
+  //         description: values.description,
+  //         tenantId: tenantId,
+  //         referenceId: referenceId,
+  //       },
+  //       url: 'appraisalperfobjectives',
+  //     }
+  //     console.log('objItem: ', item)
+  //     postData(item)
+  //   }
+  // })
 
-  const showReviewDateModal = () => {
-    setIsReviewDateModalOpen(true)
-  }
+  // const showReviewDateModal = () => {
+  //   setIsReviewDateModalOpen(true)
+  // }
 
   return (
     <div
@@ -714,46 +603,13 @@ const AppraisalPerformance = () => {
                 <>
                   <div style={{ padding: "0px 0px 0 0px" }} className='col-12 row mb-0'>
                     <div className='col-6 mb-7'>
-                      <form onSubmit={handleObjectiveSave}>
-
-                        <span className='form-label' >Objectives</span>
-                        <textarea
-                          {...register("description")}
-                          name='objectives'
-                          id="resizable-textarea"
-                          className="form-control mb-0 mt-2"
-                          defaultValue={currentObjective?.description}
-                          // onChange={handleTextareaChange}
-                          style={{ height: textareaHeight }}
-                        />
-                      </form>
-                      <a className='justify-content-end align-items-end d-flex btn text-primary' onClick={() => handleObjectiveSave()}>Save Objective</a>
+                      <AppraisalObjective referenceId={referenceId} />
                     </div>
-                    <div className='col-6 mb-7'>
-                      <div className='d-flex justify-content-between'>
-                        <span className='form-label'>Schedule Dates</span>
-                      </div>
-                      <div
-                        style={{
-                          backgroundColor: 'white',
-                          padding: '20px',
-                          borderRadius: '5px',
-                          boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-                        }}
-                        className="border border-gray-400"
-                      >
-                        <Space className="justify-content-end align-items-end d-flex mb-2" >
-                          <Button
-                            onClick={showReviewDateModal}
-                            className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
-                            type="primary" shape="circle" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'middle'} />
-                        </Space>
-                        {
-                          loading ? <Skeleton active /> :
-                            <Table columns={reviewDatesColumn} dataSource={reviewDateByID} loading={loading} />
-                        }
-                      </div>
-                    </div>
+                    < ReviewDateComponent
+                      referenceId={referenceId}
+                      selectedAppraisalType={selectedAppraisalType}
+                      handleNotificationSend={() => handleNotificationSend()}
+                    />
                   </div>
                 </>
               }
@@ -784,7 +640,7 @@ const AppraisalPerformance = () => {
               </div>
               {
                 loading ? <Skeleton active /> :
-                  <Table columns={columns} dataSource={dataByID} loading={loading} />
+                  <Table columns={columns} dataSource={dataByID} />
               }
               <Modal
                 title='Employee Details '
@@ -933,7 +789,7 @@ const AppraisalPerformance = () => {
               >
                 <h3>Will be updated soon</h3>
               </Modal>
-              <Modal
+              {/* <Modal
                 title='Add a review date'
                 open={isReviewDateModalOpen}
                 onCancel={handleReviewDateCancel}
@@ -967,11 +823,14 @@ const AppraisalPerformance = () => {
                       <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
                       <input
                         {...register("description")}
+                        name='reviewDescription'
+                        defaultValue={reviewDateDescription}
+                        onChange={handleReviewDateTextareaChange}
                         className="form-control form-control-solid" />
                     </div>
                   </div>
                 </form>
-              </Modal>
+              </Modal> */}
             </div>
           </KTCardBody>
       }
