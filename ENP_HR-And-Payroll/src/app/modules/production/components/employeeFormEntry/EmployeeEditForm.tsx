@@ -270,7 +270,6 @@ const EmployeeEditForm = () => {
 
   const uRL = `${Api_Endpoint}/Employees/${param.id}`
     const OnSUbmitUpdate = handleSubmit( async ( )=> {
-      
       setLoading(true)
       const formData:any = new FormData();
       formData.append('id', parseInt(tempData.id))
