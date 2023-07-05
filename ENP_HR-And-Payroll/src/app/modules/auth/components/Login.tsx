@@ -18,13 +18,13 @@ const loginSchema = Yup.object().shape({
     .min(3, 'Minimum 6 characters')
     .max(50, 'Maximum 50 characters')
     .required('Password is required'),
-  tenantId: Yup.string().required('Company is required'),
+  // tenantId: Yup.string().required('Company is required'),
 })
 
 const initialValues = {
   username: '',
   password: '',
-  tenantId: '',
+  // tenantId: 'test',
 }
 
 /*
@@ -70,7 +70,7 @@ export function Login() {
         //  }else{
         //   setStatus("you don't have access to this application")
         //  }
-        saveTenant(values.tenantId)
+        saveTenant('test')
         const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
           return filteredItem?.applicationId?.toString()
         })
@@ -162,7 +162,7 @@ export function Login() {
           </div>
         )}
       </div>
-      <div className='fv-row mb-10'>
+      {/* <div className='fv-row mb-10'>
         <div className='mb-10'>
           <label className='form-label fw-bold'>Company:</label>
           <div>
@@ -196,7 +196,7 @@ export function Login() {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
       <div className='text-center'>
         <button
           type='submit'

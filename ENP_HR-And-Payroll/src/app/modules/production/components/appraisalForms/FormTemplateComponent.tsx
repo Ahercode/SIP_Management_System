@@ -23,19 +23,19 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
     const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/test`), { cacheTime: 5000 })
     const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals/tenant/test`), { cacheTime: 5000 })
+   
 
-
-    const employeeData= allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
-    const department = getFieldName(employeeData?.deparmentId, allDepartments?.data)
-    const employeeId = param.employeeId
-    const lineManager = getSupervisorData({ employeeId, allEmployees, allOrganograms })
+    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
+    const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+    const empId = parseInt(employeeData?.id)
+    const lineManager = getSupervisorData({ empId, allEmployees, allOrganograms })
 
     const loadData = async () => {
         try {
             const parametersResponse = parameters?.data?.filter((item: any) => item.appraisalId === 12)
             setParametersData(parametersResponse)
-            console.log('employeeData: ', employeeData)
-            console.log('allDepartments: ', allDepartments?.data)
+            console.log('allOrganograms: ', allOrganograms?.data)
+
         } catch (error) {
             console.log('loadError: ', error)
         }

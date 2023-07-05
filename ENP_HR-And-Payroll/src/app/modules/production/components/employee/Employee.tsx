@@ -21,7 +21,7 @@ const Employee = () => {
   const [imgNew, setImgNew] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
-
+  console.log('tenantId: ', tenantId)
 
   const showModal = () => {
     setIsModalOpen(true)
