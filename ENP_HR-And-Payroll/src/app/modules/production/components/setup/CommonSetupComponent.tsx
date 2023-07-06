@@ -22,7 +22,7 @@ const SetupComponent = (props: any) => {
     const param: any = useParams();
     const navigate = useNavigate();
     const [detailName, setDetailName] = useState('')
-    const { data: medicals } = useQuery('medicals', () => fetchDocument(`Medicals/tenant/${tenantId}`), { cacheTime: 5000 })
+    const { data: medicals } = useQuery('medicals', () => fetchDocument(`Medicals`), { cacheTime: 5000 })
     const showModal = () => {
         setIsModalOpen(true)
     }
@@ -43,9 +43,9 @@ const SetupComponent = (props: any) => {
         setTempData({ ...tempData, [event.target.name]: event.target.value });
     }
 
-    const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
-        onSuccess: (data) => {
-            queryClient.setQueryData([props.data.url, tempData], data);
+    const { mutate: deleteData } = useMutation(deleteItem, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('medicals')
             loadData()
         },
         onError: (error) => {
@@ -126,12 +126,12 @@ const SetupComponent = (props: any) => {
     const loadData = async () => {
         setLoading(true)
         try {
-            const response = props.data.url === 'Products' ? await fetchDocument(`${props.data.url}`) : await fetchDocument(`${props.data.url}/tenant/${tenantId}`)
+            const response =  await fetchDocument(`${props.data.url}`)
             if (props.data.url === 'Products') {
                 const getMedicals = medicals?.data.find((item: any) => item.id.toString() === param.id)
                 const detName = getMedicals?.name
                 setDetailName(detName)
-                const data = response.data.filter((item: any) => item.medicalTypeId?.toString() === param.id)
+                const data = response?.data.filter((item: any) => item.medicalTypeId?.toString() === param.id)
                 // console.log('data', data)
                 setGridData(data)
             } else {
@@ -169,9 +169,9 @@ const SetupComponent = (props: any) => {
         setGridData(filteredData)
     }
 
-    const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
-        onSuccess: (data) => {
-            queryClient.setQueryData([props.data.url, tempData], data);
+    const {mutate: updateData } = useMutation(updateItem, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('medicals')
             reset()
             setTempData({})
             loadData()
@@ -222,9 +222,9 @@ const SetupComponent = (props: any) => {
         postData(item)
     })
 
-    const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
+    const { mutate: postData } = useMutation(postItem, {
         onSuccess: (data) => {
-            queryClient.setQueryData([props.data.url, tempData], data);
+            queryClient.invalidateQueries('medicals')
             reset()
             setTempData({})
             loadData()

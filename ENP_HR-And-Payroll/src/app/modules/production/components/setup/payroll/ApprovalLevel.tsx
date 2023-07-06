@@ -48,9 +48,9 @@ const ApprovalLevel = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData} = useMutation(deleteItem, {
     onSuccess: (data) => {
-      queryClient.setQueryData(['ApprovalLevels', tempData], data);
+      queryClient.invalidateQueries('ApprovalLevels')
       loadData()
     },
     onError: (error) => {

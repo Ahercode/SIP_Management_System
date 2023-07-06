@@ -9,7 +9,7 @@ import { PlusOutlined } from "@ant-design/icons"
 import { useForm } from "react-hook-form"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotificationSend }: any) => {
-    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/test`), { cacheTime: 5000 })
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
     const [gridData, setGridData] = useState([])
     const [loading, setLoading] = useState(false)
     const [isReviewDateModalOpen, setIsReviewDateModalOpen] = useState(false)
@@ -67,15 +67,25 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
         }
     })
 
-    const reviewDatesColumn = [
-        {
-            title: 'Date',
-            dataIndex: 'reviewDate',
-            render: (text: any) => moment(text).format('DD/MM/YYYY')
-        },
+    const reviewDatesColumn = [        
         {
             title: 'Description',
             dataIndex: 'description',
+        },
+        {
+            title: 'Start Date',
+            dataIndex: 'reviewDate',
+            render: (text: any) => <>{ !text ? '' : moment(text).format('DD/MM/YYYY')}</>
+        },
+        {
+            title: 'End Date',
+            dataIndex: 'endDate',
+            render: (text: any) => <>{ !text ? '' : moment(text).format('DD/MM/YYYY')}</>
+        },
+        {
+            title: 'Check Up Date',
+            dataIndex: 'checkUpDate',
+            render: (text: any) => <>{ !text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'Count down',

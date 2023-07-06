@@ -26,8 +26,8 @@ const Parameter = () => {
   const queryClient = useQueryClient()
   const statusList = ['Active', 'Inactive']
   let [appraisalName, setAppraisalName] = useState<any>("")
-  const { data: parameters } = useQuery('Parameters', () => fetchDocument(`Parameters/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
+  const { data: parameters } = useQuery('Parameters', () => fetchDocument(`Parameters`), { cacheTime: 5000 })
+  const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -49,36 +49,18 @@ const Parameter = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  // const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
-  //   onSuccess: (data) => {
-  //     queryClient.setQueryData(['loan', tempData], data);
-  //     loadData()
-  //   },
-  //   onError: (error) => {
-  //     console.log('delete error: ', error)
-  //   }
-  // })
-
-  // function handleDelete(element: any) {
-  //   const item = {
-  //     url: 'Parameters',
-  //     data: element
-  //   }
-  //   deleteData(item)
-  // }
 
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument(`Parameters/tenant/${tenantId}`)
-      setGridData(response?.data)
+      setGridData(parameters?.data)
       setLoading(false)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('parameters')
       loadData()
@@ -209,7 +191,7 @@ const Parameter = () => {
       .reduce((a: any, b: any) => a + b, 0);
   };
 
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('parameters')
       loadData()
@@ -445,6 +427,8 @@ const Parameter = () => {
                     {...register("weight")} type='number'
                     defaultValue={isUpdateModalOpen === true ? tempData.weight : 0}
                     onChange={handleChange}
+                    max={100}
+                    min={0}
                     className="form-control form-control-solid" />
                 </div>
                 {/* <div className='mb-7'>

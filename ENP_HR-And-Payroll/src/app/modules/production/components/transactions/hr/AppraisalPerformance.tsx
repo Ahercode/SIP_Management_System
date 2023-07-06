@@ -1,17 +1,12 @@
-import { Button, Input, Modal, Space, Table, RadioChangeEvent, Select, Divider, message, Skeleton } from 'antd'
+import { Button, Input, Modal, Select, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { ENP_URL } from '../../../urls'
-import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { Api_Endpoint, fetchAppraisals, fetchAppraisalTransactions, fetchEmployees, fetchJobTitles, fetchPaygroups, fetchPeriods, fetchParameters, postItem, deleteItem, fetchDocument, updateItem, FormsBaseUrl } from '../../../../../services/ApiCalls'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import "./cusStyle.css"
 import { useForm } from 'react-hook-form'
-import { PlusOutlined } from "@ant-design/icons"
-import moment from 'moment'
-import { getSupervisorData, getTimeLeft } from '../../ComponentsFactory'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
+import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from '../../../../../services/ApiCalls'
+import { getSupervisorData } from '../../ComponentsFactory'
 import { AppraisalObjective, ReviewDateComponent } from '../AppraisalPerformaceComponents'
+import "./cusStyle.css"
 
 
 const AppraisalPerformance = () => {
@@ -45,17 +40,17 @@ const AppraisalPerformance = () => {
   const [currentObjective, setCurrentObjective] = useState<any>([])
   const [isEmailSent, setIsEmailSent] = useState<any>(false)
 
-  const { data: allEmployees } = useQuery('employees', () => fetchEmployees(tenantId), { cacheTime: 5000 })
-  const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
-  const { data: allPeriods } = useQuery('periods', () => fetchPeriods(tenantId), { cacheTime: 5000 })
-  const { data: allJobTitles } = useQuery('jobTitles', () => fetchJobTitles(tenantId), { cacheTime: 5000 })
-  const { data: allPaygroups } = useQuery('recruitments', () => fetchPaygroups(tenantId), { cacheTime: 5000 })
-  const { data: allAppraisalTransactions } = useQuery('appraisalTransactions', () => fetchAppraisalTransactions(tenantId), { cacheTime: 5000 })
-  const { data: allParameters } = useQuery('parameters', () => fetchParameters(tenantId), { cacheTime: 5000 })
-  const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/test`), { cacheTime: 5000 })
-  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/test`), { cacheTime: 5000 })
-  const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/test`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/test`), { cacheTime: 5000 })
+  const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
+  const { data: allPeriods } = useQuery('periods', () => fetchDocument('periods'), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument('jobTitles'), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('recruitments', () => fetchDocument('recruitments'), { cacheTime: 5000 })
+  const { data: allAppraisalTransactions } = useQuery('appraisalTransactions', () => fetchDocument('appraisalTransactions'), { cacheTime: 5000 })
+  const { data: allParameters } = useQuery('parameters', () => fetchDocument('parameters'), { cacheTime: 5000 })
+  const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives`), { cacheTime: 5000 })
+  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
+  const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions`), { cacheTime: 5000 })
+  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
 
 
 
@@ -455,70 +450,6 @@ const AppraisalPerformance = () => {
     postData(item)
   }
 
-  // const reviewDatesColumn = [
-  //   {
-  //     title: 'Date',
-  //     dataIndex: 'reviewDate',
-  //     render: (text: any) => moment(text).format('DD/MM/YYYY')
-  //   },
-  //   {
-  //     title: 'Description',
-  //     dataIndex: 'description',
-  //   },
-  //   {
-  //     title: 'Count down',
-  //     dataIndex: 'reviewDate',
-  //     render: (text: any) => getTimeLeft(text),
-  //   },
-  //   {
-  //     title: 'Action',
-  //     render: (text: any, record: any) => (
-  //       <Space>
-  //         <a className='text-primary me-2' onClick={() => handleNotificationSend()}>
-  //           Send Notification
-  //         </a>
-  //         <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
-  //           Delete
-  //         </a>
-  //       </Space>
-  //     ),
-  //   }
-  // ]
-
-  // const handleObjectiveSave = handleSubmit(async (values) => {
-  //   if (objValue === '') {
-  //     message.error('Please enter objective description')
-  //     return
-  //   }
-
-  //   // check if current objective exist allObjectives using referenceId
-  //   const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
-  //   if (currentObjective) {
-  //     const item = {
-  //       data: currentObjective,
-  //       url: 'appraisalperfobjectives'
-  //     }
-  //     console.log('objItem: ', item)
-  //     updateData(item)
-  //     return
-  //   } else {
-  //     const item = {
-  //       data: {
-  //         description: values.description,
-  //         tenantId: tenantId,
-  //         referenceId: referenceId,
-  //       },
-  //       url: 'appraisalperfobjectives',
-  //     }
-  //     console.log('objItem: ', item)
-  //     postData(item)
-  //   }
-  // })
-
-  // const showReviewDateModal = () => {
-  //   setIsReviewDateModalOpen(true)
-  // }
-
   return (
     <div
       style={{
@@ -769,48 +700,6 @@ const AppraisalPerformance = () => {
               >
                 <h3>Will be updated soon</h3>
               </Modal>
-              {/* <Modal
-                title='Add a review date'
-                open={isReviewDateModalOpen}
-                onCancel={handleReviewDateCancel}
-                closable={true}
-                footer={[
-                  <Button key='back' onClick={handleReviewDateCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={reivewDateSubmitLoading}
-                    onClick={submitApplicant}
-                  >
-                    Done
-                  </Button>,
-                ]}
-              >
-                <form onSubmit={submitApplicant}>
-                  <div className='row mb-7 mt-7'>
-                    <div className='col-12 mb-7'>
-                      <label htmlFor='exampleFormControlInput1' className='form-label'>Schedule Date</label>
-                      <input
-                        {...register("reviewDate")}
-                        type='date'
-                        className='form-control form-control-solid'
-                      />
-                    </div>
-                    <div className='mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
-                      <input
-                        {...register("description")}
-                        name='reviewDescription'
-                        defaultValue={reviewDateDescription}
-                        onChange={handleReviewDateTextareaChange}
-                        className="form-control form-control-solid" />
-                    </div>
-                  </div>
-                </form>
-              </Modal> */}
             </div>
           </KTCardBody>
       }

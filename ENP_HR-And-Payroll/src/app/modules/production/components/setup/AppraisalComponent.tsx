@@ -1,12 +1,10 @@
 import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useForm } from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
-import { end } from '@popperjs/core'
+import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 
 const AppraisalComponent = ({ title, endPoint }: any) => {
 
@@ -27,8 +25,8 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
   const statusList = ['Active', 'Inactive']
   let [pathName, setPathName] = useState<any>("")
   const prevPath = title === 'Objectives' ? 'parameters' : 'appraisalobjective'
-  const { data: prevPathData } = useQuery('pathData', () => fetchDocument(`${prevPath}/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: pathData } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: prevPathData } = useQuery('pathData', () => fetchDocument(`${prevPath}`), { cacheTime: 5000 })
+  const { data: pathData } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 5000 })
 
 
   const showModal = () => {
@@ -51,8 +49,8 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
-    onSuccess: (data) => {
+  const { mutate: deleteData} = useMutation(deleteItem, {
+    onSuccess: () => {
       queryClient.invalidateQueries(`${endPoint}`)
       loadData()
     },
@@ -216,12 +214,10 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     ]
 
 
-  const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
-
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument(`${endPoint}/tenant/${tenantId}`)
+      const response = await fetchDocument(`${endPoint}`)
       setGridData(response?.data)
       setLoading(false)
     } catch (error) {
@@ -285,7 +281,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         .reduce((a: any, b: any) => a + b, 0)
   };
 
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: () => {
       queryClient.invalidateQueries(`${endPoint}`)
       loadData()
@@ -526,7 +522,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     }
   })
 
-  const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
+  const { mutate: postData} = useMutation(postItem, {
     onSuccess: () => {
       queryClient.invalidateQueries(`${endPoint}`)
       reset()

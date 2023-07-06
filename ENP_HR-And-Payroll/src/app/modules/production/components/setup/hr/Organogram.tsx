@@ -1,12 +1,11 @@
-import { Button, Divider, Form, Input, InputNumber, Modal, Skeleton, Space, Switch, Table, Tree, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { Button, Divider, Input, Modal, Skeleton, Space, Switch, Table, Tree, message } from 'antd'
 import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { ENP_URL } from '../../../urls'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Api_Endpoint, fetchDocument, fetchGrades, fetchLeaveTypes, fetchPaygroups, updateGrade, updateGradeLeave, updateItem } from '../../../../../services/ApiCalls'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { KTCardBody } from '../../../../../../_metronic/helpers'
+import { Api_Endpoint, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
 
 const Organogram = () => {
@@ -22,8 +21,8 @@ const Organogram = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
-  const { data: allEmployees } = useQuery('employees', async () => await fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allEmployees } = useQuery('employees', async () => await fetchDocument(`employees`), { cacheTime: 5000 })
+  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
   const [treeData, setTreeData] = useState<any>([])
   const [showTree, setShowTree] = useState<boolean>(false)
   const queryClient = useQueryClient()
@@ -142,9 +141,6 @@ const Organogram = () => {
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
-          {/* <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm disabled'>
-            Delete
-          </a> */}
         </Space>
       ),
 
@@ -232,8 +228,8 @@ const Organogram = () => {
   }
 
 
-  const { isLoading, mutate: updateData } = useMutation(updateItem, {
-    onSuccess: (data) => {
+  const {mutate: updateData } = useMutation(updateItem, {
+    onSuccess: () => {
       queryClient.invalidateQueries('organograms')
       message.success('Organogram updated successfully')
       reset()
@@ -280,27 +276,34 @@ const Organogram = () => {
   }
 
 
-  const url = `${Api_Endpoint}/organograms`
   const OnSubmit = handleSubmit(async (values) => {
     setLoading(true)
-    const data = {
-      employeeId: values.employeeId,
-      supervisorId: values.employeeId,
-      currentLevel: 'Level 0',
-      isAssistant: '0',
-      tenantId: tenantId,
+    const item = {
+      data: {
+        employeeId: values.employeeId,
+        supervisorId: values.employeeId,
+        currentLevel: 'Level 0',
+        isAssistant: '0',
+        tenantId: tenantId,
+      },
+      url: 'organograms'
     }
-    console.log(data)
-    try {
-      const response = await axios.post(url, data)
-      setSubmitLoading(false)
-      reset()
-      setIsModalOpen(false)
+    postData(item)
+  })
+
+  const { mutate: postData } = useMutation(postItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('organograms')
       loadData()
-      return response.statusText
-    } catch (error: any) {
+      reset()
+      setTempData({})
+      setIsModalOpen(false)
       setSubmitLoading(false)
-      return error.statusText
+      message.success('Item added successfully')
+    },
+    onError: (error: any) => {
+      setSubmitLoading(false)
+      console.log('post error: ', error)
     }
   })
 
@@ -352,8 +355,8 @@ const Organogram = () => {
           }
 
           <Modal
-            title={isUpdateModalOpen ? 'Update Roaster' : 'Add Roaster'}
-            open={isModalOpen}
+            title={'Update Organogram'}
+            open={isUpdateModalOpen}
             onCancel={handleCancel}
             closable={true}
             footer={[
@@ -365,19 +368,17 @@ const Organogram = () => {
                 type='primary'
                 htmlType='submit'
                 loading={submitLoading}
-                onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
+                onClick={handleUpdate}
               >
                 Submit
               </Button>,
             ]}
           >
             <form
-              onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
+              onSubmit={handleUpdate}
             >
               <hr></hr>
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-
-
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Employee</label>
                   <select {...register("employeeId")}
@@ -391,19 +392,6 @@ const Organogram = () => {
                     }
                   </select>
                 </div>
-                {/* <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Supervisor</label>
-                  <select {...register("supervisorId")} 
-                  value={isUpdateModalOpen === true ? tempData?.supervisorId :null} 
-                  onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">
-                    {isUpdateModalOpen === false ? <option value="Select">Select</option> : null}
-                    {
-                      allEmployees?.data.map((item: any) => (
-                        <option value={item.id}>{`${item?.firstName} ${item?.surname}`}</option>
-                      ))
-                    }
-                  </select>
-                </div> */}
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Current level</label>
                   <select {...register("currentLevel")}
@@ -417,7 +405,6 @@ const Organogram = () => {
                     }
                   </select>
                 </div>
-
               </div>
             </form>
           </Modal>
@@ -428,3 +415,4 @@ const Organogram = () => {
 }
 
 export { Organogram }
+
