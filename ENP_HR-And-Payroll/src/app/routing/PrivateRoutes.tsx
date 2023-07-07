@@ -70,6 +70,12 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Details</PageTitle>
           <Employee />
         </SuspensedView>} />
+      <Route
+        path='notifications-board/*'
+        element={<SuspensedView>
+          <PageTitle >Notifications Board</PageTitle>
+        
+        </SuspensedView>} />
 
       <Route
         path='employee-form/*'

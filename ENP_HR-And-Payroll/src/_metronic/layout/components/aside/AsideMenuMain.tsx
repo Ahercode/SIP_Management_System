@@ -46,6 +46,13 @@ export function AsideMenuMain() {
         <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={false}
           icon='/media/icons/duotune/general/gen005.svg' title='Entries' />
 
+        <AsideMenuItem
+          to='notifications-board/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen007.svg'
+          title='Notifications Board'
+        />
+
         {/* Reports authorization*/}
         {
           currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
