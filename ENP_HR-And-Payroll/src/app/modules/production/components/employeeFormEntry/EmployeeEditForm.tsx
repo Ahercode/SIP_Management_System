@@ -338,7 +338,7 @@ const EmployeeEditForm = () => {
         boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
       }}
     >
-      <h3>You are updating <span style={{ color: "#FF6363" }}>  {tempData?.firstName} {tempData?.surname}</span></h3>
+      <h3>You are updating <span style={{ color: "#FF6363"  }}>  {tempData?.firstName} {tempData?.surname}</span></h3>
       <br></br>
       <Link to="/employee">
         <a style={{ fontSize: "16px", fontWeight: "500" }} className='mb-7 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary'>
