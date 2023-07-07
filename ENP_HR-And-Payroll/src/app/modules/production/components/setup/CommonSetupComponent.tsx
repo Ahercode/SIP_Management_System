@@ -22,7 +22,11 @@ const SetupComponent = (props: any) => {
     const param: any = useParams();
     const navigate = useNavigate();
     const [detailName, setDetailName] = useState('')
-    const { data: medicals } = useQuery('medicals', () => fetchDocument(`Medicals/tenant/${tenantId}`), { cacheTime: 5000 })
+    const [objectivesId, setObjectivesId] = useState<any>()
+
+    const { data: componentData } = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}`), { cacheTime: 5000 })
+
+
     const showModal = () => {
         setIsModalOpen(true)
     }
@@ -43,9 +47,9 @@ const SetupComponent = (props: any) => {
         setTempData({ ...tempData, [event.target.name]: event.target.value });
     }
 
-    const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
-        onSuccess: (data) => {
-            queryClient.setQueryData([props.data.url, tempData], data);
+    const { mutate: deleteData } = useMutation(deleteItem, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(props.data.url)
             loadData()
         },
         onError: (error) => {
@@ -95,17 +99,6 @@ const SetupComponent = (props: any) => {
             width: 100,
             render: (_: any, record: any) => (
                 <Space size='middle'>
-                    {
-                        props.data.title === 'Divisions' && <Link to={`/department/${record.id}`}>
-                            <span className='btn btn-light-info btn-sm'>Department</span>
-                        </Link>
-                    }
-
-                    {
-                        props.data.title === 'Medicals' && <Link to={`/products/${record.id}`}>
-                            <span className='btn btn-light-info btn-sm'>Products</span>
-                        </Link>
-                    }
                     <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
                         Update
                     </a>
@@ -117,35 +110,21 @@ const SetupComponent = (props: any) => {
         },
     ]
 
-    // if title is products then remove the code column from the table
-    if (props.data.title === 'Products') {
-        columns.shift()
-    }
-    // const { data: GridData, isLoading } = useQuery(`${props.data.url}`, ()=> props.data.url === 'Products' ?  fetchDocument(`${props.data.url}`) : fetchDocument(`${props.data.url}/tenant/${tenantId}`), { cacheTime: 5000 })
-
     const loadData = async () => {
         setLoading(true)
         try {
-            const response = props.data.url === 'Products' ? await fetchDocument(`${props.data.url}`) : await fetchDocument(`${props.data.url}/tenant/${tenantId}`)
-            if (props.data.url === 'Products') {
-                const getMedicals = medicals?.data.find((item: any) => item.id.toString() === param.id)
-                const detName = getMedicals?.name
-                setDetailName(detName)
-                const data = response.data.filter((item: any) => item.medicalTypeId?.toString() === param.id)
-                // console.log('data', data)
-                setGridData(data)
-            } else {
-                setGridData(response.data)
-            }
+            const response = componentData?.data
+            setGridData(response)
             setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.log(error)
         }
     }
 
     useEffect(() => {
         loadData()
-    }, [])
+    }, [componentData?.data])
 
     const dataWithIndex = gridData.map((item: any, index) => ({
         ...item,
@@ -169,9 +148,9 @@ const SetupComponent = (props: any) => {
         setGridData(filteredData)
     }
 
-    const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
-        onSuccess: (data) => {
-            queryClient.setQueryData([props.data.url, tempData], data);
+    const { mutate: updateData } = useMutation(updateItem, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(`${props.data.url}`)
             reset()
             setTempData({})
             loadData()
@@ -212,19 +191,12 @@ const SetupComponent = (props: any) => {
             },
             url: props.data.url
         }
-        // if title is not Products, remove medicalTypeId from item data
-        if (props.data.title !== 'Products') {
-            const { medicalTypeId, ...dataWithoutMedicalTypeId } = item.data;
-            item.data = dataWithoutMedicalTypeId;
-        }
-
-        // console.log('before post', item.data)
         postData(item)
     })
 
-    const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
-        onSuccess: (data) => {
-            queryClient.setQueryData([props.data.url, tempData], data);
+    const { mutate: postData } = useMutation(postItem, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(`${props.data.url}`)
             reset()
             setTempData({})
             loadData()
@@ -247,46 +219,36 @@ const SetupComponent = (props: any) => {
             <KTCardBody className='py-4 '>
                 <div className='table-responsive'>
                     <div className="mb-5">
-                        {
-                            props.data.title === 'Products' &&
-                            <>
-                                <div>
-                                    <span className="fw-bold text-gray-800 d-block fs-2 mb-3 ">{detailName}</span>
-                                    <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
-                                </div>
-                            </>
-                        }
+                        <div className='d-flex justify-content-between'>
+                            <Space style={{ marginBottom: 16 }}>
+                                <Input
+                                    placeholder='Enter Search Text'
+                                    onChange={handleInputChange}
+                                    type='text'
+                                    allowClear
+                                    value={searchText}
+                                />
+                                <Button type='primary' onClick={globalSearch}>
+                                    Search
+                                </Button>
+                            </Space>
+                            <Space style={{ marginBottom: 16 }}>
+                                <button type='button' className='btn btn-primary me-3' onClick={showModal}>
+                                    <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                                    Add
+                                </button>
 
-                    </div>
-                    <div className='d-flex justify-content-between'>
-                        <Space style={{ marginBottom: 16 }}>
-                            <Input
-                                placeholder='Enter Search Text'
-                                onChange={handleInputChange}
-                                type='text'
-                                allowClear
-                                value={searchText}
-                            />
-                            <Button type='primary' onClick={globalSearch}>
-                                Search
-                            </Button>
-                        </Space>
-                        <Space style={{ marginBottom: 16 }}>
-                            <button type='button' className='btn btn-primary me-3' onClick={showModal}>
-                                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                                Add
-                            </button>
-
-                            <button type='button' className='btn btn-light-primary me-3'>
-                                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                                Export
-                            </button>
-                        </Space>
+                                <button type='button' className='btn btn-light-primary me-3'>
+                                    <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
+                                    Export
+                                </button>
+                            </Space>
+                        </div>
                     </div>
 
                     {
-                        loading?<Skeleton/>:
-                        <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+                        loading ? <Skeleton /> :
+                            <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
 
                     }
                     <Modal

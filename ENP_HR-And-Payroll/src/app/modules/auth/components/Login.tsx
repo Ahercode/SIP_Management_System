@@ -1,15 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react'
-import * as Yup from 'yup'
 import clsx from 'clsx'
 import { useFormik } from 'formik'
-import { login, parseJwt } from '../core/_requests'
-import { useAuth } from '../core/Auth'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
+<<<<<<< HEAD
 import { fetchCompanies, fetchUserApplications, fetchUsers } from '../../../services/ApiCalls'
 import { Button, Modal } from 'antd'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
+=======
+import * as Yup from 'yup'
+import { fetchDocument } from '../../../services/ApiCalls'
+import { useAuth } from '../core/Auth'
+import { login, parseJwt } from '../core/_requests'
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
@@ -21,13 +25,13 @@ const loginSchema = Yup.object().shape({
     .min(3, 'Minimum 6 characters')
     .max(50, 'Maximum 50 characters')
     .required('Password is required'),
-  tenantId: Yup.string().required('Company is required'),
+  // tenantId: Yup.string().required('Company is required'),
 })
 
 const initialValues = {
   username: '',
   password: '',
-  tenantId: '',
+  // tenantId: 'test',
 }
 
 /*
@@ -43,6 +47,7 @@ export function Login() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { register, reset, handleSubmit } = useForm()
 
+<<<<<<< HEAD
   
   const { data: userApplications } = useQuery('userApplications', fetchUserApplications, { cacheTime: 5000 })
   const { data: allCompanies } = useQuery('companies', fetchCompanies, { cacheTime: 5000 })
@@ -107,6 +112,15 @@ export function Login() {
     // }
     
   })
+=======
+  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
+  const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
+
+
+  // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(currentUser?.id)).map((filteredItem:any) => {
+  //   return filteredItem.applicationId.toString()
+  // })
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
  
   const formik = useFormik({
     initialValues,
@@ -131,7 +145,14 @@ export function Login() {
 
         //  if(appId===1){
            setCurrentUser(curUser)
+<<<<<<< HEAD
         saveTenant(values.tenantId)
+=======
+        //  }else{
+        //   setStatus("you don't have access to this application")
+        //  }
+        saveTenant('test')
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
         const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
           return filteredItem?.applicationId?.toString()
         })
@@ -222,8 +243,12 @@ export function Login() {
         <br></br>
         <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forget password !</a>
       </div>
+<<<<<<< HEAD
      
       <div className='fv-row mb-10'>
+=======
+      {/* <div className='fv-row mb-10'>
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
         <div className='mb-10'>
           <label className='form-label fw-bold'>Company:</label>
           <div>
@@ -257,7 +282,7 @@ export function Login() {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
       <div className='text-center'>
         <button
           type='submit'

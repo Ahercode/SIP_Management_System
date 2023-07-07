@@ -2,9 +2,9 @@ import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table } from 
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, postItem, updateItem } from '../../../../../services/ApiCalls'
+import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 import { useForm } from 'react-hook-form'
-import { useQueryClient, useMutation } from 'react-query'
+import { useQueryClient, useMutation, useQuery } from 'react-query'
 
 const Period = () => {
   const [gridData, setGridData] = useState([])
@@ -14,11 +14,12 @@ const Period = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
   const { register, reset, handleSubmit } = useForm()
-  const tenantId = localStorage.getItem('tenant')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [tempData, setTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const queryClient = useQueryClient()
+
+  const { data: periods } = useQuery('periods', () => fetchDocument(`Periods`), { cacheTime: 5000 })
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -40,9 +41,9 @@ const Period = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
-    onSuccess: (data) => {
-      queryClient.setQueryData(['Periods', tempData], data);
+  const { mutate: deleteData} = useMutation(deleteItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('periods')
       loadData()
     },
     onError: (error) => {
@@ -136,7 +137,7 @@ const Period = () => {
     setLoading(true)
     try {
       // const response = await fetchDocument('Periods')
-      const response = await axios.get(`${Api_Endpoint}/Periods/tenant/${tenantId}`)
+      const response = periods?.data
       setGridData(response.data)
       setLoading(false)
     } catch (error) {
@@ -170,9 +171,9 @@ const Period = () => {
     setGridData(filteredData)
   }
 
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const {mutate: updateData } = useMutation(updateItem, {
     onSuccess: (data) => {
-      queryClient.setQueryData(['Periods', tempData], data);
+      queryClient.invalidateQueries('periods')
       reset()
       setTempData({})
       loadData()
@@ -212,7 +213,7 @@ const Period = () => {
         name: values.name,
         startDate: values.startDate,
         endDate: values.endDate,
-        tenantId: tenantId,
+        tenantId: '',
       },
       url: endpoint
     }
@@ -220,9 +221,9 @@ const Period = () => {
     postData(item)
   })
 
-  const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
-    onSuccess: (data) => {
-      queryClient.setQueryData(['Periods', tempData], data);
+  const { mutate: postData} = useMutation(postItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('periods')
       reset()
       setTempData({})
       loadData()

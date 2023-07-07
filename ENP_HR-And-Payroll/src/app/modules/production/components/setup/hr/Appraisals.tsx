@@ -15,14 +15,14 @@
 
 // export { Appraisals }
 
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table } from 'antd'
-import { useEffect, useState } from 'react'
+import { Button, Input, Modal, Skeleton, Space, Table } from 'antd'
 import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Api_Endpoint, fetchAppraisals, updateNoteCategory } from '../../../../../services/ApiCalls'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
+import { Api_Endpoint, deleteItem, fetchDocument } from '../../../../../services/ApiCalls'
 
 const Appraisals = () => {
   const [gridData, setGridData] = useState([])
@@ -39,7 +39,9 @@ const Appraisals = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
 
-  const handleOptionChange = (event:any) => {
+  const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
+
+  const handleOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
 
@@ -64,22 +66,24 @@ const Appraisals = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-
-  const deleteData = async (element: any) => {
-    try {
-      const response = await axios.delete(`${Api_Endpoint}/Appraisals/${element.id}`)
-      // update the local state so that react can refecth and re-render the table with the new data
-      const newData = gridData.filter((item: any) => item.id !== element.id)
-      setGridData(newData)
-      return response.status
-    } catch (e) {
-      return e
+  const { mutate: deleteData} = useMutation(deleteItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('appraisals')
+      loadData()
+    },
+    onError: (error) => {
+      console.log('delete error: ', error)
     }
-  }
+  })
 
   function handleDelete(element: any) {
-    deleteData(element)
+    const item = {
+      url: 'Appraisals',
+      data: element
+    }
+    deleteData(item)
   }
+
   const columns: any = [
 
     {
@@ -112,7 +116,7 @@ const Appraisals = () => {
       title: 'Action',
       fixed: 'right',
       width: 100,
-      render: ( record: any) => (
+      render: (record: any) => (
         <Space size='middle'>
 
           <Link to={`/parameters/${record.id}`}>
@@ -131,7 +135,20 @@ const Appraisals = () => {
     },
   ]
 
-  const { data: allAppraisals, isLoading } = useQuery('appraisals', ()=> fetchAppraisals(tenantId), { cacheTime: 5000 })
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      setGridData(allAppraisals?.data)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
@@ -175,15 +192,16 @@ const Appraisals = () => {
     }
     console.log(data)
 
-    const newData = gridData.filter((item: any) => item.code == data.code) 
+    const newData = gridData.filter((item: any) => item.code == data.code)
 
-    if (!isUpdateModalOpen){
-      if(newData.length==0){
+    if (!isUpdateModalOpen) {
+      if (newData.length == 0) {
         try {
           const response = await axios.post(url, data)
           setSubmitLoading(false)
           reset()
           setIsModalOpen(false)
+          loadData()
           queryClient.invalidateQueries('appraisals')
           return response.statusText
         } catch (error: any) {
@@ -193,24 +211,25 @@ const Appraisals = () => {
       }
       window.alert("The Code you entered already exist!");
     }
-    
+
     try {
       const response = await axios.put(urlUpdate, dataUpdate)
       setSubmitLoading(false)
       reset()
       setIsModalOpen(false)
       setIsUpdateModalOpen(false)
+      loadData()
       queryClient.invalidateQueries('appraisals')
       return response.statusText
-    } catch (error:any) {
+    } catch (error: any) {
       setSubmitLoading(false)
       return error.statusText
     }
-    
-  })
-  
 
-  
+  })
+
+
+
   return (
     <div
       style={{
@@ -248,12 +267,12 @@ const Appraisals = () => {
             </Space>
           </div>
           {
-            isLoading?<Skeleton active />:
-            <Table columns={columns} dataSource={allAppraisals?.data}  loading={isLoading} />
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={gridData} />
           }
           {/* <Table columns={columns} dataSource={dataByID} loading={loading} /> */}
           <Modal
-            title={isUpdateModalOpen? "Update Appraisal": 'Add Appraisal'}
+            title={isUpdateModalOpen ? "Update Appraisal" : 'Add Appraisal'}
             open={isModalOpen}
             onCancel={handleCancel}
             closable={true}
@@ -286,7 +305,7 @@ const Appraisals = () => {
                   <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
                   <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
-                
+
               </div>
             </form>
           </Modal>

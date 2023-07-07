@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import "./formStyle.css"
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { Button, Form, Modal, Space, Table, } from 'antd';
-import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchEmployees, fetchExperiences, fetchGrades, fetchJobTitles, fetchMedicals, fetchNationalities, fetchNotches, fetchPaygroups, fetchQualifications, fetchSkills, fetchUnits, updateEmployee } from '../../../../services/ApiCalls';
+import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchDocument, fetchEmployees, fetchExperiences, fetchGrades, fetchJobTitles, fetchMedicals, fetchNationalities, fetchNotches, fetchPaygroups, fetchQualifications, fetchSkills, fetchUnits, updateEmployee } from '../../../../services/ApiCalls';
 import { KTSVG } from '../../../../../_metronic/helpers';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
@@ -129,12 +129,12 @@ const EmployeeEditForm = () => {
     }
 
   }
-  const { data: allEmployees } = useQuery('employees',()=> fetchEmployees(tenantId), { cacheTime: 5000 })
+  const { data: allEmployees } = useQuery('employees',()=> fetchDocument('employees'), { cacheTime: 5000 })
   // const { data: allDepartments } = useQuery('departments',()=> fetchDepartments(tenantId), { cacheTime: 5000 })
   // const { data: allDivisions } = useQuery('divisions',()=> fetchDivisions(tenantId), { cacheTime: 5000 })
   // const { data: allCategories } = useQuery('categories',()=> fetchCategories(tenantId), { cacheTime: 5000 })
-  const { data: allPaygroups } = useQuery('paygroups', ()=>fetchPaygroups(tenantId), { cacheTime: 5000 })
-  const { data: allJobTitles } = useQuery('jobtitle',()=> fetchJobTitles(tenantId), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroups', ()=>fetchDocument('paygroups'), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobtitle',()=> fetchDocument('jobtitles'), { cacheTime: 5000 })
 
 
 

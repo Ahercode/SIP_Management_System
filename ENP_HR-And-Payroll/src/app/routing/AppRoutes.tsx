@@ -5,17 +5,16 @@
  * components (e.g: `src/app/modules/Auth/pages/AuthPage`, `src/app/BasePage`).
  */
 
-import { FC, useEffect } from 'react'
-import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
-import { PrivateRoutes } from './PrivateRoutes'
-import { ErrorsPage } from '../modules/errors/ErrorsPage'
-import { Logout, AuthPage, useAuth } from '../modules/auth'
-import { App } from '../App'
+import { FC } from 'react'
 import { useQuery } from 'react-query'
-import { fetchUserApplications } from '../services/ApiCalls'
-import { message } from 'antd'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { App } from '../App'
+import { AuthPage, Logout, useAuth } from '../modules/auth'
+import { ErrorsPage } from '../modules/errors/ErrorsPage'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
 import { ObjectivesForm } from '../modules/production/components/appraisalForms/ObjectivesForm '
+import { fetchDocument } from '../services/ApiCalls'
+import { PrivateRoutes } from './PrivateRoutes'
 
 /**
  * Base URL of the website.
@@ -26,7 +25,7 @@ const { PUBLIC_URL } = process.env
 
 const AppRoutes: FC = () => {
   const { currentUser, tenant } = useAuth()
-  const { data: userApplications } = useQuery('userApplications', fetchUserApplications, { cacheTime: 5000 })
+  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
   const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
     return filteredItem?.applicationId?.toString()
   })
@@ -42,7 +41,7 @@ const AppRoutes: FC = () => {
         <Route element={<App />}>
           <Route path='error/*' element={<ErrorsPage />} />
           <Route path='logout' element={<Logout />} />
-          <Route path='appraisalReviewForm' element={<AppraisalForm />} />
+          <Route path='appraisalReviewForm/:employeeId' element={<AppraisalForm />} />
           <Route path='appraisalObjectivesForm/:employeeId'
             element={<ObjectivesForm />}
           />
@@ -67,3 +66,4 @@ const AppRoutes: FC = () => {
 }
 
 export { AppRoutes }
+

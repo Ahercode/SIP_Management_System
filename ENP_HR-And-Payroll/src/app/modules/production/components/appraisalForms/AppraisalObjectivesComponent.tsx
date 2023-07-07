@@ -27,9 +27,9 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
     let [pathName, setPathName] = useState<any>("")
     const [showDeliverablesEntry, setShowDeliverablesEntry] = useState<any>(false)
     const endPoint = showDeliverablesEntry ? 'appraisaldeliverable' : 'appraisalobjective'
-    const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters/tenant/test`), { cacheTime: 5000 })
-    const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable/tenant/test`), { cacheTime: 5000 })
-    const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective/tenant/test`), { cacheTime: 5000 })
+    const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+    const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
+    const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const [objectivesId, setObjectivesId] = useState<any>()
 
 
@@ -414,11 +414,12 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         // input validations
         if (showDeliverablesEntry === 'Objectives') {
             // make sure all values are filled
-            if (!values.name || values.weight === '') {
-                message.error('Please fill all fields')
-                setLoading(false)
-                return
-            } else if (parseInt(values.weight) <= 0) {
+            // if (!values.name || values.weight === '') {
+            //     message.error('Please fill all fields')
+            //     setLoading(false)
+            //     return
+            // } else
+             if (parseInt(values.weight) <= 0) {
                 message.error('Weight cannot be zero or negative')
                 setLoading(false)
                 return
@@ -431,12 +432,13 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         } else {
 
             // make sure all values are filled
-            if (!values.name || !values.subWeight ||
-                !values.unitOfMeasure || !values.target) {
-                message.error('Please fill all fields')
-                setLoading(false)
-                return
-            } else if (parseInt(values.subWeight) <= 0) {
+            // if (!values.name || !values.subWeight ||
+            //     !values.unitOfMeasure || !values.target) {
+            //     message.error('Please fill all fields')
+            //     setLoading(false)
+            //     return
+            // } else 
+            if (parseInt(values.subWeight) <= 0) {
                 message.error('Sub Weight cannot be zero or negative')
                 setLoading(false)
                 return
@@ -458,6 +460,8 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 description: "description",
                 weight: parseInt(values.weight),
                 tenantId: tenantId,
+                referenceId: '',
+                employeeId: ''
             },
             url: endPoint,
         } : {
@@ -468,7 +472,7 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 subWeight: parseInt(values.subWeight),
                 unitOfMeasure: values.unitOfMeasure,
                 target: parseInt(values.target),
-                tenantId: tenantId,
+                tenantId: tenantId
             },
             url: endPoint,
         }

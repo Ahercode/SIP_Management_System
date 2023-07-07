@@ -10,7 +10,7 @@ import { Configurations } from '../modules/production/components/setup/administr
 import { UserManagement } from '../modules/production/components/setup/administration/UserManagement'
 import { Department } from '../modules/production/components/setup/employee/Department'
 import { JobTitle } from '../modules/production/components/setup/employee/JobTitle'
-import { Nationality } from '../modules/production/components/setup/employee/Nationality'
+import { UnitOfMeasure } from '../modules/production/components/setup/employee/UnitOfMeasure'
 import { Paygroups } from '../modules/production/components/setup/employee/Paygroups'
 import { Appraisals } from '../modules/production/components/setup/hr/Appraisals'
 import { ApprovalLevel } from '../modules/production/components/setup/payroll/ApprovalLevel'
@@ -69,6 +69,12 @@ const PrivateRoutes = () => (
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Details</PageTitle>
           <Employee />
+        </SuspensedView>} />
+      <Route
+        path='notifications-board/*'
+        element={<SuspensedView>
+          <PageTitle >Notifications Board</PageTitle>
+        
         </SuspensedView>} />
 
       <Route
@@ -165,10 +171,10 @@ const PrivateRoutes = () => (
           <JobTitle />
         </SuspensedView>} />
       <Route
-        path='setup/employee/nationality/*'
+        path='setup/employee/unitOfMeasure/*'
         element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Nationalities</PageTitle>
-          <Nationality />
+          <PageTitle>Units of measure</PageTitle>
+          <UnitOfMeasure />
         </SuspensedView>} />
 
       <Route

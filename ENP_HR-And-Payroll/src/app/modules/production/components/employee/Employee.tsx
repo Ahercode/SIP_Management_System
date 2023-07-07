@@ -1,13 +1,10 @@
-import {Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table} from 'antd'
-import {useEffect, useState} from 'react'
-import axios from 'axios'
-import {KTCardBody, KTSVG} from '../../../../../_metronic/helpers'
-import { ENP_URL } from '../../urls'
+import { Button, Form, Input, Skeleton, Space, Table, message } from 'antd'
+import { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
-import { useQuery } from 'react-query'
-import {read, utils, writeFile} from "xlsx"
-import { Api_Endpoint, axioInstance, fetchDepartments, fetchEmployees, fetchGrades, fetchNotches, fetchPaygroups } from '../../../../services/ApiCalls'
-import { EmpSummaryDashBoard } from '../../../../pages/dashboard/charts/HRNewDashBoard'
+import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
+import { deleteItem, fetchDocument } from '../../../../services/ApiCalls'
+import { getFieldName } from '../ComponentsFactory'
 
 
 const Employee = () => {
@@ -21,6 +18,13 @@ const Employee = () => {
   const [imgNew, setImgNew] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
+  console.log('tenantId: ', tenantId)
+  const queryClient = useQueryClient()
+  const { data: allEmployee, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument('paygroups'), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
+  const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
 
 
   const showModal = () => {
@@ -36,32 +40,34 @@ const Employee = () => {
     setIsModalOpen(false)
   }
 
-  const deleteData = async (element: any) => {
-    try {
-      const response = await axios.delete(`${ENP_URL}/ProductionActivity/${element.id}`)
-      // update the local state so that react can refecth and re-render the table with the new data
-      const newData = gridData.filter((item: any) => item.id !== element.id)
-      setGridData(newData)
-      return response.status
-    } catch (e) {
-      return e
+  const { mutate: deleteData } = useMutation(deleteItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('employees')
+    },
+    onError: (error) => {
+      console.log('delete error: ', error)
+      message.error('Error deleting record')
     }
-  }
- 
+  })
 
   function handleDelete(element: any) {
-    deleteData(element)
+    const item = {
+      url: 'employees',
+      data: element
+    }
+    deleteData(item)
   }
+
   const columns: any = [
-   {
+    {
       title: 'Profile',
       key: 'imageUrl',
-      render: (row:any) => {
-       
-        return  (
-          row.imageUrl!==null?  
-          <img style={{borderRadius:"10px"}} src={`http://208.117.44.15/hrwebapi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img>:
-          <img style={{borderRadius:"10px"}} src={`http://208.117.44.15/hrwebapi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
+      render: (row: any) => {
+
+        return (
+          row.imageUrl !== null ?
+            <img style={{ borderRadius: "10px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img> :
+            <img style={{ borderRadius: "10px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
         )
       }
     },
@@ -91,7 +97,7 @@ const Employee = () => {
         return 0
       },
     },
-   
+
     {
       title: 'Surname',
       dataIndex: 'surname',
@@ -106,24 +112,24 @@ const Employee = () => {
       },
     },
 
-    {
-      title: 'Gender',
-      dataIndex: 'gender',
-      sorter: (a: any, b: any) => {
-        if (a.gender > b.gender) {
-          return 1
-        }
-        if (b.gender > a.gender) {
-          return -1
-        }
-        return 0
-      },
-    },
+    // {
+    //   title: 'Gender',
+    //   dataIndex: 'gender',
+    //   sorter: (a: any, b: any) => {
+    //     if (a.gender > b.gender) {
+    //       return 1
+    //     }
+    //     if (b.gender > a.gender) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
     {
       title: 'Paygroup',
       key: 'paygroupId',
       render: (row: any) => {
-        return getPaygroupName(row.paygroupId)
+        return getFieldName(row.paygroupId, allPaygroups?.data)
       },
       sorter: (a: any, b: any) => {
         if (a.paygroupId > b.paygroupId) {
@@ -136,32 +142,26 @@ const Employee = () => {
       },
     },
     {
-      title: 'Salary Grade',
-      key: 'gradeId',
-      render: (row: any) => {
-        return getGradeName(row.gradeId)
-      },
+      title: 'Email',
+      key: 'email',
       sorter: (a: any, b: any) => {
-        if (a.gradeId > b.gradeId) {
+        if (a.email > b.email) {
           return 1
         }
-        if (b.gradeId > a.gradeId) {
+        if (b.email > a.email) {
           return -1
         }
         return 0
       },
     },
     {
-      title: 'Notch',
-      key: 'notchId',
-      render: (row: any) => {
-        return getNotchName(row.notchId)
-      },
+      title: 'job Title',
+      key: 'jobTitle',
       sorter: (a: any, b: any) => {
-        if (a.notchId > b.notchId) {
+        if (a.jobTitle > b.jobTitle) {
           return 1
         }
-        if (b.notchId > a.notchId) {
+        if (b.jobTitle > a.jobTitle) {
           return -1
         }
         return 0
@@ -171,9 +171,9 @@ const Employee = () => {
       title: 'Department',
       key: 'departmentId',
       render: (row: any) => {
-        return getDepartmentName(row.departmentId)
+        return getFieldName(row.departmentId, allDepartments?.data)
       },
-      
+
       sorter: (a: any, b: any) => {
         if (a.departmentId > b.departmentId) {
           return 1
@@ -212,52 +212,11 @@ const Employee = () => {
           </Link>
         </Space>
       ),
-      
+
     },
   ]
 
-  const {data: allEmployee, isLoading} = useQuery('employees',() =>fetchEmployees(tenantId), {cacheTime:5000})
-  const {data:allDepartments} = useQuery('department',() => fetchDepartments(tenantId), {cacheTime:5000})
-  const {data:allPaygroups} = useQuery('paygroup',() => fetchPaygroups(tenantId), {cacheTime:5000})
-  const {data:allNotches} = useQuery('notches',() => fetchNotches(tenantId), {cacheTime:5000})
-  const {data:allGrades} = useQuery('grades',() => fetchGrades(tenantId), {cacheTime:5000})
- 
-  const getDepartmentName = (departmentId: any) => {
-    let departmentName = null
-    allDepartments?.data.map((item: any) => {
-      if (item.id === departmentId) {
-        departmentName=item.name
-      }
-    })
-    return departmentName
-  } 
-  const getGradeName = (gradeId: any) => {
-    let gradeName = null
-    allGrades?.data.map((item: any) => {
-      if (item.id === gradeId) {
-        gradeName=item.name
-      }
-    })
-    return gradeName
-  } 
-  const getPaygroupName = (paygroupId: any) => {
-    let paygroupName = null
-    allPaygroups?.data.map((item: any) => {
-      if (item.id === paygroupId) {
-        paygroupName=item.name
-      }
-    })
-    return paygroupName
-  } 
-  const getNotchName = (notchId: any) => {
-    let notchName = null
-    allNotches?.data.map((item: any) => {
-      if (item.id === notchId) {
-        notchName=item.name
-      }
-    })
-    return notchName
-  } 
+
 
   // const loadData = async () => {
   //   setLoading(true)
@@ -275,10 +234,10 @@ const Employee = () => {
   //   loadData()
   // }, [])
 
-  
-  var out_data:any = {};
-  
-  gridData.forEach(function(row:any) {
+
+  var out_data: any = {};
+
+  gridData.forEach(function (row: any) {
     if (out_data[row.departmentId]) {
       out_data[row.departmentId].push(row);
     } else {
@@ -287,8 +246,8 @@ const Employee = () => {
   });
 
 
-  
-  const dataWithIndex = allEmployee?.data.map((item: any, index:any) => ({
+
+  const dataWithIndex = allEmployee?.data.map((item: any, index: any) => ({
     ...item,
     key: index,
   }))
@@ -314,7 +273,7 @@ const Employee = () => {
   }
 
   return (
-    <div 
+    <div
       style={{
         backgroundColor: 'white',
         padding: '20px',
@@ -324,41 +283,42 @@ const Employee = () => {
     >
       <KTCardBody className='py-1 '>
         <div className='table-responsive'>
-            
-              <div className='d-flex justify-content-between'>
-                <Space style={{marginBottom: 16}}>
-                  <Input
-                    placeholder='Enter Search Text'
-                    onChange={handleInputChange}
-                    type='text'
-                    allowClear
-                    value={searchText}
-                  />
-                  <Button type='primary' onClick={globalSearch}>
-                    Search
-                  </Button>
-                </Space>
-                <Space style={{marginBottom: 16}}>
-                  <Link to='/employee-form'>
-                  <button type='button' className='btn btn-primary me-3'>
-                    <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                    Add
-                  </button>
-                  </Link>
-                  <button  type='button' className='btn btn-light-primary me-3'>
-                    <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                    Export
+
+          <div className='d-flex justify-content-between'>
+            <Space style={{ marginBottom: 16 }}>
+              <Input
+                placeholder='Enter Search Text'
+                onChange={handleInputChange}
+                type='text'
+                allowClear
+                value={searchText}
+              />
+              <Button type='primary' onClick={globalSearch}>
+                Search
+              </Button>
+            </Space>
+            <Space style={{ marginBottom: 16 }}>
+              <Link to='/employee-form'>
+                <button type='button' className='btn btn-primary me-3'>
+                  <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                  Add
                 </button>
-                </Space>
-              </div>
-              {
-                  isLoading?<Skeleton active />:
-                  <Table columns={columns} dataSource={dataWithIndex}  loading={isLoading} />
-              }
+              </Link>
+              <button type='button' className='btn btn-light-primary me-3'>
+                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
+                Export
+              </button>
+            </Space>
+          </div>
+          {
+            isLoading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataWithIndex} loading={isLoading} />
+          }
         </div>
       </KTCardBody>
     </div>
   )
 }
 
-export {Employee}
+export { Employee }
+

@@ -8,7 +8,7 @@ import {  Upload } from 'antd';
 import { BANKS,} from '../../../../data/DummyData';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchGrades, fetchJobTitles, fetchNationalities, fetchNotches, fetchPaygroups, fetchUnits } from '../../../../services/ApiCalls';
+import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchDocument, fetchGrades, fetchJobTitles, fetchNationalities, fetchNotches, fetchPaygroups, fetchUnits } from '../../../../services/ApiCalls';
 import { useQuery } from 'react-query';
 import {useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../../auth';
@@ -29,15 +29,18 @@ const MultiTabForm= () =>{
   const navigate = useNavigate();
   const tenantId = localStorage.getItem('tenant')
   const {currentUser} = useAuth()
-  const {data:allDepartments} = useQuery('departments',()=> fetchDepartments(tenantId), {cacheTime:5000})
-  const {data:allDivisions} = useQuery('divisions',()=> fetchDivisions(tenantId), {cacheTime:5000})
-  const {data:allCategories} = useQuery('categories', ()=>fetchCategories(tenantId), {cacheTime:5000})
-  const {data:allPaygroups} = useQuery('paygroups',()=> fetchPaygroups(tenantId), {cacheTime:5000})
-  const {data:allUnits} = useQuery('units', ()=>fetchUnits(tenantId), {cacheTime:5000})
-  const {data:allGrades} = useQuery('grades',()=> fetchGrades(tenantId), {cacheTime:5000})
-  const {data:allNotches} = useQuery('notches',()=> fetchNotches(tenantId), {cacheTime:5000})
-  const {data:allNations} = useQuery('nations', ()=>fetchNationalities(tenantId), {cacheTime:5000})
-  const {data:allJobTitles} = useQuery('jobtitle',()=> fetchJobTitles(tenantId), {cacheTime:5000})
+  const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allDepartments } = useQuery('departments', () => fetchDocument('departments'), { cacheTime: 5000 })
+  const { data: allDivisions } = useQuery('divisions', () => fetchDocument('divisions'), { cacheTime: 5000 })
+  const { data: allCategories } = useQuery('categories', () => fetchDocument('categories'), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument('paygroups'), { cacheTime: 5000 })
+  const { data: allUnits } = useQuery('units', () => fetchDocument('units'), { cacheTime: 5000 })
+  const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
+  const { data: allNotches } = useQuery('notches', () => fetchDocument('notches'), { cacheTime: 5000 })
+  const { data: allNations } = useQuery('nations', () => fetchDocument('nations'), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
+
+
 
   const handleTabChange = (newTab:any) => {
     setActiveTab(newTab);

@@ -6,6 +6,8 @@ import axios from 'axios';
 export const Api_Endpoint = "https://app.sipconsult.net/hrwebapi/api";
 // export const Api_Endpoint = "https://localhost:5001/api";
 export const UsersEndpoint = "https://app.sipconsult.net/userapi/api";
+export const FormsBaseUrl = "https://app.sipconsult.net/omni-hr";
+// export const UsersEndpoint = "http://208.117.44.15/userapi/api";
 
 
 export let axioInstance = axios.create({
@@ -40,9 +42,9 @@ export function postItem(item: any) {
 export const fetchUserRoles = () => {
     return axios.get(`${UsersEndpoint}/UserRoles`)
 }
-export const fetchUserApplications = () => {
-    return axios.get(`${UsersEndpoint}/UserApplications`)
-}
+// export const fetchUserApplications = () => {
+//     return axios.get(`${UsersEndpoint}/UserApplications`)
+// }
 
 export const fetchRoles = () => {
     return axios.get(`${UsersEndpoint}/Roles`)
@@ -51,9 +53,9 @@ export const fetchUsers = () => {
     return axios.get(`${UsersEndpoint}/Users`)
 }
 
-export const fetchCompanies = () => {
-    return axios.get(`${UsersEndpoint}/Companies`)
-}
+// export const fetchCompanies = () => {
+//     return axios.get(`${UsersEndpoint}/Companies`)
+// }
 
 export const fetchDivisions = (tId:any) => {
     return axios.get(`${Api_Endpoint}/Divisions/tenant/${tId}`)
