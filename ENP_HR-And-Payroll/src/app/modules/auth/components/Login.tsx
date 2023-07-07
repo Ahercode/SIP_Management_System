@@ -3,10 +3,17 @@ import clsx from 'clsx'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
+<<<<<<< HEAD
+import { fetchCompanies, fetchUserApplications, fetchUsers } from '../../../services/ApiCalls'
+import { Button, Modal } from 'antd'
+import axios from 'axios'
+import { useForm } from 'react-hook-form'
+=======
 import * as Yup from 'yup'
 import { fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../core/Auth'
 import { login, parseJwt } from '../core/_requests'
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
@@ -37,7 +44,75 @@ export function Login() {
   const [loading, setLoading] = useState(false)
   const { saveAuth, setCurrentUser , saveTenant} = useAuth()
   const tenantId = localStorage.getItem('tenant')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { register, reset, handleSubmit } = useForm()
 
+<<<<<<< HEAD
+  
+  const { data: userApplications } = useQuery('userApplications', fetchUserApplications, { cacheTime: 5000 })
+  const { data: allCompanies } = useQuery('companies', fetchCompanies, { cacheTime: 5000 })
+  const { data: users } = useQuery('users', fetchUsers, { cacheTime: 5000 })
+
+  const handleChange = (e:any) => {
+    // e.target.value 
+  }
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+  const handleCancel = () => {
+    setIsModalOpen(false)
+  }
+
+ 
+
+  const OnSUbmit = handleSubmit(async (values) => {
+    // setLoading(true)
+    // const data = {
+    //   tenantId: tenantId,
+    //   code: values.code,
+    //   name: values.name,
+    // }
+    // const dataUpdate = {
+    //   id: tempData.id,
+    //   tenantId: tenantId,
+    //   code: values.code,
+    //   name: values.name,
+    // }
+    // console.log(data)
+
+    // // const newData = gridData.filter((item: any) => item.code == data.code) 
+
+    // if (!isUpdateModalOpen){
+    //   if(newData.length==0){
+    //     try {
+    //       const response = await axios.post(url, data)
+    //       setSubmitLoading(false)
+    //       reset()
+    //       setIsModalOpen(false)
+    //       queryClient.invalidateQueries('appraisals')
+    //       return response.statusText
+    //     } catch (error: any) {
+    //       setSubmitLoading(false)
+    //       return error.statusText
+    //     }
+    //   }
+    //   window.alert("The Code you entered already exist!");
+    // }
+    
+    // try {
+    //   const response = await axios.put(urlUpdate, dataUpdate)
+
+    //   reset()
+    //   setIsModalOpen(false)
+    //   queryClient.invalidateQueries('appraisals')
+    //   return response.statusText
+    // } catch (error:any) {
+    //   setSubmitLoading(false)
+    //   return error.statusText
+    // }
+    
+  })
+=======
   const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
   const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
 
@@ -45,6 +120,7 @@ export function Login() {
   // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(currentUser?.id)).map((filteredItem:any) => {
   //   return filteredItem.applicationId.toString()
   // })
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
  
   const formik = useFormik({
     initialValues,
@@ -69,10 +145,14 @@ export function Login() {
 
         //  if(appId===1){
            setCurrentUser(curUser)
+<<<<<<< HEAD
+        saveTenant(values.tenantId)
+=======
         //  }else{
         //   setStatus("you don't have access to this application")
         //  }
         saveTenant('test')
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
         const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
           return filteredItem?.applicationId?.toString()
         })
@@ -87,8 +167,6 @@ export function Login() {
           setSubmitting(false)
           setLoading(false)
         }
-        
-      
       } catch (error) {
         console.error(error)
         setStatus('The login detail is incorrect')
@@ -97,8 +175,6 @@ export function Login() {
       }
     },
   })
-
-// localStorage.setItem('tenant', formik.values.tenantId)
 
 
   return (
@@ -156,6 +232,7 @@ export function Login() {
             }
           )}
         />
+        
         {formik.touched.password && formik.errors.password && (
           <div className='fv-plugins-message-container'>
             <div className='fv-help-block'>
@@ -163,8 +240,15 @@ export function Login() {
             </div>
           </div>
         )}
+        <br></br>
+        <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forget password !</a>
       </div>
+<<<<<<< HEAD
+     
+      <div className='fv-row mb-10'>
+=======
       {/* <div className='fv-row mb-10'>
+>>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
         <div className='mb-10'>
           <label className='form-label fw-bold'>Company:</label>
           <div>
@@ -215,6 +299,46 @@ export function Login() {
           )}
         </button>
       </div>
+      <Modal
+            title="Change Password"
+            open={isModalOpen}
+            onCancel={handleCancel}
+            closable={true}
+            footer={[
+              <Button key='back' onClick={handleCancel}>
+                Cancel
+              </Button>,
+              <Button
+                key='submit'
+                type='primary'
+                htmlType='submit'
+                // loading={submitLoading}
+                onClick={OnSUbmit}
+              >
+                Submit
+              </Button>,
+            ]}
+          >
+            <form
+              onSubmit={OnSUbmit}
+            >
+              <hr></hr>
+              <div style={{ padding: "20px 20px 20px 20px" }} >
+                <div className=' mb-7'>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Username</label>
+                  <input type="text" {...register("username")} onChange={handleChange} className="form-control form-control-solid" />
+                </div>
+                <div className=' mb-7'>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Password</label>
+                  <input type="text" {...register("password")} onChange={handleChange} className="form-control form-control-solid" />
+                </div>
+                <div className=' mb-7'>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Confirm Password </label>
+                  <input type="text" {...register("confirmPassword")} onChange={handleChange} className="form-control form-control-solid" />
+                </div>
+              </div>
+            </form>
+          </Modal>
     </form>
   )
 }

@@ -49,6 +49,9 @@ export const fetchUserRoles = () => {
 export const fetchRoles = () => {
     return axios.get(`${UsersEndpoint}/Roles`)
 }
+export const fetchUsers = () => {
+    return axios.get(`${UsersEndpoint}/Users`)
+}
 
 // export const fetchCompanies = () => {
 //     return axios.get(`${UsersEndpoint}/Companies`)
