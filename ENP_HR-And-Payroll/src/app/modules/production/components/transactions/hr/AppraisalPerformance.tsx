@@ -30,8 +30,7 @@ const AppraisalPerformance = () => {
   const [selectedEndPeriod, setSelectedEndPeriod] = useState<any>(null);
   const tenantId = localStorage.getItem('tenant')
   const [fieldInit, setFieldInit] = useState([])
-  const [isReviewDateModalOpen, setIsReviewDateModalOpen] = useState(false)
-  const [reivewDateSubmitLoading, setReviewDateSubmitLoading] = useState(false)
+  const [isSchedulesDateModalOpen, setIsSchedulesDateModalOpen] = useState(false)
   const [reviewDatesData, setReviewDatesData] = useState<any>([])
   const queryClient = useQueryClient()
   const [appraisalData, setAppraisalData] = useState<any>([])
@@ -44,7 +43,7 @@ const AppraisalPerformance = () => {
   const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
   const { data: allPeriods } = useQuery('periods', () => fetchDocument('periods'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument('jobTitles'), { cacheTime: 5000 })
-  const { data: allPaygroups } = useQuery('recruitments', () => fetchDocument('recruitments'), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument('Paygroups'), { cacheTime: 5000 })
   const { data: allAppraisalTransactions } = useQuery('appraisalTransactions', () => fetchDocument('appraisalTransactions'), { cacheTime: 5000 })
   const { data: allParameters } = useQuery('parameters', () => fetchDocument('parameters'), { cacheTime: 5000 })
   const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives`), { cacheTime: 5000 })
@@ -62,13 +61,13 @@ const AppraisalPerformance = () => {
 
   }
 
-  const handleReviewDateCancel = () => {
+  const handleScheduleModalCancel = () => {
     reset()
-    setIsReviewDateModalOpen(false)
+    setIsSchedulesDateModalOpen(false)
   }
 
-  const showTabModal = () => {
-    setTabModalOpen(true)
+  const showSchedulesModal = () => {
+    setIsSchedulesDateModalOpen(true)
   }
   const handleUpdateCancel = () => {
     setUpdateModalOpen(false)
@@ -512,15 +511,16 @@ const AppraisalPerformance = () => {
             <div className='table-responsive'>
               {
                 <>
-                  <div style={{ padding: "0px 0px 0 0px" }} className='col-12 row mb-0'>
+                  <div style={{ padding: "0px 0px 0 0px" }} className='col-12 row mb-0 bg-lightx'>
                     <div className='col-6 mb-7'>
                       <AppraisalObjective referenceId={referenceId} />
                     </div>
-                    < ReviewDateComponent
-                      referenceId={referenceId}
-                      selectedAppraisalType={selectedAppraisalType}
-                      handleNotificationSend={() => handleNotificationSend()}
-                    />
+                    <div className='col-6 mt-7'>
+                      <button type='button' className='col-6 btn btn-light' onClick={showSchedulesModal}>
+                        <KTSVG path='/media/icons/duotune/general/gen014.svg' className='svg-icon-2' />
+                        View Schedules
+                      </button>
+                    </div>
                   </div>
                 </>
               }
@@ -699,6 +699,24 @@ const AppraisalPerformance = () => {
                 ]}
               >
                 <h3>Will be updated soon</h3>
+              </Modal>
+              <Modal
+                title={`Schedule Dates`}
+                open={isSchedulesDateModalOpen}
+                onCancel={handleScheduleModalCancel}
+                closable={true}
+                width="900px"
+                footer={[
+                  <Button key='back' onClick={handleScheduleModalCancel}>
+                    Close
+                  </Button>,
+                ]}
+              >
+                < ReviewDateComponent
+                  referenceId={referenceId}
+                  selectedAppraisalType={selectedAppraisalType}
+                  handleNotificationSend={() => handleNotificationSend()}
+                />
               </Modal>
             </div>
           </KTCardBody>

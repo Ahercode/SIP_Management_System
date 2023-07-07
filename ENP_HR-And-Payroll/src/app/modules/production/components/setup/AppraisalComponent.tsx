@@ -27,6 +27,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
   const prevPath = title === 'Objectives' ? 'parameters' : 'appraisalobjective'
   const { data: prevPathData } = useQuery('pathData', () => fetchDocument(`${prevPath}`), { cacheTime: 5000 })
   const { data: pathData } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 5000 })
+  const { data: allUnitsOfMeasure } = useQuery(`unitsofmeasure`, () => fetchDocument(`unitsofmeasure`), { cacheTime: 5000 })
 
 
   const showModal = () => {
@@ -49,7 +50,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData} = useMutation(deleteItem, {
+  const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries(`${endPoint}`)
       loadData()
@@ -317,7 +318,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
 
       // make sure all values are filled
       if (!tempData.name || !tempData.description || !tempData.subWeight ||
-        tempData.subWeight === '' || !tempData.unitOfMeasure || !tempData.target ||
+        tempData.subWeight === '' || !tempData.unitOfMeasureId || !tempData.target ||
         tempData.target === '') {
         return message.error('Please fill all fields')
       } else if (parseInt(tempData.subWeight) <= 0) {
@@ -383,7 +384,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         const itemExists = gridData.find((item: any) =>
           item.name === tempData.name &&
           item.description === tempData.description &&
-          item.unitOfMeasure === tempData.unitOfMeasure &&
+          item.unitOfMeasureId === tempData.unitOfMeasureId &&
           item.target === tempData.target
         )
 
@@ -465,7 +466,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         objectiveId: parseInt(param.id),
         description: values.description,
         subWeight: parseInt(values.subWeight),
-        unitOfMeasure: values.unitOfMeasure,
+        unitOfMeasureId: values.unitOfMeasureId,
         target: parseInt(values.target),
         tenantId: tenantId,
       },
@@ -484,7 +485,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         item.objectiveId === itemToPost.data.objectiveId &&
         item.description === itemToPost.data.description &&
         item.subWeight === itemToPost.data.subWeight &&
-        item.unitOfMeasure === itemToPost.data.unitOfMeasure &&
+        item.unitOfMeasureId === itemToPost.data.unitOfMeasureId &&
         item.target === itemToPost.data.target
       )
 
@@ -522,7 +523,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     }
   })
 
-  const { mutate: postData} = useMutation(postItem, {
+  const { mutate: postData } = useMutation(postItem, {
     onSuccess: () => {
       queryClient.invalidateQueries(`${endPoint}`)
       reset()
@@ -660,11 +661,16 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
                     <div style={{ padding: "0px 20px 20px 20px" }} className='row mb-0 '>
                       <div className='col-4 mb-7'>
                         <label htmlFor="exampleFormControlInput1" className="form-label">Unit of measure</label>
-                        <input
-                          {...register("unitOfMeasure")}
-                          defaultValue={isUpdateModalOpen === true ? tempData.unitOfMeasure : null}
-                          onChange={handleChange}
-                          className="form-control form-control-solid" />
+                        <select {...register("unitOfMeasureId")}
+                          value={isUpdateModalOpen === true ? tempData?.unitOfMeasureId : null}
+                          onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">
+                          {isUpdateModalOpen === false ? <option value="Select">Select</option> : null}
+                          {
+                            allUnitsOfMeasure?.data.map((item: any) => (
+                              <option value={item.id}>{`${item?.name}`}</option>
+                            ))
+                          }
+                        </select>
                       </div>
                       <div className='col-4 mb-7'>
                         <label htmlFor="exampleFormControlInput1" className="form-label">Target</label>

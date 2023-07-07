@@ -1,10 +1,10 @@
 import { SetupComponent } from '../CommonSetupComponent'
 
-const Nationality = () => {
+const UnitOfMeasure = () => {
 
   const data = {
-    title: 'Nationalities',
-    url: 'Nationalities',
+    title: 'Unit of measure',
+    url: 'unitsofmeasure',
   }
 
   return (
@@ -14,5 +14,5 @@ const Nationality = () => {
   )
 }
 
-export { Nationality }
+export { UnitOfMeasure }
 

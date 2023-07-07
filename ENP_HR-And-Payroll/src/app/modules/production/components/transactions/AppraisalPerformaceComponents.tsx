@@ -18,7 +18,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
     const [isEmailSent, setIsEmailSent] = useState<any>(false)
     const [description, setDescription] = useState<any>('')
 
-    
+
 
     const showReviewDateModal = () => {
         setIsReviewDateModalOpen(true)
@@ -67,7 +67,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
         }
     })
 
-    const reviewDatesColumn = [        
+    const reviewDatesColumn = [
         {
             title: 'Description',
             dataIndex: 'description',
@@ -75,17 +75,17 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
         {
             title: 'Start Date',
             dataIndex: 'reviewDate',
-            render: (text: any) => <>{ !text ? '' : moment(text).format('DD/MM/YYYY')}</>
+            render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'End Date',
             dataIndex: 'endDate',
-            render: (text: any) => <>{ !text ? '' : moment(text).format('DD/MM/YYYY')}</>
+            render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'Check Up Date',
             dataIndex: 'checkUpDate',
-            render: (text: any) => <>{ !text ? '' : moment(text).format('DD/MM/YYYY')}</>
+            render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'Count down',
@@ -97,7 +97,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
             render: (text: any, record: any) => (
                 <Space>
                     <a className='text-primary me-2' onClick={handleNotificationSend}>
-                        Send Notification
+                        Send Notifications
                     </a>
                     <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
                         Delete
@@ -110,8 +110,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
 
 
     const submitReviewDate = handleSubmit(async (values) => {
-        if (!values.reviewDate) {
-            message.error('Please select date')
+        if (!values.reviewDate || !values.endDate || !values.checkUpDate) {
+            message.error('All dates are required.')
             return
         }
         if (values.description === '') {
@@ -120,10 +120,14 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
         }
 
         const selectedDate = new Date(values.reviewDate);
+        const endDate = new Date(values.endDate);
+        const checkUpDate = new Date(values.checkUpDate);
         const item = {
             data: {
                 appraisalId: parseInt(selectedAppraisalType),
                 reviewDate: selectedDate.toISOString(),
+                endDate: endDate.toISOString(),
+                checkUpDate: checkUpDate.toISOString(),
                 description: values.description,
                 tenantId: 'test',
                 referenceId: referenceId,
@@ -149,36 +153,26 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
 
     return (
         <>
-            <div className='col-6 mb-7'>
-                <div className='d-flex justify-content-between'>
-                    <span className='form-label'>Schedule Dates</span>
-                </div>
-                <div
-                    style={{
-                        backgroundColor: 'white',
-                        padding: '20px',
-                        borderRadius: '5px',
-                        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-                    }}
-                    className="border border-gray-400"
-                >
-                    <Space className="justify-content-end align-items-end d-flex mb-2" >
-                        <Button
-                            onClick={showReviewDateModal}
-                            className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
-                            type="primary" shape="circle" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} />
-                    </Space>
-                    {
-                        loading ? <Skeleton active /> :
-                            <Table columns={reviewDatesColumn} dataSource={gridData} />
-                    }
-                </div>
+            <div>
+                <Space className="justify-content-end align-items-end d-flex mb-2" >
+                    <Button
+                        onClick={showReviewDateModal}
+                        className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
+                        type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
+                        Add Schedule Date
+                    </Button>
+                </Space>
+                {
+                    loading ? <Skeleton active /> :
+                        <Table columns={reviewDatesColumn} dataSource={gridData} />
+                }
             </div>
             <Modal
-                title='Add a review date'
+                title='Add a schedule date'
                 open={isReviewDateModalOpen}
                 onCancel={handleReviewDateCancel}
                 closable={true}
+                width={700}
                 footer={[
                     <Button key='back' onClick={handleReviewDateCancel}>
                         Cancel
@@ -194,23 +188,42 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
                 ]}
             >
                 <form onSubmit={submitReviewDate}>
-                    <div className='row mb-7 mt-7'>
-                        <div className='col-12 mb-7'>
-                            <label htmlFor='exampleFormControlInput1' className='form-label'>Schedule Date</label>
+                    <div className='row mt-7'>
+                        <div className='col-4 mb-7'>
+                            <label htmlFor='exampleFormControlInput1' className='form-label'>Start Date</label>
                             <input
                                 {...register("reviewDate")}
+                                type='date'
+                                min={moment().format('YYYY-MM-DD')}
+                                className='form-control form-control-solid'
+                            />
+                        </div>
+                        <div className='col-4 mb-7'>
+                            <label htmlFor='exampleFormControlInput1' className='form-label'>End Date</label>
+                            <input
+                                {...register("endDate")}
+                                min={moment().format('YYYY-MM-DD')}
                                 type='date'
                                 className='form-control form-control-solid'
                             />
                         </div>
-                        <div className='mb-3'>
-                            <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
+                        <div className='col-4 mb-7'>
+                            <label htmlFor='exampleFormControlInput1' className='form-label'>Check Up Date</label>
                             <input
-                                {...register("description")}
-                                onChange={(e) => setDescription(e.target.value)}
-                                type="text"
-                                className="form-control form-control-solid" />
+                                {...register("checkUpDate")}
+                                min={moment().format('YYYY-MM-DD')}
+                                type='date'
+                                className='form-control form-control-solid'
+                            />
                         </div>
+                    </div>
+                    <div className='mb-7'>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
+                        <input
+                            {...register("description")}
+                            onChange={(e) => setDescription(e.target.value)}
+                            type="text"
+                            className="form-control form-control-solid" />
                     </div>
                 </form>
             </Modal>

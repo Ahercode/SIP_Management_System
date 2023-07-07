@@ -74,7 +74,7 @@ export function AsideMenuMain() {
               <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
               <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
               <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
-              <AsideMenuItem to='setup/employee/nationality' hasBullet={true} title='Nationalities' />
+              <AsideMenuItem to='setup/employee/unitOfMeasure' hasBullet={true} title='Units of Measure' />
             </AsideMenuItemWithSub>
             : ""
         }

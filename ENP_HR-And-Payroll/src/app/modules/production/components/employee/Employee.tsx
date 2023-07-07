@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchDocument } from '../../../../services/ApiCalls'
+import { getFieldName } from '../ComponentsFactory'
 
 
 const Employee = () => {
@@ -19,6 +20,12 @@ const Employee = () => {
   const tenantId = localStorage.getItem('tenant')
   console.log('tenantId: ', tenantId)
   const queryClient = useQueryClient()
+  const { data: allEmployee, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument('paygroups'), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
+  const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
+
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -105,24 +112,24 @@ const Employee = () => {
       },
     },
 
-    {
-      title: 'Gender',
-      dataIndex: 'gender',
-      sorter: (a: any, b: any) => {
-        if (a.gender > b.gender) {
-          return 1
-        }
-        if (b.gender > a.gender) {
-          return -1
-        }
-        return 0
-      },
-    },
+    // {
+    //   title: 'Gender',
+    //   dataIndex: 'gender',
+    //   sorter: (a: any, b: any) => {
+    //     if (a.gender > b.gender) {
+    //       return 1
+    //     }
+    //     if (b.gender > a.gender) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
     {
       title: 'Paygroup',
       key: 'paygroupId',
       render: (row: any) => {
-        return getPaygroupName(row.paygroupId)
+        return getFieldName(row.paygroupId, allPaygroups?.data)
       },
       sorter: (a: any, b: any) => {
         if (a.paygroupId > b.paygroupId) {
@@ -135,32 +142,26 @@ const Employee = () => {
       },
     },
     {
-      title: 'Salary Grade',
-      key: 'gradeId',
-      render: (row: any) => {
-        return getGradeName(row.gradeId)
-      },
+      title: 'Email',
+      key: 'email',
       sorter: (a: any, b: any) => {
-        if (a.gradeId > b.gradeId) {
+        if (a.email > b.email) {
           return 1
         }
-        if (b.gradeId > a.gradeId) {
+        if (b.email > a.email) {
           return -1
         }
         return 0
       },
     },
     {
-      title: 'Notch',
-      key: 'notchId',
-      render: (row: any) => {
-        return getNotchName(row.notchId)
-      },
+      title: 'job Title',
+      key: 'jobTitle',
       sorter: (a: any, b: any) => {
-        if (a.notchId > b.notchId) {
+        if (a.jobTitle > b.jobTitle) {
           return 1
         }
-        if (b.notchId > a.notchId) {
+        if (b.jobTitle > a.jobTitle) {
           return -1
         }
         return 0
@@ -170,7 +171,7 @@ const Employee = () => {
       title: 'Department',
       key: 'departmentId',
       render: (row: any) => {
-        return getDepartmentName(row.departmentId)
+        return getFieldName(row.departmentId, allDepartments?.data)
       },
 
       sorter: (a: any, b: any) => {
@@ -215,48 +216,7 @@ const Employee = () => {
     },
   ]
 
-  const { data: allEmployee, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
-  const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 5000 })
-  const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument('paygroups'), { cacheTime: 5000 })
-  const { data: allNotches } = useQuery('notches', () => fetchDocument('notches'), { cacheTime: 5000 })
-  const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
 
-  const getDepartmentName = (departmentId: any) => {
-    let departmentName = null
-    allDepartments?.data.map((item: any) => {
-      if (item.id === departmentId) {
-        departmentName = item.name
-      }
-    })
-    return departmentName
-  }
-  const getGradeName = (gradeId: any) => {
-    let gradeName = null
-    allGrades?.data.map((item: any) => {
-      if (item.id === gradeId) {
-        gradeName = item.name
-      }
-    })
-    return gradeName
-  }
-  const getPaygroupName = (paygroupId: any) => {
-    let paygroupName = null
-    allPaygroups?.data.map((item: any) => {
-      if (item.id === paygroupId) {
-        paygroupName = item.name
-      }
-    })
-    return paygroupName
-  }
-  const getNotchName = (notchId: any) => {
-    let notchName = null
-    allNotches?.data.map((item: any) => {
-      if (item.id === notchId) {
-        notchName = item.name
-      }
-    })
-    return notchName
-  }
 
   // const loadData = async () => {
   //   setLoading(true)
