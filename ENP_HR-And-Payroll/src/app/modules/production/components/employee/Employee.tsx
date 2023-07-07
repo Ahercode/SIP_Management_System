@@ -66,8 +66,8 @@ const Employee = () => {
 
         return (
           row.imageUrl !== null ?
-            <img style={{ borderRadius: "10px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img> :
-            <img style={{ borderRadius: "10px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
+            <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img> :
+            <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
         )
       }
     },
@@ -143,6 +143,7 @@ const Employee = () => {
     },
     {
       title: 'Email',
+      dataIndex: 'email',
       key: 'email',
       sorter: (a: any, b: any) => {
         if (a.email > b.email) {
@@ -156,7 +157,11 @@ const Employee = () => {
     },
     {
       title: 'job Title',
+      dataIndex: 'jobTitleId',
       key: 'jobTitle',
+      render: (row: any) => {
+        return getFieldName(row, allJobTitles?.data)
+      },
       sorter: (a: any, b: any) => {
         if (a.jobTitle > b.jobTitle) {
           return 1
@@ -169,9 +174,10 @@ const Employee = () => {
     },
     {
       title: 'Department',
+      dataIndex: 'departmentId',
       key: 'departmentId',
       render: (row: any) => {
-        return getFieldName(row.departmentId, allDepartments?.data)
+        return getFieldName(row, allDepartments?.data)
       },
 
       sorter: (a: any, b: any) => {
@@ -215,26 +221,6 @@ const Employee = () => {
 
     },
   ]
-
-
-
-  // const loadData = async () => {
-  //   setLoading(true)
-  //   try {
-  //     const response = await axios.get(`${Api_Endpoint}/Employees/tenant/${tenantId}`,
-  //     )
-  //     setGridData(response.data)
-  //     setLoading(false)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   loadData()
-  // }, [])
-
-
   var out_data: any = {};
 
   gridData.forEach(function (row: any) {
@@ -244,7 +230,6 @@ const Employee = () => {
       out_data[row.departmentId] = [row];
     }
   });
-
 
 
   const dataWithIndex = allEmployee?.data.map((item: any, index: any) => ({

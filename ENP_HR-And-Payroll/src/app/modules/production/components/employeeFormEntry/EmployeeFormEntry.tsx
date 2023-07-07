@@ -1,17 +1,13 @@
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import "./formStyle.css"
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { UploadOutlined } from '@ant-design/icons';
-import {  Upload } from 'antd';
-import { BANKS,} from '../../../../data/DummyData';
-import { useForm } from 'react-hook-form';
+import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 import axios from 'axios';
-import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchDocument, fetchGrades, fetchJobTitles, fetchNationalities, fetchNotches, fetchPaygroups, fetchUnits } from '../../../../services/ApiCalls';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
-import {useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Api_Endpoint, fetchDocument } from '../../../../services/ApiCalls';
 import { useAuth } from '../../../auth';
+import "./formStyle.css";
 
 const MultiTabForm= () =>{
   const [formData, setFormData] = useState({});
@@ -403,4 +399,5 @@ const MultiTabForm= () =>{
 }
 
 
-export  {MultiTabForm}
+export { MultiTabForm };
+

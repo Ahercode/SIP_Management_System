@@ -34,9 +34,7 @@ export function AsideMenuMain() {
 
   return (
     <>
-
       <>
-
         <AsideMenuItem
           to='employee/'
           hasBullet={false}

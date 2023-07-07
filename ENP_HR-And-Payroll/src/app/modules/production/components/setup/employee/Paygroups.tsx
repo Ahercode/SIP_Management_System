@@ -1,9 +1,9 @@
-import { Button, Input, Modal, Skeleton, Space, Table } from 'antd'
+import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { useForm } from 'react-hook-form'
-import { Api_Endpoint, fetchPaygroups, updatePaygroup } from '../../../../../services/ApiCalls'
+import { Api_Endpoint, deleteItem, fetchDocument, fetchPaygroups, postItem, updateItem, updatePaygroup } from '../../../../../services/ApiCalls'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 
@@ -18,7 +18,8 @@ const Paygroups = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
+  const { data: allPaygroups, } = useQuery('paygroups', () => fetchDocument("paygroups"), { cacheTime: 5000 })
+  const queryClient = useQueryClient()
 
   const tenantId = localStorage.getItem('tenant')
   const showModal = () => {
@@ -40,23 +41,26 @@ const Paygroups = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const deleteData = async (element: any) => {
-    try {
-      const response = await axios.delete(`${Api_Endpoint}/Paygroups/${element.id}`)
-      // update the local state so that react can refecth and re-render the table with the new data
-      const newData = gridData.filter((item: any) => item.id !== element.id)
-      setGridData(newData)
-      return response.status
-    } catch (e) {
-      return e
+  const { mutate: deleteData } = useMutation(deleteItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`paygroups`)
+      loadData()
+    },
+    onError: (error) => {
+      console.log('delete error: ', error)
+      message.error('Error deleting record')
     }
-  }
-
-
+  })
 
   function handleDelete(element: any) {
-    deleteData(element)
+    const item = {
+      url: "paygroups",
+      data: element
+    }
+    deleteData(item)
   }
+
+
   const columns: any = [
 
     {
@@ -108,7 +112,7 @@ const Paygroups = () => {
           {/* <Link to={`/grades/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Grades</span>
           </Link> */}
-          <a onClick={ () => showUpdateModal(record) } className='btn btn-light-warning btn-sm'>
+          <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
@@ -122,13 +126,12 @@ const Paygroups = () => {
   ]
 
 
-  const { data: allPaygroups, } = useQuery('paygroups', fetchPaygroups, { cacheTime: 5000 })
 
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await axios.get(`${Api_Endpoint}/Paygroups/tenant/${tenantId}`)
-      setGridData(response.data)
+      const response = allPaygroups?.data
+      setGridData(response)
       setLoading(false)
     } catch (error) {
       console.log(error)
@@ -137,9 +140,9 @@ const Paygroups = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [allPaygroups?.data])
 
-  const dataWithIndex = gridData.map((item: any, index) => ({
+  const dataWithIndex = gridData?.map((item: any, index) => ({
     ...item,
     key: index,
     numberOfHours: item.numberOfHours === null ? "---" : item.numberOfHours,
@@ -162,47 +165,57 @@ const Paygroups = () => {
     setGridData(filteredData)
   }
 
-  const queryClient = useQueryClient()
-  const {  mutate } = useMutation(updatePaygroup, {
-    onSuccess: (data) => {
-      queryClient.setQueryData(['paygroup', tempData.id], data);
+
+  const { mutate: updateData } = useMutation(updateItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`paygroups`)
+      loadData()
       reset()
       setTempData({})
-      loadData()
       setIsUpdateModalOpen(false)
+      setIsModalOpen(false)
+      message.success('Item updated successfully')
     },
     onError: (error) => {
-      console.log('error: ', error)
+      message.error('Error updating item')
     }
   })
 
 
   const handleUpdate = (e: any) => {
     e.preventDefault()
-    mutate(tempData)
-    console.log('update: ', tempData)
+    updateData(tempData)
   }
 
-  const url = `${Api_Endpoint}/Paygroups`
+
   const OnSUbmit = handleSubmit(async (values) => {
     setLoading(true)
-    const data = {
-      code: values.code,
-      name: values.name,
-      numberOfHours: values.numberOfHours,
-      tenantId: tenantId,
+    const item = {
+      data: {
+        code: values.code,
+        name: values.name,
+        numberOfHours: values.numberOfHours,
+        tenantId: tenantId,
+      },
+      url: "paygroups"
     }
-    try {
-      
-      const response = await axios.post(url, data)
-      setSubmitLoading(false)
+    postData(item)
+  })
+
+  const { mutate: postData } = useMutation(postItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`paygroups`)
       reset()
-      setIsModalOpen(false)
+      setTempData({})
       loadData()
-      return response.statusText
-    } catch (error: any) {
+      setIsModalOpen(false)
       setSubmitLoading(false)
-      return error.statusText
+      message.success('Item added successfully')
+    },
+    onError: (error: any) => {
+      setSubmitLoading(false)
+      console.log('post error: ', error)
+      message.error('Error adding item')
     }
   })
 
@@ -249,8 +262,8 @@ const Paygroups = () => {
             </Space>
           </div>
           {
-            loading?<Skeleton active/>:
-            <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
           }
           <Modal
             title='Paygroup Setup'
@@ -294,7 +307,7 @@ const Paygroups = () => {
           </Modal>
 
           {/* update modal */}
-          
+
           <Modal
             title='Paygroup Update'
             open={isUpdateModalOpen}
