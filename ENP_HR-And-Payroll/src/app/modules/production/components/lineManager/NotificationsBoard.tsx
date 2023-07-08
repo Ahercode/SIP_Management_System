@@ -3,9 +3,18 @@ import { NotificationsComponent } from "./NotificationsComponent";
 import { right } from "@popperjs/core";
 import { useState } from "react";
 import { DownLines } from "./DownLines";
+import { useQuery } from "react-query";
+import { fetchDocument } from "../../../../services/ApiCalls";
 
 const NotificationsBoard = () => {
     const [isDownlinesModalOpen, setIsDownlinesModalOpen] = useState(false)
+    const { data: downlines, isLoading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === '1')
+
+    // filter employeeObjectives by employees in the filteredByLineManger
+    const filteredObjectives = employeeObjectives?.data?.filter((item: any) => filteredByLineManger?.map((item: any) => item.employeeId).includes(item.employeeId))
+
 
     const onTabsChange = (key: string) => {
         console.log(key);
@@ -27,20 +36,33 @@ const NotificationsBoard = () => {
         {
             key: '1',
             label: <>
-                <Badge count={0} showZero={true} title="Awaiting approvals" size="small">
-                    <span>Approvals</span>
+                <Badge count={filteredByLineManger?.length} showZero={true} title="Downlines" size="small">
+                    <span>Downlines</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <NotificationsComponent />
+                    <DownLines  filteredByLineManger={filteredByLineManger} loading={isLoading} />
                 </>
             ),
         },
         {
             key: '2',
             label: <>
-                <Badge count={0} showZero={true} title="Rejected objectives" size="small">
+                <Badge count={filteredObjectives?.length} showZero={true} title="Awaiting approvals" size="small">
+                    <span>Approvals</span>
+                </Badge>
+            </>,
+            children: (
+                <>
+                    <NotificationsComponent filteredByLineManger={filteredObjectives} loading={objectivesLoading} />
+                </>
+            ),
+        },
+        {
+            key: '3',
+            label: <>
+                <Badge count={0} showZero={true} title="Rejected objectives" size="default">
                     <span>Notifications</span>
                 </Badge>
             </>,
@@ -64,7 +86,7 @@ const NotificationsBoard = () => {
                 type="line"
                 items={tabItems}
                 onChange={onTabsChange}
-                tabBarExtraContent={slot}
+                // tabBarExtraContent={slot}
             />
 
             <Modal

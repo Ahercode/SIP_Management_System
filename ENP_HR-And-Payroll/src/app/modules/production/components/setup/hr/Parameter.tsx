@@ -26,7 +26,7 @@ const Parameter = () => {
   const queryClient = useQueryClient()
   const statusList = ['Active', 'Inactive']
   let [appraisalName, setAppraisalName] = useState<any>("")
-  const { data: parameters } = useQuery('Parameters', () => fetchDocument(`Parameters`), { cacheTime: 5000 })
+  const { data: tableData, isLoading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 5000 })
   const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
 
   const showModal = () => {
@@ -53,7 +53,7 @@ const Parameter = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      setGridData(parameters?.data)
+      setGridData(tableData?.data)
       setLoading(false)
     } catch (error) {
       console.log(error)
@@ -63,7 +63,7 @@ const Parameter = () => {
   const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('parameters')
-      loadData()
+      // loadData()
     },
     onError: (error) => {
       console.log('delete error: ', error)
@@ -154,7 +154,7 @@ const Parameter = () => {
   }
 
 
-  const dataByID = gridData?.filter((section: any) => {
+  const dataByID = tableData?.data?.filter((section: any) => {
     return section.appraisalId?.toString() === param.id
   })
 
@@ -186,7 +186,7 @@ const Parameter = () => {
 
   // to find the sum of weights per appraisal needed for validation
   const weightSum = (itemToPost: any) => {
-    return parameters?.data.filter((item: any) => item.appraisalId === itemToPost.appraisalId)
+    return tableData?.data.filter((item: any) => item.appraisalId === itemToPost.appraisalId)
       .map((item: any) => item.weight)
       .reduce((a: any, b: any) => a + b, 0);
   };
@@ -265,7 +265,7 @@ const Parameter = () => {
   }
 
 
-  const url = `${Api_Endpoint}/Parameters`
+
   const OnSubmit = handleSubmit(async (values) => {
     setLoading(true)
 
@@ -321,10 +321,11 @@ const Parameter = () => {
     }
   })
 
-  const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
+  const { mutate: postData } = useMutation(postItem, {
     onSuccess: (data) => {
       queryClient.invalidateQueries('parameters')
-      loadData()
+      // queryClient.setQueryData('parameters', (old: any) => [...old, data])
+      // loadData()
       reset()
       setTempData({})
       setIsModalOpen(false)
@@ -378,8 +379,8 @@ const Parameter = () => {
             </Space>
           </div>
           {
-            loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataByID} loading={loading} />
+            isLoading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataByID}/>
           }
           <Modal
             title={isUpdateModalOpen ? 'Parameter Update' : 'Parameter Setup'}

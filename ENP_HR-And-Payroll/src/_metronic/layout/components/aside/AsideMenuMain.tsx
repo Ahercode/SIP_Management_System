@@ -45,7 +45,7 @@ export function AsideMenuMain() {
           icon='/media/icons/duotune/general/gen005.svg' title='Entries' />
 
         <AsideMenuItem
-          to='notifications-board/'
+          to={`notifications-board/lineManger`}
           hasBullet={false}
           icon='/media/icons/duotune/general/gen007.svg'
           title='Notifications Board'

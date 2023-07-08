@@ -459,19 +459,6 @@ const EmployeeEditForm = () => {
                 </div>
               
                 <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Nationality</label>
-                  <select
-                    {...register("nationality")} name="nationality"
-                    onChange={handleChange}
-                    value={parseInt(tempData?.nationality)}
-                    className="form-select form-select-solid" aria-label="Select example">
-                    {/* {allNations?.data.map((item: any) => (
-                      <option value={item.id}>{item.name}</option>
-                    ))} */}
-
-                  </select>
-                </div>
-                <div className='col-4 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className=" form-label">National ID</label>
                   <input type="text" {...register("nationalId")}
                     name="nationalId"

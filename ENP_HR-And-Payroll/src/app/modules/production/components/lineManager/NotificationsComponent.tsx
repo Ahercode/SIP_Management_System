@@ -1,39 +1,29 @@
 import { useEffect, useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
-import { Skeleton, Table } from "antd"
+import { Badge, Modal, Skeleton, Table, Tag } from "antd"
 import { getEmployeeProperty, getEmployeePropertyName } from "../ComponentsFactory"
+import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
+import { ObjectivesForm } from "../appraisalForms/ObjectivesForm "
 
-const NotificationsComponent = ({ lineManagerId }: any) => {
+const NotificationsComponent = ({ loading, filteredByLineManger }: any) => {
     const { data: allSubmittedObjectives } = useQuery('employeeObjectives', () => fetchDocument(`employeeObjectives`), { cacheTime: 5000 })
-    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
-    const [loading, setLoading] = useState(false)
-    const [viewEmployeeObjectives, setViewEmployeeObjectives] = useState(false)
+    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const queryClient = useQueryClient()
     const [gridData, setGridData] = useState<any>([])
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [employeeName, setEmployeeName] = useState('')
+
 
     const showObjectivesView = (record: any) => {
-        setViewEmployeeObjectives(true)
+        setIsModalOpen(true)
     }
 
-    const hideObjectivesView = () => {
-        setViewEmployeeObjectives(false)
-    }
 
-    const loadData = async () => {
-        setLoading(true)
-        try {
-            const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === lineManagerId)
-            setGridData(filteredByLineManger)
-            setLoading(false)
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
-    useEffect(() => {
-        loadData()
-    }, [downlines?.data])
+    const handleCancel = () => {
+        setIsModalOpen(false)
+    }
 
 
 
@@ -45,10 +35,17 @@ const NotificationsComponent = ({ lineManagerId }: any) => {
         {
             title: 'Name',
             dataIndex: 'employeeId',
+            render: (record: any) => {
+                const employee = allEmployees?.data?.find((item: any) => item.employeeId === record)
+                return employee?.firstName + ' ' + employee?.surname
+            }
         },
         {
             title: 'Approval Status',
             dataIndex: 'status',
+            render: () => {
+                return <Tag color="error">Pending</Tag>
+            }
         },
         {
             title: 'Action',
@@ -66,13 +63,25 @@ const NotificationsComponent = ({ lineManagerId }: any) => {
         <>
             {
                 loading ? <Skeleton active /> :
-                    <Table columns={columns} dataSource={[]} />
+                    <Table columns={columns} dataSource={filteredByLineManger} />
             }
+
+            <Modal
+                title={`Objectives for ${employeeName}`}
+                open={isModalOpen}
+                width={1000}
+                onCancel={handleCancel}
+                closable={true}
+                footer={null}
+            >
+                <ObjectivesForm />
+            </Modal>
+
         </>
     )
 
 }
 
-export  { NotificationsComponent}
+export { NotificationsComponent }
 
 

@@ -73,7 +73,7 @@ const PrivateRoutes = () => (
         </SuspensedView>} />
 
       <Route
-        path='notifications-board/*'
+        path='notifications-board/:id'
         element={<SuspensedView>
           <PageTitle >Notifications Board</PageTitle>
           <NotificationsBoard />

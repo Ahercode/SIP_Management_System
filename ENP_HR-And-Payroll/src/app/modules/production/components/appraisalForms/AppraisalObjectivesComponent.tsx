@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 
-const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
+const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const [gridData, setGridData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -29,6 +29,7 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
     const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
     const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const [objectivesId, setObjectivesId] = useState<any>()
+
 
 
     const showModal = () => {
@@ -112,12 +113,16 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                     <a className='btn btn-light-info btn-sm' onClick={() => deliverablesEntry(record.id)} >
                         Deliverables
                     </a>
-                    <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
-                        Update
-                    </a>
-                    <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-                        Delete
-                    </a>
+                    {
+                       param?.id !== 'lineManger' ?                         <>
+                            <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+                                Update
+                            </a>
+                            <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+                                Delete
+                            </a>
+                        </> : ""
+                    }
                 </Space>
             ),
         },
@@ -417,7 +422,7 @@ const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
             //     setLoading(false)
             //     return
             // } else
-             if (parseInt(values.weight) <= 0) {
+            if (parseInt(values.weight) <= 0) {
                 message.error('Weight cannot be zero or negative')
                 setLoading(false)
                 return
