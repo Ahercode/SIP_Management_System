@@ -3,17 +3,15 @@ import clsx from 'clsx'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-<<<<<<< HEAD
-import { fetchCompanies, fetchUserApplications, fetchUsers } from '../../../services/ApiCalls'
+
+import {  fetchUsers } from '../../../services/ApiCalls'
 import { Button, Modal } from 'antd'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
-=======
 import * as Yup from 'yup'
 import { fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../core/Auth'
 import { login, parseJwt } from '../core/_requests'
->>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
@@ -46,11 +44,7 @@ export function Login() {
   const tenantId = localStorage.getItem('tenant')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { register, reset, handleSubmit } = useForm()
-
-<<<<<<< HEAD
   
-  const { data: userApplications } = useQuery('userApplications', fetchUserApplications, { cacheTime: 5000 })
-  const { data: allCompanies } = useQuery('companies', fetchCompanies, { cacheTime: 5000 })
   const { data: users } = useQuery('users', fetchUsers, { cacheTime: 5000 })
 
   const handleChange = (e:any) => {
@@ -112,15 +106,10 @@ export function Login() {
     // }
     
   })
-=======
   const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
   const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
 
 
-  // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(currentUser?.id)).map((filteredItem:any) => {
-  //   return filteredItem.applicationId.toString()
-  // })
->>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
  
   const formik = useFormik({
     initialValues,
@@ -145,14 +134,10 @@ export function Login() {
 
         //  if(appId===1){
            setCurrentUser(curUser)
-<<<<<<< HEAD
-        saveTenant(values.tenantId)
-=======
         //  }else{
         //   setStatus("you don't have access to this application")
         //  }
         saveTenant('test')
->>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
         const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
           return filteredItem?.applicationId?.toString()
         })
@@ -243,12 +228,11 @@ export function Login() {
         <br></br>
         <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forget password !</a>
       </div>
-<<<<<<< HEAD
+{/* <<<<<<< HEAD
      
       <div className='fv-row mb-10'>
-=======
+======= */}
       {/* <div className='fv-row mb-10'>
->>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
         <div className='mb-10'>
           <label className='form-label fw-bold'>Company:</label>
           <div>

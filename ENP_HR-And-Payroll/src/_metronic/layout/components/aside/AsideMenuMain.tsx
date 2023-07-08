@@ -88,47 +88,6 @@ export function AsideMenuMain() {
       </>
 
 
-<<<<<<< HEAD
-          {/* Reports authorization*/}
-          {
-            currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('4'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('5'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('6'))
-              ? <AsideMenuItem
-                to='employee-report-page/'
-                hasBullet={false}
-                icon='/media/icons/duotune/general/gen028.svg'
-                title='Reports'
-              />
-              : ""
-          }
-          {/* <AsideMenuItemWithSub to='#' title='Transactions' icon='/media/icons/duotune/ecommerce/ecm001.svg' hasBullet={false}>
-            <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={true} title='Appraisals and Performances' />
-          </AsideMenuItemWithSub> */}
-          <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={true} title='Entries' />
-          {/* Setups authorizations */}
-          {
-            currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
-              || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
-              ? <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/technology/teh004.svg' hasBullet={false}>
-                <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
-                <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Paygroups' />
-                <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
-                <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
-                <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
-                <AsideMenuItem to='setup/employee/nationality' hasBullet={true} title='Nationalities' />
-              </AsideMenuItemWithSub>
-              : ""
-          }
-        </>
-      </AsideMenuItemWithSub>
-=======
->>>>>>> 8cedc32213628b61ba0a6563358f0d79ba0a7e3a
-
       {/* This is for HR and Payroll */}
       {
         isPayrollHR == true ?
