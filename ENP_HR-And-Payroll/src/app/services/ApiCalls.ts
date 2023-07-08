@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// export const Api_Endpoint = "http://208.117.44.15/hrwebapi/api";
-export const Api_Endpoint = "https://app.sipconsult.net/omniappraisalapi/api";
+// const tenantId = localStorage.getItem('tenant')
+
+// export const Api_Endpoint = "http://208.117.44.15/omniAppraisalApi/api";
+export const Api_Endpoint = "https://app.sipconsult.net/omniAppraisalApi/api";
 // export const Api_Endpoint = "https://localhost:5001/api";
 export const UsersEndpoint = "https://app.sipconsult.net/userapi/api";
 export const FormsBaseUrl = "https://app.sipconsult.net/omni-hr";

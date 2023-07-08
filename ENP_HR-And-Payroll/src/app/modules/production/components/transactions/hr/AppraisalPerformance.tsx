@@ -516,8 +516,8 @@ const AppraisalPerformance = () => {
                       <AppraisalObjective referenceId={referenceId} />
                     </div>
                     <div className='col-6 mt-7'>
-                      <button type='button' className='col-6 btn btn-light' onClick={showSchedulesModal}>
-                        <KTSVG path='/media/icons/duotune/general/gen014.svg' className='svg-icon-2' />
+                      <button type='button' className='col-6 btn btn-light  border' onClick={showSchedulesModal}>
+                        <KTSVG path='/media/icons/duotune/general/gen014.svg' className='svg-icon-2 me-3' />
                         View Schedules
                       </button>
                     </div>

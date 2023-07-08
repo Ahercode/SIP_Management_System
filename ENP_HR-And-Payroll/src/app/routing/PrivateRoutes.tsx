@@ -41,8 +41,9 @@ import { Organogram } from '../modules/production/components/setup/hr/Organogram
 import { OrgLevel } from '../modules/production/components/setup/hr/OrgLevel'
 import { AppraisalDeliverables } from '../modules/production/components/setup/hr/ObjectiveDeliverables'
 import { AppraisalObjectives } from '../modules/production/components/setup/hr/ParameterObjectives'
-import {ErrorBoundary} from '@ant-design/pro-components'
+import { ErrorBoundary } from '@ant-design/pro-components'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
+import { NotificationsBoard } from '../modules/production/components/lineManager/NotificationsBoard'
 
 const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -70,11 +71,12 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Details</PageTitle>
           <Employee />
         </SuspensedView>} />
+
       <Route
         path='notifications-board/*'
         element={<SuspensedView>
           <PageTitle >Notifications Board</PageTitle>
-        
+          <NotificationsBoard />
         </SuspensedView>} />
 
       <Route
@@ -233,7 +235,7 @@ const PrivateRoutes = () => (
         path='parameters/:id'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Parameters</PageTitle>
-            <Parameter />    
+          <Parameter />
         </SuspensedView>} />
       <Route
         path='objectives/:id'
@@ -293,7 +295,7 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Division Summary Report</PageTitle>
           <EmployeeDivisionSummaryReport />
         </SuspensedView>} />
-      
+
       <Route
         path='AppraisalPerformanceByAppraisalTypeReport/*'
         element={<SuspensedView>
@@ -306,8 +308,8 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>AppraisalPerformanceByEmployeeReport</PageTitle>
           <AppraisalPerformanceByEmployeeReport />
         </SuspensedView>} />
-      
-      
+
+
       <Route path='*' element={<Navigate to='/error/404' />} />
     </Route>
   </Routes>

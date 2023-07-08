@@ -50,11 +50,26 @@ const getSupervisorData = ({ employeeId, allEmployees, allOrganograms }: any) =>
 // getFieldName function is used to get the field name given the field id and field data
 const getFieldName = (fieldId: any, fieldData: any) => {
     const field = fieldData?.find((item: any) => {
-        return item.id === fieldId
+        return item.id === parseInt(fieldId)
     })
     return field?.name
 }
 
+// to  get property of employee given the employee id, the field name and all employees data
+const getEmployeeProperty = ({ employeeId, fieldName, allEmployees }: any) => {
+    const employee = allEmployees?.data?.find((item: any) => {
+        return item.employeeId === employeeId || item.id === employeeId
+    })
+    return employee?.[fieldName]
+}
+
+// to get the name of an employee property given the employee id, the field name which will return an Id, all employees data and the data of the field which will return a name
+const getEmployeePropertyName = ({ employeeId, employeeProperty, allEmployees, OtherData }: any) => {
+    const fieldNameId = getEmployeeProperty({ employeeId, employeeProperty, allEmployees })
+    const fieldNameName = getFieldName(fieldNameId, OtherData)
+    return fieldNameName
+}
 
 
-export { getTimeLeft, getSupervisorData, getFieldName }
+
+export { getTimeLeft, getSupervisorData, getFieldName, getEmployeeProperty, getEmployeePropertyName }

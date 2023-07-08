@@ -1,13 +1,11 @@
-import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useForm } from 'react-hook-form'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
-import { end } from '@popperjs/core'
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { Button, Modal, Skeleton, Space, Table, message } from 'antd'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useParams } from 'react-router-dom'
+import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
+import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 
 const  AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
