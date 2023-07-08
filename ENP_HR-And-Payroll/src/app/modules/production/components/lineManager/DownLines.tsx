@@ -22,7 +22,7 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             title: 'Name',
             dataIndex: 'employeeId',
             render: (record: any) => {
-                const employee = allEmployees?.data?.find((item: any) => item.id === record)
+                const employee = allEmployees?.data?.find((item: any) => item.employeeId === record)
                 return employee?.firstName + ' ' + employee?.surname
             }
         },
@@ -30,21 +30,21 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             title: 'Department',
             dataIndex: 'employeeId',
             render: (record: any) => {
-                return getEmployeePropertyName({ employeeId: record, employeeProperty: 'departmentId', allEmployees: filteredByLineManger, OtherData: allDepartments?.data })
+                return getEmployeePropertyName({ employeeId: `${record}`, employeeProperty: 'departmentId', allEmployees: allEmployees?.data, OtherData: allDepartments?.data })
             }
         },
         {
             title: 'Job Title',
             dataIndex: 'employeeId',
             render: (record: any) => {
-                return getEmployeePropertyName({ employeeId: record, employeeProperty: 'jobTitleId', allEmployees: filteredByLineManger, OtherData: allJobTitles?.data })
+                return getEmployeePropertyName({ employeeId: `${record}`, employeeProperty: 'jobTitleId', allEmployees: allEmployees?.data, OtherData: allJobTitles?.data })
             }
         },
         {
             title: 'Email',
             dataIndex: 'employeeId',
             render: (record: any) => {
-                return getEmployeeProperty({ employeeId: record, fieldName: 'email', allEmployees: filteredByLineManger })
+                return getEmployeeProperty({ employeeId: `${record}`, fieldName: 'email', allEmployees: allEmployees?.data })
             }
         },
     ]

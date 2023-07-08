@@ -19,13 +19,9 @@ const NotificationsComponent = ({ loading, filteredByLineManger }: any) => {
         setIsModalOpen(true)
     }
 
-
-
     const handleCancel = () => {
         setIsModalOpen(false)
     }
-
-
 
     const columns: any = [
         {
@@ -51,7 +47,7 @@ const NotificationsComponent = ({ loading, filteredByLineManger }: any) => {
             title: 'Action',
             fixed: 'right',
             render: (_: any, record: any) => (
-                <a onClick={() => showObjectivesView(record)} className='btn btn-light-info btn-sm'>
+                <a onClick={() => showObjectivesView(record?.employeeId)} className='btn btn-light-info btn-sm'>
                     View Objectives
                 </a>
 
@@ -67,7 +63,6 @@ const NotificationsComponent = ({ loading, filteredByLineManger }: any) => {
             }
 
             <Modal
-                title={`Objectives for ${employeeName}`}
                 open={isModalOpen}
                 width={1000}
                 onCancel={handleCancel}

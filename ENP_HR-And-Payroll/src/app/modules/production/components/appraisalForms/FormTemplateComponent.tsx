@@ -12,24 +12,23 @@ interface ComponentWrapperProps {
     component: ComponentType<any>;
 }
 
-const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component }) => {
+const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component}) => {
     const [parametersData, setParametersData] = useState<any>([])
     const param: any = useParams();
-    const tenantId = localStorage.getItem('tenant')
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
     const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
-    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees}`), { cacheTime: 5000 })
+    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
-   
 
-    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
+
+    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.id)
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
-    const empId = parseInt(employeeData?.id)
-    console.log('empId: ', empId)
-    const lineManager = getSupervisorData({ employeeId:empId, allEmployees, allOrganograms })
+    const empId = employeeData?.id
+
+    const lineManager = getSupervisorData({ employeeId: empId, allEmployees, allOrganograms })
 
     const loadData = async () => {
         try {
@@ -44,14 +43,21 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
         loadData()
     }, [parameters?.data, appraisalobjective?.data, appraisaldeliverable?.data])
 
+    const style = param?.id !== 'lineManger' ? {
+        backgroundColor: 'white',
+        padding: '40px',
+        borderRadius: '5px',
+        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+        margin: '40px'
+    } : {
+        backgroundColor: 'transparent',
+        padding: '0px',
+        borderRadius: '0px',
+        margin: '20px'
+    }
+
     return (
-        <div style={{
-            backgroundColor: 'white',
-            padding: '40px',
-            borderRadius: '5px',
-            boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-            margin: '40px'
-        }}>
+        <div style={style} >
             <div className="d-flex flex-column align-items-start mb-5">
                 <div className=' fs-1 fw-bold mb-2 text-primary'>
                     {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${employeeData?.surname}`}
@@ -59,7 +65,7 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
                 <Divider className="mb-3 mt-0" />
                 <div className='d-flex row-auto mb-3'>
                     <div className='me-9'>
-                        <h5 style={{ color: "GrayText" }}>EmployeeId:
+                        <h5 style={{ color: "GrayText" }}>Id:
                             <span className="ms-3" style={{ color: "black" }}>{!employeeData ? `Unknown` : `${employeeData?.employeeId}`}</span>
                         </h5>
                     </div>
@@ -86,14 +92,29 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
                 ))
             }
             <div className='d-flex align-items-end justify-content-end align-content-end' >
-                <button type='button' className='btn btn-primary me-3 mt-7' onClick={() => { }}>
-                    Submit
-                </button>
+                {
+                    param?.id !== 'lineManger' ?
+                        <>
+                            <button type='button' className='btn btn-primary me-3 mt-7' onClick={() => { }}>
+                                Submit
+                            </button>
+                        </> :
+                        <>
+                            <button type='button' className='btn btn-danger me-3 mt-7' onClick={() => { }}>
+                                Decline
+                            </button>
+                            <button type='button' className='btn btn-success  mt-7' onClick={() => { }}>
+                                Approve
+                            </button>
+                        </>
+                }
             </div>
 
         </div>
     )
 }
+
+
 
 export { FormTemplate }
 

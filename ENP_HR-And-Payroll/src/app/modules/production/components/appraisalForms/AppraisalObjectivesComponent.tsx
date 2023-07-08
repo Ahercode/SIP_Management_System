@@ -114,14 +114,15 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                         Deliverables
                     </a>
                     {
-                       param?.id !== 'lineManger' ?                         <>
-                            <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
-                                Update
-                            </a>
-                            <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-                                Delete
-                            </a>
-                        </> : ""
+                        param?.id !== 'lineManger' ?
+                            <>
+                                <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+                                    Update
+                                </a>
+                                <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+                                    Delete
+                                </a>
+                            </> : ""
                     }
                 </Space>
             ),
@@ -201,12 +202,17 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 width: 100,
                 render: (_: any, record: any) => (
                     <Space size='middle'>
-                        <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
-                            Update
-                        </a>
-                        <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-                            Delete
-                        </a>
+                        {
+                            param?.id !== 'lineManger' ?
+                                <>
+                                    <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+                                        Update
+                                    </a>
+                                    <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+                                        Delete
+                                    </a>
+                                </> : ""
+                        }
                     </Space>
                 ),
             },
@@ -548,6 +554,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         }
     })
 
+
     return (
         <div
             style={{
@@ -580,13 +587,17 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                                 <span className="fw-bold text-gray-600 d-block fs-2">{!showDeliverablesEntry ? `Objectives` : `${pathName}`}</span>
                             </Space>
                         </div>
-
-                        <Space className="justify-content-end align-items-end d-flex mb-6" >
-                            <button type='button' className='btn btn-primary me-3' onClick={showModal}>
-                                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                                Add
-                            </button>
-                        </Space>
+                        {
+                            param?.id !== 'lineManger' ?
+                                <>
+                                    <Space className="justify-content-end align-items-end d-flex mb-6" >
+                                        <button type='button' className='btn btn-primary me-3' onClick={showModal}>
+                                            <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                                            Add
+                                        </button>
+                                    </Space>
+                                </> : ""
+                        }
                     </div>
                     {
                         loading ? <Skeleton active /> :

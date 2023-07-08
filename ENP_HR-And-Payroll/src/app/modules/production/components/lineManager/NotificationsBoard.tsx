@@ -89,7 +89,7 @@ const NotificationsBoard = () => {
                 // tabBarExtraContent={slot}
             />
 
-            <Modal
+            {/* <Modal
                 title={'Downlines'}
                 open={isDownlinesModalOpen}
                 onCancel={hideDownlinesModal}
@@ -99,7 +99,7 @@ const NotificationsBoard = () => {
                 <div className="mt-7">
                     <DownLines />
                 </div>
-            </Modal>
+            </Modal> */}
         </div>
     )
 }

@@ -78,13 +78,13 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
             render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
-            title: 'End Date',
-            dataIndex: 'endDate',
+            title: 'Check Up Date',
+            dataIndex: 'checkUpDate',
             render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
-            title: 'Check Up Date',
-            dataIndex: 'checkUpDate',
+            title: 'End Date',
+            dataIndex: 'endDate',
             render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
@@ -199,18 +199,18 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
                             />
                         </div>
                         <div className='col-4 mb-7'>
-                            <label htmlFor='exampleFormControlInput1' className='form-label'>End Date</label>
+                            <label htmlFor='exampleFormControlInput1' className='form-label'>Check Up Date</label>
                             <input
-                                {...register("endDate")}
+                                {...register("checkUpDate")}
                                 min={moment().format('YYYY-MM-DD')}
                                 type='date'
                                 className='form-control form-control-solid'
                             />
                         </div>
                         <div className='col-4 mb-7'>
-                            <label htmlFor='exampleFormControlInput1' className='form-label'>Check Up Date</label>
+                            <label htmlFor='exampleFormControlInput1' className='form-label'>End Date</label>
                             <input
-                                {...register("checkUpDate")}
+                                {...register("endDate")}
                                 min={moment().format('YYYY-MM-DD')}
                                 type='date'
                                 className='form-control form-control-solid'

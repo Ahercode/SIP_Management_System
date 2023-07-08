@@ -57,7 +57,7 @@ const getFieldName = (fieldId: any, fieldData: any) => {
 
 // to  get property of employee given the employee id, the field name and all employees data
 const getEmployeeProperty = ({ employeeId, fieldName, allEmployees }: any) => {
-    const employee = allEmployees?.data?.find((item: any) => {
+    const employee = allEmployees?.find((item: any) => {
         return item.employeeId === employeeId || item.id === employeeId
     })
     return employee?.[fieldName]
@@ -65,8 +65,8 @@ const getEmployeeProperty = ({ employeeId, fieldName, allEmployees }: any) => {
 
 // to get the name of an employee property given the employee id, the field name which will return an Id, all employees data and the data of the field which will return a name
 const getEmployeePropertyName = ({ employeeId, employeeProperty, allEmployees, OtherData }: any) => {
-    const fieldNameId = getEmployeeProperty({ employeeId, employeeProperty, allEmployees })
-    const fieldNameName = getFieldName(fieldNameId, OtherData)
+    const fieldNameId = getEmployeeProperty({ employeeId: employeeId, fieldName: employeeProperty, allEmployees: allEmployees })
+    const fieldNameName = getFieldName(parseInt(fieldNameId), OtherData)
     return fieldNameName
 }
 
