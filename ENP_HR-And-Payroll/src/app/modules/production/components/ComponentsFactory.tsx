@@ -26,7 +26,7 @@ const getTimeLeft = (reviewDate: any) => {
 const getSupervisorData = ({ employeeId, allEmployees, allOrganograms }: any) => {
     // get employee code from employee table
     const employeeIdFromEmployee = allEmployees?.data?.find((item: any) => {
-        return item.id === employeeId 
+        return item.id === employeeId || item.employeeId === employeeId
     })
 
     // get supervisor  id from organogram table

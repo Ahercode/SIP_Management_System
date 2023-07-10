@@ -1,14 +1,14 @@
-import { Button, Modal, Skeleton, Space, Table, message } from "antd"
+import { Button, Divider, Modal, Skeleton, Space, Spin, Table, message } from "antd"
 import moment from "moment"
-import { getTimeLeft } from "../ComponentsFactory"
+import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft } from "../../ComponentsFactory"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { deleteItem, fetchDocument, postItem, updateItem } from "../../../../services/ApiCalls"
-import { register } from "../../../auth/core/_requests"
+import { FormsBaseUrl, deleteItem, fetchDocument, postItem, updateItem } from "../../../../../services/ApiCalls"
+import { register } from "../../../../auth/core/_requests"
 import { PlusOutlined } from "@ant-design/icons"
 import { useForm } from "react-hook-form"
 
-const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotificationSend }: any) => {
+const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
     const [gridData, setGridData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -17,8 +17,24 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
     const queryClient = useQueryClient()
     const [isEmailSent, setIsEmailSent] = useState<any>(false)
     const [description, setDescription] = useState<any>('')
+    const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
+    const [sendLoading, setSendLoading] = useState(false)
 
 
+
+    const handleNotificationCancel = () => {
+        setIsNotificationModalOpen(false)
+    }
+
+    const showNotificationModal = () => {
+        setIsNotificationModalOpen(true)
+    }
+
+    const handleConfirmNotificationSend = () => {
+        // setIsNotificationModalOpen(false)
+        handleNotificationSend()
+        setIsEmailSent(true)
+    }
 
     const showReviewDateModal = () => {
         setIsReviewDateModalOpen(true)
@@ -96,7 +112,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
             title: 'Action',
             render: (text: any, record: any) => (
                 <Space>
-                    <a className='text-primary me-2' onClick={handleNotificationSend}>
+                    <a className='text-primary me-2' onClick={showNotificationModal}>
                         Send Notifications
                     </a>
                     <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
@@ -106,7 +122,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
             ),
         }
     ]
-
 
 
     const submitReviewDate = handleSubmit(async (values) => {
@@ -143,13 +158,40 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
             reset()
             setIsReviewDateModalOpen(false)
             loadData()
+            setSendLoading(false)
             isEmailSent && message.success('Email notifications sent successfully')
             setIsEmailSent(false)
         },
         onError: (error: any) => {
             console.log('post error: ', error)
+            setSendLoading(false)
+            isEmailSent && message.error('Error sending email notifications')
+            handleNotificationCancel()
         }
     })
+
+    const handleNotificationSend = () => {
+
+        setSendLoading(true)
+        //map throw dataById and return employeeId and name of employee as a new array
+        const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
+            email: item.email,
+            username: `${item.firstName} ${item.surname}`
+        }))
+        console.log('employeeMailAndName: ', employeeMailAndName)
+
+        const item = {
+            data: {
+                subject: 'Appraisal Review Date',
+                formLink: `${FormsBaseUrl}/appraisalObjectivesForm`,
+                recipients: employeeMailAndName
+            },
+            url: 'appraisalperftransactions/sendMail',
+        }
+        // console.log('email sent: ', item)
+        setIsEmailSent(true)
+        postData(item)
+    }
 
     return (
         <>
@@ -240,144 +282,55 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
                     </div>
                 </form>
             </Modal>
+
+            {/* confirm notification roll out modal */}
+
+            <Modal
+                title='Confirm Notification Send'
+                open={isNotificationModalOpen}
+                onCancel={handleNotificationCancel}
+                closable={true}
+                footer={
+                    <Space>
+                        {
+                            sendLoading ? <></> :
+                                <>
+                                    <Button onClick={handleNotificationCancel}
+                                        type='primary'
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}
+                                        className='btn btn-danger btn-sm w'>
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleConfirmNotificationSend}
+                                        type='primary'
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}
+                                        className='btn btn-success btn-sm w'>
+                                        Send Notifications
+                                    </Button>
+                                </>
+                        }
+                    </Space>
+                }
+            >
+                <Divider />
+                <Spin spinning={sendLoading}>
+                    <div className='row'>
+                        <div className='col-12'>
+                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees in the selected employee group`}</p>
+                        </div>
+                    </div>
+                </Spin>
+            </Modal>
         </>
     )
 }
 
-
-const AppraisalObjective = ({ referenceId }: any) => {
-
-    const [objValue, setObjValue] = useState<any>('');
-    const [textareaHeight, setTextareaHeight] = useState('auto');
-    const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/test`), { cacheTime: 5000 })
-    const { reset, register, handleSubmit } = useForm()
-    const queryClient = useQueryClient()
-    const [currentObjective, setCurrentObjective] = useState<any>([])
-    const [objectiveData, setObjectiveData] = useState<any>([])
-
-    const handleChange = (event: any) => {
-        event.preventDefault()
-        setObjValue(event.target.value);
-        const { name, value } = event.target;
-        setObjectiveData(
-            (prevState: any) => ({
-                ...prevState,
-                [name]: value
-            }));
-        adjustTextareaHeight();
-    };
-
-
-    const adjustTextareaHeight = () => {
-        const textarea: any = document.getElementById('resizable-textarea');
-        textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight}px`;
-
-        // Limit height to 10 lines
-        if (textarea.scrollHeight > 10 * parseFloat(getComputedStyle(textarea).lineHeight)) {
-            textarea.style.overflowY = 'scroll';
-            textarea.style.height = `${10 * parseFloat(getComputedStyle(textarea).lineHeight)}px`;
-        } else {
-            textarea.style.overflowY = 'hidden';
-        }
-
-        setTextareaHeight(`${textarea.style.height}`);
-    };
-
-    const loadData = async () => {
-        try {
-            const response = allObjectives?.data?.filter((item: any) => {
-                return item.referenceId === referenceId
-            })
-            setObjectiveData(response[0])
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    useEffect(() => {
-        loadData()
-    }, [
-        allObjectives?.data, referenceId
-    ])
-
-
-
-
-    const handleObjectiveSave = handleSubmit(async (values) => {
-        if (objValue === '') {
-            message.error('Please enter objective description')
-            return
-        }
-
-        // check if current objective exist allObjectives using referenceId
-        const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
-        if (currentObjective) {
-            const item = {
-                data: objectiveData,
-                url: 'appraisalperfobjectives'
-            }
-            console.log('objItem: ', item)
-            updateData(item)
-            return
-        } else {
-            const item = {
-                data: {
-                    description: values.description,
-                    tenantId: 'test',
-                    referenceId: referenceId,
-                },
-                url: 'appraisalperfobjectives',
-            }
-            console.log('objItem: ', item)
-            postData(item)
-        }
-    })
-
-    const { mutate: postData } = useMutation(postItem, {
-        onSuccess: () => {
-            reset()
-            queryClient.invalidateQueries('appraisalperfobjectives')
-            loadData()
-            message.success('Appraisal objective saved successfully')
-
-        },
-        onError: (error: any) => {
-            console.log('post error: ', error)
-        }
-    })
-
-
-    const { mutate: updateData } = useMutation(updateItem, {
-        onSuccess: () => {
-            reset()
-            loadData()
-            queryClient.invalidateQueries('appraisalperfobjectives')
-            message.success('Appraisal objective updated successfully')
-        },
-        onError: (error) => {
-            console.log('error: ', error)
-        }
-    })
-
-    return (
-        <>
-            <form onSubmit={handleObjectiveSave}>
-                <span className='form-label' >Objectives</span>
-                <textarea
-                    {...register("description")}
-                    id="resizable-textarea"
-                    className="form-control mb-0 mt-2"
-                    defaultValue={objectiveData ? objectiveData?.description : ''}
-                    onChange={handleChange}
-                    style={{ height: textareaHeight }}
-                />
-                <a className='justify-content-end align-items-end d-flex btn text-primary' onClick={() => handleObjectiveSave()}>Save Objective</a>
-            </form>
-        </>
-    )
-}
-
-
-export { ReviewDateComponent, AppraisalObjective, getTimeLeft }
+export { ReviewDateComponent }
