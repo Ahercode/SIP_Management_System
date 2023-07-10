@@ -14,7 +14,7 @@ import { UnitOfMeasure } from '../modules/production/components/setup/employee/U
 import { Paygroups } from '../modules/production/components/setup/employee/Paygroups'
 import { Appraisals } from '../modules/production/components/setup/hr/Appraisals'
 import { ApprovalLevel } from '../modules/production/components/setup/payroll/ApprovalLevel'
-import { Currency } from '../modules/production/components/setup/payroll/Currency'
+import { Category } from '../modules/production/components/setup/payroll/Currency'
 import { Period } from '../modules/production/components/setup/payroll/Period'
 import { Parameter } from '../modules/production/components/setup/hr/Parameter'
 import { AppraisalPerformance } from '../modules/production/components/transactions/hr/AppraisalPerformance'
@@ -44,6 +44,7 @@ import { AppraisalObjectives } from '../modules/production/components/setup/hr/P
 import { ErrorBoundary } from '@ant-design/pro-components'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
 import { NotificationsBoard } from '../modules/production/components/lineManager/NotificationsBoard'
+import { PerformanceBoard } from '../modules/production/components/transactions/hr/PerformanceBoard'
 
 const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -122,8 +123,8 @@ const PrivateRoutes = () => (
       <Route
         path='transaction/hr/appraisal-performance/*'
         element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Appraisal and Performances</PageTitle>
-          <AppraisalPerformance />
+          <PageTitle>Appraisal and Performances</PageTitle>
+          <PerformanceBoard />
         </SuspensedView>} />
 
       {/* setup routes*/}
@@ -182,8 +183,14 @@ const PrivateRoutes = () => (
       <Route
         path='setup/employee/paygroups/*'
         element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Paygroups</PageTitle>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Groups</PageTitle>
           <Paygroups />
+        </SuspensedView>} />
+        
+      <Route
+        path='processes'
+        element={<SuspensedView>
+          <PageTitle >Processes</PageTitle>        
         </SuspensedView>} />
 
 
@@ -219,10 +226,10 @@ const PrivateRoutes = () => (
         </SuspensedView>} />
 
       <Route
-        path='setup/payroll/currency/*'
+        path='setup/employee/categories'
         element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Currencies</PageTitle>
-          <Currency />
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Categories</PageTitle>
+          <Category />
         </SuspensedView>} />
 
       <Route

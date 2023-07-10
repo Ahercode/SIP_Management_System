@@ -153,19 +153,32 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, handleNotific
 
     return (
         <>
-            <div>
-                <Space className="justify-content-end align-items-end d-flex mb-2" >
-                    <Button
-                        onClick={showReviewDateModal}
-                        className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
-                        type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
-                        Add Schedule Date
-                    </Button>
-                </Space>
-                {
-                    loading ? <Skeleton active /> :
-                        <Table columns={reviewDatesColumn} dataSource={gridData} />
-                }
+            <div className='col-9 mb-7'>
+                <div className='d-flex justify-content-between'>
+                    <span className='form-label'>Schedule Dates</span>
+                </div>
+                <div
+                    style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '5px',
+                        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+                    }}
+                    className="border border-gray-400"
+                >
+                    <Space className="justify-content-end align-items-end d-flex mb-2" >
+                        <Button
+                            onClick={showReviewDateModal}
+                            className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
+                            type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
+                            Add Schedule Date
+                        </Button>
+                    </Space>
+                    {
+                        loading ? <Skeleton active /> :
+                            <Table columns={reviewDatesColumn} dataSource={gridData} />
+                    }
+                </div>
             </div>
             <Modal
                 title='Add a schedule date'
@@ -351,7 +364,6 @@ const AppraisalObjective = ({ referenceId }: any) => {
     return (
         <>
             <form onSubmit={handleObjectiveSave}>
-
                 <span className='form-label' >Objectives</span>
                 <textarea
                     {...register("description")}

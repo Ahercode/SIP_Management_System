@@ -132,7 +132,7 @@ const EmployeeEditForm = () => {
   const { data: allEmployees } = useQuery('employees',()=> fetchDocument('employees'), { cacheTime: 5000 })
   // const { data: allDepartments } = useQuery('departments',()=> fetchDepartments(tenantId), { cacheTime: 5000 })
   // const { data: allDivisions } = useQuery('divisions',()=> fetchDivisions(tenantId), { cacheTime: 5000 })
-  // const { data: allCategories } = useQuery('categories',()=> fetchCategories(tenantId), { cacheTime: 5000 })
+  const { data: allCategories } = useQuery('categories',()=> fetchCategories('categories'), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroups', ()=>fetchDocument('paygroups'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle',()=> fetchDocument('jobtitles'), { cacheTime: 5000 })
 
@@ -530,21 +530,21 @@ const EmployeeEditForm = () => {
           {activeTab === 'tab3' &&
             <div className='row col-12'>
                 <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Pay Group</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
                   <select {...register("paygroupId")} value={tempData?.paygroupId} name='paygroupId' onChange={handleChange}  className="form-select form-select-solid" aria-label="Select example">
                     {allPaygroups?.data.map((item: any) => (
                       <option value={item.id}>{item.name}</option>
                     ))}
                   </select>
                 </div>
-                {/* <div className='col-4 mb-7'>
+                <div className='col-4 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
                   <select  {...register("categoryId")} name="categoryId" onChange={handleChange} value={tempData?.categoryId} className="form-select form-select-solid" aria-label="Select example">
                     {allCategories?.data.map((item: any) => (
                       <option value={item.id}>{item.name}</option>
                     ))}
                   </select>
-                </div> */}
+                </div>
                 {/* <div className='col-4 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className=" form-label">Division</label>
                   <select  {...register("divisionId")} name="divisionId" onChange={handleChange} value={tempData?.divisionId} className="form-select form-select-solid" aria-label="Select example">

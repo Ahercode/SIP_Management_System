@@ -1,12 +1,10 @@
-import { Badge, Button, Divider, Modal, Space, Switch, Tabs, TabsProps } from "antd";
-import { NotificationsComponent } from "./NotificationsComponent";
-import { right } from "@popperjs/core";
+import { Badge, Button, Tabs, TabsProps } from "antd";
 import { useState } from "react";
-import { DownLines } from "./DownLines";
 import { useQuery } from "react-query";
-import { fetchDocument } from "../../../../services/ApiCalls";
+import { fetchDocument } from "../../../../../services/ApiCalls";
+import { AppraisalPerformance } from "./AppraisalPerformance";
 
-const NotificationsBoard = () => {
+const PerformanceBoard = () => {
     const [isDownlinesModalOpen, setIsDownlinesModalOpen] = useState(false)
     const { data: downlines, isLoading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
@@ -36,26 +34,26 @@ const NotificationsBoard = () => {
         {
             key: '1',
             label: <>
-                <Badge count={filteredByLineManger?.length} showZero={true} title="Downlines" size="small">
-                    <span>Team</span>
-                </Badge>
+                {/* <Badge count={0} showZero={true} title="Entries" size="small"> */}
+                    <span>Entries</span>
+                {/* </Badge> */}
             </>,
             children: (
                 <>
-                    <DownLines  filteredByLineManger={filteredByLineManger} loading={isLoading} />
+                    <AppraisalPerformance />
                 </>
             ),
         },
         {
             key: '2',
             label: <>
-                <Badge count={filteredObjectives?.length} showZero={true} title="Awaiting approvals" size="small">
-                    <span>Approvals</span>
+                <Badge count={0} showZero={true} title="Requests" size="small">
+                    <span>Requests</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <NotificationsComponent filteredByLineManger={filteredObjectives} loading={objectivesLoading} />
+
                 </>
             ),
         },
@@ -86,7 +84,7 @@ const NotificationsBoard = () => {
                 type="line"
                 items={tabItems}
                 onChange={onTabsChange}
-                // tabBarExtraContent={slot}
+            // tabBarExtraContent={slot}
             />
 
             {/* <Modal
@@ -104,4 +102,5 @@ const NotificationsBoard = () => {
     )
 }
 
-export { NotificationsBoard }
+export { PerformanceBoard };
+

@@ -1,4 +1,4 @@
-import { Skeleton, Table } from "antd"
+import { Skeleton, Table, Tag } from "antd"
 import { useState, useEffect } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
@@ -45,6 +45,13 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             dataIndex: 'employeeId',
             render: (record: any) => {
                 return getEmployeeProperty({ employeeId: `${record}`, fieldName: 'email', allEmployees: allEmployees?.data })
+            }
+        },
+        {
+            title: 'Approval Status',
+            dataIndex: 'status',
+            render: () => {
+                return <Tag color="error">Pending</Tag>
             }
         },
     ]

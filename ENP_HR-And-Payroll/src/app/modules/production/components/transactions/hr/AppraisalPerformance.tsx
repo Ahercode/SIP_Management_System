@@ -450,20 +450,13 @@ const AppraisalPerformance = () => {
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '5px',
-        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-      }}
-    >
+    <div>
       <form onSubmit={submitApplicant}>
         <div style={{ padding: "20px 0px 0 0px" }} className='col-12 row mb-0'>
           <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Paygroup</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Groups</label>
             <select value={selectedPaygroup} onChange={(e) => setSelectedPaygroup(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select paygroup">select paygroup</option>
+              <option value="select paygroup">select employee group</option>
               {allPaygroups?.data.map((item: any) => (
                 <option value={item.id}>{item.name}</option>
               ))}
@@ -507,20 +500,19 @@ const AppraisalPerformance = () => {
           || selectedAppraisalType === "select appraisal type"
           || selectedStartPeriod === "select start period"
           || selectedEndPeriod === "select end period" ? "" :
-          <KTCardBody className='py-4 '>
+          <KTCardBody className='py-4 col'>
             <div className='table-responsive'>
               {
                 <>
-                  <div style={{ padding: "0px 0px 0 0px" }} className='col-12 row mb-0 bg-lightx'>
-                    <div className='col-6 mb-7'>
+                  <div className='col-12 row mb-7'>
+                    <div className='col-3 mb-7'>
                       <AppraisalObjective referenceId={referenceId} />
                     </div>
-                    <div className='col-6 mt-7'>
-                      <button type='button' className='col-6 btn btn-light  border' onClick={showSchedulesModal}>
-                        <KTSVG path='/media/icons/duotune/general/gen014.svg' className='svg-icon-2 me-3' />
-                        View Schedules
-                      </button>
-                    </div>
+                    < ReviewDateComponent
+                      referenceId={referenceId}
+                      selectedAppraisalType={selectedAppraisalType}
+                      handleNotificationSend={() => handleNotificationSend()}
+                    />
                   </div>
                 </>
               }
@@ -574,7 +566,11 @@ const AppraisalPerformance = () => {
                   </Button>,
                 ]}
               >
-                <form onSubmit={submitApplicant}>
+                {
+                  loading ? <Skeleton active /> :
+                  <Table columns={columns} dataSource={dataByID} />
+                }
+                {/* <form onSubmit={submitApplicant}>
                   <hr></hr>
                   <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                     <div className='col-6 mb-3'>
@@ -675,7 +671,7 @@ const AppraisalPerformance = () => {
                     <input {...register("documentUrl")} className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' type="file" />
                   </div>
 
-                </form>
+                </form> */}
               </Modal>
               <Modal
                 title={"Details of ID " + employeeId}
