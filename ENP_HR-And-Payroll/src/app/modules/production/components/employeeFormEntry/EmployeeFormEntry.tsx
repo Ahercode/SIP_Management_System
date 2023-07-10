@@ -334,16 +334,7 @@ const MultiTabForm= () =>{
                   <input type="email" {...register("personalEmail")}  className="form-control form-control-solid" />
                 </div>
               
-              
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Next of kin</label>
-                  <input type="text" {...register("nextOfKin")}  className="form-control form-control-solid" />
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Guarantor</label>
-                  <input type="text" {...register("guarantor")}  className="form-control form-control-solid" />
-                </div>
-              
+            
             </div>
           }
           {/* Administration */}

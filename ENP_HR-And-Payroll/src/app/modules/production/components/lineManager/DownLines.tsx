@@ -54,6 +54,16 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
                 return <Tag color="error">Pending</Tag>
             }
         },
+        {
+            title: 'Action',
+            fixed: 'right',
+            width: 100,
+            render: (_: any, record: any) => (
+                <a onClick={() => {}} className='btn btn-light-warning btn-sm'>
+                    Amend
+                </a>
+            ),
+        },
     ]
 
 
