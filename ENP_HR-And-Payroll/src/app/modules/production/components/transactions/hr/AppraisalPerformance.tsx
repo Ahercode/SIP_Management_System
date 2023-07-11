@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from '../../../../../services/ApiCalls'
 import { getFieldName, getSupervisorData } from '../../ComponentsFactory'
-import {  ReviewDateComponent } from './AppraisalScheduleDates'
+import { ReviewDateComponent } from './AppraisalScheduleDates'
 import "./cusStyle.css"
 import { EmployeeGroups } from './EmployeeGroups'
 import { AppraisalObjective } from './AppraisalObjective'
@@ -198,27 +198,27 @@ const AppraisalPerformance = () => {
 
   const removeEmployeeFromData = (item: any) => {
     setNotificationsGroupData((prev: any) => {
-        return prev.filter((prevItem: any) => {
-            return prevItem !== item
-        })
+      return prev.filter((prevItem: any) => {
+        return prevItem !== item
+      })
     })
-}
+  }
 
-const clearAll = () => {
+  const clearAll = () => {
     setNotificationsGroupData([])
-}
+  }
 
-const setNotificationsEmployeesData = () => {
-  clearAll()
-  const data = allAppraisalsPerfTrans?.data?.filter((item: any) => {
-    return item.referenceId === referenceId
-  })
-  setNotificationsGroupData(data)
-}
+  const setNotificationsEmployeesData = () => {
+    clearAll()
+    const data = allAppraisalsPerfTrans?.data?.filter((item: any) => {
+      return item.referenceId === referenceId
+    })
+    setNotificationsGroupData(data)
+  }
 
   const loadData = async () => {
     setLoading(true)
-    try {      
+    try {
       setReviewDatesData(allReviewdates?.data)
       setNotificationsEmployeesData()
       //find objective with matching referenceId from all objectives
@@ -442,87 +442,84 @@ const setNotificationsEmployeesData = () => {
           || selectedAppraisalType === "select appraisal type"
           || selectedStartPeriod === "select start period"
           || selectedEndPeriod === "select end period" ? "" :
-          <KTCardBody className='py-4 col'>
-            <div className='table-responsive'>
-              {
-                <>
-                  <div className='col-12 row mb-7'>
-                    <div className='col-3 mb-7'>
-                      <AppraisalObjective referenceId={referenceId} />
-                    </div>
-                    < ReviewDateComponent
-                      referenceId={referenceId}
-                      selectedAppraisalType={selectedAppraisalType}
-                      employeesInDataByID={employeesInDataByID}
-                    />
-                  </div>
-                </>
-              }
-              <div className='d-flex justify-content-between'>
-                <Space style={{ marginBottom: 16 }}>
-                  <Input
-                    placeholder='Enter Search Text'
-                    onChange={handleInputChange}
-                    type='text'
-                    allowClear
-                    value={searchText}
-                  />
-                  <Button type='primary' onClick={globalSearch}>
-                    Search
-                  </Button>
-                </Space>
+
+          <div className='table-responsive'>
+            <div className='col-12 row mb-7 py-4'>
+              <div className='col-3 mb-7'>
+                <AppraisalObjective referenceId={referenceId} />
               </div>
-              {
-                loading ? <Skeleton active /> :
-                  <Table columns={columns} dataSource={notificationsGroupData} />
-              }
-              <Modal
-                title={`Employees in ${getFieldName(selectedPaygroup, allPaygroups?.data)}`}
-                open={isModalOpen}
-                onCancel={handleCancel}
-                closable={true}
-                width="1200px"
-                footer={[
-                  <Button key='back' onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={submitApplicant}
-                  >
-                    Submit
-                  </Button>,
-                ]}>
-                <EmployeeGroups allEmployeeGroups={employeeGroupsData} loading={loading} />
-              </Modal>
-              <Modal
-                title={"Details of ID " + employeeId}
-                open={updateModalOpen}
-                onCancel={handleUpdateCancel}
-                closable={true}
-                width="900px"
-                footer={[
-                  <Button key='back' onClick={handleUpdateCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={submitApplicant}
-                  >
-                    Done
-                  </Button>,
-                ]}
-              >
-                <h3>Will be updated soon</h3>
-              </Modal>             
+              < ReviewDateComponent
+                referenceId={referenceId}
+                selectedAppraisalType={selectedAppraisalType}
+                employeesInDataByID={employeesInDataByID}
+              />
             </div>
-          </KTCardBody>
+
+            <div className='d-flex justify-content-between'>
+              <Space style={{ marginBottom: 16 }}>
+                <Input
+                  placeholder='Enter Search Text'
+                  onChange={handleInputChange}
+                  type='text'
+                  allowClear
+                  value={searchText}
+                />
+                <Button type='primary' onClick={globalSearch}>
+                  Search
+                </Button>
+              </Space>
+            </div>
+            {
+              loading ? <Skeleton active /> :
+                <Table columns={columns} dataSource={notificationsGroupData} />
+            }
+            <Modal
+              title={`Employees in ${getFieldName(selectedPaygroup, allPaygroups?.data)}`}
+              open={isModalOpen}
+              onCancel={handleCancel}
+              closable={true}
+              width="1200px"
+              footer={[
+                <Button key='back' onClick={handleCancel}>
+                  Cancel
+                </Button>,
+                <Button
+                  key='submit'
+                  type='primary'
+                  htmlType='submit'
+                  loading={submitLoading}
+                  onClick={submitApplicant}
+                >
+                  Submit
+                </Button>,
+              ]}>
+              <EmployeeGroups allEmployeeGroups={employeeGroupsData} loading={loading} />
+            </Modal>
+            <Modal
+              title={"Details of ID " + employeeId}
+              open={updateModalOpen}
+              onCancel={handleUpdateCancel}
+              closable={true}
+              width="900px"
+              footer={[
+                <Button key='back' onClick={handleUpdateCancel}>
+                  Cancel
+                </Button>,
+                <Button
+                  key='submit'
+                  type='primary'
+                  htmlType='submit'
+                  loading={submitLoading}
+                  onClick={submitApplicant}
+                >
+                  Done
+                </Button>,
+              ]}
+            >
+              <h3>Will be updated soon</h3>
+            </Modal>
+          </div>
+
       }
     </div >
   )

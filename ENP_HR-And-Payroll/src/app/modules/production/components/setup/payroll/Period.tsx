@@ -138,7 +138,7 @@ const Period = () => {
     try {
       // const response = await fetchDocument('Periods')
       const response = periods?.data
-      setGridData(response.data)
+      setGridData(response?.data)
       setLoading(false)
     } catch (error) {
       console.log(error)
@@ -149,7 +149,7 @@ const Period = () => {
     loadData()
   }, [])
 
-  const dataWithIndex = gridData.map((item: any, index) => ({
+  const dataWithIndex = gridData?.map((item: any, index) => ({
     ...item,
     key: index,
   }))

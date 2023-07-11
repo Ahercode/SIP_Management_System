@@ -45,6 +45,7 @@ import { ErrorBoundary } from '@ant-design/pro-components'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
 import { NotificationsBoard } from '../modules/production/components/lineManager/NotificationsBoard'
 import { PerformanceBoard } from '../modules/production/components/transactions/hr/PerformanceBoard'
+import { Processes } from '../modules/production/components/setup/hr/Processes'
 
 const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -190,7 +191,8 @@ const PrivateRoutes = () => (
       <Route
         path='processes'
         element={<SuspensedView>
-          <PageTitle >Processes</PageTitle>        
+          <PageTitle >Processes</PageTitle>   
+          <Processes/>     
         </SuspensedView>} />
 
 

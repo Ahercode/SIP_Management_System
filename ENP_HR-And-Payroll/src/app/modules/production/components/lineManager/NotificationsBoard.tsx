@@ -56,7 +56,7 @@ const NotificationsBoard = () => {
             </>,
             children: (
                 <>
-                    <NotificationsComponent filteredBySubmitted={DummyObjectives?.filter((item: any) => item.status === 'Awaiting approval')} loading={objectivesLoading} />
+                    <NotificationsComponent loading={objectivesLoading} filter={'Awaiting approval'} />
                 </>
             ),
         },
