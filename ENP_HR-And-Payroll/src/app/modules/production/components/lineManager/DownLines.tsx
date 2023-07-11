@@ -11,8 +11,6 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 5000 })
 
 
-
-
     const columns: any = [
         {
             title: 'Id',
@@ -50,8 +48,8 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
         {
             title: 'Approval Status',
             dataIndex: 'status',
-            render: () => {
-                return <Tag color="error">Pending</Tag>
+            render: (text: any) => {
+                return <Tag color={text === "Not Submitted" ? "error" : "purple"}>{text}</Tag>
             }
         },
         {
@@ -59,7 +57,47 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             fixed: 'right',
             width: 100,
             render: (_: any, record: any) => (
-                <a onClick={() => {}} className='btn btn-light-warning btn-sm'>
+                <a onClick={() => { }} className='btn btn-light-info btn-sm'>
+                    Amend
+                </a>
+            ),
+        },
+    ]
+
+    const columns2: any = [
+        {
+            title: 'Id',
+            dataIndex: 'employeeId',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'employeeName',
+        },
+        {
+            title: 'Department',
+            dataIndex: 'department',
+        },
+        {
+            title: 'Job Title',
+            dataIndex: 'jobTitle',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+        },
+        {
+            title: 'Approval Status',
+            dataIndex: 'status', 
+            render: (text: any) => {
+                return <Tag color={text === "Not submitted" ? "error" : "purple"}>{text}</Tag>
+            }
+        },
+        {
+            title: 'Action',
+            fixed: 'right',
+            width: 100,
+            render: (_: any, record: any) => (
+                <a onClick={() => { }} className='btn btn-light-info btn-sm'>
                     Amend
                 </a>
             ),
@@ -71,11 +109,13 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
         <>
             {
                 loading ? <Skeleton active /> :
-                    <Table columns={columns} dataSource={filteredByLineManger} />
+                    <Table columns={columns2} dataSource={filteredByLineManger} />
             }
         </>
     )
 
 }
 
-export {  DownLines }
+
+
+export { DownLines }

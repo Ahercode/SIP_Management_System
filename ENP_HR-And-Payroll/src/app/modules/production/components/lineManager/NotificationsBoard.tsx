@@ -1,5 +1,5 @@
 import { Badge, Button, Divider, Modal, Space, Switch, Tabs, TabsProps } from "antd";
-import { NotificationsComponent } from "./NotificationsComponent";
+import { DummyObjectives, NotificationsComponent } from "./NotificationsComponent";
 import { right } from "@popperjs/core";
 import { useState } from "react";
 import { DownLines } from "./DownLines";
@@ -15,6 +15,7 @@ const NotificationsBoard = () => {
     // filter employeeObjectives by employees in the filteredByLineManger
     const filteredObjectives = employeeObjectives?.data?.filter((item: any) => filteredByLineManger?.map((item: any) => item.employeeId).includes(item.employeeId))
 
+   
 
     const onTabsChange = (key: string) => {
         console.log(key);
@@ -36,26 +37,26 @@ const NotificationsBoard = () => {
         {
             key: '1',
             label: <>
-                <Badge count={filteredByLineManger?.length} showZero={true} title="Downlines" size="small">
+                <Badge count={DummyObjectives?.length} showZero={true} title="Downlines" size="small">
                     <span>Team</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <DownLines  filteredByLineManger={filteredByLineManger} loading={isLoading} />
+                    <DownLines  filteredByLineManger={DummyObjectives} loading={isLoading} />
                 </>
             ),
         },
         {
             key: '2',
             label: <>
-                <Badge count={filteredObjectives?.length} showZero={true} title="Awaiting approvals" size="small">
+                <Badge count={DummyObjectives?.filter((item: any) => item.status === 'Awaiting approval')?.length} showZero={true} title="Awaiting approvals" size="small">
                     <span>Approvals</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <NotificationsComponent filteredByLineManger={filteredObjectives} loading={objectivesLoading} />
+                    <NotificationsComponent filteredBySubmitted={DummyObjectives?.filter((item: any) => item.status === 'Awaiting approval')} loading={objectivesLoading} />
                 </>
             ),
         },
@@ -103,5 +104,6 @@ const NotificationsBoard = () => {
         </div>
     )
 }
+
 
 export { NotificationsBoard }

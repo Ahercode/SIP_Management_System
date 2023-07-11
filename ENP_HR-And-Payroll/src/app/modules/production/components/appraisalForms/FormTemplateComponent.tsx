@@ -11,9 +11,11 @@ import { PrinterOutlined } from '@ant-design/icons';
 
 interface ComponentWrapperProps {
     component: ComponentType<any>;
+    onObjectiveApproved?: any;
+    onObjectiveRejected?: any;
 }
 
-const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component }) => {
+const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component, onObjectiveApproved, onObjectiveRejected }) => {
     const [parametersData, setParametersData] = useState<any>([])
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
@@ -25,7 +27,7 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
     const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
 
 
-    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.id)
+    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const empId = employeeData?.id
 
@@ -88,10 +90,10 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
             {
                 parametersData?.map((item: any) => (
                     <div className="align-items-start mt-7" >
-                        <div className="row align-items-center justify-content-center align-content-center">
-                            <span className=' fs-2 fw-bold mb-5 mt-7'>{item?.name}</span>
-                            <div className="bullet bg-danger me-5"></div>
-                            <span className=' fs-2 fw-bold mb-5 mt-7'>{item?.weight}</span>
+                        <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center">
+                            <span className=' fs-2 fw-bold '>{item?.name}</span>
+                            <div className="bullet bg-danger ms-4"></div>
+                            <span className=' fs-2 ms-4 fw-bold'>{`(${item?.weight}%)`}</span>
                         </div>
 
                         <ErrorBoundary>
@@ -109,10 +111,10 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component })
                             </button>
                         </> :
                         <>
-                            <button type='button' className='btn btn-danger me-3 mt-7' onClick={() => { }}>
+                            <button type='button' className='btn btn-danger me-3 mt-7' onClick={() => onObjectiveRejected()}>
                                 Decline
                             </button>
-                            <button type='button' className='btn btn-success  mt-7' onClick={() => { }}>
+                            <button type='button' className='btn btn-success  mt-7' onClick={() => onObjectiveApproved()}>
                                 Approve
                             </button>
                         </>
