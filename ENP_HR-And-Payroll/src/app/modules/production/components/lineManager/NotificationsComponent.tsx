@@ -1,24 +1,37 @@
-import { Button, Modal, Skeleton, Table, Tag } from "antd"
+import { Button, Modal, Skeleton, Space, Table, Tag } from "antd"
 import { useEffect, useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
 import { ObjectivesForm } from "../appraisalForms/ObjectivesForm "
 import { set, useForm } from "react-hook-form"
+import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
+import { AppraisalFormHeader, AppraisalFormContent } from "../appraisalForms/FormTemplateComponent"
+import { useParams } from "react-router-dom"
+import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 
-const NotificationsComponent = ({ loading, filter }: any) => {
-    const { data: allSubmittedObjectives } = useQuery('employeeObjectives', () => fetchDocument(`employeeObjectives`), { cacheTime: 5000 })
+const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
+
+    const { data: allSubmittedObjectives } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const queryClient = useQueryClient()
-    const [gridData, setGridData] = useState<any>([])
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [employeeName, setEmployeeName] = useState('')
     const [employeeData, setEmployeeData] = useState<any>({})
-    const [prevData, setPrevData] = useState<any>([])
     const [componentData, setComponentData] = useState<any>()
     const [commentModalOpen, setCommentModalOpen] = useState(false)
     const [comment, setComment] = useState('')
     const { reset, register, handleSubmit } = useForm()
+    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+    const [parametersData, setParametersData] = useState<any>([])
 
+    const param: any = useParams();
+    const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
+    const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
+    const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
+
+    const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+    const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
 
     const handleCommentModalCancel = () => {
         setCommentModalOpen(false)
@@ -69,14 +82,18 @@ const NotificationsComponent = ({ loading, filter }: any) => {
         })
         loadData()
         setCommentModalOpen(false)
+        setIsModalOpen(false)
         reset()
         setComment('')
     }
 
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
-        setEmployeeData(record)
+        const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
+        setEmployeeData(employee)
+        console.log('record', employee)
     }
+
 
     const onObjectivesApproved = () => {
         DummyObjectives?.map((item: any) => {
@@ -86,16 +103,19 @@ const NotificationsComponent = ({ loading, filter }: any) => {
             return item
         })
         loadData()
+        setIsModalOpen(false)
     }
 
     const loadData = () => {
-        const data = DummyObjectives?.filter((item: any) => item.status === filter)
+        const data = filteredByObjectives?.filter((item: any) => item?.status === filter)
         setComponentData(data)
+        const parametersResponse = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
+        setParametersData(parametersResponse)
     }
 
     useEffect(() => {
         loadData()
-    }, [componentData])
+    }, [componentData, parameters?.data, employeeData])
 
 
     const onObjectivesRejected = () => {
@@ -138,46 +158,12 @@ const NotificationsComponent = ({ loading, filter }: any) => {
         },
     ]
 
-    const columns2: any = [
-        {
-            title: 'Id',
-            dataIndex: 'employeeId',
-        },
-        {
-            title: 'Name',
-            dataIndex: 'employeeName',
-        },
-
-        {
-            title: 'Job Title',
-            dataIndex: 'jobTitle',
-        },
-
-        {
-            title: 'Approval Status',
-            dataIndex: 'status',
-            render: () => {
-                return <Tag color="error">Pending</Tag>
-            }
-        },
-        {
-            title: 'Action',
-            fixed: 'right',
-            render: (_: any, record: any) => (
-                <a onClick={() => showObjectivesView(record)} className='btn btn-light-info btn-sm'>
-                    View Objectives
-                </a>
-
-            ),
-        },
-    ]
-
 
     return (
         <>
             {
                 loading ? <Skeleton active /> :
-                    <Table columns={columns2} dataSource={componentData} />
+                    <Table columns={columns} dataSource={componentData} />
             }
 
             <Modal
@@ -185,12 +171,23 @@ const NotificationsComponent = ({ loading, filter }: any) => {
                 width={1000}
                 onCancel={handleCancel}
                 closable={true}
-                footer={null}>
-                <ObjectivesForm
-                    onObjectiveApproved={onObjectivesApproved}
-                    onObjectiveRejected={onObjectivesRejected}
-                />
+                footer={
+                    <Space className="mt-7">
+                        <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
+                            Decline
+                        </button>
+                        <button type='button' className='btn btn-success  btn-sm' onClick={onObjectivesApproved}>
+                            Approve
+                        </button>
+                    </Space>
+                }>
+
+                <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
+
+                <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
+
             </Modal>
+            {/* comment modal */}
             <Modal
                 title={`Add a comment for declining objectives`}
                 open={commentModalOpen}
