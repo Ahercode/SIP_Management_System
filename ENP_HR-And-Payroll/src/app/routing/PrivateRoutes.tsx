@@ -1,5 +1,5 @@
 import { FC, Suspense } from 'react'
-import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
+import { Route, Routes, Navigate} from 'react-router-dom'
 import { MasterLayout } from '../../_metronic/layout/MasterLayout'
 import { getCSSVariableValue } from '../../_metronic/assets/ts/_utils'
 import { WithChildren } from '../../_metronic/helpers'
@@ -17,10 +17,7 @@ import { ApprovalLevel } from '../modules/production/components/setup/payroll/Ap
 import { Category } from '../modules/production/components/setup/payroll/Currency'
 import { Period } from '../modules/production/components/setup/payroll/Period'
 import { Parameter } from '../modules/production/components/setup/hr/Parameter'
-import { AppraisalPerformance } from '../modules/production/components/transactions/hr/AppraisalPerformance'
 import { Employee } from '../modules/production/components/employee/Employee'
-
-import { HRDashboardPage } from '../pages/dashboard/HumanResourceDashBoard'
 import { HRDashboardWrapper } from '../pages/dashboard/HumanResourceDashBoard'
 import { MultiTabForm } from '../modules/production/components/employeeFormEntry/EmployeeFormEntry'
 import { EmployeeEditForm } from '../modules/production/components/employeeFormEntry/EmployeeEditForm'
@@ -41,11 +38,13 @@ import { Organogram } from '../modules/production/components/setup/hr/Organogram
 import { OrgLevel } from '../modules/production/components/setup/hr/OrgLevel'
 import { AppraisalDeliverables } from '../modules/production/components/setup/hr/ObjectiveDeliverables'
 import { AppraisalObjectives } from '../modules/production/components/setup/hr/ParameterObjectives'
-import { ErrorBoundary } from '@ant-design/pro-components'
-import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
 import { NotificationsBoard } from '../modules/production/components/lineManager/NotificationsBoard'
 import { PerformanceBoard } from '../modules/production/components/transactions/hr/PerformanceBoard'
 import { Processes } from '../modules/production/components/setup/hr/Processes'
+import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjective/EmployeeObjectivePage'
+import { TestParameter } from '../modules/production/entry/TestParameter'
+import { TestEmployeeObjective } from '../modules/production/entry/TestEmplyeeObjectives'
+import { TestEmployeeDeliverable } from '../modules/production/entry/TestEmployeeDeliverable'
 
 const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -87,6 +86,32 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Entries</PageTitle>
           <MultiTabForm />
         </SuspensedView>} />
+
+      <Route
+        path='employee-objective/*'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Entries</PageTitle>
+          <EmployeeObjectivePage />
+        </SuspensedView>} />
+      <Route
+        path='new-employee-objectives/*'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
+          <TestEmployeeObjective />
+        </SuspensedView>} />
+      <Route
+        path='new-employee-deliverables/*'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Deliverables</PageTitle>
+          <TestEmployeeDeliverable />
+        </SuspensedView>} />
+      <Route
+        path='demo-parameter/*'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Parameters</PageTitle>
+          <TestParameter />
+        </SuspensedView>} />
+
       <Route
         path='employee-edit-form/:id'
         element={<SuspensedView>

@@ -154,12 +154,11 @@ const EmplyeeDetails = () => {
 
   return (
     <div
-      className="col-12"
+      className="col-12 border-gray-400"
       style={{
         backgroundColor: 'white',
         padding: '30px',
         borderRadius: '5px',
-
         boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
       }}
     >
