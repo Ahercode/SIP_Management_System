@@ -63,9 +63,6 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ contentComponent: Compo
 
             <div className='d-flex align-items-end justify-content-end align-content-end' >
                 {footerComponent}
-                {/* <button type='button' className='btn btn-primary me-3 mt-7' onClick={() => { }}>
-                    Done
-                </button> */}
             </div>
         </div>
     )

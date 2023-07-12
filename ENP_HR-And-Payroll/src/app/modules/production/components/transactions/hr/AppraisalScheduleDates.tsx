@@ -52,7 +52,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 return refId?.referenceId === referenceId
             })
             setGridData(response)
-            //find objective with matching referenceId from all objectives
             setLoading(false)
         } catch (error) {
             console.log(error)
@@ -112,20 +111,26 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             title: 'Action',
             render: (record: any) => (
                 <Space>
-                    <Popconfirm
-                        title="Confirm notifcation send"
-                        description={<><span className="ml-4">This action will roll out email notifications to all <br/>employees in the selected employee group</span></>}
-                        onConfirm={handleConfirmNotificationSend}
-                        placement="leftTop"
-                        onCancel={handleNotificationCancel}
-                        className="w-100px"
-                        okText="Send"
-                        cancelText="Cancel"
-                    >
-                        <a className='text-primary me-2'>
-                            Send Notifications
-                        </a>
-                    </Popconfirm>
+                    {
+                        employeesInDataByID?.length > 0 ?
+                            <Popconfirm
+                                title="Confirm notifcation send"
+                                description={<><span className="ml-4">This action will roll out email notifications to all <br />employees in the selected employee group</span></>}
+                                onConfirm={handleConfirmNotificationSend}
+                                placement="leftTop"
+                                onCancel={handleNotificationCancel}
+                                className="w-100px"
+                                okText="Send"
+                                cancelText="Cancel"
+                            >
+                                <a className={'text-primary me-2'}>
+                                    Send Notifications
+                                </a>
+                            </Popconfirm>
+                            : <a className={'text-secondary me-2'}>
+                                Send Notifications
+                            </a>
+                    }
                     <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
                         Delete
                     </a>
@@ -187,9 +192,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         //map throw dataById and return employeeId and name of employee as a new array
         const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
             email: item.email,
-            username: `${item.firstName} ${item.surname}`
+            username: `${item.firstName} ${item.surname}`,
+            employeeId: item.employeeId
         }))
-        console.log('employeeMailAndName: ', employeeMailAndName)
 
         const item = {
             data: {
@@ -199,7 +204,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             },
             url: 'appraisalperftransactions/sendMail',
         }
-        // console.log('email sent: ', item)
+        console.log('email sent: ', item)
         setIsEmailSent(true)
         postData(item)
     }

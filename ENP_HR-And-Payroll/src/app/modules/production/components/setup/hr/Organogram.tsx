@@ -10,7 +10,6 @@ import { Api_Endpoint, fetchDocument, postItem, updateItem } from '../../../../.
 
 const Organogram = () => {
   const [gridData, setGridData] = useState([])
-  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -22,7 +21,7 @@ const Organogram = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
   const { data: allEmployees } = useQuery('employees', async () => await fetchDocument(`employees`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+  const { data: allOrganograms, isLoading: loading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
   const [treeData, setTreeData] = useState<any>([])
   const [showTree, setShowTree] = useState<boolean>(false)
   const queryClient = useQueryClient()
@@ -188,13 +187,12 @@ const Organogram = () => {
   // this filters for only gradeLeaves for the pARAM ID 
 
   const loadData = async () => {
-    setLoading(true)
     try {
       const data = allOrganograms?.data
       setGridData(allOrganograms?.data.filter((item: any) => item.currentLevel === 'Level 0'))
       const td = createEmployeeTree(data)
       setTreeData(td)
-      setLoading(false)
+
     } catch (error) {
       console.log(error)
     }
@@ -228,7 +226,7 @@ const Organogram = () => {
   }
 
 
-  const {mutate: updateData } = useMutation(updateItem, {
+  const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('organograms')
       message.success('Organogram updated successfully')
@@ -237,10 +235,10 @@ const Organogram = () => {
       setIsUpdateModalOpen(false)
       setIsModalOpen(false)
       loadData()
-      setLoading(false)
+
     },
     onError: (error) => {
-      setLoading(false)
+
       console.log('error: ', error)
       message.error('Organogram update failed')
     }
@@ -248,7 +246,6 @@ const Organogram = () => {
 
   const handleUpdate = (e: any) => {
     e.preventDefault()
-    setLoading(true)
     const item: any = {
       data: tempData,
       url: 'organograms'
@@ -277,7 +274,6 @@ const Organogram = () => {
 
 
   const OnSubmit = handleSubmit(async (values) => {
-    setLoading(true)
     const item = {
       data: {
         employeeId: values.employeeId,

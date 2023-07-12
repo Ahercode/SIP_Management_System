@@ -8,9 +8,8 @@ import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
 const OrgLevel = () => {
-  const [gridData, setGridData] = useState([])
-  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
+  const [gridData, setGridData] = useState([])
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const { register, reset, handleSubmit } = useForm()
@@ -24,7 +23,7 @@ const OrgLevel = () => {
   const tenantId = localStorage.getItem('tenant')
   const [supervisorName, setSupervisorName] = useState('')
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+  const { data: allOrganograms, isLoading:loading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
   const [breadcrumbs, setBreadcrumbs]: any = useState<any>([])
   const [treeData, setTreeData] = useState<any>([])
 
@@ -209,7 +208,6 @@ const OrgLevel = () => {
   }
 
   const loadData = async () => {
-    setLoading(true)
     try {
       const response = allOrganograms?.data
       if (param.level === '0') {
@@ -223,10 +221,8 @@ const OrgLevel = () => {
       const filteredBySupervisor = response.filter((item: any) => item?.supervisorId === param.id)
       setGridData(filteredBySupervisor)
       setTreeData(createEmployeeTree(response))
-      setLoading(false)
     } catch (error) {
       console.log(error)
-      setLoading(false)
     }
   }
 
@@ -266,7 +262,6 @@ const OrgLevel = () => {
       loadData()
       setTempData({})
       setIsModalOpen(false)
-      setLoading(false)
     },
     onError: (error) => {
       console.log('error: ', error)
@@ -276,7 +271,6 @@ const OrgLevel = () => {
 
   const handleUpdate = (e: any) => {
     e.preventDefault()
-    setLoading(true)
     const item: any = {
       data: tempData,
       url: 'organograms'
@@ -306,7 +300,6 @@ const OrgLevel = () => {
 
   const url = `${Api_Endpoint}/organograms`
   const OnSubmit = handleSubmit(async (values) => {
-    setLoading(true)
     if (values.employeeId === 'Select') {
       message.error('Please select an employee')
       return
@@ -398,7 +391,7 @@ const OrgLevel = () => {
           </div>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={gridData} loading={loading} />
+              <Table columns={columns} dataSource={gridData} />
           }
           <Modal
             title={isUpdateModalOpen ? 'Update Organogram ' : 'Add Employee to Organogram'}

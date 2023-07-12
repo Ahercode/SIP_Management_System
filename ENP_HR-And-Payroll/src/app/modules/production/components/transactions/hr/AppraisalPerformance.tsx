@@ -92,7 +92,7 @@ const AppraisalPerformance = () => {
       dataIndex: 'employeeId',
       key: 'employeeId',
       render: (text: any) => {
-        return <span className='text-primary'>{getEmployeeCode(text)}</span>
+        return <span className='text-primary'>{text}</span>
       },
       sorter: (a: any, b: any) => {
         if (a.employeeId > b.employeeId) {
@@ -106,10 +106,11 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'First Name',
+      dataIndex: 'firstName',
       key: 'employeeId',
-      render: (row: any) => {
-        return getFirstName(row.employeeId)
-      },
+      // render: (row: any) => {
+      //   return getFirstName(row)
+      // },
       sorter: (a: any, b: any) => {
         if (a.employeeId > b.employeeId) {
           return 1
@@ -122,11 +123,11 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Surname',
-      //   dataIndex: 'surname',
+      dataIndex: 'surname',
       key: "employeeId",
-      render: (row: any) => {
-        return getSurname(row?.employeeId)
-      },
+      // render: (row: any) => {
+      //   return getSurname(employeeId)
+      // },
       sorter: (a: any, b: any) => {
         if (a.surname > b.surname) {
           return 1
@@ -139,8 +140,9 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Job Title',
+      dataIndex: 'jobTitleId',
       render: (row: any) => {
-        return getJobTitle(row.employeeId)
+        return getFieldName(row, allJobTitles?.data)
       },
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
@@ -154,9 +156,10 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Email',
-      render: (row: any) => {
-        return <span className='text-primar'>{getEmail(row.employeeId)}</span>
-      },
+      dataIndex: 'email',
+      // render: (row: any) => {
+      //   return <span className='text-primar'>{getEmail(row.employeeId)}</span>
+      // },
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
           return 1
@@ -201,7 +204,7 @@ const AppraisalPerformance = () => {
             Details
           </a>
           <a onClick={() => removeEmployeeFromData(record)} className='btn btn-light-danger btn-sm'>
-            Delete
+            Remove
           </a>
         </Space>
       ),
@@ -223,8 +226,8 @@ const AppraisalPerformance = () => {
 
   const setNotificationsEmployeesData = () => {
     clearAll()
-    const data = allAppraisalsPerfTrans?.data?.filter((item: any) => {
-      return item.referenceId === referenceId
+    const data = allEmployees?.data?.filter((item: any) => {
+      return item.paygroupId === parseInt(selectedPaygroup)
     })
     setNotificationsGroupData(data)
   }
@@ -467,7 +470,7 @@ const AppraisalPerformance = () => {
               < ReviewDateComponent
                 referenceId={referenceId}
                 selectedAppraisalType={selectedAppraisalType}
-                employeesInDataByID={employeesInDataByID}
+                employeesInDataByID={notificationsGroupData}
               />
             </div>
 

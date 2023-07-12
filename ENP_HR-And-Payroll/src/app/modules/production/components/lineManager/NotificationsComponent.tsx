@@ -82,7 +82,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
             url: 'appraisalobjective'
         }
         setIsObjectiveDeclined(true)
-        updateItem(item)
+        updateData(item)
     }
 
     const showObjectivesView = (record: any) => {
@@ -160,7 +160,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
             queryClient.invalidateQueries('appraisalobjective')
-            message.success(`Objective ${isObjectiveDeclined ? 'declined' : 'approved'}`)
+            message.success(`Changes saved successfully`)
             reset()
             loadData()
             setEmployeeData({})
@@ -168,10 +168,11 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
             setCommentModalOpen(false)
             setIsModalOpen(false)
             setComment('')
+            setIsObjectiveDeclined(false)
         },
         onError: (error) => {
             console.log('error: ', error)
-            message.error(`Objective ${isObjectiveDeclined ? 'decline' : 'approval'} failed`)
+            message.error(`Failed to save changes`)
         }
     })
 
@@ -209,7 +210,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
             </Modal>
             {/* comment modal */}
             <Modal
-                title={`Add a comment for declining objectives`}
+                title={`Add a comment for declining`}
                 open={commentModalOpen}
                 width={800}
                 onCancel={handleCommentModalCancel}

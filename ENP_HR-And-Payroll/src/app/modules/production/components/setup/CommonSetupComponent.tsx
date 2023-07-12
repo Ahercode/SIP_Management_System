@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Skeleton, Space, Table } from "antd"
+import { Button, Input, Modal, Skeleton, Space, Table, message } from "antd"
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useQueryClient, useMutation, useQuery } from "react-query"
@@ -9,7 +9,6 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 // common setup component
 const SetupComponent = (props: any) => {
     const [gridData, setGridData] = useState([])
-    const [loading, setLoading] = useState(false)
     const [searchText, setSearchText] = useState('')
     let [filteredData] = useState([])
     const [submitLoading, setSubmitLoading] = useState(false)
@@ -24,7 +23,7 @@ const SetupComponent = (props: any) => {
     const [detailName, setDetailName] = useState('')
     const [objectivesId, setObjectivesId] = useState<any>()
 
-    const { data: componentData } = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}`), { cacheTime: 5000 })
+    const { data: componentData, isLoading: loading } = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}`), { cacheTime: 5000 })
 
 
     const showModal = () => {
@@ -92,6 +91,19 @@ const SetupComponent = (props: any) => {
                 return 0
             },
         },
+        {
+            title: 'Bonus target',
+            dataIndex: 'binusTarget',
+            sorter: (a: any, b: any) => {
+                if (a.name > b.name) {
+                    return 1
+                }
+                if (b.name > a.name) {
+                    return -1
+                }
+                return 0
+            },
+        },
 
         {
             title: 'Action',
@@ -110,14 +122,16 @@ const SetupComponent = (props: any) => {
         },
     ]
 
+    // remove bonus target from columns if props.data.title is category
+    if (props.data.title === 'Category') {
+        columns.splice(2, 1)
+    }
+
     const loadData = async () => {
-        setLoading(true)
         try {
             const response = componentData?.data
             setGridData(response)
-            setLoading(false)
         } catch (error) {
-            setLoading(false)
             console.log(error)
         }
     }
@@ -156,9 +170,11 @@ const SetupComponent = (props: any) => {
             loadData()
             setIsUpdateModalOpen(false)
             setIsModalOpen(false)
+            message.success(`${props.data.title} updated successfully.`)
         },
         onError: (error) => {
             console.log('error: ', error)
+            message.error(`Error updating ${props.data.title}. Please try again later.`)
         }
     })
 
@@ -181,13 +197,13 @@ const SetupComponent = (props: any) => {
 
 
     const OnSubmit = handleSubmit(async (values) => {
-        setLoading(true)
         const item: any = {
             data: {
                 name: values.name,
                 code: values.code,
-                medicalTypeId: parseInt(param.id),
+                // medicalTypeId: parseInt(param.id),
                 tenantId: tenantId,
+                bonusTarget: values.bonusTarget,
             },
             url: props.data.url
         }
@@ -201,9 +217,11 @@ const SetupComponent = (props: any) => {
             setTempData({})
             loadData()
             setIsModalOpen(false)
+            message.success(`${props.data.title} created successfully`)
         },
         onError: (error) => {
             console.log('post error: ', error)
+            message.error(`Error while creating ${props.data.title}. Please try again later.`)
         }
     })
 
@@ -247,7 +265,7 @@ const SetupComponent = (props: any) => {
                     </div>
 
                     {
-                        loading ? <Skeleton /> :
+                        loading ? <Skeleton active /> :
                             <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
 
                     }
@@ -284,6 +302,13 @@ const SetupComponent = (props: any) => {
                                     <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
                                     <input type="text" {...register("name")} defaultValue={isUpdateModalOpen === true ? tempData.name : ''} onChange={handleChange} className="form-control form-control-solid" />
                                 </div>
+                                {
+                                    props.data.title === 'Category' &&
+                                    <div className=' mb-7'>
+                                        <label htmlFor="exampleFormControlInput1" className="form-label">Bonus Target</label>
+                                        <input type="number" {...register("bonusTarget")} defaultValue={isUpdateModalOpen === true ? tempData.bonusTarget : 0} onChange={handleChange} className="form-control form-control-solid" />
+                                    </div>
+                                }
                             </div>
                         </form>
                     </Modal>
