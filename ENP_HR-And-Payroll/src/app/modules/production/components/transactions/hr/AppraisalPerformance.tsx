@@ -407,9 +407,7 @@ const AppraisalPerformance = () => {
     // postData(item)
   })
 
-
-
-
+  
   return (
     <div>
       <form onSubmit={submitApplicant}>
@@ -444,7 +442,7 @@ const AppraisalPerformance = () => {
           <div className='col-3 mb-7'>
             <label htmlFor="exampleFormControlInput1" className=" form-label">End Period</label>
             <select value={selectedEndPeriod} onChange={(e) => setSelectedEndPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select end period"> select end period</option>
+              <option value="select end period"> Select end period</option>
               {allPeriods?.data.map((item: any) => (
                 <option value={item.id}>{item.name}</option>
               ))}

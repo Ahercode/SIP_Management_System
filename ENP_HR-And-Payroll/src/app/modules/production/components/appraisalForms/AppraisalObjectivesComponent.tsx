@@ -593,6 +593,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                                                 onChange={handleChange}
                                                 className="form-control form-control-solid" />
                                         </div>
+
                                         <div className='mb-7'>
                                             <label htmlFor="exampleFormControlInput1" className="form-label">{`Weight(%)`}</label>
                                             <input
