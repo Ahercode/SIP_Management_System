@@ -1,10 +1,10 @@
 import { SetupComponent } from '../CommonSetupComponent'
 
-const Currency = () => {
+const Category = () => {
   
   const data = {
-    title: 'Currency',
-    url: `Currencies`,
+    title: 'Category',
+    url: `Categories`,
     }
   return (
     <div>
@@ -13,5 +13,5 @@ const Currency = () => {
   )
 }
 
-export { Currency }
+export { Category }
 

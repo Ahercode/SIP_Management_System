@@ -42,7 +42,10 @@ export function AsideMenuMain() {
           title='Employee Details'
         />
         <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={false}
-          icon='/media/icons/duotune/general/gen005.svg' title='Entries' />
+          icon='/media/icons/duotune/general/gen032.svg' title='Performance' />
+
+        <AsideMenuItem to='processes' hasBullet={false}
+          icon='/media/icons/duotune/general/gen022.svg' title='Processes' />
 
         <AsideMenuItem
           to={`notifications-board/lineManger`}
@@ -73,9 +76,11 @@ export function AsideMenuMain() {
           currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
             || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
             || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
-            ? <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/technology/teh004.svg' hasBullet={false}>
+            ? <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/general/gen019.svg' hasBullet={false}>
               <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
-              <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Employee Group' />
+
+              <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Employee Groups' />
+              <AsideMenuItem to='setup/employee/categories' hasBullet={true} title='Categories' />
               <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
               <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='' />
               <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />

@@ -10,7 +10,6 @@ import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from
 const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const [gridData, setGridData] = useState([])
-    const [loading, setLoading] = useState(false)
     const [searchText, setSearchText] = useState('')
     let [filteredData] = useState([])
     const [submitLoading, setSubmitLoading] = useState(false)
@@ -22,15 +21,14 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
     const [secondTempData, setSecondTempData] = useState<any>()
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
     const queryClient = useQueryClient()
-    let [pathName, setPathName] = useState<any>("")
+    const [pathName, setPathName] = useState<any>("")
     const [showDeliverablesEntry, setShowDeliverablesEntry] = useState<any>(false)
     const endPoint = showDeliverablesEntry ? 'appraisaldeliverable' : 'appraisalobjective'
     const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+    const { data: componentData, isLoading: loading } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 5000 })
     const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
     const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    const [objectivesId, setObjectivesId] = useState<any>()
-
-
+    const [objectivesData, setObjectivesData] = useState<any>()
 
     const showModal = () => {
         setIsModalOpen(true)
@@ -59,8 +57,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         }
     })
 
-    const deliverablesEntry = (objectivesId: any) => {
-        setObjectivesId(objectivesId)
+    const deliverablesEntry = (objectivesData: any) => {
+        setObjectivesData(objectivesData)
         setShowDeliverablesEntry(true)
     }
 
@@ -110,7 +108,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
             width: 100,
             render: (_: any, record: any) => (
                 <Space size='middle'>
-                    <a className='btn btn-light-info btn-sm' onClick={() => deliverablesEntry(record.id)} >
+                    <a className='btn btn-light-info btn-sm' onClick={() => deliverablesEntry(record)} >
                         Deliverables
                     </a>
                     {
@@ -222,62 +220,35 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
     const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
 
     const loadData = async () => {
-        setLoading(true)
         try {
-            const response = await fetchDocument(`${endPoint}/tenant/${tenantId}`)
+            const response = componentData?.data
             setGridData(response?.data)
-            setLoading(false)
         } catch (error) {
             console.log(error)
         }
     }
 
     // get data for validation and path name
-    const getItemData = (param: any, data: any) => {
-        const item = data.find((item: any) =>
-            item?.id.toString() === param
+    const getItemData = (fieldProp: any, data: any) => {
+        const item = data?.find((item: any) =>
+            item?.id.toString() === fieldProp
         )
         return item
     }
 
     useEffect(() => {
         (async () => {
-
-            // console.log('objectivesId: ', objectivesId)
-            // console.log('allAppraisalObjectives: ', allAppraisalObjectives?.data)
-            let res = showDeliverablesEntry && getItemData(objectivesId, allAppraisalObjectives?.data)
-            setPathName(res?.name)
+            setPathName(objectivesData?.name)
         })();
         loadData()
-    }, [param, parameterData?.data, objectivesId, showDeliverablesEntry])
+    }, [param, parameterData?.data, objectivesData, showDeliverablesEntry])
 
-    const dataWithIndex = gridData.map((item: any, index) => ({
-        ...item,
-        key: index,
-    }))
 
-    const dataByID = gridData.filter((section: any) => {
+    const dataByID = componentData?.data.filter((section: any) => {
         return !showDeliverablesEntry ?
             section.parameterId === parameterId :
-            section.objectiveId === objectivesId
+            section.objectiveId === objectivesData?.id
     })
-
-    const handleInputChange = (e: any) => {
-        setSearchText(e.target.value)
-        if (e.target.value === '') {
-            loadData()
-        }
-    }
-
-    const globalSearch = () => {
-        // @ts-ignore
-        filteredData = dataWithVehicleNum.filter((value) => {
-            return (
-                value.name.toLowerCase().includes(searchText.toLowerCase())
-            )
-        })
-        setGridData(filteredData)
-    }
 
 
     // to find the sum of the weight of the objectives or deliverables needed for validation
@@ -309,7 +280,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const handleUpdate = async (e: any) => {
         e.preventDefault()
-        const data = showDeliverablesEntry ? getItemData(objectivesId, allAppraisalObjectives?.data) : getItemData(parameterId, parameterData?.data)
+        const data = showDeliverablesEntry ? getItemData(objectivesData, allAppraisalObjectives?.data) : getItemData(parameterId, parameterData?.data)
         // input validation
         if (!showDeliverablesEntry) {
             // make sure all values are filled
@@ -319,7 +290,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 return message.error('Weight cannot be zero or negative')
             } else if (parseInt(tempData.weight) > 100) {
                 message.error('Weight cannot be greater than 100')
-                setLoading(false)
                 return
             }
         } else {
@@ -335,7 +305,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 return message.error('Target cannot be zero or negative')
             } else if (parseInt(tempData.weight) > 100) {
                 message.error('Weight cannot be greater than 100')
-                setLoading(false)
                 return
             }
         }
@@ -415,49 +384,36 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
     }
 
 
-
-
     const OnSubmit = handleSubmit(async (values) => {
-        setLoading(true)
-
         // input validations
         if (showDeliverablesEntry === 'Objectives') {
             // make sure all values are filled
-            // if (!values.name || values.weight === '') {
-            //     message.error('Please fill all fields')
-            //     setLoading(false)
-            //     return
-            // } else
-            if (parseInt(values.weight) <= 0) {
+            if (!values.name || values.weight === '') {
+                message.error('Please fill all fields')
+                return
+            } else if (parseInt(values.weight) <= 0) {
                 message.error('Weight cannot be zero or negative')
-                setLoading(false)
                 return
             } else if (parseInt(values.weight) > 100) {
                 message.error('Weight cannot be greater than 100')
-                setLoading(false)
                 return
             }
 
         } else {
 
             // make sure all values are filled
-            // if (!values.name || !values.subWeight ||
-            //     !values.unitOfMeasure || !values.target) {
-            //     message.error('Please fill all fields')
-            //     setLoading(false)
-            //     return
-            // } else 
-            if (parseInt(values.subWeight) <= 0) {
+            if (!values.name || !values.subWeight ||
+                !values.unitOfMeasure || !values.target) {
+                message.error('Please fill all fields')
+                return
+            } else if (parseInt(values.subWeight) <= 0) {
                 message.error('Sub Weight cannot be zero or negative')
-                setLoading(false)
                 return
             } else if (parseInt(values.target) <= 0) {
                 message.error('Target cannot be zero or negative')
-                setLoading(false)
                 return
             } else if (parseInt(values.weight) > 100) {
                 message.error('Weight cannot be greater than 100')
-                setLoading(false)
                 return
             }
         }
@@ -504,7 +460,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
         if (itemExist) {
             message.error('Item already exist')
-            setLoading(false)
             return
         }
 
@@ -513,7 +468,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         if (showDeliverablesEntry) {
             if (sums > 0) {
                 if (sums + itemToPost.data.subWeight > 100) {
-                    setLoading(false)
                     return message.error(`Total weight for ${pathName} cannot be greater than 100`);
                 } else {
                     postData(itemToPost)
@@ -523,9 +477,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
             }
         } else {
             if (sums > 0) {
-                const data = showDeliverablesEntry ? getItemData(objectivesId, allAppraisalObjectives?.data) : getItemData(parameterId, parameterData?.data)
+                const data = showDeliverablesEntry ? getItemData(objectivesData, allAppraisalObjectives?.data) : getItemData(parameterId, parameterData?.data)
                 if (sums + itemToPost.data.weight > data?.weight) {
-                    setLoading(false)
                     return message.error(`Total weight for ${pathName} cannot be greater than ${data?.weight}`);
                 } else {
                     postData(itemToPost)
@@ -536,7 +489,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         }
     })
 
-    const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
+    const { mutate: postData} = useMutation(postItem, {
         onSuccess: () => {
             queryClient.invalidateQueries(`${endPoint}`)
             reset()
@@ -601,7 +554,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                     </div>
                     {
                         loading ? <Skeleton active /> :
-                            <Table columns={columns} dataSource={dataByID} loading={loading} />
+                            <Table columns={columns} dataSource={dataByID}/>
                     }
                     <Modal
                         title={!showDeliverablesEntry ? isUpdateModalOpen ? `Update Objective` : `Add Objective` : isUpdateModalOpen ? `Update Deliverable` : `Add Deliverable`}
@@ -638,7 +591,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                                                 onChange={handleChange}
                                                 className="form-control form-control-solid" />
                                         </div>
-                                        
+
                                         <div className='mb-7'>
                                             <label htmlFor="exampleFormControlInput1" className="form-label">{`Weight(%)`}</label>
                                             <input

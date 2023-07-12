@@ -272,7 +272,7 @@ const EmplyeeDetails = () => {
         <br />
         <br />
         <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Paygroup: <span style={{ color: "black" }}>{tempData?.paygroupId === null ? " NULL" : paygName}</span></h5>
+          <h5 style={{ color: "GrayText" }}>Employee Group: <span style={{ color: "black" }}>{tempData?.paygroupId === null ? " NULL" : paygName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
           <h5 style={{ color: "GrayText" }}>Category: <span style={{ color: "black" }}>{tempData?.categoryId === null ? " NULL" : catName}</span></h5>
@@ -280,15 +280,15 @@ const EmplyeeDetails = () => {
         <div className='col-3 mb-5'>
           <h5 style={{ color: "GrayText" }}>Division: <span style={{ color: "black" }}>{tempData?.divisionId === null ? " NULL" : divName}</span></h5>
         </div>
-        <div className='col-3 mb-5'>
+        {/* <div className='col-3 mb-5'>
           <h5 style={{ color: "GrayText" }}>Salary Grade: <span style={{ color: "black" }}>{tempData?.gradeId === null ? " NULL" : graName}</span></h5>
-        </div>
+        </div> */}
         <div className='col-3 mb-5'>
           <h5 style={{ color: "GrayText" }}>Department: <span style={{ color: "black" }}>{tempData?.departmentId === null ? " NULL" : depName}</span></h5>
         </div>
-        <div className='col-3 mb-5'>
+        {/* <div className='col-3 mb-5'>
           <h5 style={{ color: "GrayText" }}>Notch: <span style={{ color: "black" }}>{tempData?.notchId === null ? " NULL" : notchName}</span></h5>
-        </div>
+        </div> */}
         <div className='col-3 mb-5'>
           <h5 style={{ color: "GrayText" }}>Unit: <span style={{ color: "black" }}>{tempData?.unitId === null ? " NULL" : uniName}</span></h5>
         </div>

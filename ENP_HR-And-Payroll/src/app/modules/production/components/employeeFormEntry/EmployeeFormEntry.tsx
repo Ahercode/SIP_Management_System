@@ -342,7 +342,7 @@ const MultiTabForm= () =>{
           
             <div className='row col-12'>
               <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Pay Group</label>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
                   <select {...register("paygroupId")} className="form-select form-select-solid" aria-label="Select example">
                   <option>select </option>
                   {allPaygroups?.data.map((item: any) => (

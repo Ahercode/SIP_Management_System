@@ -1,16 +1,14 @@
-import { Skeleton, Table } from "antd"
+import { Skeleton, Table, Tag } from "antd"
 import { useState, useEffect } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
 import { getEmployeePropertyName, getEmployeeProperty } from "../ComponentsFactory"
 
 const DownLines = ({ filteredByLineManger, loading }: any) => {
-    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    // const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 5000 })
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 5000 })
-
-
 
 
     const columns: any = [
@@ -47,8 +45,24 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
                 return getEmployeeProperty({ employeeId: `${record}`, fieldName: 'email', allEmployees: allEmployees?.data })
             }
         },
+        {
+            title: 'Approval Status',
+            dataIndex: 'status',
+            render: (text: any) => {
+                return <Tag color={text === "Not submitted" ? "error" : "purple"}>{text}</Tag>
+            }
+        },
+        {
+            title: 'Action',
+            fixed: 'right',
+            width: 100,
+            render: (_: any, record: any) => (
+                <button disabled={record.status === "Not submitted"} onClick={() => { }} className={record.status === "Not submitted" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
+                    Amend
+                </button>
+            ),
+        },
     ]
-
 
     return (
         <>
@@ -58,7 +72,8 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             }
         </>
     )
-
 }
 
-export {  DownLines }
+
+
+export { DownLines }
