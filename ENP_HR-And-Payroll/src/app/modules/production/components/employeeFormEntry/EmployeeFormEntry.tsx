@@ -160,8 +160,6 @@ const MultiTabForm = () => {
       children: (
         <form onSubmit={OnSUbmit}>
           <div className='row col-12'>
-
-
             <div className=' mb-7 '>
               {
                 previewImage && (
