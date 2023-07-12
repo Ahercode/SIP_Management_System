@@ -9,7 +9,6 @@ import { getFieldName } from '../ComponentsFactory'
 
 const Employee = () => {
   const [gridData, setGridData] = useState<any>([])
-  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -20,7 +19,7 @@ const Employee = () => {
   const tenantId = localStorage.getItem('tenant')
   console.log('tenantId: ', tenantId)
   const queryClient = useQueryClient()
-  const { data: allEmployee, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allEmployee, isLoading: loading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
   const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument('paygroups'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
@@ -296,8 +295,8 @@ const Employee = () => {
             </Space>
           </div>
           {
-            isLoading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataWithIndex} loading={isLoading} />
+            loading ? <Skeleton active /> :
+              <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
           }
         </div>
       </KTCardBody>

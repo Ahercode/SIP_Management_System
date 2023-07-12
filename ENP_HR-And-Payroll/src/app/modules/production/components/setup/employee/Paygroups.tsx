@@ -9,7 +9,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 const Paygroups = () => {
   const [gridData, setGridData] = useState([])
-  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -18,7 +17,7 @@ const Paygroups = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data: allPaygroups, } = useQuery('paygroups', () => fetchDocument("paygroups"), { cacheTime: 5000 })
+  const { data: allPaygroups, isLoading: loading } = useQuery('paygroups', () => fetchDocument("paygroups"), { cacheTime: 5000 })
   const queryClient = useQueryClient()
 
   const tenantId = localStorage.getItem('tenant')
@@ -89,20 +88,7 @@ const Paygroups = () => {
         return 0
       },
     },
-    {
-      title: 'Nunber of Hours',
-      dataIndex: 'numberOfHours',
-      sorter: (a: any, b: any) => {
-        if (a.numberOfHours > b.numberOfHours) {
-          return 1
-        }
-        if (b.numberOfHours > a.numberOfHours) {
-          return -1
-        }
-        return 0
-      },
-    },
-
+  
     {
       title: 'Action',
       fixed: 'right',
@@ -128,11 +114,9 @@ const Paygroups = () => {
 
 
   const loadData = async () => {
-    setLoading(true)
     try {
       const response = allPaygroups?.data
       setGridData(response)
-      setLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -189,7 +173,6 @@ const Paygroups = () => {
 
 
   const OnSUbmit = handleSubmit(async (values) => {
-    setLoading(true)
     const item = {
       data: {
         code: values.code,

@@ -1,4 +1,4 @@
-import { Button, Divider, Modal, Skeleton, Space, Spin, Table, message } from "antd"
+import { Button, Divider, Modal, Popconfirm, Skeleton, Space, Spin, Table, message } from "antd"
 import moment from "moment"
 import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft } from "../../ComponentsFactory"
 import { useEffect, useState } from "react"
@@ -52,7 +52,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 return refId?.referenceId === referenceId
             })
             setGridData(response)
-            //find objective with matching referenceId from all objectives
             setLoading(false)
         } catch (error) {
             console.log(error)
@@ -110,11 +109,28 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         },
         {
             title: 'Action',
-            render: (text: any, record: any) => (
+            render: (record: any) => (
                 <Space>
-                    <a className='text-primary me-2' onClick={showNotificationModal}>
-                        Send Notifications
-                    </a>
+                    {
+                        employeesInDataByID?.length > 0 ?
+                            <Popconfirm
+                                title="Confirm notifcation send"
+                                description={<><span className="ml-4">This action will roll out email notifications to all <br />employees in the selected employee group</span></>}
+                                onConfirm={handleConfirmNotificationSend}
+                                placement="leftTop"
+                                onCancel={handleNotificationCancel}
+                                className="w-100px"
+                                okText="Send"
+                                cancelText="Cancel"
+                            >
+                                <a className={'text-primary me-2'}>
+                                    Send Notifications
+                                </a>
+                            </Popconfirm>
+                            : <a className={'text-secondary me-2'}>
+                                Send Notifications
+                            </a>
+                    }
                     <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
                         Delete
                     </a>
@@ -176,9 +192,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         //map throw dataById and return employeeId and name of employee as a new array
         const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
             email: item.email,
-            username: `${item.firstName} ${item.surname}`
+            username: `${item.firstName} ${item.surname}`,
+            employeeId: item.employeeId
         }))
-        console.log('employeeMailAndName: ', employeeMailAndName)
 
         const item = {
             data: {
@@ -188,7 +204,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             },
             url: 'appraisalperftransactions/sendMail',
         }
-        // console.log('email sent: ', item)
+        console.log('email sent: ', item)
         setIsEmailSent(true)
         postData(item)
     }
@@ -199,28 +215,30 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 <div className='d-flex justify-content-between'>
                     <span className='form-label'>Schedule Dates</span>
                 </div>
-                <div
-                    style={{
-                        backgroundColor: 'white',
-                        padding: '20px',
-                        borderRadius: '5px',
-                        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-                    }}
-                    className="border border-gray-400"
-                >
-                    <Space className="justify-content-end align-items-end d-flex mb-2" >
-                        <Button
-                            onClick={showReviewDateModal}
-                            className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
-                            type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
-                            Add Schedule Date
-                        </Button>
-                    </Space>
-                    {
-                        loading ? <Skeleton active /> :
-                            <Table columns={reviewDatesColumn} dataSource={gridData} />
-                    }
-                </div>
+                <Spin spinning={sendLoading}>
+                    <div
+                        style={{
+                            backgroundColor: 'white',
+                            padding: '20px',
+                            borderRadius: '5px',
+                            boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+                        }}
+                        className="border border-gray-400"
+                    >
+                        <Space className="justify-content-end align-items-end d-flex mb-2" >
+                            <Button
+                                onClick={showReviewDateModal}
+                                className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
+                                type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
+                                Add Schedule Date
+                            </Button>
+                        </Space>
+                        {
+                            loading ? <Skeleton active /> :
+                                <Table columns={reviewDatesColumn} dataSource={gridData} />
+                        }
+                    </div>
+                </Spin>
             </div>
             <Modal
                 title='Add a schedule date'
@@ -285,8 +303,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
             {/* confirm notification roll out modal */}
 
-            <Modal
-                title='Confirm Notification Send'
+            {/* <Modal
+                title='Confirm Notifications Send'
                 open={isNotificationModalOpen}
                 onCancel={handleNotificationCancel}
                 closable={true}
@@ -305,16 +323,26 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                         className='btn btn-danger btn-sm w'>
                                         Cancel
                                     </Button>
-                                    <Button onClick={handleConfirmNotificationSend}
-                                        type='primary'
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}
-                                        className='btn btn-success btn-sm w'>
-                                        Send Notifications
-                                    </Button>
+                                    <Popconfirm
+
+                                        title="Confirm notifcations send"
+                                        description={`This action will roll out email notifications to all employees\n in the selected employee group.`}
+                                        onConfirm={handleConfirmNotificationSend}
+                                        onCancel={handleNotificationCancel}
+                                        okText="Send"
+                                        cancelText="Cancel"
+                                    >
+                                        <Button
+                                            type='primary'
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                            }}
+                                            className='btn btn-success btn-sm w'>
+                                            Send Notifications
+                                        </Button>
+                                    </Popconfirm>
                                 </>
                         }
                     </Space>
@@ -324,11 +352,11 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 <Spin spinning={sendLoading}>
                     <div className='row'>
                         <div className='col-12'>
-                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees in the selected employee group`}</p>
+                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees\n in the selected employee group.`}</p>
                         </div>
                     </div>
                 </Spin>
-            </Modal>
+            </Modal> */}
         </>
     )
 }

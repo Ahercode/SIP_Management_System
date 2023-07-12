@@ -1,25 +1,35 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { Button, Input, Modal, Skeleton, Space, Table } from 'antd'
 import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQueryClient, useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
+import { Api_Endpoint, deleteItem, fetchDocument } from '../../../services/ApiCalls'
 
-const Period = () => {
+const TestEmployeeObjective = () => {
   const [gridData, setGridData] = useState([])
+  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
-  const [form] = Form.useForm()
   const { register, reset, handleSubmit } = useForm()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const param: any = useParams();
+  const navigate = useNavigate();
   const [tempData, setTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
-  const queryClient = useQueryClient()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption2, setSelectedOption2] = useState("");
+  let [appraisalName, setAppraisalName] = useState<any>("")
 
-  const { data: periods, isLoading: loading } = useQuery('periods', () => fetchDocument(`periods`), { cacheTime: 5000 })
+  const { data: Appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
 
+  const handleOptionChange = (event: any) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const tenantId = localStorage.getItem('tenant')
   const showModal = () => {
     setIsModalOpen(true)
   }
@@ -40,20 +50,19 @@ const Period = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData } = useMutation(deleteItem, {
+  const { mutate: deleteData} = useMutation(deleteItem, {
     onSuccess: () => {
-      queryClient.invalidateQueries('periods')
+      queryClient.invalidateQueries('appraisalObjectives')
       loadData()
     },
     onError: (error) => {
       console.log('delete error: ', error)
-      message.error('An error occurred while deleting the record.')
     }
   })
 
   function handleDelete(element: any) {
-    const item = {
-      url: 'Periods',
+    const item:any = {
+      url: 'AppraisalObjective',
       data: element
     }
     deleteData(item)
@@ -61,19 +70,6 @@ const Period = () => {
 
   const columns: any = [
 
-    {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -88,44 +84,35 @@ const Period = () => {
       },
     },
     {
-      title: 'Start Date',
-      dataIndex: 'startDate',
+      title: 'Weight',
+      dataIndex: 'weight',
       sorter: (a: any, b: any) => {
-        if (a.startDate > b.startDate) {
+        if (a.weight > b.weight) {
           return 1
         }
-        if (b.startDate > a.startDate) {
+        if (b.weight > a.weight) {
           return -1
         }
         return 0
       },
     },
-    {
-      title: 'End Date',
-      dataIndex: 'endDate',
-      sorter: (a: any, b: any) => {
-        if (a.endDate > b.endDate) {
-          return 1
-        }
-        if (b.endDate > a.endDate) {
-          return -1
-        }
-        return 0
-      },
-    },
-
     {
       title: 'Action',
       fixed: 'right',
       width: 100,
-      render: (_: any, record: any) => (
+      render: (record: any) => (
         <Space size='middle'>
-          <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+
+          <Link to={`/new-employee-deliverables/${record.id}`}>
+            <span className='btn btn-light-info btn-sm'>Deliverables</span>
+          </Link>
+          {/* <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
-          </a>
+          </a> */}
+
         </Space>
       ),
 
@@ -133,8 +120,10 @@ const Period = () => {
   ]
 
   const loadData = async () => {
+    setLoading(true)
     try {
-      setGridData(periods?.data)
+      setGridData(Appraisalobjectives?.data)
+      setLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -142,15 +131,13 @@ const Period = () => {
 
   useEffect(() => {
     loadData()
-    console.log('girdData: ', gridData)
-  }, [periods?.data])
-
+  }, [])
 
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
     if (e.target.value === '') {
-      loadData()
+      queryClient.invalidateQueries('appraisalObjectives')
     }
   }
 
@@ -164,65 +151,65 @@ const Period = () => {
     setGridData(filteredData)
   }
 
-  const { mutate: updateData } = useMutation(updateItem, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries('periods')
-      reset()
-      setTempData({})
-      loadData()
-      setIsUpdateModalOpen(false)
-      setIsModalOpen(false)
-    },
-    onError: (error) => {
-      console.log('error: ', error)
-    }
-  })
-
-  const handleUpdate = (e: any) => {
-    e.preventDefault()
-    const item = {
-      url: 'Periods',
-      data: tempData
-    }
-    updateData(item)
-    console.log('update: ', item.data)
-  }
+  const queryClient = useQueryClient()
 
   const showUpdateModal = (values: any) => {
-    showModal()
+    setIsModalOpen(true)
     setIsUpdateModalOpen(true)
     setTempData(values);
-    console.log(values)
   }
 
-
-  const OnSubmit = handleSubmit(async (values) => {
-    const endpoint = 'Periods'
-    const item = {
-      data: {
-        code: values.code,
-        name: values.name,
-        startDate: values.startDate,
-        endDate: values.endDate,
-        tenantId: '',
-      },
-      url: endpoint
+  const url = `${Api_Endpoint}/AppraisalObjective`
+  const urlUpdate = `${Api_Endpoint}/AppraisalObjective/${tempData?.id}`
+  const OnSUbmit = handleSubmit(async (values) => {
+    setLoading(true)
+    const data = {
+      tenantId: tenantId,
+      code: values.code,
+      name: values.name,
     }
-    console.log(item.data)
-    postData(item)
-  })
+    const dataUpdate = {
+      id: tempData.id,
+      tenantId: tenantId,
+      code: values.code,
+      name: values.name,
+    }
+    console.log(data)
 
-  const { mutate: postData } = useMutation(postItem, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('periods')
+    const newData = gridData.filter((item: any) => item.code == data.code)
+
+    if (!isUpdateModalOpen) {
+      if (newData.length == 0) {
+        try {
+          const response = await axios.post(url, data)
+          setSubmitLoading(false)
+          reset()
+          setIsModalOpen(false)
+          loadData()
+          queryClient.invalidateQueries('appraisalObjectives')
+          return response.statusText
+        } catch (error: any) {
+          setSubmitLoading(false)
+          return error.statusText
+        }
+      }
+      window.alert("The Code you entered already exist!");
+    }
+
+    try {
+      const response = await axios.put(urlUpdate, dataUpdate)
+      setSubmitLoading(false)
       reset()
-      setTempData({})
-      loadData()
       setIsModalOpen(false)
-    },
-    onError: (error) => {
-      console.log('post error: ', error)
+      setIsUpdateModalOpen(false)
+      loadData()
+      queryClient.invalidateQueries('appraisalObjective')
+      return response.statusText
+    } catch (error: any) {
+      setSubmitLoading(false)
+      return error.statusText
     }
+
   })
 
   return (
@@ -236,6 +223,10 @@ const Period = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
+            <h3 style={{ fontWeight: "bolder" }}>{appraisalName}</h3>
+          <br></br>
+          <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
+          <br></br>
           <div className='d-flex justify-content-between'>
             <Space style={{ marginBottom: 16 }}>
               <Input
@@ -266,9 +257,8 @@ const Period = () => {
               <Table columns={columns} dataSource={gridData} />
           }
           <Modal
-            title={isUpdateModalOpen ? 'Period Update' : 'Period Setup'}
+            title={isUpdateModalOpen ? "Update Objective" : 'Add Objective'}
             open={isModalOpen}
-            width="600px"
             onCancel={handleCancel}
             closable={true}
             footer={[
@@ -280,34 +270,25 @@ const Period = () => {
                 type='primary'
                 htmlType='submit'
                 loading={submitLoading}
-                onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
+                onClick={OnSUbmit}
               >
                 Submit
               </Button>,
             ]}
           >
             <form
-              onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
+              onSubmit={OnSUbmit}
             >
               <hr></hr>
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Code</label>
-                  <input type="text" {...register("code")} value={isUpdateModalOpen === true ? tempData?.code : null} onChange={handleChange} className="form-control form-control-solid" />
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
+                  <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
+
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                  <input type="text" {...register("name")} value={isUpdateModalOpen === true ? tempData?.name : null} onChange={handleChange} className="form-control form-control-solid" />
-                </div>
-                <div className='row'>
-                  <div className='col-6 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className="form-label">Start Date</label>
-                    <input type="date" {...register("startDate")} value={isUpdateModalOpen === true ? tempData?.startDate : null} onChange={handleChange} className="form-control form-control-solid" />
-                  </div>
-                  <div className='col-6 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className="form-label">End Date</label>
-                    <input type="date" {...register("endDate")} value={isUpdateModalOpen === true ? tempData?.endDate : null} onChange={handleChange} className="form-control form-control-solid" />
-                  </div>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Weight </label>
+                  <input type="number" min={0} {...register("weight")} defaultValue={isUpdateModalOpen ? tempData?.weight : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
 
               </div>
@@ -319,4 +300,8 @@ const Period = () => {
   )
 }
 
-export { Period }
+export { TestEmployeeObjective }
+
+
+
+

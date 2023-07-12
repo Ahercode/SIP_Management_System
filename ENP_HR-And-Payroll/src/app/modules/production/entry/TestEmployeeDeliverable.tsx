@@ -1,31 +1,17 @@
-// import { SetupComponent } from '../CommonSetupComponent'
 
-// const Appraisals = () => {
 
-//   const data = {
-//     title: 'Appraisals',
-//     url: 'Appraisals',
-//     }
-//   return (
-//     <div>
-//       < SetupComponent data={data} />    
-//     </div>
-//   )
-// }
-
-// export { Appraisals }
-
-import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
+import { Button, Input, Modal, Skeleton, Space, Table } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument } from '../../../../../services/ApiCalls'
+import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
+import { Api_Endpoint, deleteItem, fetchDocument } from '../../../services/ApiCalls'
 
-const Appraisals = () => {
+const TestEmployeeDeliverable = () => {
   const [gridData, setGridData] = useState([])
+  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -37,8 +23,9 @@ const Appraisals = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
+  let [appraisalName, setAppraisalName] = useState<any>("")
 
-  const { data: allAppraisals, isLoading: loading } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
+  const { data: allAppraisals } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 5000 })
 
   const handleOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
@@ -67,12 +54,11 @@ const Appraisals = () => {
 
   const { mutate: deleteData} = useMutation(deleteItem, {
     onSuccess: () => {
-      queryClient.invalidateQueries('appraisals')
+      queryClient.invalidateQueries('appraisalDeliverables')
       loadData()
     },
     onError: (error) => {
       console.log('delete error: ', error)
-      message.error(`Error deleting Appraisal`)
     }
   })
 
@@ -87,19 +73,6 @@ const Appraisals = () => {
   const columns: any = [
 
     {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
       title: 'Name',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
@@ -113,21 +86,69 @@ const Appraisals = () => {
       },
     },
     {
+      title: 'Description',
+      dataIndex: 'description',
+      sorter: (a: any, b: any) => {
+        if (a.description > b.description) {
+          return 1
+        }
+        if (b.description > a.description) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
+      title: 'Sub Weight',
+      dataIndex: 'subWeight',
+      sorter: (a: any, b: any) => {
+        if (a.subWeight > b.subWeight) {
+          return 1
+        }
+        if (b.subWeight > a.subWeight) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
+      title: 'Unit Of Measure',
+      dataIndex: 'unitOfMeasure',
+      sorter: (a: any, b: any) => {
+        if (a.unitOfMeasure > b.unitOfMeasure) {
+          return 1
+        }
+        if (b.unitOfMeasure > a.unitOfMeasure) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
+      title: 'Target',
+      dataIndex: 'target',
+      sorter: (a: any, b: any) => {
+        if (a.target > b.target) {
+          return 1
+        }
+        if (b.target > a.target) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
       title: 'Action',
       fixed: 'right',
       width: 100,
       render: (record: any) => (
         <Space size='middle'>
-
-          <Link to={`/parameters/${record.id}`}>
-            <span className='btn btn-light-info btn-sm'>Parameters</span>
-          </Link>
-          <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+          {/* <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
-          </a>
+          </a> */}
 
         </Space>
       ),
@@ -136,8 +157,10 @@ const Appraisals = () => {
   ]
 
   const loadData = async () => {
+    setLoading(true)
     try {
       setGridData(allAppraisals?.data)
+      setLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -145,13 +168,13 @@ const Appraisals = () => {
 
   useEffect(() => {
     loadData()
-  }, [allAppraisals?.data])
+  }, [])
 
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
     if (e.target.value === '') {
-      queryClient.invalidateQueries('appraisals')
+      queryClient.invalidateQueries('appraisalDeliverables')
     }
   }
 
@@ -173,9 +196,10 @@ const Appraisals = () => {
     setTempData(values);
   }
 
-  const url = `${Api_Endpoint}/Appraisals`
-  const urlUpdate = `${Api_Endpoint}/Appraisals/${tempData?.id}`
+  const url = `${Api_Endpoint}/AppraisalDeliverable`
+  const urlUpdate = `${Api_Endpoint}/AppraisalDeliverable/${tempData?.id}`
   const OnSUbmit = handleSubmit(async (values) => {
+    setLoading(true)
     const data = {
       tenantId: tenantId,
       code: values.code,
@@ -199,7 +223,7 @@ const Appraisals = () => {
           reset()
           setIsModalOpen(false)
           loadData()
-          queryClient.invalidateQueries('appraisals')
+          queryClient.invalidateQueries('AppraisalDeliverables')
           return response.statusText
         } catch (error: any) {
           setSubmitLoading(false)
@@ -216,7 +240,7 @@ const Appraisals = () => {
       setIsModalOpen(false)
       setIsUpdateModalOpen(false)
       loadData()
-      queryClient.invalidateQueries('appraisals')
+      queryClient.invalidateQueries('appraisalDeliverables')
       return response.statusText
     } catch (error: any) {
       setSubmitLoading(false)
@@ -238,6 +262,10 @@ const Appraisals = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
+        <h3 style={{ fontWeight: "bolder" }}>{appraisalName}</h3>
+          <br></br>
+          <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
+          <br></br>
           <div className='d-flex justify-content-between'>
             <Space style={{ marginBottom: 16 }}>
               <Input
@@ -269,7 +297,7 @@ const Appraisals = () => {
           }
           {/* <Table columns={columns} dataSource={dataByID} loading={loading} /> */}
           <Modal
-            title={isUpdateModalOpen ? "Update Appraisal" : 'Add Appraisal'}
+            title={isUpdateModalOpen ? "Update Deliverable" : 'Add Deliverable'}
             open={isModalOpen}
             onCancel={handleCancel}
             closable={true}
@@ -312,7 +340,7 @@ const Appraisals = () => {
   )
 }
 
-export { Appraisals }
+export { TestEmployeeDeliverable }
 
 
 

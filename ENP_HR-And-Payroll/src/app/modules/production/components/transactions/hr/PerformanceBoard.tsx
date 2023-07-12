@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../../services/ApiCalls";
 import { AppraisalPerformance } from "./AppraisalPerformance";
+import { NotificationsComponent } from "../../lineManager/NotificationsComponent";
 
 const PerformanceBoard = () => {
     const [isDownlinesModalOpen, setIsDownlinesModalOpen] = useState(false)
@@ -13,6 +14,8 @@ const PerformanceBoard = () => {
     // filter employeeObjectives by employees in the filteredByLineManger
     const filteredObjectives = employeeObjectives?.data?.filter((item: any) => filteredByLineManger?.map((item: any) => item.employeeId).includes(item.employeeId))
 
+    // filter objectives by status === 'Awaiting HR Approval'
+    const filteredObjectivesByStatus = filteredObjectives?.filter((item: any) => item.status === 'Awaiting HR Approval')
 
     const onTabsChange = (key: string) => {
         console.log(key);
@@ -35,7 +38,7 @@ const PerformanceBoard = () => {
             key: '1',
             label: <>
                 {/* <Badge count={0} showZero={true} title="Entries" size="small"> */}
-                    <span>Entries</span>
+                <span>Entries</span>
                 {/* </Badge> */}
             </>,
             children: (
@@ -53,7 +56,7 @@ const PerformanceBoard = () => {
             </>,
             children: (
                 <>
-
+                    <NotificationsComponent loading={objectivesLoading} filter={'Awaiting HR Approval'} />
                 </>
             ),
         },
@@ -72,7 +75,8 @@ const PerformanceBoard = () => {
         // },
     ]
     return (
-        <div className='card border border-gray-400 '
+        <div 
+        // className='card border border-gray-400 '
             style={{
                 backgroundColor: 'white',
                 padding: '20px',

@@ -1,17 +1,13 @@
 import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { ENP_URL } from '../../../urls'
-import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
+import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
+import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { set, useForm } from 'react-hook-form'
-import form from 'antd/es/form'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeftOutlined } from "@ant-design/icons"
 
-
-const Parameter = () => {
+const TestParameter = () => {
   const [gridData, setGridData] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -129,9 +125,9 @@ const Parameter = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          {/* <Link to={`/objectives/${record.id}`}>
+          <Link to={`/new-employee-objectives/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Objectives</span>
-          </Link> */}
+          </Link>
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
@@ -157,7 +153,7 @@ const Parameter = () => {
 
 
   const dataByID = tableData?.data?.filter((section: any) => {
-    return section.appraisalId?.toString() === param.id
+    return section.appraisalId?.toString() === '12'
   })
 
   useEffect(() => {
@@ -351,21 +347,6 @@ const Parameter = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-          <Space className='d-flex align-items-center align-content-center mb-3 flex-direction-row' >
-            <Button
-              onClick={() => navigate(-1)}
-              className="btn btn-light-primary me-4"
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                display: 'flex',
-              }}
-              type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
-            />
-            <span className="fw-bold text-gray-600 d-block fs-2 mb-3 ">{appraisalName}</span>
-            {/* <> <Breadcrumb separator=">" items={breadcrumbs} className="mb-3" /> </> */}
-          </Space>
-          
           <div className='d-flex justify-content-between'>
             <Space style={{ marginBottom: 16 }}>
               <Input
@@ -379,7 +360,7 @@ const Parameter = () => {
                 Search
               </Button>
             </Space>
-            <Space style={{ marginBottom: 16 }}>
+            {/* <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
@@ -389,81 +370,17 @@ const Parameter = () => {
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
               </button>
-            </Space>
+            </Space> */}
           </div>
           {
             isLoading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataByID} />
+              <Table columns={columns} dataSource={dataByID}/>
           }
-          <Modal
-            title={isUpdateModalOpen ? 'Parameter Update' : 'Parameter Setup'}
-            open={isModalOpen}
-            onCancel={handleCancel}
-            closable={true}
-            footer={[
-              <Button key='back' onClick={handleCancel}>
-                Cancel
-              </Button>,
-              <Button
-                key='submit'
-                type='primary'
-                htmlType='submit'
-                onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
-              >
-                Submit
-              </Button>,
-            ]}
-          >
-            <form
-              onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
-            >
-              <hr></hr>
-              <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Code</label>
-                  <input
-                    {...register("code")}
-                    defaultValue={isUpdateModalOpen === true ? tempData.code : ''}
-                    onChange={handleChange}
-                    className="form-control form-control-solid" />
-                </div>
-                <div className='mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                  <input
-                    {...register("name")}
-                    defaultValue={isUpdateModalOpen === true ? tempData.name : ''}
-                    onChange={handleChange}
-                    className="form-control form-control-solid" />
-                </div>
-                <div className='mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">{`Parameter Weight (%)`}</label>
-                  <input
-                    {...register("weight")} type='number'
-                    defaultValue={isUpdateModalOpen === true ? tempData.weight : 0}
-                    onChange={handleChange}
-                    max={100}
-                    min={0}
-                    className="form-control form-control-solid" />
-                </div>
-                {/* <div className='mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Status</label>
-                  <select 
-                    {...register("status")} 
-                    value={isUpdateModalOpen === true ? tempData?.status?.toString() : null}
-                    onChange={handleChange}
-                    className="form-select form-select-solid" aria-label="Select example">
-                    {isUpdateModalOpen === false ? <option>Select status</option> : null}
-                    <option value='0'>Inactive</option>
-                    <option value='1'>Active</option>
-                  </select>
-                </div> */}
-              </div>
-            </form>
-          </Modal>
+          
         </div>
       </KTCardBody>
     </div>
   )
 }
 
-export { Parameter }
+export { TestParameter }

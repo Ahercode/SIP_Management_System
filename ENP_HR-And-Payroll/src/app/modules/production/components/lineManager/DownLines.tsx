@@ -1,16 +1,41 @@
-import { Skeleton, Table, Tag } from "antd"
-import { useState, useEffect } from "react"
+import { Button, Modal, Skeleton, Space, Table, Tag } from "antd"
+import { useState } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
-import { getEmployeePropertyName, getEmployeeProperty } from "../ComponentsFactory"
+import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData } from "../ComponentsFactory"
+import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
+import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
 
 const DownLines = ({ filteredByLineManger, loading }: any) => {
-    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    // const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 5000 })
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 5000 })
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
+    const [employeeData, setEmployeeData] = useState<any>({})
+    const [objectivesData, setObjectivesData] = useState<any>([])
+
+    const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+
+    const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+    const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
+
+    const parametersData = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
+
+
+    const showObjectivesView = (record: any) => {
+        setIsModalOpen(true)
+        const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
+        setEmployeeData(employee)
+        setObjectivesData(record)
+    }
+
+    const handleCancel = () => {
+        setIsModalOpen(false)
+    }
 
 
     const columns: any = [
@@ -50,32 +75,56 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
         {
             title: 'Approval Status',
             dataIndex: 'status',
-            render: () => {
-                return <Tag color="error">Pending</Tag>
+            render: (text: any) => {
+                return <Tag color={text === "Not submitted" ? "error" : "purple"}>{text}</Tag>
             }
         },
         {
             title: 'Action',
             fixed: 'right',
             width: 100,
-            render: (_: any, record: any) => (
-                <a onClick={() => {}} className='btn btn-light-warning btn-sm'>
+            render: (record: any) => (
+                <button disabled={record.status === "Not submitted"} onClick={() => showObjectivesView(record)} className={record.status === "Not submitted" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
                     Amend
-                </a>
+                </button>
             ),
         },
     ]
-
 
     return (
         <>
             {
                 loading ? <Skeleton active /> :
-                    <Table columns={columns} dataSource={filteredByLineManger} />
+                    <Table
+                        columns={columns}
+                        dataSource={filteredByLineManger}
+                        expandable={{
+                            expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.comment}</p>,
+                            rowExpandable: (record) => record.status === 'Rejected',
+                        }}
+                    />
             }
+
+            <Modal
+                open={isModalOpen}
+                width={1000}
+                onCancel={handleCancel}
+                onOk={handleCancel}
+                closable={true}
+                footer={<>
+                <Button onClick={()=>handleCancel()}>Done</Button>
+                </>}
+                >
+                <div className="py-9 px-9">
+                    <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
+
+                    <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
+                </div>
+            </Modal>
         </>
     )
-
 }
 
-export {  DownLines }
+
+
+export { DownLines }

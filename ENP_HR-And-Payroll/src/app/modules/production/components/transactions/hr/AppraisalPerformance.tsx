@@ -5,10 +5,13 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from '../../../../../services/ApiCalls'
 import { getFieldName, getSupervisorData } from '../../ComponentsFactory'
-import {  ReviewDateComponent } from './AppraisalScheduleDates'
+import { ReviewDateComponent } from './AppraisalScheduleDates'
+
 import "./cusStyle.css"
 import { EmployeeGroups } from './EmployeeGroups'
 import { AppraisalObjective } from './AppraisalObjective'
+import { AppraisalObjectivesComponent } from '../../appraisalForms/AppraisalObjectivesComponent'
+import { AppraisalFormHeader, AppraisalFormContent } from '../../appraisalForms/FormTemplateComponent'
 
 
 const AppraisalPerformance = () => {
@@ -20,7 +23,7 @@ const AppraisalPerformance = () => {
   const { reset, register, handleSubmit } = useForm()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false)
   const [employeeRecord, setEmployeeRecord] = useState<any>([])
   const [employeeId, setEmployeeId] = useState<any>()
   const [selectedPaygroup, setSelectedPaygroup] = useState<any>(null);
@@ -52,25 +55,35 @@ const AppraisalPerformance = () => {
   const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions`), { cacheTime: 5000 })
   const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
 
+  const [employeeData, setEmployeeData] = useState<any>({})
+  const [parametersData, setParametersData] = useState<any>([])
+
+  const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
+
+  const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
+  const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
 
 
   const handleCancel = () => {
     reset()
     setEmployeeRecord([])
     setIsModalOpen(false)
-    setUpdateModalOpen(false)
+    setDetailsModalOpen(false)
     loadData()
     setEmployeeGroupsData(dataByID)
   }
 
 
   const handleUpdateCancel = () => {
-    setUpdateModalOpen(false)
+    setDetailsModalOpen(false)
   }
   const showUpdateModal = (record: any) => {
     console.log(record)
-    setUpdateModalOpen(true)
-    setEmployeeId(record)
+    setDetailsModalOpen(true)
+    console.log('record', record)
+    const employee = allEmployees?.data?.find((item: any) => item.id === record?.employeeId)
+    console.log('employee', employee)
+    setEmployeeData(employee)
   }
 
   const columns: any = [
@@ -79,7 +92,7 @@ const AppraisalPerformance = () => {
       dataIndex: 'employeeId',
       key: 'employeeId',
       render: (text: any) => {
-        return <span className='text-primary'>{getEmployeeCode(text)}</span>
+        return <span className='text-primary'>{text}</span>
       },
       sorter: (a: any, b: any) => {
         if (a.employeeId > b.employeeId) {
@@ -93,10 +106,11 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'First Name',
+      dataIndex: 'firstName',
       key: 'employeeId',
-      render: (row: any) => {
-        return getFirstName(row.employeeId)
-      },
+      // render: (row: any) => {
+      //   return getFirstName(row)
+      // },
       sorter: (a: any, b: any) => {
         if (a.employeeId > b.employeeId) {
           return 1
@@ -109,11 +123,11 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Surname',
-      //   dataIndex: 'surname',
+      dataIndex: 'surname',
       key: "employeeId",
-      render: (row: any) => {
-        return getSurname(row?.employeeId)
-      },
+      // render: (row: any) => {
+      //   return getSurname(employeeId)
+      // },
       sorter: (a: any, b: any) => {
         if (a.surname > b.surname) {
           return 1
@@ -126,8 +140,9 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Job Title',
+      dataIndex: 'jobTitleId',
       render: (row: any) => {
-        return getJobTitle(row.employeeId)
+        return getFieldName(row, allJobTitles?.data)
       },
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
@@ -141,9 +156,10 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Email',
-      render: (row: any) => {
-        return <span className='text-primar'>{getEmail(row.employeeId)}</span>
-      },
+      dataIndex: 'email',
+      // render: (row: any) => {
+      //   return <span className='text-primar'>{getEmail(row.employeeId)}</span>
+      // },
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
           return 1
@@ -184,11 +200,11 @@ const AppraisalPerformance = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <a onClick={() => showUpdateModal(record.id)} className='btn btn-light-info btn-sm'>
+          <a onClick={() => showUpdateModal(record)} className='btn btn-light-info btn-sm'>
             Details
           </a>
           <a onClick={() => removeEmployeeFromData(record)} className='btn btn-light-danger btn-sm'>
-            Delete
+            Remove
           </a>
         </Space>
       ),
@@ -198,29 +214,31 @@ const AppraisalPerformance = () => {
 
   const removeEmployeeFromData = (item: any) => {
     setNotificationsGroupData((prev: any) => {
-        return prev.filter((prevItem: any) => {
-            return prevItem !== item
-        })
+      return prev.filter((prevItem: any) => {
+        return prevItem !== item
+      })
     })
-}
+  }
 
-const clearAll = () => {
+  const clearAll = () => {
     setNotificationsGroupData([])
-}
+  }
 
-const setNotificationsEmployeesData = () => {
-  clearAll()
-  const data = allAppraisalsPerfTrans?.data?.filter((item: any) => {
-    return item.referenceId === referenceId
-  })
-  setNotificationsGroupData(data)
-}
+  const setNotificationsEmployeesData = () => {
+    clearAll()
+    const data = allEmployees?.data?.filter((item: any) => {
+      return item.paygroupId === parseInt(selectedPaygroup)
+    })
+    setNotificationsGroupData(data)
+  }
 
   const loadData = async () => {
     setLoading(true)
-    try {      
+    try {
       setReviewDatesData(allReviewdates?.data)
       setNotificationsEmployeesData()
+      const parametersResponse = allParameters?.data?.filter((item: any) => item?.appraisalId === 12)
+      setParametersData(parametersResponse)
       //find objective with matching referenceId from all objectives
       setLoading(false)
     } catch (error) {
@@ -232,9 +250,10 @@ const setNotificationsEmployeesData = () => {
   useEffect(() => {
     loadData()
     setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
+
   }, [
     allJobTitles?.data, allObjectives?.data, allReviewdates?.data, selectedAppraisalType,
-    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId
+    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId, employeeData
   ])
 
   const dataByID: any = allAppraisalsPerfTrans?.data?.filter((refId: any) => {
@@ -388,9 +407,7 @@ const setNotificationsEmployeesData = () => {
     // postData(item)
   })
 
-
-
-
+  
   return (
     <div>
       <form onSubmit={submitApplicant}>
@@ -425,7 +442,7 @@ const setNotificationsEmployeesData = () => {
           <div className='col-3 mb-7'>
             <label htmlFor="exampleFormControlInput1" className=" form-label">End Period</label>
             <select value={selectedEndPeriod} onChange={(e) => setSelectedEndPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select end period"> select end period</option>
+              <option value="select end period"> Select end period</option>
               {allPeriods?.data.map((item: any) => (
                 <option value={item.id}>{item.name}</option>
               ))}
@@ -442,87 +459,74 @@ const setNotificationsEmployeesData = () => {
           || selectedAppraisalType === "select appraisal type"
           || selectedStartPeriod === "select start period"
           || selectedEndPeriod === "select end period" ? "" :
-          <KTCardBody className='py-4 col'>
-            <div className='table-responsive'>
-              {
-                <>
-                  <div className='col-12 row mb-7'>
-                    <div className='col-3 mb-7'>
-                      <AppraisalObjective referenceId={referenceId} />
-                    </div>
-                    < ReviewDateComponent
-                      referenceId={referenceId}
-                      selectedAppraisalType={selectedAppraisalType}
-                      employeesInDataByID={employeesInDataByID}
-                    />
-                  </div>
-                </>
-              }
-              <div className='d-flex justify-content-between'>
-                <Space style={{ marginBottom: 16 }}>
-                  <Input
-                    placeholder='Enter Search Text'
-                    onChange={handleInputChange}
-                    type='text'
-                    allowClear
-                    value={searchText}
-                  />
-                  <Button type='primary' onClick={globalSearch}>
-                    Search
-                  </Button>
-                </Space>
+
+          <div className='table-responsive'>
+            <div className='col-12 row mb-7 py-4'>
+              <div className='col-3 mb-7'>
+                <AppraisalObjective referenceId={referenceId} />
               </div>
-              {
-                loading ? <Skeleton active /> :
-                  <Table columns={columns} dataSource={notificationsGroupData} />
-              }
-              <Modal
-                title={`Employees in ${getFieldName(selectedPaygroup, allPaygroups?.data)}`}
-                open={isModalOpen}
-                onCancel={handleCancel}
-                closable={true}
-                width="1200px"
-                footer={[
-                  <Button key='back' onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={submitApplicant}
-                  >
-                    Submit
-                  </Button>,
-                ]}>
-                <EmployeeGroups allEmployeeGroups={employeeGroupsData} loading={loading} />
-              </Modal>
-              <Modal
-                title={"Details of ID " + employeeId}
-                open={updateModalOpen}
-                onCancel={handleUpdateCancel}
-                closable={true}
-                width="900px"
-                footer={[
-                  <Button key='back' onClick={handleUpdateCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={submitApplicant}
-                  >
-                    Done
-                  </Button>,
-                ]}
-              >
-                <h3>Will be updated soon</h3>
-              </Modal>             
+              < ReviewDateComponent
+                referenceId={referenceId}
+                selectedAppraisalType={selectedAppraisalType}
+                employeesInDataByID={notificationsGroupData}
+              />
             </div>
-          </KTCardBody>
+
+            <div className='d-flex justify-content-between'>
+              <Space style={{ marginBottom: 16 }}>
+                <Input
+                  placeholder='Enter Search Text'
+                  onChange={handleInputChange}
+                  type='text'
+                  allowClear
+                  value={searchText}
+                />
+                <Button type='primary' onClick={globalSearch}>
+                  Search
+                </Button>
+              </Space>
+            </div>
+            {
+              loading ? <Skeleton active /> :
+                <Table columns={columns} dataSource={notificationsGroupData} />
+            }
+            <Modal
+              title={`Employees in ${getFieldName(selectedPaygroup, allPaygroups?.data)}`}
+              open={isModalOpen}
+              onCancel={handleCancel}
+              closable={true}
+              width="1200px"
+              footer={[
+                <Button key='back' onClick={handleCancel}>
+                  Cancel
+                </Button>,
+                <Button
+                  key='submit'
+                  type='primary'
+                  htmlType='submit'
+                  loading={submitLoading}
+                  onClick={submitApplicant}
+                >
+                  Submit
+                </Button>,
+              ]}>
+              <EmployeeGroups allEmployeeGroups={employeeGroupsData} loading={loading} />
+            </Modal>
+            <Modal
+              open={detailsModalOpen}
+              onCancel={handleUpdateCancel}
+              closable={true}
+              width="900px"
+              footer={<Button onClick={handleUpdateCancel}>Done</Button>}
+            >
+              <div className="py-9 px-9">
+                <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
+
+                <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
+              </div>
+            </Modal>
+          </div>
+
       }
     </div >
   )
