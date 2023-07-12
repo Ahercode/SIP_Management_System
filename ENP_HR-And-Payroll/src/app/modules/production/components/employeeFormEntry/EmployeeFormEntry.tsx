@@ -8,7 +8,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Api_Endpoint, fetchDocument } from '../../../../services/ApiCalls';
 import { useAuth } from '../../../auth';
 import "./formStyle.css";
-import { Divider, Tabs, TabsProps } from 'antd';
+import { Button, Divider, Space, Tabs, TabsProps } from 'antd';
+import { ArrowLeftOutlined } from "@ant-design/icons"
+
 
 const MultiTabForm = () => {
   const [formData, setFormData] = useState({});
@@ -156,10 +158,10 @@ const MultiTabForm = () => {
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: 'Details',
+      label: <><span className="fw-bold d-block fs-2">Details</span></>,
       children: (
         <form onSubmit={OnSUbmit}>
-          <div className='row col-12'>
+          <div className='row'>
             <div className=' mb-7 '>
               {
                 previewImage && (
@@ -250,68 +252,68 @@ const MultiTabForm = () => {
 
             <Divider />
 
-            <div className='row col-12'>
-              <div className='row mt-3'>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
-                  <select {...register("paygroupId")} className="form-select form-select-solid" aria-label="Select example">
-                    <option>select </option>
-                    {allPaygroups?.data.map((item: any) => (
-                      <option value={item.id}>{item.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Department</label>
-                  <select {...register("departmentId")} className="form-select form-select-solid" aria-label="Select example">
-                    <option>select </option>
-                    {allDepartments?.data.map((item: any) => (
-                      <option value={item.id}>{item.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
-                  <select {...register("jobTitleId")} className="form-select form-select-solid" aria-label="Select example">
-                    <option>Select </option>
-                    {allJobTitles?.data.map((item: any) => (
-                      <option value={item.id}>{item.name}</option>
-                    ))}
-                  </select>
-                </div>
+
+            <div className='row mt-3'>
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
+                <select {...register("paygroupId")} className="form-select form-select-solid" aria-label="Select example">
+                  <option>select </option>
+                  {allPaygroups?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
               </div>
-              <div className='row mt-3'>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
-                  <select {...register("categoryId")} className="form-select form-select-solid" aria-label="Select example">
-                    <option>Select </option>
-                    {allCategories?.data.map((item: any) => (
-                      <option value={item.id}>{item.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Employment Date</label>
-                  <input type="date" {...register("employmentDate")} className="form-control form-control-solid" />
-
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Job Roles</label>
-                  <textarea  {...register("jobRole")} className="form-control form-control-solid" placeholder='list job roles (seperate each role with a comma)' aria-label="With textarea"></textarea>
-                </div>
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Department</label>
+                <select {...register("departmentId")} className="form-select form-select-solid" aria-label="Select example">
+                  <option>select </option>
+                  {allDepartments?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
+                <select {...register("jobTitleId")} className="form-select form-select-solid" aria-label="Select example">
+                  <option>Select </option>
+                  {allJobTitles?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
+            <div className='row mt-3'>
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
+                <select {...register("categoryId")} className="form-select form-select-solid" aria-label="Select example">
+                  <option>Select </option>
+                  {allCategories?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Employment Date</label>
+                <input type="date" {...register("employmentDate")} className="form-control form-control-solid" />
+
+              </div>
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Job Roles</label>
+                <textarea  {...register("jobRole")} className="form-control form-control-solid" placeholder='list job roles (seperate each role with a comma)' aria-label="With textarea"></textarea>
+              </div>
+            </div>
+
           </div>
         </form>
       ),
     },
     {
       key: '2',
-      label: 'Communications',
+      label: <><span className="fw-bold d-block fs-2">Communications</span></>,
       children: (
         <form onSubmit={OnSUbmit}>
-          <div className='row col-12'>
+          <div className='row'>
             <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Phone Number</label>
               <input type="phone" {...register("phone")} className="form-control form-control-solid" />
@@ -358,223 +360,28 @@ const MultiTabForm = () => {
         backgroundColor: 'white',
         padding: '40px',
         borderRadius: '5px',
-
         boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
       }}
     >
-      <Link to="/employee">
-        <a style={{ fontSize: "16px", fontWeight: "500" }} className='mb-7 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary'>
-          Back to list
-        </a>
-      </Link>
-      {/* <div className="tabs">
-        <button
-          className={`tab ${activeTab === 'tab1' ? 'active' : ''}`}
-          onClick={() => handleTabClick('tab1')}
-        >
-          Details
-        </button>
-        <button
-          className={`tab ${activeTab === 'tab2' ? 'active' : ''}`}
-          onClick={() => handleTabClick('tab2')}
-        >
-          Communication
-        </button>
-      </div>
-      <form onSubmit={OnSUbmit}>
-        <div className="tab-content">
-
-          {activeTab === 'tab1' &&
-            <div className='row col-12'>
-
-
-              <div className=' mb-7 '>
-                {
-                  previewImage && (
-                    <>
-                      <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={previewImage} width={120} height={120}>
-                      </img>
-                      <p style={{
-                        // backgroundColor:"light-blue", 
-
-                        width: "90px",
-                        height: "20px",
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        alignItems: "center",
-                        display: "flex",
-                        justifyContent: "center",
-                        borderRadius: "5px",
-                        marginTop: "-15px",
-                        marginLeft: "10px",
-                        cursor: "pointer",
-                      }}
-                        onClick={clearImage}
-                      >Remove</p>
-                    </>
-
-                  )
-                }{
-                  !previewImage && (
-
-                    <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/ahercode1.jpg`} width={120} height={120}></img>
-                  )
-                }
-                <br></br>
-                <label htmlFor="imageFile" className='btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary'>Upload Picture</label>
-                <input id='imageFile' style={{ visibility: "hidden" }}
-                  onChange={onFileChange}
-                  type="file" />
-              </div>
-
-              <div className='row mt-3'>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Employee ID</label>
-                  <input type="text"  {...register("employeeId")} className="form-control form-control-solid" />
-                </div>
-
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">First Name</label>
-                  <input type="text"  {...register("firstName")} className="form-control form-control-solid" />
-                </div>
-
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Surname</label>
-                  <input type="text" {...register("surname")} className="form-control form-control-solid" />
-                </div>
-              </div>
-              <div className='row mt-3'>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Other Name</label>
-                  <input type="text" {...register("otherName")} className="form-control form-control-solid" />
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Date of Birth</label>
-                  <input type="date" {...register("dob")} className="form-control form-control-solid" />
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
-                  <select {...register("gender")} className="form-select form-select-solid" aria-label="Select example">
-                    <option>select </option>
-                    <option value="MALE">MALE</option>
-                    <option value="FEMALE">FEMALE</option>
-                  </select>
-                </div>
-              </div>
-              <div className='row mt-3'>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
-                  <select {...register("maritalStatus")} className="form-select form-select-solid" aria-label="Select example">
-                    <option>select </option>
-                    <option value="SINGLE">SINGLE</option>
-                    <option value="MARRIED">MARRIED</option>
-                  </select>
-                </div>
-                <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Annual Salary</label>
-                  <input type="number" {...register("annualSalary")} className="form-control form-control-solid" />
-                </div>
-              </div>
-
-              <Divider />
-
-              <div className='row col-12'>
-                <div className='row mt-3'>
-                  <div className='col-4 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
-                    <select {...register("paygroupId")} className="form-select form-select-solid" aria-label="Select example">
-                      <option>select </option>
-                      {allPaygroups?.data.map((item: any) => (
-                        <option value={item.id}>{item.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className='col-4 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className=" form-label">Department</label>
-                    <select {...register("departmentId")} className="form-select form-select-solid" aria-label="Select example">
-                      <option>select </option>
-                      {allDepartments?.data.map((item: any) => (
-                        <option value={item.id}>{item.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className='col-4 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
-                    <select {...register("jobTitleId")} className="form-select form-select-solid" aria-label="Select example">
-                      <option>Select </option>
-                      {allJobTitles?.data.map((item: any) => (
-                        <option value={item.id}>{item.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className='row mt-3'>
-                  <div className='col-4 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
-                    <select {...register("categoryId")} className="form-select form-select-solid" aria-label="Select example">
-                      <option>Select </option>
-                      {allCategories?.data.map((item: any) => (
-                        <option value={item.id}>{item.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className='col-4 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className=" form-label">Employment Date</label>
-                    <input type="date" {...register("employmentDate")} className="form-control form-control-solid" />
-
-                  </div>
-                  <div className='col-4 mb-7'>
-                    <label htmlFor="exampleFormControlInput1" className=" form-label">Job Roles</label>
-                    <textarea  {...register("jobRole")} className="form-control form-control-solid" placeholder='list job roles (seperate each role with a comma)' aria-label="With textarea"></textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-
-          {
-            activeTab === 'tab2' &&
-            <div className='row col-12'>
-              <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Phone Number</label>
-                <input type="phone" {...register("phone")} className="form-control form-control-solid" />
-              </div>
-              <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Alternative Phone number</label>
-                <input type="phone" {...register("alternativePhone")} className="form-control form-control-solid" />
-              </div>
-
-
-              <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Address</label>
-                <input type="text" {...register("address")} className="form-control form-control-solid" />
-              </div>
-              <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Residential Address</label>
-                <input type="text" {...register("residentialAddress")} className="form-control form-control-solid" />
-              </div>
-
-
-              <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Email</label>
-                <input type="email" {...register("email")} className="form-control form-control-solid" />
-              </div>
-              <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Personal Email</label>
-                <input type="email" {...register("personalEmail")} className="form-control form-control-solid" />
-              </div>
-
-
-            </div>
-          }
-        </div>
-        <button className='btn btn-primary' onClick={OnSUbmit} type="submit">Submit</button>
-      </form> */}
+      <Space>
+        <Link to="/employee">
+          <Button
+            className="btn btn-light-primary me-4"
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              display: 'flex',
+            }}
+            type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
+          />
+        </Link>
+        <span className="fw-bold text-gray-600 d-block fs-2">Back</span>
+      </Space>
       <Tabs defaultActiveKey="1"
         type="line"
         items={tabItems}
         onChange={onTabsChange}
+        className='mt-5'
       />
       <div className='d-flex align-items-end justify-content-end align-content-end' >
         <button className='btn btn-primary' onClick={OnSUbmit} type="submit">Submit</button>

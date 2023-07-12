@@ -18,7 +18,7 @@ const Period = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: periods, isLoading: loading } = useQuery('periods', () => fetchDocument(`Periods`), { cacheTime: 5000 })
+  const { data: periods, isLoading: loading } = useQuery('periods', () => fetchDocument(`periods`), { cacheTime: 5000 })
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -134,9 +134,7 @@ const Period = () => {
 
   const loadData = async () => {
     try {
-      // const response = await fetchDocument('Periods')
-      const response = periods?.data
-      setGridData(response?.data)
+      setGridData(periods?.data)
     } catch (error) {
       console.log(error)
     }
@@ -144,12 +142,10 @@ const Period = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+    console.log('girdData: ', gridData)
+  }, [periods?.data])
 
-  const dataWithIndex = gridData?.map((item: any, index) => ({
-    ...item,
-    key: index,
-  }))
+
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
@@ -267,7 +263,7 @@ const Period = () => {
           </div>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataWithIndex} />
+              <Table columns={columns} dataSource={gridData} />
           }
           <Modal
             title={isUpdateModalOpen ? 'Period Update' : 'Period Setup'}

@@ -491,7 +491,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         }
     })
 
-    const { mutate: postData} = useMutation(postItem, {
+    const { mutate: postData } = useMutation(postItem, {
         onSuccess: () => {
             queryClient.invalidateQueries(`${endPoint}`)
             reset()
@@ -536,7 +536,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                                                 justifyContent: 'center',
                                                 display: 'flex',
                                             }}
-                                            type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'} />
+                                            type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
+                                        />
                                     </>
                                 }
                                 <span className="fw-bold text-gray-600 d-block fs-2">{!showDeliverablesEntry ? `Objectives` : `${pathName}`}</span>
@@ -556,7 +557,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                     </div>
                     {
                         loading ? <Skeleton active /> :
-                            <Table columns={columns} dataSource={dataByID}/>
+                            <Table columns={columns} dataSource={dataByID} />
                     }
                     <Modal
                         title={!showDeliverablesEntry ? isUpdateModalOpen ? `Update Objective` : `Add Objective` : isUpdateModalOpen ? `Update Deliverable` : `Add Deliverable`}
