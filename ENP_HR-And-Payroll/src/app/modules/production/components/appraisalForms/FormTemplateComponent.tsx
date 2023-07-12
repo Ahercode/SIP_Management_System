@@ -19,15 +19,15 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component}) 
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
     const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
-    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
+    const { data: allEmployees } = useQuery('employees', () => fetchDocument("employees"), { cacheTime: 5000 })
     const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
 
 
-    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.id)
+    const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const empId = employeeData?.id
-
+    
     const lineManager = getSupervisorData({ employeeId: empId, allEmployees, allOrganograms })
 
     const loadData = async () => {

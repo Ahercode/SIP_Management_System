@@ -75,8 +75,9 @@ export function AsideMenuMain() {
             || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
             ? <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/technology/teh004.svg' hasBullet={false}>
               <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
-              <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Paygroups' />
+              <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Employee Group' />
               <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
+              <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='' />
               <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
               <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
               <AsideMenuItem to='setup/employee/unitOfMeasure' hasBullet={true} title='Units of Measure' />
