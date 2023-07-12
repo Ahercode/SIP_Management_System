@@ -4,7 +4,7 @@ const JobTitle = () => {
 
   const data = {
     title: 'Job Titles',
-    url: 'JobTitles',
+    url: 'jobtitles',
   }
 
   return (

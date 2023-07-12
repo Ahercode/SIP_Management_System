@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -47,6 +47,7 @@ const Period = () => {
     },
     onError: (error) => {
       console.log('delete error: ', error)
+      message.error('An error occurred while deleting the record.')
     }
   })
 
@@ -125,7 +126,6 @@ const Period = () => {
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
           </a>
-
         </Space>
       ),
 

@@ -88,20 +88,7 @@ const Paygroups = () => {
         return 0
       },
     },
-    {
-      title: 'Nunber of Hours',
-      dataIndex: 'numberOfHours',
-      sorter: (a: any, b: any) => {
-        if (a.numberOfHours > b.numberOfHours) {
-          return 1
-        }
-        if (b.numberOfHours > a.numberOfHours) {
-          return -1
-        }
-        return 0
-      },
-    },
-
+  
     {
       title: 'Action',
       fixed: 'right',

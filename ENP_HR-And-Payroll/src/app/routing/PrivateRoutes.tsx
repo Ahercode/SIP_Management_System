@@ -14,7 +14,7 @@ import { UnitOfMeasure } from '../modules/production/components/setup/employee/U
 import { Paygroups } from '../modules/production/components/setup/employee/Paygroups'
 import { Appraisals } from '../modules/production/components/setup/hr/Appraisals'
 import { ApprovalLevel } from '../modules/production/components/setup/payroll/ApprovalLevel'
-import { Category } from '../modules/production/components/setup/payroll/Currency'
+import { Category } from '../modules/production/components/setup/payroll/Category'
 import { Period } from '../modules/production/components/setup/payroll/Period'
 import { Parameter } from '../modules/production/components/setup/hr/Parameter'
 import { AppraisalPerformance } from '../modules/production/components/transactions/hr/AppraisalPerformance'

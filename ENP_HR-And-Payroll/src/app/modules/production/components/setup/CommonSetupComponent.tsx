@@ -93,7 +93,7 @@ const SetupComponent = (props: any) => {
         },
         {
             title: 'Bonus target',
-            dataIndex: 'binusTarget',
+            dataIndex: 'bonusTarget',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
                     return 1
@@ -123,7 +123,7 @@ const SetupComponent = (props: any) => {
     ]
 
     // remove bonus target from columns if props.data.title is category
-    if (props.data.title === 'Category') {
+    if (props.data.title !== 'Category') {
         columns.splice(2, 1)
     }
 
@@ -204,6 +204,7 @@ const SetupComponent = (props: any) => {
                 // medicalTypeId: parseInt(param.id),
                 tenantId: tenantId,
                 bonusTarget: values.bonusTarget,
+                weight: values.weight,
             },
             url: props.data.url
         }
@@ -304,10 +305,16 @@ const SetupComponent = (props: any) => {
                                 </div>
                                 {
                                     props.data.title === 'Category' &&
-                                    <div className=' mb-7'>
-                                        <label htmlFor="exampleFormControlInput1" className="form-label">Bonus Target</label>
-                                        <input type="number" {...register("bonusTarget")} defaultValue={isUpdateModalOpen === true ? tempData.bonusTarget : 0} onChange={handleChange} className="form-control form-control-solid" />
-                                    </div>
+                                    <>
+                                        <div className=' mb-7'>
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Bonus Target</label>
+                                            <input type="number" {...register("bonusTarget")} defaultValue={isUpdateModalOpen === true ? tempData.bonusTarget : 0} onChange={handleChange} className="form-control form-control-solid" />
+                                        </div>
+                                        <div className=' mb-7'>
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Weight</label>
+                                            <input type="number" {...register("weight")} defaultValue={isUpdateModalOpen === true ? tempData.bonusTarget : 0} onChange={handleChange} className="form-control form-control-solid" />
+                                        </div>
+                                    </>
                                 }
                             </div>
                         </form>

@@ -27,7 +27,7 @@ const Processes = () => {
             }
         },
         {
-            title: 'Count',
+            title: 'Number of Employees',
             dataIndex: 'count',
             render: (record: any) => {
                 return record?.count

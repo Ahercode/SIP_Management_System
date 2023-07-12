@@ -73,7 +73,8 @@ const NotificationsBoard = () => {
         // },
     ]
     return (
-        <div className='card border border-gray-400 '
+        <div 
+        // className='card border border-gray-400 '
             style={{
                 backgroundColor: 'white',
                 padding: '20px',
