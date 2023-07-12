@@ -10,9 +10,8 @@ import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 import { PrinterOutlined } from '@ant-design/icons';
 
 interface ComponentWrapperProps {
-    component: ComponentType<any>;
-    onObjectiveApproved?: any;
-    onObjectiveRejected?: any;
+    contentComponent: ComponentType<any>;
+    footerComponent: any
 }
 
 interface ContentProps {
@@ -20,7 +19,7 @@ interface ContentProps {
     parametersData: any;
 }
 
-const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component, onObjectiveApproved, onObjectiveRejected }) => {
+const FormTemplate: React.FC<ComponentWrapperProps> = ({ contentComponent: Component, footerComponent, }) => {
     const [parametersData, setParametersData] = useState<any>([])
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
@@ -50,51 +49,29 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ component: Component, o
         loadData()
     }, [parameters?.data, appraisalobjective?.data, appraisaldeliverable?.data])
 
-    const style = param?.id !== 'lineManger' ? {
-        backgroundColor: 'white',
-        padding: '40px',
-        borderRadius: '5px',
-        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-        margin: '40px'
-    } : {
-        backgroundColor: 'transparent',
-        padding: '0px',
-        borderRadius: '0px',
-        margin: '20px'
-    }
-
     return (
-        <div style={style} >
+        <div style={{
+            backgroundColor: 'white',
+            padding: '40px',
+            borderRadius: '5px',
+            boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+            margin: '40px'
+        }} >
             <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
 
             <AppraisalFormContent component={Component} parametersData={parametersData} />
 
             <div className='d-flex align-items-end justify-content-end align-content-end' >
-                <button type='button' className='btn btn-primary me-3 mt-7' onClick={() => { }}>
+                {footerComponent}
+                {/* <button type='button' className='btn btn-primary me-3 mt-7' onClick={() => { }}>
                     Done
-                </button>
+                </button> */}
             </div>
         </div>
     )
 }
 
 const AppraisalFormHeader = ({ employeeData, department, lineManager }: any) => {
-    // const [parametersData, setParametersData] = useState<any>([])
-    // const param: any = useParams();
-    // const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
-    // const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
-    // const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    // const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
-    // const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
-    // const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
-    // const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
-
-
-    // const employeeData = allEmployees?.data?.find((employee: any) => employee.employeeId === param?.employeeId)
-    // const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
-    // const empId = employeeData?.id
-    // const lineManager = getSupervisorData({ employeeId: empId, allEmployees, allOrganograms })
-
     return (
         <div className="d-flex flex-column align-items-start mb-5">
             <div className="d-flex justify-content-between flex-direction-row align-items-center align-self-stretch" >

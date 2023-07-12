@@ -110,13 +110,15 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         },
         {
             title: 'Action',
-            render: (text: any, record: any) => (
+            render: (record: any) => (
                 <Space>
                     <Popconfirm
                         title="Confirm notifcation send"
-                        description={`This action will roll out email ${<br />}notifications to all employees in the selected employee group`}
+                        description={<><span className="ml-4">This action will roll out email notifications to all <br/>employees in the selected employee group</span></>}
                         onConfirm={handleConfirmNotificationSend}
+                        placement="leftTop"
                         onCancel={handleNotificationCancel}
+                        className="w-100px"
                         okText="Send"
                         cancelText="Cancel"
                     >
@@ -296,8 +298,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
             {/* confirm notification roll out modal */}
 
-            <Modal
-                title='Confirm Notification Send'
+            {/* <Modal
+                title='Confirm Notifications Send'
                 open={isNotificationModalOpen}
                 onCancel={handleNotificationCancel}
                 closable={true}
@@ -317,8 +319,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                         Cancel
                                     </Button>
                                     <Popconfirm
-                                        title="Confirm notifcation send"
-                                        description="This action will roll out email notifications to all employees in the selected employee group"
+
+                                        title="Confirm notifcations send"
+                                        description={`This action will roll out email notifications to all employees\n in the selected employee group.`}
                                         onConfirm={handleConfirmNotificationSend}
                                         onCancel={handleNotificationCancel}
                                         okText="Send"
@@ -344,11 +347,11 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 <Spin spinning={sendLoading}>
                     <div className='row'>
                         <div className='col-12'>
-                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees in the selected employee group`}</p>
+                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees\n in the selected employee group.`}</p>
                         </div>
                     </div>
                 </Spin>
-            </Modal>
+            </Modal> */}
         </>
     )
 }

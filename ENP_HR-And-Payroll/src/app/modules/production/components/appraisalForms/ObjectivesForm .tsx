@@ -1,18 +1,19 @@
+import { Button } from "antd";
 import { AppraisalObjectivesComponent } from "./AppraisalObjectivesComponent"
 import { FormTemplate } from "./FormTemplateComponent"
 
-interface ObjectivesWrapperProps {
-    onObjectiveApproved?: any;
-    onObjectiveRejected?: any;
-}
 
-const ObjectivesForm: React.FC<ObjectivesWrapperProps> = ({ onObjectiveApproved, onObjectiveRejected }) => {
+const ObjectivesForm = () => {
+
     return (
         <div>
             <FormTemplate
-                component={AppraisalObjectivesComponent}
-                onObjectiveApproved={onObjectiveApproved}
-                onObjectiveRejected={onObjectiveRejected}
+                contentComponent={AppraisalObjectivesComponent}
+                footerComponent={
+                    <button type='button' className='btn btn-primary me-3 mt-7' onClick={() => { }}>
+                    Done
+                </button>
+                }
             />
         </div>
     )

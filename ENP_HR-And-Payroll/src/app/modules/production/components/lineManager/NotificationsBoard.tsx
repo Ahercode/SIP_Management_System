@@ -1,10 +1,9 @@
-import { Badge, Button, Divider, Modal, Space, Switch, Tabs, TabsProps } from "antd";
-import { DummyObjectives, NotificationsComponent } from "./NotificationsComponent";
-import { right } from "@popperjs/core";
+import { Badge, Tabs, TabsProps } from "antd";
 import { useEffect, useState } from "react";
-import { DownLines } from "./DownLines";
 import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../services/ApiCalls";
+import { DownLines } from "./DownLines";
+import { NotificationsComponent } from "./NotificationsComponent";
 
 const NotificationsBoard = () => {
     const { data: downlines, isLoading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
@@ -105,4 +104,4 @@ const NotificationsBoard = () => {
 }
 
 
-export { NotificationsBoard }
+export { NotificationsBoard };
