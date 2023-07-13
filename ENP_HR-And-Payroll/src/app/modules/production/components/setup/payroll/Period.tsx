@@ -243,9 +243,9 @@ const Period = () => {
                 onChange={handleInputChange}
                 type='text'
                 allowClear
-                value={searchText}
+                value={searchText} size='large'
               />
-              <Button type='primary' onClick={globalSearch}>
+              <Button type='primary' onClick={globalSearch} size='large'>
                 Search
               </Button>
             </Space>

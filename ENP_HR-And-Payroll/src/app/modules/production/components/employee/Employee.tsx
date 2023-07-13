@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName } from '../ComponentsFactory'
+import { size } from '@devexpress/analytics-core/analytics-diagram'
 
 
 const Employee = () => {
@@ -45,7 +46,7 @@ const Employee = () => {
     },
     onError: (error) => {
       console.log('delete error: ', error)
-      message.error('Error deleting record')
+      message.error('Error deleting employee')
     }
   })
 
@@ -57,76 +58,92 @@ const Employee = () => {
     deleteData(item)
   }
 
+
+
   const columns: any = [
     {
       title: 'Profile',
       key: 'imageUrl',
+      fixed: 'left',
+      width: 270,
       render: (row: any) => {
-
         return (
-          row.imageUrl !== null ?
-            <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img> :
-            <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
+          <EmployeeProfile employee={row} />
+          // row.imageUrl !== null ?
+          //   <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img> :
+          //   <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
         )
       }
     },
-    {
-      title: 'EmployeeID',
-      dataIndex: 'employeeId',
-      sorter: (a: any, b: any) => {
-        if (a.employeeId > b.employeeId) {
-          return 1
-        }
-        if (b.employeeId > a.employeeId) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'First Name',
-      dataIndex: 'firstName',
-      sorter: (a: any, b: any) => {
-        if (a.firstName > b.firstName) {
-          return 1
-        }
-        if (b.firstName > a.firstName) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Surname',
-      dataIndex: 'surname',
-      sorter: (a: any, b: any) => {
-        if (a.surname > b.surname) {
-          return 1
-        }
-        if (b.surname > a.surname) {
-          return -1
-        }
-        return 0
-      },
-    },
-
     // {
-    //   title: 'Gender',
-    //   dataIndex: 'gender',
+    //   title: 'ID',
+    //   dataIndex: 'employeeId',
+    //   fixed: 'left',
+    //   width: 100,
+    //   render: (text: any) => {
+    //     return (<span className='badge badge-primary flex-wrap'>{text}</span>)
+    //   },
     //   sorter: (a: any, b: any) => {
-    //     if (a.gender > b.gender) {
+    //     if (a.employeeId > b.employeeId) {
     //       return 1
     //     }
-    //     if (b.gender > a.gender) {
+    //     if (b.employeeId > a.employeeId) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
+    // {
+    //   title: 'First Name',
+    //   dataIndex: 'firstName',
+    //   width: 120,
+    //   sorter: (a: any, b: any) => {
+    //     if (a.firstName > b.firstName) {
+    //       return 1
+    //     }
+    //     if (b.firstName > a.firstName) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
+
+    // {
+    //   title: 'Surname',
+    //   dataIndex: 'surname',
+    //   width: 120,
+    //   sorter: (a: any, b: any) => {
+    //     if (a.surname > b.surname) {
+    //       return 1
+    //     }
+    //     if (b.surname > a.surname) {
     //       return -1
     //     }
     //     return 0
     //   },
     // },
     {
+      title: 'Email',
+      dataIndex: 'email',
+      // width: 180,
+      key: 'email',
+      // render: (row: any) => {
+      //   return <a href={`mailto:${row}`}>{row}</a>
+      // },
+      sorter: (a: any, b: any) => {
+        if (a.email > b.email) {
+          return 1
+        }
+        if (b.email > a.email) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
       title: 'Paygroup',
       key: 'paygroupId',
+      // width: 120,
       render: (row: any) => {
         return getFieldName(row.paygroupId, allPaygroups?.data)
       },
@@ -141,23 +158,10 @@ const Employee = () => {
       },
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      sorter: (a: any, b: any) => {
-        if (a.email > b.email) {
-          return 1
-        }
-        if (b.email > a.email) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
       title: 'job Title',
       dataIndex: 'jobTitleId',
       key: 'jobTitle',
+      // width: 140,
       render: (row: any) => {
         return getFieldName(row, allJobTitles?.data)
       },
@@ -175,6 +179,7 @@ const Employee = () => {
       title: 'Department',
       dataIndex: 'departmentId',
       key: 'departmentId',
+      // width: 120,
       render: (row: any) => {
         return getFieldName(row, allDepartments?.data)
       },
@@ -192,6 +197,10 @@ const Employee = () => {
     {
       title: 'Phone',
       dataIndex: 'phone',
+      // width: 120,
+      render: (row: any) => {
+        return <a href={`tel:${row}`}>{row}</a>
+      },
       sorter: (a: any, b: any) => {
         if (a.phone > b.phone) {
           return 1
@@ -206,15 +215,18 @@ const Employee = () => {
     {
       title: 'Action',
       fixed: 'right',
-      width: 100,
+      width: 270,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <Link to={`/employee-edit-form/${record.id}`}>
-            <span className='btn btn-light-info btn-sm'>Update</span>
-          </Link>
           <Link to={`/employee-details/${record.id}`}>
             <span className='btn btn-light-success btn-sm'>Details</span>
           </Link>
+          <Link to={`/employee-edit-form/${record.id}`}>
+            <span className='btn btn-light-info btn-sm'>Update</span>
+          </Link>
+          <a className='btn btn-light-danger btn-sm' onClick={() => handleDelete(record)}>
+            Delete
+          </a>
         </Space>
       ),
 
@@ -257,7 +269,7 @@ const Employee = () => {
   }
 
   return (
-    <div
+    <div className='card'
       style={{
         backgroundColor: 'white',
         padding: '20px',
@@ -265,22 +277,22 @@ const Employee = () => {
         boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
       }}
     >
-      <KTCardBody className='py-1 '>
-        <div className='table-responsive'>
-
-          <div className='d-flex justify-content-between'>
-            <Space style={{ marginBottom: 16 }}>
-              <Input
-                placeholder='Enter Search Text'
-                onChange={handleInputChange}
-                type='text'
-                allowClear
-                value={searchText}
-              />
-              <Button type='primary' onClick={globalSearch}>
-                Search
-              </Button>
-            </Space>
+      <div className="card-custom card-flush">
+        <div className="card-header mt-0" style={{ borderBottom: 'none' }}>
+          <Space style={{ marginBottom: 16 }}>
+            <Input
+              placeholder='Enter Search Text'
+              onChange={handleInputChange}
+              type='text'
+              allowClear
+              value={searchText}
+              size='large'
+            />
+            <Button type='primary' onClick={globalSearch} size='large'>
+              Search
+            </Button>
+          </Space>
+          <div className="card-toolbar">
             <Space style={{ marginBottom: 16 }}>
               <Link to='/employee-form'>
                 <button type='button' className='btn btn-primary me-3'>
@@ -294,15 +306,45 @@ const Employee = () => {
               </button>
             </Space>
           </div>
+        </div>
+      </div>
+
+      <KTCardBody className='py-1 '>
+        <div className='table-responsive'>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+              <Table columns={columns} dataSource={dataWithIndex} scroll={{ x: 1300 }} />
           }
         </div>
       </KTCardBody>
-    </div>
+    </div >
   )
 }
 
-export { Employee }
+const EmployeeProfile = (employee: any) => {
+  return (
+    <>
+      <div className='d-flex display-direction-row align-items-center align-content-center'>
+        <div>
+          {
+            employee?.employee?.imageUrl !== null ?
+              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> :
+              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>
+          }
+        </div>
+        <div className='col px-4 align-items-center align-content-center'>
+          {/* <div className='row'> */}
+          <div className='text-dark fw-bold fs-4'>{`${employee?.employee?.firstName} ${employee?.employee?.surname}`}</div>
+          {/* <div className='text-gray-500'>{employee?.employee?.email}</div> */}
+          {/* </div> */}
+          <div className='badge badge-primary'>
+            <span>{employee?.employee?.employeeId}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export { Employee, EmployeeProfile }
 

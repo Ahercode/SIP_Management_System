@@ -158,7 +158,7 @@ const MultiTabForm = () => {
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
-      label: <><span className="fw-bold d-block fs-2">Details</span></>,
+      label: <><span className="fw-bold d-block fs-2">Personal details</span></>,
       children: (
         <form onSubmit={OnSUbmit}>
           <div className='row'>
@@ -310,7 +310,7 @@ const MultiTabForm = () => {
     },
     {
       key: '2',
-      label: <><span className="fw-bold d-block fs-2">Communications</span></>,
+      label: <><span className="fw-bold d-block fs-2">Communication details</span></>,
       children: (
         <form onSubmit={OnSUbmit}>
           <div className='row'>
