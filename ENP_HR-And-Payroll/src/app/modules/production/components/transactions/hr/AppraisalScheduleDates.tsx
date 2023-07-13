@@ -1,12 +1,11 @@
-import { Button, Divider, Modal, Popconfirm, Skeleton, Space, Spin, Table, message } from "antd"
-import moment from "moment"
-import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft } from "../../ComponentsFactory"
-import { useEffect, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
-import { FormsBaseUrl, deleteItem, fetchDocument, postItem, updateItem } from "../../../../../services/ApiCalls"
-import { register } from "../../../../auth/core/_requests"
 import { PlusOutlined } from "@ant-design/icons"
+import { Button, Modal, Popconfirm, Skeleton, Space, Spin, Table, message } from "antd"
+import moment from "moment"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useMutation, useQuery, useQueryClient } from "react-query"
+import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from "../../../../../services/ApiCalls"
+import { getTimeLeft } from "../../ComponentsFactory"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
@@ -19,6 +18,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [description, setDescription] = useState<any>('')
     const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
     const [sendLoading, setSendLoading] = useState(false)
+    const [scheduleDateData, setScheduleDateData] = useState<any>({})
 
 
 
@@ -30,11 +30,12 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         setIsNotificationModalOpen(true)
     }
 
-    const handleConfirmNotificationSend = () => {
-        // setIsNotificationModalOpen(false)
-        handleNotificationSend()
-        setIsEmailSent(true)
-    }
+    // const handleConfirmNotificationSend = (record: any) => {
+    //     // setIsNotificationModalOpen(false)
+    //     handleNotificationSend()
+    //     setIsEmailSent(true)
+    //     setScheduleDateData(record) 
+    // }
 
     const showReviewDateModal = () => {
         setIsReviewDateModalOpen(true)
@@ -62,7 +63,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     useEffect(() => {
         loadData()
     }, [
-        allReviewdates?.data, referenceId
+        allReviewdates?.data, referenceId, scheduleDateData
     ])
 
     function handleDeleteReviewDate(element: any) {
@@ -116,7 +117,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                             <Popconfirm
                                 title="Confirm notifcation send"
                                 description={<><span className="ml-4">This action will roll out email notifications to all <br />employees in the selected employee group</span></>}
-                                onConfirm={handleConfirmNotificationSend}
+                                onConfirm={()=>handleNotificationSend(record)}
                                 placement="leftTop"
                                 onCancel={handleNotificationCancel}
                                 className="w-100px"
@@ -186,8 +187,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
-    const handleNotificationSend = () => {
+    const handleNotificationSend = (record: any) => {
 
+        setIsEmailSent(true)
         setSendLoading(true)
         //map throw dataById and return employeeId and name of employee as a new array
         const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
@@ -204,6 +206,21 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             },
             url: 'appraisalperftransactions/sendMail',
         }
+
+        const employeePerformanceData = employeeMailAndName?.map((item: any) => ({
+            employeeId: item.employeeId,
+            Status: 'Pending',
+            referenceId: referenceId,
+            scheduleDateId: record.id,
+        }))
+
+        const item2 = {
+            data: employeePerformanceData,
+            url: 'EmployeePerfDetails',
+        }
+
+        console.log('EmployeePerfDetails: ', item2)
+     
         console.log('email sent: ', item)
         setIsEmailSent(true)
         postData(item)
@@ -362,3 +379,4 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 }
 
 export { ReviewDateComponent }
+

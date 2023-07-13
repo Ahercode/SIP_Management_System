@@ -182,8 +182,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const loadData = async () => {
         try {
-            const response = componentData?.data
-            setGridData(response?.data)
+            // const response = componentData?.data
+            setGridData(componentData?.data)
         } catch (error) {
             console.log(error)
         }
@@ -353,7 +353,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 <div className='table-responsive'>
                     <div className='d-flex justify-content-between align-items-center align-content-center'>
 
-                        {
+                        {/* {
                             param?.id !== 'lineManger' ?
                                 <>
                                     <Space className="justify-content-end align-items-end d-flex mb-6" >
@@ -363,7 +363,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                                         </button>
                                     </Space>
                                 </> : ""
-                        }
+                        } */}
                     </div>
                     {
                         loading ? <Skeleton active /> :

@@ -1,13 +1,10 @@
-import { Button, Collapse, CollapseProps, Divider, Space, Table } from "antd"
+import { ErrorBoundary } from "@ant-design/pro-components"
+import { Divider } from "antd"
 import { ComponentType, useEffect, useState } from "react"
 import { useQuery } from "react-query"
-import { fetchDocument } from "../../../../services/ApiCalls"
-import { useForm } from "react-hook-form"
-import { AppraisalObjectivesComponent } from "./AppraisalObjectivesComponent"
-import { ErrorBoundary } from "@ant-design/pro-components"
 import { useParams } from "react-router-dom"
+import { fetchDocument } from "../../../../services/ApiCalls"
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
-import { PrinterOutlined } from '@ant-design/icons';
 
 interface ComponentWrapperProps {
     contentComponent: ComponentType<any>;
@@ -71,14 +68,22 @@ const FormTemplate: React.FC<ComponentWrapperProps> = ({ contentComponent: Compo
     )
 }
 
-const AppraisalFormHeader = ({ employeeData, department, lineManager }: any) => {
+interface AppraisalFormHeaderProps {
+    employeeData: any;
+    department: any;
+    lineManager: any;
+    printComponent?: React.ComponentType<any>;
+}
+
+const AppraisalFormHeader: React.FC<AppraisalFormHeaderProps> = ({ employeeData, department, lineManager, printComponent: PrintComponent}) => {
     return (
         <div className="d-flex flex-column align-items-start mb-5">
             <div className="d-flex justify-content-between flex-direction-row align-items-center align-self-stretch" >
                 <div className=' fs-1 fw-bold mb-2 text-primary'>
                     {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${employeeData?.surname}`}
                 </div>
-                <Button type="link" className="me-3" onClick={() => { }} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
+                {PrintComponent && <PrintComponent />} 
+                {/* <Button type="link" className="me-3" onClick={() => { }} icon={<PrinterOutlined rev={'print'} className="fs-1" />} /> */}
             </div>
             <Divider className="mb-3 mt-0" />
             <div className='d-flex row-auto mb-3'>
@@ -124,6 +129,6 @@ const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, componen
 
 
 
-export { FormTemplate, AppraisalFormHeader, AppraisalFormContent }
+export { AppraisalFormContent, AppraisalFormHeader, FormTemplate }
 
 

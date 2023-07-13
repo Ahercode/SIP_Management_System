@@ -67,19 +67,19 @@ const Processes = () => {
                     <div className='mb-7'>
                         <label htmlFor="exampleFormControlInput1" className="form-label">Group Achievement</label>
                         <input
-                            {...register("goupAchievement")}
+                            {...register("groupAchievement")}
                             defaultValue={0}
                             type="number"
                             className="form-control form-control-solid" />
                     </div>
-                    <div className='mb-7'>
+                    {/* <div className='mb-7'>
                         <label htmlFor="exampleFormControlInput1" className="form-label">Weight</label>
                         <input
                             {...register("weight")}
                             defaultValue={0}
                             type="number"
                             className="form-control form-control-solid" />
-                    </div>
+                    </div> */}
                 </form>
                 <div className="col-9 mb-7">
                     <Table rowSelection={rowSelection} columns={columns} dataSource={[]} />

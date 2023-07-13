@@ -226,7 +226,7 @@ export function Login() {
           </div>
         )}
         <br></br>
-        <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forget password !</a>
+        <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forgot your password?</a>
       </div>
 {/* <<<<<<< HEAD
      
