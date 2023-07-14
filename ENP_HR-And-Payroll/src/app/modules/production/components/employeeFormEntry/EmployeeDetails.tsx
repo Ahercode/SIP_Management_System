@@ -5,8 +5,11 @@ import { fetchDocument } from '../../../../services/ApiCalls';
 import "./formStyle.css";
 
 import { useQuery } from 'react-query';
+import { getFieldName, getSupervisorData } from '../ComponentsFactory';
+import { JobTitle } from '../setup/employee/JobTitle';
+import { Tabs, TabsProps } from 'antd';
 
-const EmplyeeDetails = () => {
+const EmplyeeDetails = ({employeeData}: any) => {
   const param: any = useParams();
   const [tempData, setTempData] = useState<any>()
   const [graName, setGraName] = useState<any>()
@@ -42,286 +45,237 @@ const EmplyeeDetails = () => {
   const { data: allQualifications } = useQuery('qualifications', () => fetchDocument('qualifications'), { cacheTime: 5000 })
   const { data: allExperiences } = useQuery('experiences', () => fetchDocument('experiences'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
+  // const [employeeData, setEmployeeData] = useState<any>()
 
-  useEffect(() => {
+  const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+  const category = getFieldName(employeeData?.categoryId, allCategories?.data)
+  const jobTitle = getFieldName(employeeData?.jobTitleId, allJobTitles?.data)
+  const division = getFieldName(employeeData?.divisionId, allDivisions?.data)
+  const employeeGroup = getFieldName(employeeData?.paygroupId, alPaygroups?.data)
+  // const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
 
-    const getDepartmentName = () => {
-      let departmentName = null
-      allDepartments?.data.map((item: any) => {
-        if (item.id === tempData?.departmentId) {
-          departmentName = item.name
-        }
-      })
-      return setDepName(departmentName)
-    }
-    const getGradeName = () => {
-      let gradeName = ""
-      allGrades?.data.map((item: any) => {
-        if (item.id === tempData?.gradeId) {
-          gradeName = item.name
-        }
-      })
-      return setGraName(gradeName)
-    }
-    const getNationName = () => {
-      let nationmame = ""
-      allNations?.data.map((item: any) => {
-        if (item.id === parseInt(tempData?.nationality)) {
-          nationmame = item.name
-        }
-      })
-      return setNation(nationmame)
-    }
-
-    const getUnitName = () => {
-      let unitName = ""
-      allUnits?.data.map((item: any) => {
-        if (item.id === tempData?.unitId) {
-          unitName = item.name
-        }
-      })
-      return setUniName(unitName)
-    }
-    const getJobTName = () => {
-      let jobTitleName = ""
-      allJobTitles?.data.map((item: any) => {
-        if (item.id === tempData?.jobTitleId) {
-          jobTitleName = item.name
-        }
-      })
-      return setJobTName(jobTitleName)
-    }
-
-    const getCatName = () => {
-      let categoryName = ""
-      allCategories?.data.map((item: any) => {
-        if (item.id === tempData?.categoryId) {
-          categoryName = item.name
-        }
-      })
-      return setCatName(categoryName)
-    }
-
-    const getDivisionName = () => {
-      let divisionName = ""
-      allDivisions?.data.map((item: any) => {
-        if (item.id === tempData?.divisionId) {
-          divisionName = item.name
-        }
-      })
-      return setDivName(divisionName)
-    }
-
-    const getPaygroupName = () => {
-      let paygroupName = null
-      alPaygroups?.data.map((item: any) => {
-        if (item.id === tempData?.paygroupId) {
-          paygroupName = item.name
-        }
-      })
-      return setPaygName(paygroupName)
-    }
-    const getNotchName = () => {
-      let notchName = null
-      allNotches?.data.map((item: any) => {
-        if (item.id === tempData?.notchId) {
-          notchName = item.name
-        }
-      })
-      return setNotchName(notchName)
-    }
-    getNationName()
-    getCatName()
-    getJobTName()
-    getUnitName()
-    getDivisionName()
-    getDepartmentName()
-    getPaygroupName()
-    getNotchName()
-    getGradeName()
-  })
-
-  useEffect(() => {
-    const dataByID = allEmployees?.data.find((employee: any) => {
-      return employee.id.toString() === param.id
-    })
-    const getEmployeeById = () => {
-      setTempData(dataByID)
-    }
-    getEmployeeById()
-
-  })
+  const tabItems: TabsProps['items'] = [
+    {
+      key: '1',
+      label: <span>Job roles</span>,
+      children: (<></>),
+    },
+    {
+      key: '2',
+      label: <span>Other details</span>,
+      children: (<></>),
+    },
+  ]
+  const onTabsChange = (key: string) => {
+    console.log(key);
+  };
 
   return (
-    <div
-      className="col-12 border-gray-400"
-      style={{
-        backgroundColor: 'white',
-        padding: '30px',
-        borderRadius: '5px',
-        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-      }}
-    >
-      <Link to="/employee">
-        <a style={{ fontSize: "16px", fontWeight: "500" }} className='mb-7 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary'>
-          Back to list
-        </a>
-      </Link>
-      <br></br>
-      <h3> You are viewing details of <span style={{ color: "#FF6363" }}>  {tempData?.firstName} {tempData?.surname}</span></h3>
-      <hr />
-      <br></br>
-      <div className='col-4 mb-7'>
-        {
-          tempData?.imageUrl !== null ?
-            <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/${tempData?.imageUrl}`} width={150} height={150}></img> :
-            <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/ahercode1.jpg`} width={150} height={150}></img>
-        }
+    <div className='py-7'>
+      <div className="d-flex row-auto align-items-center align-content-center ">
+        <div>
+          {
+            employeeData?.imageUrl !== null ?
+              <img style={{ borderRadius: "5%", width: "160px", height: "160px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> :
+              <img style={{ borderRadius: "5%", width: "160px", height: "160px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>
+          }
+        </div>
+        <div className="column-auto align-items-center align-content-center" >
+          <div className='fs-1 fw-bold mb-2 px-4 d-flex row-auto align-items-center align-content-center'>
+            <div className="me-3"> {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${!employeeData?.otherName ? '' : employeeData?.otherName} ${employeeData?.surname}`} </div>
+            <div className='badge badge-light-primary'>
+              <span>{employeeData?.employeeId}</span>
+            </div>
+          </div>
 
-      </div>
-      <div className='row mb-5'>
-        <div style={{ marginBottom: "10px" }}>
-          <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Details</h2>
-        </div>
-        <br />
-        <br />
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>EmployeeId: <span style={{ color: "black" }}>{tempData?.employeeId}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>First Name: <span style={{ color: "black" }}>{tempData?.firstName}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Surname: <span style={{ color: "black" }}>{tempData?.surname}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>
-            Other name: <span style={{ color: "black" }}>{tempData?.otherName === null ? "NULL" : tempData?.otherName}</span>
-          </h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>
-            Gender: <span style={{ color: "black" }}> {tempData?.gender}</span>
-          </h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Date of Birth:
-            <span style={{ color: "black" }}> {tempData?.dob}</span>
-          </h5>
-        </div>
+          <div className="d-flex row-auto align-items-center align-content-center mb-6">
+            <div className=' d-flex px-4 row-auto align-items-center align-content-center text-gray-500'>
+              <i className="bi bi-envelope"></i>
+              <div className='px-3'>{!employeeData?.email ? `Unavailable` : employeeData?.email}</div>
+            </div>
+            <div className=' d-flex row-auto align-items-center align-content-center text-gray-500'>
+              <i className="bi bi-telephone"></i>
+              <div className='px-3'>{!employeeData?.phone ? `Unavailable` : employeeData?.phone}</div>
+            </div>
+          </div>
 
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }} >Mrital Status:
-            <span style={{ color: "black" }}> {tempData?.maritalStatus === null ? " NULL" : tempData?.maritalStatus}</span>
-          </h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }} >
-            Nationality: <span style={{ color: "black" }}>{tempData?.nationality === null ? " NULL" : nation}</span>
-          </h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }} >
-            ID Card Number: <span style={{ color: "black" }}>{tempData?.nationalId}</span>
-          </h5>
-        </div>
-      </div>
-      {/* communication */}
-      {/* <br></br> */}
-      <div className='row mb-5'>
-        {/* <h2 style={{color:"lightblue", fontWeight:"bold", textDecoration:"underline"}}>Communication</h2> */}
-        <div style={{ marginBottom: "10px" }}>
-          <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Communication</h2>
-        </div>
-        <br />
-        <br />
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Phone Number: <span style={{ color: "black" }}>{tempData?.phone === null ? " NULL" : tempData?.phone}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Alternative Phone Number: <span style={{ color: "black" }}>{tempData?.alternativePhone === null ? " NULL" : tempData?.alternativePhone}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Address: <span style={{ color: "black" }}>{tempData?.address === null ? " NULL" : tempData?.address}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Residential Address: <span style={{ color: "black" }}>{tempData?.residentialAddress === null ? " NULL" : tempData?.residentialAddress}</span></h5>
-        </div>
-
-        {/* <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Per. Email: <span style={{ color:"black"}}>{tempData?.personalEmail===null?" NULL":tempData?.personalEmail.toLowerCase()}</span></h5>
-        </div> */}
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Next Of Kin: <span style={{ color: "black" }}>{tempData?.nextOfKin === null ? " NULL" : tempData?.nextOfKin}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Guarantor: <span style={{ color: "black" }}>{tempData?.guarantor === null ? " NULL" : tempData?.guarantor}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Email: <span style={{ color: "black" }}>{tempData?.email === null ? " NULL" : tempData?.email.toLowerCase()}</span></h5>
+          <div className="d-flex px-4 row-auto align-items-center align-content-center ">
+            <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
+              <div className='column-auto justify-content-start align-content-start'>
+                <div className='fs-5 fw-bold'>{`${!jobTitle ? 'Unavailable' : jobTitle}`}</div>
+                <div className='text-gray-500'>Job Title</div>
+              </div>
+            </div>
+            <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
+              <div className='column-auto justify-content-start align-content-start'>
+                <div className='fs-5 fw-bold'>{`${!employeeGroup ? 'Unavailable' : employeeGroup}`}</div>
+                <div className='text-gray-500'>Employee group</div>
+              </div>
+            </div>
+            <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
+              <div className='column-auto justify-content-start align-content-start'>
+                <div className='fs-5 fw-bold'>{`${!category ? 'Unavailable' : category}`}</div>
+                <div className='text-gray-500'>Category</div>
+              </div>
+            </div>
+            <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
+              <div className='column-auto justify-content-start align-content-start'>
+                <div className='fs-5 fw-bold'>{`${!department ? 'Unavailable' : department}`}</div>
+                <div className='text-gray-500'>Department</div>
+              </div>
+            </div>
+            <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
+              <div className='column-auto justify-content-start align-content-start'>
+                <div className='fs-5 fw-bold'>{`${!division ? 'Unavailable' : division}`}</div>
+                <div className='text-gray-500'>Division</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      {/* Administration */}
-      {/* <br></br> */}
-      <div className='row mb-5'>
-        {/* <h2 style={{color:"lightblue", fontWeight:"bold", textDecoration:"underline"}}>Administration</h2> */}
-        <div style={{ marginBottom: "10px" }}>
-          <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Administration</h2>
-        </div>
-        <br />
-        <br />
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Employee Group: <span style={{ color: "black" }}>{tempData?.paygroupId === null ? " NULL" : paygName}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Category: <span style={{ color: "black" }}>{tempData?.categoryId === null ? " NULL" : catName}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Division: <span style={{ color: "black" }}>{tempData?.divisionId === null ? " NULL" : divName}</span></h5>
-        </div>
-        {/* <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Salary Grade: <span style={{ color: "black" }}>{tempData?.gradeId === null ? " NULL" : graName}</span></h5>
-        </div> */}
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Department: <span style={{ color: "black" }}>{tempData?.departmentId === null ? " NULL" : depName}</span></h5>
-        </div>
-        {/* <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Notch: <span style={{ color: "black" }}>{tempData?.notchId === null ? " NULL" : notchName}</span></h5>
-        </div> */}
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Unit: <span style={{ color: "black" }}>{tempData?.unitId === null ? " NULL" : uniName}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>JobTitle: <span style={{ color: "black" }}>{tempData?.jobTitleId === null ? " NULL" : jobTName}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Job Roles: <span style={{ color: "black" }}>{tempData?.jobRole === null ? " NULL" : tempData?.jobRole}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Employment Date: <span style={{ color: "black" }}>{tempData?.employmentDate === null ? " NULL" : tempData?.employmentDate}</span></h5>
-        </div>
-      </div>
-      {/* Payroll */}
-      {/* <br></br> */}
-      <div className='row mb-5'>
-        <div style={{ marginBottom: "10px" }}>
-          <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Payroll</h2>
-        </div>
-        <br />
-        <br />
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Phone: <span style={{ color: "black" }}>{tempData?.phone}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Alternative Phone: <span style={{ color: "black" }}>{tempData?.alternativePhone}</span></h5>
-        </div>
-        <div className='col-3 mb-5'>
-          <h5 style={{ color: "GrayText" }}>Address: <span style={{ color: "black" }}>{tempData?.employmentDate === null ? " NULL" : tempData?.employmentDate}</span></h5>
-        </div>
+      <div className='mt-6'>
+        <Tabs defaultActiveKey="1"
+          type="line"
+          items={tabItems}
+          onChange={onTabsChange}
+        // tabBarExtraContent={slot}
+        />
       </div>
     </div>
+
   );
 }
+
+{/* <>
+<div className='row mb-5'>
+  <div style={{ marginBottom: "10px" }}>
+    <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Details</h2>
+  </div>
+  <br />
+  <br />
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>EmployeeId: <span style={{ color: "black" }}>{tempData?.employeeId}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>First Name: <span style={{ color: "black" }}>{tempData?.firstName}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Surname: <span style={{ color: "black" }}>{tempData?.surname}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>
+      Other name: <span style={{ color: "black" }}>{tempData?.otherName === null ? "NULL" : tempData?.otherName}</span>
+    </h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>
+      Gender: <span style={{ color: "black" }}> {tempData?.gender}</span>
+    </h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Date of Birth:
+      <span style={{ color: "black" }}> {tempData?.dob}</span>
+    </h5>
+  </div>
+
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }} >Mrital Status:
+      <span style={{ color: "black" }}> {tempData?.maritalStatus === null ? " NULL" : tempData?.maritalStatus}</span>
+    </h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }} >
+      Nationality: <span style={{ color: "black" }}>{tempData?.nationality === null ? " NULL" : nation}</span>
+    </h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }} >
+      ID Card Number: <span style={{ color: "black" }}>{tempData?.nationalId}</span>
+    </h5>
+  </div>
+</div>
+
+<div className='row mb-5'>
+  <div style={{ marginBottom: "10px" }}>
+    <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Communication</h2>
+  </div>
+  <br />
+  <br />
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Phone Number: <span style={{ color: "black" }}>{tempData?.phone === null ? " NULL" : tempData?.phone}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Alternative Phone Number: <span style={{ color: "black" }}>{tempData?.alternativePhone === null ? " NULL" : tempData?.alternativePhone}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Address: <span style={{ color: "black" }}>{tempData?.address === null ? " NULL" : tempData?.address}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Residential Address: <span style={{ color: "black" }}>{tempData?.residentialAddress === null ? " NULL" : tempData?.residentialAddress}</span></h5>
+  </div>
+
+
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Next Of Kin: <span style={{ color: "black" }}>{tempData?.nextOfKin === null ? " NULL" : tempData?.nextOfKin}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Guarantor: <span style={{ color: "black" }}>{tempData?.guarantor === null ? " NULL" : tempData?.guarantor}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Email: <span style={{ color: "black" }}>{tempData?.email === null ? " NULL" : tempData?.email.toLowerCase()}</span></h5>
+  </div>
+</div>
+
+<div className='row mb-5'>
+  <div style={{ marginBottom: "10px" }}>
+    <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Administration</h2>
+  </div>
+  <br />
+  <br />
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Employee Group: <span style={{ color: "black" }}>{tempData?.paygroupId === null ? " NULL" : paygName}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Category: <span style={{ color: "black" }}>{tempData?.categoryId === null ? " NULL" : catName}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Division: <span style={{ color: "black" }}>{tempData?.divisionId === null ? " NULL" : divName}</span></h5>
+  </div>
+
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Department: <span style={{ color: "black" }}>{tempData?.departmentId === null ? " NULL" : depName}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Unit: <span style={{ color: "black" }}>{tempData?.unitId === null ? " NULL" : uniName}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>JobTitle: <span style={{ color: "black" }}>{tempData?.jobTitleId === null ? " NULL" : jobTName}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Job Roles: <span style={{ color: "black" }}>{tempData?.jobRole === null ? " NULL" : tempData?.jobRole}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Employment Date: <span style={{ color: "black" }}>{tempData?.employmentDate === null ? " NULL" : tempData?.employmentDate}</span></h5>
+  </div>
+</div>
+
+<div className='row mb-5'>
+  <div style={{ marginBottom: "10px" }}>
+    <h2 style={{ color: "#f2f2f2", fontWeight: "bold", backgroundColor: "Highlight", maxWidth: "180px", padding: "8px" }}>Payroll</h2>
+  </div>
+  <br />
+  <br />
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Phone: <span style={{ color: "black" }}>{tempData?.phone}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Alternative Phone: <span style={{ color: "black" }}>{tempData?.alternativePhone}</span></h5>
+  </div>
+  <div className='col-3 mb-5'>
+    <h5 style={{ color: "GrayText" }}>Address: <span style={{ color: "black" }}>{tempData?.employmentDate === null ? " NULL" : tempData?.employmentDate}</span></h5>
+  </div>
+</div>
+</> */}
 
 
 export { EmplyeeDetails };

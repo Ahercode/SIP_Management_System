@@ -12,7 +12,7 @@ interface ComponentWrapperProps {
 }
 
 interface ContentProps {
-    component: ComponentType<any>;
+    component: React.ComponentType<any>;
     parametersData: any;
 }
 
@@ -73,15 +73,17 @@ interface AppraisalFormHeaderProps {
     department: any;
     lineManager: any;
     printComponent?: React.ComponentType<any>;
+    print?:any
 }
 
-const AppraisalFormHeader: React.FC<AppraisalFormHeaderProps> = ({ employeeData, department, lineManager, printComponent: PrintComponent}) => {
+const AppraisalFormHeader: React.FC<AppraisalFormHeaderProps> = ({ employeeData, department, lineManager, printComponent: PrintComponent, print}) => {
     return (
         <div className="d-flex flex-column align-items-start mb-5">
             <div className="d-flex justify-content-between flex-direction-row align-items-center align-self-stretch" >
                 <div className=' fs-1 fw-bold mb-2 text-primary'>
                     {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${employeeData?.surname}`}
                 </div>
+                <div>{print}</div>
                 {PrintComponent && <PrintComponent />} 
                 {/* <Button type="link" className="me-3" onClick={() => { }} icon={<PrinterOutlined rev={'print'} className="fs-1" />} /> */}
             </div>
@@ -129,6 +131,6 @@ const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, componen
 
 
 
-export { AppraisalFormContent, AppraisalFormHeader, FormTemplate }
+export { AppraisalFormContent, AppraisalFormHeader, FormTemplate, }
 
 

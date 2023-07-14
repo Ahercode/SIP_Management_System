@@ -149,7 +149,7 @@ const PrivateRoutes = () => (
       <Route
         path='transaction/hr/appraisal-performance/*'
         element={<SuspensedView>
-          <PageTitle>Appraisal and Performances</PageTitle>
+          <PageTitle>Appraisal and Performance</PageTitle>
           <PerformanceBoard />
         </SuspensedView>} />
 

@@ -271,7 +271,7 @@ const SetupComponent = (props: any) => {
 
                     }
                     <Modal
-                        title={isUpdateModalOpen ? `${props.data.title} Update` : `${props.data.title} Setup`}
+                        title={isUpdateModalOpen ? `${props.data.title} update` : `${props.data.title} setup`}
                         open={isModalOpen}
                         onCancel={handleCancel}
                         closable={true}

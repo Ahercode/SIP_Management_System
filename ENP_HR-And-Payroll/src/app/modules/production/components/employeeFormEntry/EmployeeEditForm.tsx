@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { BANKS } from '../../../../data/DummyData';
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { getFieldName } from '../ComponentsFactory';
 
 const EmployeeEditForm = () => {
   const [formData, setFormData] = useState({});
@@ -24,6 +25,7 @@ const EmployeeEditForm = () => {
   const [tempData, setTempData] = useState<any>()
 
   const [jobTName, setJobTName] = useState<any>()
+  const [catName, setCatName] = useState<any>()
 
   const [paygName, setPaygName] = useState<any>()
   const [newPay, setNewPay] = useState([])
@@ -133,7 +135,7 @@ const EmployeeEditForm = () => {
   const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
   const { data: allDepartments } = useQuery('departments', () => fetchDepartments(tenantId), { cacheTime: 5000 })
   // const { data: allDivisions } = useQuery('divisions',()=> fetchDivisions(tenantId), { cacheTime: 5000 })
-  const { data: allCategories } = useQuery('categories', () => fetchCategories('categories'), { cacheTime: 5000 })
+  const { data: allCategories } = useQuery('categories', () => fetchCategories('Categories'), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument('paygroups'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
 
@@ -160,6 +162,7 @@ const EmployeeEditForm = () => {
       return setJobTName(jobTitleName)
     }
 
+    setCatName(getFieldName(tempData?.categoryId, allCategories?.data))
 
     const getPaygroupName = () => {
       let paygroupName = null
@@ -466,10 +469,12 @@ const EmployeeEditForm = () => {
               </div>
             </div>
 
+
             <div className='row mt-3'>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
                 <select  {...register("categoryId")} name="categoryId" onChange={handleChange} value={tempData?.categoryId} className="form-select form-select-solid" aria-label="Select example">
+                  <option>{catName} </option>
                   {allCategories?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
                   ))}

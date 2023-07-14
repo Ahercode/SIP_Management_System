@@ -1,4 +1,4 @@
-import { Button, Form, Input, Skeleton, Space, Table, message } from 'antd'
+import { Button, Form, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName } from '../ComponentsFactory'
 import { size } from '@devexpress/analytics-core/analytics-diagram'
+import { EmplyeeDetails } from '../employeeFormEntry/EmployeeDetails'
 
 
 const Employee = () => {
@@ -25,10 +26,17 @@ const Employee = () => {
   const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument('paygroups'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
   const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
+  const [employeeData, setEmployeeData] = useState<any>({})
 
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false)
 
-  const showModal = () => {
-    setIsModalOpen(true)
+  const showDetailsModal = (record: any) => {
+    setDetailsModalOpen(true)
+    setEmployeeData(record)
+  }
+
+  const handleDetailsModalCancel = () => {
+    setDetailsModalOpen(false)
   }
 
   const handleOk = () => {
@@ -218,9 +226,12 @@ const Employee = () => {
       width: 270,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <Link to={`/employee-details/${record.id}`}>
+          <a className='btn btn-light-success btn-sm' onClick={() => showDetailsModal(record)}>
+            Details
+          </a>
+          {/* <Link to={`/employee-details/${record.id}`}>
             <span className='btn btn-light-success btn-sm'>Details</span>
-          </Link>
+          </Link> */}
           <Link to={`/employee-edit-form/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Update</span>
           </Link>
@@ -317,6 +328,15 @@ const Employee = () => {
           }
         </div>
       </KTCardBody>
+
+      <Modal
+        open={detailsModalOpen}
+        onCancel={handleDetailsModalCancel}
+        closable={true}
+        width="1000px"
+        footer={null}>
+          <EmplyeeDetails employeeData={employeeData} />
+      </Modal>
     </div >
   )
 }
@@ -337,7 +357,7 @@ const EmployeeProfile = (employee: any) => {
           <div className='text-dark fw-bold fs-4'>{`${employee?.employee?.firstName} ${employee?.employee?.surname}`}</div>
           {/* <div className='text-gray-500'>{employee?.employee?.email}</div> */}
           {/* </div> */}
-          <div className='badge badge-primary'>
+          <div className='badge badge-light-primary'>
             <span>{employee?.employee?.employeeId}</span>
           </div>
         </div>

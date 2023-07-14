@@ -8,6 +8,8 @@ import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjecti
 import { AppraisalFormHeader, AppraisalFormContent } from "../appraisalForms/FormTemplateComponent"
 import { useParams } from "react-router-dom"
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
+import { PrinterOutlined } from '@ant-design/icons'
+import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/AppraisalPdfPrintView"
 
 const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
@@ -24,6 +26,8 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
     const [parametersData, setParametersData] = useState<any>([])
     const [isObjectiveDeclined, setIsObjectiveDeclined] = useState(false)
+    const [showPritntPreview, setShowPrintPreview] = useState(false)
+
 
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
@@ -39,6 +43,14 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
         setCommentModalOpen(false)
         reset()
         setComment('')
+    }
+
+    const handlePrintPreviewModalCancel = () => {
+        setShowPrintPreview(false)
+    }
+
+    const showPrintPreview = () => {
+        setShowPrintPreview(true)
     }
 
     const [textareaHeight, setTextareaHeight] = useState('auto');
@@ -83,6 +95,11 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
         }
         setIsObjectiveDeclined(true)
         updateData(item)
+    }
+
+    const handlePrintPreviewModalOk = () => {
+        //todo print of the objectives 
+        setShowPrintPreview(false)
     }
 
     const showObjectivesView = (record: any) => {
@@ -203,7 +220,14 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                     </Space>
                 }>
                 <div className="py-9 px-9">
-                    <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
+                    <AppraisalFormHeader
+                        employeeData={employeeData}
+                        department={department}
+                        lineManager={lineManager}
+                        print={
+                            <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
+                        }
+                    />
 
                     <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
                 </div>
@@ -239,6 +263,20 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                     />
                 </form>
 
+            </Modal>
+            <Modal
+                title={``}
+                open={showPritntPreview}
+                width={1000}
+                onCancel={handlePrintPreviewModalCancel}
+                closable={true}
+                okText="Print"
+                onOk={handlePrintPreviewModalOk}
+            >
+                <AppraisalPrintHeader
+                    employeeData={employeeData}
+                />
+                <PrintComponent />
             </Modal>
         </>
     )
