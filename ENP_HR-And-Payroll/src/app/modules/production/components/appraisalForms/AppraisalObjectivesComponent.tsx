@@ -400,7 +400,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 message.error('Weight cannot be greater than 100')
                 return
             }
-
         } else {
 
             // make sure all values are filled
@@ -546,12 +545,12 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                         {
                             param?.id !== 'lineManger' ?
                                 <>
-                                    <Space className="justify-content-end align-items-end d-flex mb-6" >
+                                    {/* <Space className="justify-content-end align-items-end d-flex mb-6" >
                                         <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                                             <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                                             Add
                                         </button>
-                                    </Space>
+                                    </Space> */}
                                 </> : ""
                         }
                     </div>

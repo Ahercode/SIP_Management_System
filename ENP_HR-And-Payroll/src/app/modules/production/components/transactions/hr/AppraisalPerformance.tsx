@@ -6,12 +6,13 @@ import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from '../../../../../services/ApiCalls'
 import { getFieldName, getSupervisorData } from '../../ComponentsFactory'
 import { ReviewDateComponent } from './AppraisalScheduleDates'
-
 import "./cusStyle.css"
 import { EmployeeGroups } from './EmployeeGroups'
 import { AppraisalObjective } from './AppraisalObjective'
 import { AppraisalObjectivesComponent } from '../../appraisalForms/AppraisalObjectivesComponent'
 import { AppraisalFormHeader, AppraisalFormContent } from '../../appraisalForms/FormTemplateComponent'
+import { AppraisalPrintHeader, PrintComponent } from '../../appraisalForms/AppraisalPdfPrintView'
+import { PrinterOutlined } from '@ant-design/icons'
 
 
 const AppraisalPerformance = () => {
@@ -57,6 +58,7 @@ const AppraisalPerformance = () => {
 
   const [employeeData, setEmployeeData] = useState<any>({})
   const [parametersData, setParametersData] = useState<any>([])
+  const [showPritntPreview, setShowPrintPreview] = useState(false)
 
   const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
 
@@ -73,6 +75,19 @@ const AppraisalPerformance = () => {
     setEmployeeGroupsData(dataByID)
   }
 
+  const showPrintPreview = () => {
+    setShowPrintPreview(true)
+    handleCancel()
+  }
+
+  const handlePrintPreviewModalCancel = () => {
+    setShowPrintPreview(false)
+  }
+
+  const handlePrintPreviewModalOk = () => {
+    //todo print of the objectives 
+    setShowPrintPreview(false)
+  }
 
   const handleUpdateCancel = () => {
     setDetailsModalOpen(false)
@@ -407,7 +422,7 @@ const AppraisalPerformance = () => {
     // postData(item)
   })
 
-  
+
   return (
     <div>
       <form onSubmit={submitApplicant}>
@@ -520,13 +535,32 @@ const AppraisalPerformance = () => {
               footer={<Button onClick={handleUpdateCancel}>Done</Button>}
             >
               <div className="py-9 px-9">
-                <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
-
+                <AppraisalFormHeader
+                  employeeData={employeeData}
+                  department={department}
+                  lineManager={lineManager}
+                  print={
+                    <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
+                  }
+                />
                 <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
               </div>
             </Modal>
+            <Modal
+              title={``}
+              open={showPritntPreview}
+              width={1000}
+              onCancel={handlePrintPreviewModalCancel}
+              closable={true}
+              okText="Print"
+              onOk={handlePrintPreviewModalOk}
+            >
+              <AppraisalPrintHeader
+                employeeData={employeeData}
+              />
+              <PrintComponent />
+            </Modal>
           </div>
-
       }
     </div >
   )

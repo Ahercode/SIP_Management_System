@@ -1,42 +1,36 @@
-import { Button, Input, Modal, Skeleton, Space, Table } from 'antd'
+import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument } from '../../../services/ApiCalls'
+import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
+import { ArrowLeftOutlined } from "@ant-design/icons"
+
 
 const TestEmployeeObjective = () => {
   const [gridData, setGridData] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
-  const [submitLoading, setSubmitLoading] = useState(false)
+
   const { register, reset, handleSubmit } = useForm()
   const param: any = useParams();
   const navigate = useNavigate();
   const [tempData, setTempData] = useState<any>()
+  const [secondTempData, setSecondTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedOption, setSelectedOption] = useState("");
-  const [selectedOption2, setSelectedOption2] = useState("");
-  let [appraisalName, setAppraisalName] = useState<any>("")
+  const queryClient = useQueryClient()
+  const [pathData, setPathData] = useState<any>("")
+  const { data: appraisalobjectives, isLoading: loading } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
+  const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
 
-  const { data: Appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
 
-  const handleOptionChange = (event: any) => {
-    setSelectedOption(event.target.value);
-  };
 
   const tenantId = localStorage.getItem('tenant')
   const showModal = () => {
     setIsModalOpen(true)
   }
 
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
 
   const handleCancel = () => {
     reset()
@@ -50,23 +44,32 @@ const TestEmployeeObjective = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData} = useMutation(deleteItem, {
+  const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('appraisalObjectives')
       loadData()
     },
     onError: (error) => {
       console.log('delete error: ', error)
+      message.error('Error deleting record')
     }
   })
 
   function handleDelete(element: any) {
-    const item:any = {
+    const item: any = {
       url: 'AppraisalObjective',
       data: element
     }
     deleteData(item)
   }
+
+  const showUpdateModal = (values: any) => {
+    setIsUpdateModalOpen(true)
+    setTempData(values);
+    setSecondTempData(values);
+    showModal()
+  }
+
 
   const columns: any = [
 
@@ -106,12 +109,12 @@ const TestEmployeeObjective = () => {
           <Link to={`/new-employee-deliverables/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Deliverables</span>
           </Link>
-          {/* <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+          <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
-          </a> */}
+          </a>
 
         </Space>
       ),
@@ -120,10 +123,10 @@ const TestEmployeeObjective = () => {
   ]
 
   const loadData = async () => {
-    setLoading(true)
     try {
-      setGridData(Appraisalobjectives?.data)
-      setLoading(false)
+      setGridData(appraisalobjectives?.data?.filter((item: any) => item?.parameterId.toString() === param?.parameterId))
+      setPathData(getItemData(param?.parameterId, parameterData?.data))
+
     } catch (error) {
       console.log(error)
     }
@@ -131,86 +134,158 @@ const TestEmployeeObjective = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [appraisalobjectives?.data])
 
-
-  const handleInputChange = (e: any) => {
-    setSearchText(e.target.value)
-    if (e.target.value === '') {
-      queryClient.invalidateQueries('appraisalObjectives')
-    }
+  const getItemData = (fieldProp: any, data: any) => {
+    const item = data?.find((item: any) =>
+      item?.id.toString() === fieldProp
+    )
+    return item
   }
 
-  const globalSearch = () => {
-    // @ts-ignore
-    filteredData = dataWithVehicleNum.filter((value) => {
-      return (
-        value.name.toLowerCase().includes(searchText.toLowerCase())
+
+  const weightSum = (itemToPost: any) => {
+    return appraisalobjectives?.data.filter((item: any) => item.parameterId === itemToPost.parameterId)
+      .map((item: any) => item.weight)
+      .reduce((a: any, b: any) => a + b, 0)
+  };
+
+
+  const { mutate: updateData } = useMutation(updateItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`appraisalObjectives`)
+      loadData()
+      reset()
+      setTempData({})
+      setSecondTempData({})
+      setIsUpdateModalOpen(false)
+      setIsModalOpen(false)
+      message.success('Item updated successfully')
+    },
+    onError: (error) => {
+      console.log('error: ', error)
+      message.error('Error updating item')
+    }
+  })
+
+  const handleUpdate = async (e: any) => {
+    e.preventDefault()
+    const data = getItemData(tempData?.parameterId, parameterData?.data)
+    // input validation
+    // make sure all values are filled
+    if (!tempData.name || !tempData.weight || tempData.weight === '') {
+      return message.error('Please fill all fields')
+    } else if (parseInt(tempData.weight) <= 0) {
+      return message.error('Weight cannot be zero or negative')
+    } else if (parseInt(tempData.weight) > 100) {
+      message.error('Weight cannot be greater than 100')
+      return
+    }
+
+    //logic validatio
+
+    if (tempData.name === secondTempData.name && tempData.description === secondTempData.description) {
+      if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > data?.weight) {
+        return message.error(`Total weight for ${pathData?.name} cannot be greater than ${data?.weight}`);
+      } else {
+        const item: any = {
+          url: `appraisalObjectives`,
+          data: tempData
+        }
+        updateData(item)
+      }
+    } else {
+      //cheeck if new name already exists
+      const itemExists = gridData.find((item: any) =>
+        item.name === tempData.name &&
+        item.code === tempData.description
       )
-    })
-    setGridData(filteredData)
-  }
 
-  const queryClient = useQueryClient()
-
-  const showUpdateModal = (values: any) => {
-    setIsModalOpen(true)
-    setIsUpdateModalOpen(true)
-    setTempData(values);
-  }
-
-  const url = `${Api_Endpoint}/AppraisalObjective`
-  const urlUpdate = `${Api_Endpoint}/AppraisalObjective/${tempData?.id}`
-  const OnSUbmit = handleSubmit(async (values) => {
-    setLoading(true)
-    const data = {
-      tenantId: tenantId,
-      code: values.code,
-      name: values.name,
-    }
-    const dataUpdate = {
-      id: tempData.id,
-      tenantId: tenantId,
-      code: values.code,
-      name: values.name,
-    }
-    console.log(data)
-
-    const newData = gridData.filter((item: any) => item.code == data.code)
-
-    if (!isUpdateModalOpen) {
-      if (newData.length == 0) {
-        try {
-          const response = await axios.post(url, data)
-          setSubmitLoading(false)
-          reset()
-          setIsModalOpen(false)
-          loadData()
-          queryClient.invalidateQueries('appraisalObjectives')
-          return response.statusText
-        } catch (error: any) {
-          setSubmitLoading(false)
-          return error.statusText
+      if (itemExists) { return message.error('Item already exists') } else {
+        if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > data?.weight) {
+          return message.error(`Total weight for ${pathData} cannot be greater than ${data?.weight}`);
+        } else {
+          const item: any = {
+            url: `appraisalObjectives`,
+            data: tempData
+          }
+          updateData(item)
         }
       }
-      window.alert("The Code you entered already exist!");
+    }
+  }
+
+
+  const OnSubmit = handleSubmit(async (values) => {
+    // input validations
+    // make sure all values are filled
+    if (!values.name || values.weight === '') {
+      message.error('Please fill all fields')
+      return
+    } else if (parseInt(values.weight) <= 0) {
+      message.error('Weight cannot be zero or negative')
+      return
+    } else if (parseInt(values.weight) > 100) {
+      message.error('Weight cannot be greater than 100')
+      return
     }
 
-    try {
-      const response = await axios.put(urlUpdate, dataUpdate)
-      setSubmitLoading(false)
-      reset()
-      setIsModalOpen(false)
-      setIsUpdateModalOpen(false)
-      loadData()
-      queryClient.invalidateQueries('appraisalObjective')
-      return response.statusText
-    } catch (error: any) {
-      setSubmitLoading(false)
-      return error.statusText
+    const itemToPost = {
+      data: {
+        name: values.name,
+        parameterId: parseInt(param.parameterId),
+        description: "description",
+        weight: parseInt(values.weight),
+        tenantId: tenantId,
+        referenceId: '',
+        employeeId: '' //use logged employee id here
+      },
+      url: `appraisalObjectives`,
     }
 
+    // check if item already exist
+    const itemExist = gridData.find((item: any) =>
+      item.name === itemToPost.data.name &&
+      item.parameterId === itemToPost.data.parameterId &&
+      item.description === itemToPost.data.description &&
+      item.weight === itemToPost.data.weight
+    )
+    if (itemExist) {
+      message.error('Item already exist')
+      return
+    }
+
+    const sums = weightSum(itemToPost.data)
+
+    if (sums > 0) {
+      const data = getItemData(parseInt(param?.parameterId), parameterData?.data)
+      if (sums + itemToPost.data.weight > data?.weight) {
+        return message.error(`Total weight for ${pathData?.name} cannot be greater than ${data?.weight}`);
+      } else {
+        postData(itemToPost)
+      }
+    } else {
+      postData(itemToPost)
+    }
   })
+
+  const { mutate: postData } = useMutation(postItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`appraisalObjectives`)
+      reset()
+      setTempData({})
+      setSecondTempData({})
+      loadData()
+      setIsModalOpen(false)
+      message.success('Item added successfully')
+    },
+    onError: (error: any) => {
+      console.log('post error: ', error)
+      message.error('Error adding item')
+    }
+  })
+
+
 
   return (
     <div
@@ -223,33 +298,29 @@ const TestEmployeeObjective = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-            <h3 style={{ fontWeight: "bolder" }}>{appraisalName}</h3>
-          <br></br>
-          <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
-          <br></br>
-          <div className='d-flex justify-content-between'>
-            <Space style={{ marginBottom: 16 }}>
-              <Input
-                placeholder='Enter Search Text'
-                onChange={handleInputChange}
-                type='text'
-                allowClear
-                value={searchText}
+          <div className="mb-5 d-flex justify-content-between align-items-center align-content-center">
+            <Space className=''>
+              <Button
+                onClick={() => navigate(-1)}
+                className="btn btn-light-primary me-4"
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  display: 'flex',
+                }}
+                type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
               />
-              <Button type='primary' onClick={globalSearch}>
-                Search
-              </Button>
+              <span className="fw-bold text-gray-600 d-block fs-2">{`${pathData?.name}`}</span>
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
-
-              <button type='button' className='btn btn-light-primary me-3'>
+              {/* <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-              </button>
+              </button> */}
             </Space>
           </div>
           {
@@ -260,6 +331,7 @@ const TestEmployeeObjective = () => {
             title={isUpdateModalOpen ? "Update Objective" : 'Add Objective'}
             open={isModalOpen}
             onCancel={handleCancel}
+            width={500}
             closable={true}
             footer={[
               <Button key='back' onClick={handleCancel}>
@@ -269,28 +341,25 @@ const TestEmployeeObjective = () => {
                 key='submit'
                 type='primary'
                 htmlType='submit'
-                loading={submitLoading}
-                onClick={OnSUbmit}
+                onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
               >
                 Submit
               </Button>,
             ]}
           >
             <form
-              onSubmit={OnSUbmit}
+              onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
             >
               <hr></hr>
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
                   <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
-
                 </div>
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Weight </label>
-                  <input type="number" min={0} {...register("weight")} defaultValue={isUpdateModalOpen ? tempData?.weight : ''} onChange={handleChange} className="form-control form-control-solid" />
+                  <input type="number" min={0} max={100} {...register("weight")} defaultValue={isUpdateModalOpen ? tempData?.weight : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
-
               </div>
             </form>
           </Modal>

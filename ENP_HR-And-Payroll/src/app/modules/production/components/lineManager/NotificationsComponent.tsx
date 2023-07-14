@@ -51,6 +51,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
 
     const showPrintPreview = () => {
         setShowPrintPreview(true)
+        handleCancel()
     }
 
     const [textareaHeight, setTextareaHeight] = useState('auto');

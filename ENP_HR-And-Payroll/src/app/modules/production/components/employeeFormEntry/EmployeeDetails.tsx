@@ -84,7 +84,7 @@ const EmplyeeDetails = ({employeeData}: any) => {
           <div className='fs-1 fw-bold mb-2 px-4 d-flex row-auto align-items-center align-content-center'>
             <div className="me-3"> {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${!employeeData?.otherName ? '' : employeeData?.otherName} ${employeeData?.surname}`} </div>
             <div className='badge badge-light-primary'>
-              <span>{employeeData?.employeeId}</span>
+              <span className='fs-4'>{employeeData?.employeeId}</span>
             </div>
           </div>
 

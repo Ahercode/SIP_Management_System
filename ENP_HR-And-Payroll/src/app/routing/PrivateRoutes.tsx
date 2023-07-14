@@ -94,13 +94,13 @@ const PrivateRoutes = () => (
           <EmployeeObjectivePage />
         </SuspensedView>} />
       <Route
-        path='new-employee-objectives/*'
+        path='new-employee-objectives/:parameterId'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
           <TestEmployeeObjective />
         </SuspensedView>} />
       <Route
-        path='new-employee-deliverables/*'
+        path='new-employee-deliverables/:objectiveId'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Deliverables</PageTitle>
           <TestEmployeeDeliverable />
