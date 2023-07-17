@@ -229,7 +229,6 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                             <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
                         }
                     />
-
                     <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
                 </div>
             </Modal>

@@ -238,10 +238,13 @@ const TestEmployeeObjective = () => {
         weight: parseInt(values.weight),
         tenantId: tenantId,
         referenceId: '',
-        employeeId: '' //use logged employee id here
+        employeeId: 'EB61', //use logged in employee id here
+        comment: "",
+        status: "Pending",
       },
       url: `appraisalObjectives`,
     }
+
 
     // check if item already exist
     const itemExist = gridData.find((item: any) =>
