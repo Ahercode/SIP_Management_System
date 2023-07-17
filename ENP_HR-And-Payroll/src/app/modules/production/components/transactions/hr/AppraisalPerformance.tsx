@@ -93,10 +93,9 @@ const AppraisalPerformance = () => {
     setDetailsModalOpen(false)
   }
   const showUpdateModal = (record: any) => {
-    console.log(record)
-    setDetailsModalOpen(true)
+    setShowPrintPreview(true)
     console.log('record', record)
-    const employee = allEmployees?.data?.find((item: any) => item.id === record?.employeeId)
+    const employee = allEmployees?.data?.find((item: any) => item?.employeeId === record?.employeeId)
     console.log('employee', employee)
     setEmployeeData(employee)
   }
@@ -281,60 +280,6 @@ const AppraisalPerformance = () => {
       return item.employeeId
     })?.includes(item.id)
   })
-
-
-  const getFirstName = (employeeId: any) => {
-    let firstName = null
-    allEmployees?.data.map((item: any) => {
-      if (item.id === employeeId) {
-        firstName = item.firstName
-      }
-    })
-    return firstName
-  }
-  const getSurname = (employeeId: any) => {
-    let surname = null
-    allEmployees?.data.map((item: any) => {
-      if (item.id === employeeId) {
-        surname = item.surname
-      }
-    })
-    return surname
-  }
-
-  const getEmail = (employeeId: any) => {
-    let email = null
-    allEmployees?.data.map((item: any) => {
-      if (item.id === employeeId) {
-        email = item.email
-      }
-    })
-    return email
-  }
-
-
-  const getJobTitle = (employeeId: any) => {
-    let jobTitleId: any = null
-    allEmployees?.data.map((item: any) => {
-      if (item.id === employeeId) {
-        jobTitleId = item.jobTitleId
-      }
-    })
-    let jobTitleName = null
-    allJobTitles?.data.map((item: any) => {
-      if (item.id === jobTitleId) {
-        jobTitleName = item.name
-      }
-    })
-    return jobTitleName
-  }
-
-  const getEmployeeCode = (employeeId: any) => {
-    const employeeCode = allEmployees?.data?.find((item: any) => {
-      return item.id === employeeId
-    })
-    return employeeCode?.employeeId
-  }
 
   // get supervisor name from organogram table
   const getSupervisorName = (employeeId: any) => {
@@ -528,37 +473,20 @@ const AppraisalPerformance = () => {
               <EmployeeGroups allEmployeeGroups={employeeGroupsData} loading={loading} />
             </Modal>
             <Modal
-              open={detailsModalOpen}
-              onCancel={handleUpdateCancel}
-              closable={true}
-              width="900px"
-              footer={<Button onClick={handleUpdateCancel}>Done</Button>}
-            >
-              <div className="py-9 px-9">
-                <AppraisalFormHeader
-                  employeeData={employeeData}
-                  department={department}
-                  lineManager={lineManager}
-                  print={
-                    <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
-                  }
-                />
-                <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
-              </div>
-            </Modal>
-            <Modal
-              title={``}
               open={showPritntPreview}
-              width={1000}
               onCancel={handlePrintPreviewModalCancel}
               closable={true}
+              width={1000}
+              cancelText='Close'
               okText="Print"
               onOk={handlePrintPreviewModalOk}
             >
-              <AppraisalPrintHeader
-                employeeData={employeeData}
-              />
-              <PrintComponent />
+              <div className="py-9 px-9">
+                <AppraisalPrintHeader
+                  employeeData={employeeData}
+                />
+                <PrintComponent />
+              </div>
             </Modal>
           </div>
       }

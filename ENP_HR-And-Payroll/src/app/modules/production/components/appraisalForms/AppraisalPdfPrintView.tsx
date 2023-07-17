@@ -177,12 +177,12 @@ const AppraisalPrintHeader: React.FC<PrintHeaderProps> = ({ employeeData, printC
                 <div className="column-auto align-items-center align-content-center" >
                     <div className='fs-1 fw-bold mb-2 px-4 d-flex row-auto align-items-center align-content-center'>
                         <div className="me-3"> {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${employeeData?.surname}`} </div>
-                        <div className='badge badge-light-primary'>
+                        <div className='badge badge-light-primary fs-5'>
                             <span>{employeeData?.employeeId}</span>
                         </div>
                     </div>
 
-                    <div className="d-flex row-auto align-items-center align-content-center ">
+                    <div className="d-flex row-auto align-items-center align-content-center fs-4 ">
                         <div className=' d-flex px-4 row-auto align-items-center align-content-center text-gray-500'>
                             <i className="bi bi-envelope"></i>
                             <div className='px-3'>{!employeeData?.email ? `Unavailable` : employeeData?.email}</div>
