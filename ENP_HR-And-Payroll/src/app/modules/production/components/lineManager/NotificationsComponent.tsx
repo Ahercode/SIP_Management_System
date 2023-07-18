@@ -1,13 +1,15 @@
-import { Button, Modal, Skeleton, Space, Table, Tag } from "antd"
+import { Button, Modal, Skeleton, Space, Table, Tag, message } from "antd"
 import { useEffect, useState } from "react"
-import { useQuery, useQueryClient } from "react-query"
-import { fetchDocument } from "../../../../services/ApiCalls"
+import { useMutation, useQuery, useQueryClient } from "react-query"
+import { fetchDocument, updateItem } from "../../../../services/ApiCalls"
 import { ObjectivesForm } from "../appraisalForms/ObjectivesForm "
 import { set, useForm } from "react-hook-form"
 import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
 import { AppraisalFormHeader, AppraisalFormContent } from "../appraisalForms/FormTemplateComponent"
 import { useParams } from "react-router-dom"
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
+import { PrinterOutlined } from '@ant-design/icons'
+import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/AppraisalPdfPrintView"
 
 const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
@@ -16,12 +18,16 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
     const queryClient = useQueryClient()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [employeeData, setEmployeeData] = useState<any>({})
+    const [objectivesData, setObjectivesData] = useState<any>([])
     const [componentData, setComponentData] = useState<any>()
     const [commentModalOpen, setCommentModalOpen] = useState(false)
     const [comment, setComment] = useState('')
     const { reset, register, handleSubmit } = useForm()
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
     const [parametersData, setParametersData] = useState<any>([])
+    const [isObjectiveDeclined, setIsObjectiveDeclined] = useState(false)
+    const [showPritntPreview, setShowPrintPreview] = useState(false)
+
 
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
@@ -37,6 +43,15 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
         setCommentModalOpen(false)
         reset()
         setComment('')
+    }
+
+    const handlePrintPreviewModalCancel = () => {
+        setShowPrintPreview(false)
+    }
+
+    const showPrintPreview = () => {
+        setShowPrintPreview(true)
+        handleCancel()
     }
 
     const [textareaHeight, setTextareaHeight] = useState('auto');
@@ -71,38 +86,40 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
 
 
     const handleCommentModalOk = () => {
-        // todo update the status of the objective to rejected 
-        // update the comment field, 
+        const item = {
+            data: {
+                ...objectivesData,
+                status: 'Rejected',
+                comment: comment
+            },
+            url: 'appraisalobjective'
+        }
+        setIsObjectiveDeclined(true)
+        updateData(item)
+    }
 
-        DummyObjectives?.map((item: any) => {
-            if (item.employeeId === employeeData?.employeeId) {
-                item.status = 'Rejected'
-            }
-            return item
-        })
-        loadData()
-        setCommentModalOpen(false)
-        setIsModalOpen(false)
-        reset()
-        setComment('')
+    const handlePrintPreviewModalOk = () => {
+        //todo print of the objectives 
+        setShowPrintPreview(false)
     }
 
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
         setEmployeeData(employee)
-        console.log('record', employee)
+        setObjectivesData(record)
     }
 
 
     const onObjectivesApproved = () => {
-        DummyObjectives?.map((item: any) => {
-            if (item.employeeId === employeeData?.employeeId) {
-                item.status = 'Approved'
-            }
-            return item
-        })
-        loadData()
+        const item = {
+            data: {
+                ...objectivesData,
+                status: 'Approved'
+            },
+            url: 'appraisalobjective'
+        }
+        updateData(item)
         setIsModalOpen(false)
     }
 
@@ -158,12 +175,34 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
         },
     ]
 
+    const { mutate: updateData } = useMutation(updateItem, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('appraisalobjective')
+            message.success(`Changes saved successfully`)
+            reset()
+            loadData()
+            setEmployeeData({})
+            setObjectivesData([])
+            setCommentModalOpen(false)
+            setIsModalOpen(false)
+            setComment('')
+            setIsObjectiveDeclined(false)
+        },
+        onError: (error) => {
+            console.log('error: ', error)
+            message.error(`Failed to save changes`)
+        }
+    })
+
 
     return (
         <>
             {
                 loading ? <Skeleton active /> :
-                    <Table columns={columns} dataSource={componentData} />
+                    <Table
+                        columns={columns}
+                        dataSource={componentData}
+                    />
             }
 
             <Modal
@@ -181,15 +220,22 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                         </button>
                     </Space>
                 }>
+                <div className="py-9 px-9">
+                    <AppraisalFormHeader
+                        employeeData={employeeData}
+                        department={department}
+                        lineManager={lineManager}
+                        print={
+                            <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
+                        }
+                    />
 
-                <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
-
-                <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
-
+                    <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
+                </div>
             </Modal>
             {/* comment modal */}
             <Modal
-                title={`Add a comment for declining objectives`}
+                title={`Add a comment for declining`}
                 open={commentModalOpen}
                 width={800}
                 onCancel={handleCommentModalCancel}
@@ -219,65 +265,25 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                 </form>
 
             </Modal>
+            <Modal
+                title={``}
+                open={showPritntPreview}
+                width={1000}
+                onCancel={handlePrintPreviewModalCancel}
+                closable={true}
+                okText="Print"
+                onOk={handlePrintPreviewModalOk}
+            >
+                <AppraisalPrintHeader
+                    employeeData={employeeData}
+                />
+                <PrintComponent />
+            </Modal>
         </>
     )
 
 }
 
-const DummyObjectives = [
-    {
-        id: 1,
-        employeeId: 'EMP001',
-        employeeName: 'John Doe',
-        objective: 'To increase sales by 20%',
-        status: 'Not submitted',
-        jobTitle: 'Sales Manager',
-        department: 'Sales',
-        email: 'sample1@gmail.com'
-    },
-    {
-        id: 2,
-        employeeId: 'EB62',
-        employeeName: 'Jane Sam',
-        objective: 'To increase sales by 20%',
-        status: 'Awaiting approval',
-        jobTitle: 'Sales Manager',
-        department: 'Sales',
-        email: 'sample2@gmail.com'
-    },
-    {
-        id: 3,
-        employeeId: 'EMP003',
-        employeeName: 'Dave Smith',
-        objective: 'To increase sales by 20%',
-        status: 'Not submitted',
-        jobTitle: 'Sales Manager',
-        department: 'Sales',
-        email: 'sample3@gmail.com'
-    },
-    {
-        id: 4,
-        employeeId: 'EB63',
-        employeeName: 'Dean Sean',
-        objective: 'To increase sales by 20%',
-        status: 'Awaiting approval',
-        jobTitle: 'Sales Manager',
-        department: 'Sales',
-        email: 'sample4@gmail.com'
-
-    },
-    {
-        id: 5,
-        employeeId: 'EMP005',
-        employeeName: 'Paul Hughes',
-        objective: 'To increase sales by 20%',
-        status: 'Awaiting approval',
-        jobTitle: 'Sales Manager',
-        department: 'Sales',
-        email: 'sample5@gmail.com'
-    },
-]
-
-export { NotificationsComponent, DummyObjectives }
+export { NotificationsComponent }
 
 

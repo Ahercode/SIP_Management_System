@@ -15,7 +15,7 @@
 
 // export { Appraisals }
 
-import { Button, Input, Modal, Skeleton, Space, Table } from 'antd'
+import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -26,7 +26,6 @@ import { Api_Endpoint, deleteItem, fetchDocument } from '../../../../../services
 
 const Appraisals = () => {
   const [gridData, setGridData] = useState([])
-  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -39,7 +38,7 @@ const Appraisals = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
 
-  const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
+  const { data: allAppraisals, isLoading: loading } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
 
   const handleOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
@@ -76,6 +75,7 @@ const Appraisals = () => {
     },
     onError: (error) => {
       console.log('delete error: ', error)
+      message.error(`Error deleting Appraisal`)
     }
   })
 
@@ -139,10 +139,8 @@ const Appraisals = () => {
   ]
 
   const loadData = async () => {
-    setLoading(true)
     try {
       setGridData(allAppraisals?.data)
-      setLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -150,7 +148,7 @@ const Appraisals = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [allAppraisals?.data])
 
 
   const handleInputChange = (e: any) => {
@@ -181,7 +179,6 @@ const Appraisals = () => {
   const url = `${Api_Endpoint}/Appraisals`
   const urlUpdate = `${Api_Endpoint}/Appraisals/${tempData?.id}`
   const OnSUbmit = handleSubmit(async (values) => {
-    setLoading(true)
     const data = {
       tenantId: tenantId,
       code: values.code,

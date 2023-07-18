@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../../services/ApiCalls";
 import { AppraisalPerformance } from "./AppraisalPerformance";
 import { NotificationsComponent } from "../../lineManager/NotificationsComponent";
+import { PerformanceDetails } from "./PerfDetails";
 
 const PerformanceBoard = () => {
     const [isDownlinesModalOpen, setIsDownlinesModalOpen] = useState(false)
@@ -60,22 +61,19 @@ const PerformanceBoard = () => {
                 </>
             ),
         },
-        // {
-        //     key: '3',
-        //     label: <>
-        //         <Badge count={0} showZero={true} title="Rejected objectives" size="default">
-        //             <span>Notifications</span>
-        //         </Badge>
-        //     </>,
-        //     children: (
-        //         <>
-        //             <NotificationsComponent />
-        //         </>
-        //     ),
-        // },
+        {
+            key: '3',
+            label: <span>View details</span>,
+            children: (
+                <>
+                    <PerformanceDetails />
+                </>
+            ),
+        },
     ]
     return (
-        <div className='card border border-gray-400 '
+        <div 
+        // className='card border border-gray-400 '
             style={{
                 backgroundColor: 'white',
                 padding: '20px',

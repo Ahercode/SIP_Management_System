@@ -8,6 +8,8 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { set, useForm } from 'react-hook-form'
 import form from 'antd/es/form'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeftOutlined } from "@ant-design/icons"
+
 
 const Parameter = () => {
   const [gridData, setGridData] = useState([])
@@ -349,10 +351,21 @@ const Parameter = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-          <h3 style={{ fontWeight: "bolder" }}>{appraisalName}</h3>
-          <br></br>
-          <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
-          <br></br>
+          <Space className='d-flex align-items-center align-content-center mb-3 flex-direction-row' >
+            <Button
+              onClick={() => navigate(-1)}
+              className="btn btn-light-primary me-4"
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                display: 'flex',
+              }}
+              type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
+            />
+            <span className="fw-bold text-gray-600 d-block fs-2 mb-3 ">{appraisalName}</span>
+            {/* <> <Breadcrumb separator=">" items={breadcrumbs} className="mb-3" /> </> */}
+          </Space>
+          
           <div className='d-flex justify-content-between'>
             <Space style={{ marginBottom: 16 }}>
               <Input
@@ -380,7 +393,7 @@ const Parameter = () => {
           </div>
           {
             isLoading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataByID}/>
+              <Table columns={columns} dataSource={dataByID} />
           }
           <Modal
             title={isUpdateModalOpen ? 'Parameter Update' : 'Parameter Setup'}

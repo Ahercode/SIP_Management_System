@@ -4,7 +4,7 @@ const UnitOfMeasure = () => {
 
   const data = {
     title: 'Unit of measure',
-    url: 'unitsofmeasure',
+    url: 'unitofmeasures',
   }
 
   return (

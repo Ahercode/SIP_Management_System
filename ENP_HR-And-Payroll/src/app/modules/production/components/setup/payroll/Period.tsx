@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
@@ -8,7 +8,6 @@ import { useQueryClient, useMutation, useQuery } from 'react-query'
 
 const Period = () => {
   const [gridData, setGridData] = useState([])
-  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -19,7 +18,7 @@ const Period = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: periods } = useQuery('periods', () => fetchDocument(`Periods`), { cacheTime: 5000 })
+  const { data: periods, isLoading: loading } = useQuery('periods', () => fetchDocument(`periods`), { cacheTime: 5000 })
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -41,13 +40,14 @@ const Period = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData} = useMutation(deleteItem, {
+  const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('periods')
       loadData()
     },
     onError: (error) => {
       console.log('delete error: ', error)
+      message.error('An error occurred while deleting the record.')
     }
   })
 
@@ -126,7 +126,6 @@ const Period = () => {
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
           </a>
-
         </Space>
       ),
 
@@ -134,12 +133,8 @@ const Period = () => {
   ]
 
   const loadData = async () => {
-    setLoading(true)
     try {
-      // const response = await fetchDocument('Periods')
-      const response = periods?.data
-      setGridData(response?.data)
-      setLoading(false)
+      setGridData(periods?.data)
     } catch (error) {
       console.log(error)
     }
@@ -147,12 +142,10 @@ const Period = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+    console.log('girdData: ', gridData)
+  }, [periods?.data])
 
-  const dataWithIndex = gridData?.map((item: any, index) => ({
-    ...item,
-    key: index,
-  }))
+
 
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
@@ -171,7 +164,7 @@ const Period = () => {
     setGridData(filteredData)
   }
 
-  const {mutate: updateData } = useMutation(updateItem, {
+  const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: (data) => {
       queryClient.invalidateQueries('periods')
       reset()
@@ -204,9 +197,7 @@ const Period = () => {
 
 
   const OnSubmit = handleSubmit(async (values) => {
-    setLoading(true)
     const endpoint = 'Periods'
-
     const item = {
       data: {
         code: values.code,
@@ -221,7 +212,7 @@ const Period = () => {
     postData(item)
   })
 
-  const { mutate: postData} = useMutation(postItem, {
+  const { mutate: postData } = useMutation(postItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('periods')
       reset()
@@ -252,9 +243,9 @@ const Period = () => {
                 onChange={handleInputChange}
                 type='text'
                 allowClear
-                value={searchText}
+                value={searchText} size='large'
               />
-              <Button type='primary' onClick={globalSearch}>
+              <Button type='primary' onClick={globalSearch} size='large'>
                 Search
               </Button>
             </Space>
@@ -272,7 +263,7 @@ const Period = () => {
           </div>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+              <Table columns={columns} dataSource={gridData} />
           }
           <Modal
             title={isUpdateModalOpen ? 'Period Update' : 'Period Setup'}

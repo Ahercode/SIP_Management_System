@@ -14,7 +14,7 @@ import { UnitOfMeasure } from '../modules/production/components/setup/employee/U
 import { Paygroups } from '../modules/production/components/setup/employee/Paygroups'
 import { Appraisals } from '../modules/production/components/setup/hr/Appraisals'
 import { ApprovalLevel } from '../modules/production/components/setup/payroll/ApprovalLevel'
-import { Category } from '../modules/production/components/setup/payroll/Currency'
+import { Category } from '../modules/production/components/setup/payroll/Category'
 import { Period } from '../modules/production/components/setup/payroll/Period'
 import { Parameter } from '../modules/production/components/setup/hr/Parameter'
 import { Employee } from '../modules/production/components/employee/Employee'
@@ -94,13 +94,13 @@ const PrivateRoutes = () => (
           <EmployeeObjectivePage />
         </SuspensedView>} />
       <Route
-        path='new-employee-objectives/*'
+        path='new-employee-objectives/:parameterId'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
           <TestEmployeeObjective />
         </SuspensedView>} />
       <Route
-        path='new-employee-deliverables/*'
+        path='new-employee-deliverables/:objectiveId'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Deliverables</PageTitle>
           <TestEmployeeDeliverable />
@@ -149,7 +149,7 @@ const PrivateRoutes = () => (
       <Route
         path='transaction/hr/appraisal-performance/*'
         element={<SuspensedView>
-          <PageTitle>Appraisal and Performances</PageTitle>
+          <PageTitle>Appraisal and Performance</PageTitle>
           <PerformanceBoard />
         </SuspensedView>} />
 

@@ -1,12 +1,11 @@
-import { Button, Divider, Modal, Popconfirm, Skeleton, Space, Spin, Table, message } from "antd"
-import moment from "moment"
-import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft } from "../../ComponentsFactory"
-import { useEffect, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
-import { FormsBaseUrl, deleteItem, fetchDocument, postItem, updateItem } from "../../../../../services/ApiCalls"
-import { register } from "../../../../auth/core/_requests"
 import { PlusOutlined } from "@ant-design/icons"
+import { Button, Modal, Popconfirm, Skeleton, Space, Spin, Table, message } from "antd"
+import moment from "moment"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useMutation, useQuery, useQueryClient } from "react-query"
+import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from "../../../../../services/ApiCalls"
+import { getTimeLeft } from "../../ComponentsFactory"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
@@ -19,6 +18,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [description, setDescription] = useState<any>('')
     const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
     const [sendLoading, setSendLoading] = useState(false)
+    const [scheduleDateData, setScheduleDateData] = useState<any>({})
 
 
 
@@ -30,11 +30,12 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         setIsNotificationModalOpen(true)
     }
 
-    const handleConfirmNotificationSend = () => {
-        // setIsNotificationModalOpen(false)
-        handleNotificationSend()
-        setIsEmailSent(true)
-    }
+    // const handleConfirmNotificationSend = (record: any) => {
+    //     // setIsNotificationModalOpen(false)
+    //     handleNotificationSend()
+    //     setIsEmailSent(true)
+    //     setScheduleDateData(record) 
+    // }
 
     const showReviewDateModal = () => {
         setIsReviewDateModalOpen(true)
@@ -52,7 +53,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 return refId?.referenceId === referenceId
             })
             setGridData(response)
-            //find objective with matching referenceId from all objectives
             setLoading(false)
         } catch (error) {
             console.log(error)
@@ -63,7 +63,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     useEffect(() => {
         loadData()
     }, [
-        allReviewdates?.data, referenceId
+        allReviewdates?.data, referenceId, scheduleDateData
     ])
 
     function handleDeleteReviewDate(element: any) {
@@ -110,20 +110,28 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         },
         {
             title: 'Action',
-            render: (text: any, record: any) => (
+            render: (record: any) => (
                 <Space>
-                    <Popconfirm
-                        title="Confirm notifcation send"
-                        description={`This action will roll out email ${<br />}notifications to all employees in the selected employee group`}
-                        onConfirm={handleConfirmNotificationSend}
-                        onCancel={handleNotificationCancel}
-                        okText="Send"
-                        cancelText="Cancel"
-                    >
-                        <a className='text-primary me-2'>
-                            Send Notifications
-                        </a>
-                    </Popconfirm>
+                    {
+                        employeesInDataByID?.length > 0 ?
+                            <Popconfirm
+                                title="Confirm notifcation send"
+                                description={<><span className="ml-4">This action will roll out email notifications to all <br />employees in the selected employee group</span></>}
+                                onConfirm={()=>handleNotificationSend(record)}
+                                placement="leftTop"
+                                onCancel={handleNotificationCancel}
+                                className="w-100px"
+                                okText="Send"
+                                cancelText="Cancel"
+                            >
+                                <a className={'text-primary me-2'}>
+                                    Send Notifications
+                                </a>
+                            </Popconfirm>
+                            : <a className={'text-secondary me-2'}>
+                                Send Notifications
+                            </a>
+                    }
                     <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
                         Delete
                     </a>
@@ -179,15 +187,16 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
-    const handleNotificationSend = () => {
+    const handleNotificationSend = (record: any) => {
 
+        setIsEmailSent(true)
         setSendLoading(true)
         //map throw dataById and return employeeId and name of employee as a new array
         const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
             email: item.email,
-            username: `${item.firstName} ${item.surname}`
+            username: `${item.firstName} ${item.surname}`,
+            employeeId: item.employeeId
         }))
-        console.log('employeeMailAndName: ', employeeMailAndName)
 
         const item = {
             data: {
@@ -197,7 +206,22 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             },
             url: 'appraisalperftransactions/sendMail',
         }
-        // console.log('email sent: ', item)
+
+        const employeePerformanceData = employeeMailAndName?.map((item: any) => ({
+            employeeId: item.employeeId,
+            Status: 'Pending',
+            referenceId: referenceId,
+            scheduleDateId: record.id,
+        }))
+
+        const item2 = {
+            data: employeePerformanceData,
+            url: 'EmployeePerfDetails',
+        }
+
+        console.log('EmployeePerfDetails: ', item2)
+     
+        console.log('email sent: ', item)
         setIsEmailSent(true)
         postData(item)
     }
@@ -296,8 +320,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
             {/* confirm notification roll out modal */}
 
-            <Modal
-                title='Confirm Notification Send'
+            {/* <Modal
+                title='Confirm Notifications Send'
                 open={isNotificationModalOpen}
                 onCancel={handleNotificationCancel}
                 closable={true}
@@ -317,8 +341,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                         Cancel
                                     </Button>
                                     <Popconfirm
-                                        title="Confirm notifcation send"
-                                        description="This action will roll out email notifications to all employees in the selected employee group"
+
+                                        title="Confirm notifcations send"
+                                        description={`This action will roll out email notifications to all employees\n in the selected employee group.`}
                                         onConfirm={handleConfirmNotificationSend}
                                         onCancel={handleNotificationCancel}
                                         okText="Send"
@@ -344,13 +369,14 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 <Spin spinning={sendLoading}>
                     <div className='row'>
                         <div className='col-12'>
-                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees in the selected employee group`}</p>
+                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees\n in the selected employee group.`}</p>
                         </div>
                     </div>
                 </Spin>
-            </Modal>
+            </Modal> */}
         </>
     )
 }
 
 export { ReviewDateComponent }
+

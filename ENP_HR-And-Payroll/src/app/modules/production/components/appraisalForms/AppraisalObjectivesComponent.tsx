@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 
+
+
 const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const [gridData, setGridData] = useState([])
@@ -398,7 +400,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                 message.error('Weight cannot be greater than 100')
                 return
             }
-
         } else {
 
             // make sure all values are filled
@@ -489,7 +490,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
         }
     })
 
-    const { mutate: postData} = useMutation(postItem, {
+    const { mutate: postData } = useMutation(postItem, {
         onSuccess: () => {
             queryClient.invalidateQueries(`${endPoint}`)
             reset()
@@ -534,7 +535,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                                                 justifyContent: 'center',
                                                 display: 'flex',
                                             }}
-                                            type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'} />
+                                            type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
+                                        />
                                     </>
                                 }
                                 <span className="fw-bold text-gray-600 d-block fs-2">{!showDeliverablesEntry ? `Objectives` : `${pathName}`}</span>
@@ -543,18 +545,18 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
                         {
                             param?.id !== 'lineManger' ?
                                 <>
-                                    <Space className="justify-content-end align-items-end d-flex mb-6" >
+                                    {/* <Space className="justify-content-end align-items-end d-flex mb-6" >
                                         <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                                             <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                                             Add
                                         </button>
-                                    </Space>
+                                    </Space> */}
                                 </> : ""
                         }
                     </div>
                     {
                         loading ? <Skeleton active /> :
-                            <Table columns={columns} dataSource={dataByID}/>
+                            <Table columns={columns} dataSource={dataByID} />
                     }
                     <Modal
                         title={!showDeliverablesEntry ? isUpdateModalOpen ? `Update Objective` : `Add Objective` : isUpdateModalOpen ? `Update Deliverable` : `Add Deliverable`}
