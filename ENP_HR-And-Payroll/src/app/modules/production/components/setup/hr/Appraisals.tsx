@@ -60,6 +60,9 @@ const Appraisals = () => {
     setTempData(null)
   }
 
+  // handle date format
+  
+
   const handleChange = (event: any) => {
     event.preventDefault()
     setTempData({ ...tempData, [event.target.name]: event.target.value });

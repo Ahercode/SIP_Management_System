@@ -74,6 +74,10 @@ const AppraisalFormObjectiveComponent = ({ appraisalParameterData }: any) => {
         loadData()
     })
 
+
+    // get the first ten items from objectiveData
+    
+
     return (
         <div>
             {

@@ -165,7 +165,7 @@ const SharedComponent = (props: any) => {
         setGridData(filteredData)
     }
 
-    const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+    const {  mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
             queryClient.invalidateQueries(props.data.url)
             reset()
