@@ -867,8 +867,7 @@ const CashFlow = () => {
     //     amount: 'Dec27',
     //     id:60
     // },
-    
-       
+           
   ]
 
   const PeriodData: any = [
@@ -1124,7 +1123,7 @@ console.log(newItem);
                 </>:""
             }
             <div >
-                <label className="form-label">Financce Option</label>
+                <label className="form-label">Finance Option</label>
                     <select 
                         onChange={(e:any)=>setFinanceOption(e.target.value)}
                         className="form-select form-select-solid" aria-label="Select example">
