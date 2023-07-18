@@ -7,6 +7,7 @@ import {useFormik} from 'formik'
 import {getUserByToken, login, parseJwt} from '../core/_requests'
 import {useAuth} from '../core/Auth'
 
+
 const loginSchema = Yup.object().shape({
   username: Yup.string()
     // .email('Wrong username')
@@ -29,7 +30,6 @@ const initialValues = {
   https://jaredpalmer.com/formik/docs/tutorial#getfieldprops
   https://medium.com/@maurice.de.beijer/yup-validation-and-typescript-and-formik-6c342578a20e
 */
-
 export function Login() {
   const [loading, setLoading] = useState(false)
   const {saveAuth, setCurrentUser} = useAuth()
@@ -161,3 +161,4 @@ export function Login() {
     </form>
   )
 }
+
