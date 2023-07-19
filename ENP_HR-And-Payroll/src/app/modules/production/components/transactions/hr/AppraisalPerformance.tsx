@@ -94,9 +94,7 @@ const AppraisalPerformance = () => {
   }
   const showUpdateModal = (record: any) => {
     setShowPrintPreview(true)
-    console.log('record', record)
     const employee = allEmployees?.data?.find((item: any) => item?.employeeId === record?.employeeId)
-    console.log('employee', employee)
     setEmployeeData(employee)
   }
 
@@ -495,5 +493,7 @@ const AppraisalPerformance = () => {
 }
 
 export { AppraisalPerformance }
+
+
 
 

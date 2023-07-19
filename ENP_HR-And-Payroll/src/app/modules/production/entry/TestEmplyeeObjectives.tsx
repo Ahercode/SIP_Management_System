@@ -189,7 +189,7 @@ const TestEmployeeObjective = () => {
         return message.error(`Total weight for ${pathData?.name} cannot be greater than ${data?.weight}`);
       } else {
         const item: any = {
-          url: `appraisalObjectives`,
+          url: `appraisalObjective`,
           data: tempData
         }
         updateData(item)
@@ -206,7 +206,7 @@ const TestEmployeeObjective = () => {
           return message.error(`Total weight for ${pathData} cannot be greater than ${data?.weight}`);
         } else {
           const item: any = {
-            url: `appraisalObjectives`,
+            url: `appraisalObjective`,
             data: tempData
           }
           updateData(item)
@@ -242,7 +242,7 @@ const TestEmployeeObjective = () => {
         comment: "",
         status: "Pending",
       },
-      url: `appraisalObjectives`,
+      url: `appraisalObjective`,
     }
 
 
@@ -265,9 +265,11 @@ const TestEmployeeObjective = () => {
       if (sums + itemToPost.data.weight > data?.weight) {
         return message.error(`Total weight for ${pathData?.name} cannot be greater than ${data?.weight}`);
       } else {
+        console.log('item to post: ', itemToPost)
         postData(itemToPost)
       }
     } else {
+      console.log('item to post: ', itemToPost)
       postData(itemToPost)
     }
   })
@@ -372,7 +374,11 @@ const TestEmployeeObjective = () => {
   )
 }
 
-
+{
+  /**
+   * 
+   */
+}
 export { TestEmployeeObjective }
 
 

@@ -1,12 +1,8 @@
-import { ArrowLeftOutlined } from "@ant-design/icons"
-import { Button, Divider, Modal, Skeleton, Space, Table, message } from 'antd'
+import { Divider, Empty, Skeleton, Table } from 'antd'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
-import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
-import { AppraisalFormContent } from "./FormTemplateComponent"
+import { fetchAppraisals, fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 
 
@@ -108,6 +104,10 @@ const PrintComponent: React.FC = () => {
         loadData()
     }, [param, parameterData?.data, objectivesData])
 
+    const empObjectives = (parameterId: number) => {
+        const data: any = allAppraisalObjectives?.data?.filter((item: any) => item.parameterId === parameterId)
+        return !data ? null : data
+    }
 
     return (
         <div
@@ -123,23 +123,24 @@ const PrintComponent: React.FC = () => {
                                 <span className=' fs-2 ms-4 fw-bold'>{`(${item?.weight}%)`}</span>
                             </div>
                             {
-                                allAppraisalObjectives?.data?.filter((obj: any) => obj.parameterId === item?.id).map((objItem: any) => (
-                                    <div className="mb-7 px-3 py-4 mt-4">
-                                        <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center mb-2">
-                                            <span className=' fs-3 fw-bold'>{objItem?.name}</span>
-                                            <div className="bullet bg-danger ms-4"></div>
-                                            <span className=' fs-3 ms-4 fw-bold'>{`${objItem?.description}`}</span>
+                                empObjectives(item?.id) === null ? <Empty className="mt-4" /> :
+                                    empObjectives(item?.id)?.map((objItem: any) => (
+                                        <div className="mb-7 px-3 py-4 mt-4">
+                                            <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center mb-2">
+                                                <span className=' fs-3 fw-bold'>{objItem?.name}</span>
+                                                <div className="bullet bg-danger ms-4"></div>
+                                                <span className=' fs-3 ms-4 fw-bold'>{`${objItem?.description}`}</span>
+                                            </div>
+                                            <div>
+                                                {loading ? <Skeleton active /> :
+                                                    <Table
+                                                        bordered
+                                                        columns={delCols}
+                                                        dataSource={allAppraisalDeliverables?.data?.filter((del: any) => del.objectiveId === objItem?.id)}
+                                                    />}
+                                            </div>
                                         </div>
-                                        <div>
-                                            {loading ? <Skeleton active /> :
-                                                <Table
-                                                    bordered
-                                                    columns={delCols}
-                                                    dataSource={allAppraisalDeliverables?.data?.filter((del: any) => del.objectiveId === objItem?.id)}
-                                                />}
-                                        </div>
-                                    </div>
-                                ))
+                                    ))
                             }
                         </div>
                     ))
@@ -217,4 +218,4 @@ const AppraisalPrintHeader: React.FC<PrintHeaderProps> = ({ employeeData, printC
         </div>
     )
 }
-export { PrintComponent, AppraisalPrintHeader }
+export { AppraisalPrintHeader, PrintComponent }
