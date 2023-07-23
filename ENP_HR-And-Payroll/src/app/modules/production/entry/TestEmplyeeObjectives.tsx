@@ -46,7 +46,7 @@ const TestEmployeeObjective = () => {
 
   const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
-      queryClient.invalidateQueries('appraisalObjectives')
+      queryClient.invalidateQueries('appraisalObjective')
       loadData()
     },
     onError: (error) => {
@@ -170,7 +170,6 @@ const TestEmployeeObjective = () => {
 
   const handleUpdate = async (e: any) => {
     e.preventDefault()
-    const data = getItemData(tempData?.parameterId, parameterData?.data)
     // input validation
     // make sure all values are filled
     if (!tempData.name || !tempData.weight || tempData.weight === '') {
@@ -185,8 +184,8 @@ const TestEmployeeObjective = () => {
     //logic validatio
 
     if (tempData.name === secondTempData.name && tempData.description === secondTempData.description) {
-      if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > data?.weight) {
-        return message.error(`Total weight for ${pathData?.name} cannot be greater than ${data?.weight}`);
+      if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > pathData?.weight) {
+        return message.error(`Total weight for ${pathData?.name} cannot be greater than ${pathData?.weight}`);
       } else {
         const item: any = {
           url: `appraisalObjective`,
@@ -202,8 +201,8 @@ const TestEmployeeObjective = () => {
       )
 
       if (itemExists) { return message.error('Item already exists') } else {
-        if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > data?.weight) {
-          return message.error(`Total weight for ${pathData} cannot be greater than ${data?.weight}`);
+        if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > pathData?.weight) {
+          return message.error(`Total weight for ${pathData} cannot be greater than ${pathData?.weight}`);
         } else {
           const item: any = {
             url: `appraisalObjective`,
@@ -260,10 +259,10 @@ const TestEmployeeObjective = () => {
 
     const sums = weightSum(itemToPost.data)
 
+
     if (sums > 0) {
-      const data = getItemData(parseInt(param?.parameterId), parameterData?.data)
-      if (sums + itemToPost.data.weight > data?.weight) {
-        return message.error(`Total weight for ${pathData?.name} cannot be greater than ${data?.weight}`);
+      if (sums + itemToPost.data.weight > pathData?.weight) {
+        return message.error(`Total weight for ${pathData?.name} cannot be greater than ${pathData?.weight}`);
       } else {
         console.log('item to post: ', itemToPost)
         postData(itemToPost)
@@ -315,7 +314,11 @@ const TestEmployeeObjective = () => {
                 }}
                 type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
               />
-              <span className="fw-bold text-gray-600 d-block fs-2">{`${pathData?.name}`}</span>
+              <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
+                <span className="fw-bold d-block fs-2">{`${pathData?.name}`}</span>
+                <div className="bullet bg-danger ms-4"></div>
+                <span className=' fs-2 ms-4 fw-bold'>{`${pathData?.weight}%`}</span>
+              </div>
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>

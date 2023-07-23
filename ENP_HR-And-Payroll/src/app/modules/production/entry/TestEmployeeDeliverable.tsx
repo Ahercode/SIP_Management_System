@@ -208,12 +208,9 @@ const TestEmployeeDeliverable = () => {
 
   const handleUpdate = async (e: any) => {
     e.preventDefault()
-    const data = getItemData(tempData?.objectiveId, appraisalobjectives?.data)
-
-    if (!tempData.name || !tempData.subWeight ||
-      tempData.subWeight === '' || !tempData.unitOfMeasureId || !tempData.target ||
-      tempData.target === '') {
-      return message.error('Please fill all fields')
+    console.log('tempData: ', tempData)
+    if (tempData.name = '') {
+      return message.error('Name is required.')
     } else if (parseInt(tempData.subWeight) <= 0) {
       return message.error('Sub Weight cannot be zero or negative')
     } else if (parseInt(tempData.target) <= 0) {
@@ -260,18 +257,14 @@ const TestEmployeeDeliverable = () => {
   const OnSubmit = handleSubmit(async (values) => {
     // input validations
     // make sure all values are filled
-    if (values.name === '' || values.unitOfMeasure==='Select') {
-      message.error('Please fill all fields')
-      return
+    if (values.name = '' || values.unitOfMeasureId === 'Select') {
+      // return message.error('Please fill all fields')
     } else if (parseInt(values.subWeight) <= 0) {
-      message.error('Sub Weight cannot be zero or negative')
-      return
+      return message.error('Sub Weight cannot be zero or negative')
     } else if (parseInt(values.target) <= 0) {
-      message.error('Target cannot be zero or negative')
-      return
+      return message.error('Target cannot be zero or negative')
     } else if (parseInt(values.weight) > 100) {
-      message.error('Weight cannot be greater than 100')
-      return
+      return message.error('Weight cannot be greater than 100')
     }
 
     const itemToPost = {
@@ -353,7 +346,11 @@ const TestEmployeeDeliverable = () => {
                 }}
                 type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
               />
-              <span className="fw-bold text-gray-600 d-block fs-2">{`${pathData?.name}`}</span>
+              <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
+                <span className="fw-bold d-block fs-2">{`${pathData?.name}`}</span>
+                <div className="bullet bg-danger ms-4"></div>
+                <span className=' fs-2 ms-4 fw-bold'>{`${pathData?.weight}%`}</span>
+              </div>
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
@@ -438,7 +435,7 @@ const TestEmployeeDeliverable = () => {
                   <label htmlFor="exampleFormControlInput1" className="form-label">Sub Weight</label>
                   <input
                     {...register("subWeight")}
-                    type='number' min='0' 
+                    type='number' min='0'
                     defaultValue={isUpdateModalOpen === true ? tempData.subWeight : 0}
                     onChange={handleChange}
                     className="form-control form-control-solid" />
