@@ -479,11 +479,11 @@ const AppraisalPerformance = () => {
               okText="Print"
               onOk={handlePrintPreviewModalOk}
             >
-              <div className="py-9 px-9">
+              <div className="py-9 px-9"> 
                 <AppraisalPrintHeader
                   employeeData={employeeData}
                 />
-                <PrintComponent />
+                <PrintComponent employeeData={employeeData} />
               </div>
             </Modal>
           </div>

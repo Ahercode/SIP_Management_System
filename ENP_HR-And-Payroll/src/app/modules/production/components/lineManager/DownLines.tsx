@@ -99,8 +99,8 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
                         columns={columns}
                         dataSource={filteredByLineManger}
                         expandable={{
-                            expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.comment}</p>,
                             rowExpandable: (record) => record.status === 'Rejected',
+                            expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.comment}</p>,
                         }}
                     />
             }

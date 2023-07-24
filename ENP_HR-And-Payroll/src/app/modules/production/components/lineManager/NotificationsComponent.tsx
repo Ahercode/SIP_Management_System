@@ -276,7 +276,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                 <AppraisalPrintHeader
                     employeeData={employeeData}
                 />
-                <PrintComponent />
+                <PrintComponent employeeData={employeeData} />
             </Modal>
         </>
     )

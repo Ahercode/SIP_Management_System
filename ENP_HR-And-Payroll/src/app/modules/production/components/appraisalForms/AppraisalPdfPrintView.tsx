@@ -7,7 +7,7 @@ import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 
 
 
-const PrintComponent: React.FC = () => {
+const PrintComponent: React.FC<PrintHeaderProps> = ({employeeData}: any) => {
 
     const [gridData, setGridData] = useState([])
     const param: any = useParams();
@@ -105,15 +105,13 @@ const PrintComponent: React.FC = () => {
     }, [param, parameterData?.data, objectivesData])
 
     const empObjectives = (parameterId: number) => {
-        const data: any = allAppraisalObjectives?.data?.filter((item: any) => item.parameterId === parameterId)
-        console.log('objectives', data)
+        console.log('allAppraisalObjectives', allAppraisalObjectives?.data)
+        const data: any = allAppraisalObjectives?.data?.filter((item: any) => item.parameterId === parameterId && item.employeeId === employeeData?.employeeId)
         return data
     }
 
     return (
-        <div
-        // className="border border-gray-400 mt-4"
-        >
+        <div>
             <div className='table-responsive'>
                 {
                     gridData?.map((item: any) => (

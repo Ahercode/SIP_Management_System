@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, Tag, message } from 'antd'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
@@ -94,10 +94,35 @@ const TestParameter = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-          <div className='text-primary fs-2 fw-bold mb-4'>{`${appraisalData?.name}`}</div>
+          <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
+            <div className='text-primary fs-2 fw-bold mb-4'>{`${appraisalData?.name}`}</div>
+            <Button type='primary' disabled={true} size='large'>
+              Submit
+            </Button>
+          </div>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataByID} />
+              <Table
+                columns={columns}
+                dataSource={dataByID}
+                expandable={{
+                  rowExpandable: (record) => record,
+                  expandedRowRender: (record) =>
+                    <div>
+                      <div className='d-flex flex-direction-row align-items-center align-content-center py-4'>
+                        <div className='d-flex flex-direction-row me-4'>
+                          <span className=''>Objectives</span>
+                          <Tag color='red' className='mx-2'>Incomplete</Tag>
+                        </div>
+                        <div className='d-flex flex-direction-row'>
+                          <span className=''>Deliverables</span>
+                          <Tag color='red' className='mx-2'>Incomplete</Tag>
+                        </div>
+                      </div>
+                    </div>
+                  ,
+                }}
+              />
           }
         </div>
       </KTCardBody>
