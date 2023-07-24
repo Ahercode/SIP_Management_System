@@ -106,7 +106,8 @@ const PrintComponent: React.FC = () => {
 
     const empObjectives = (parameterId: number) => {
         const data: any = allAppraisalObjectives?.data?.filter((item: any) => item.parameterId === parameterId)
-        return !data ? null : data
+        console.log('objectives', data)
+        return data
     }
 
     return (
@@ -123,7 +124,10 @@ const PrintComponent: React.FC = () => {
                                 <span className=' fs-2 ms-4 fw-bold'>{`(${item?.weight}%)`}</span>
                             </div>
                             {
-                                empObjectives(item?.id) === null ? <Empty className="mt-4" /> :
+                                empObjectives(item?.id).length === 0 ?
+                                    <Empty
+                                        description={<span className='text-gray-600'>No objectives found </span>}
+                                        className="mt-4" /> :
                                     empObjectives(item?.id)?.map((objItem: any) => (
                                         <div className="mb-7 px-3 py-4 mt-4">
                                             <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center mb-2">
