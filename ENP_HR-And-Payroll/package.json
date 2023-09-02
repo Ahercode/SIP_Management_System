@@ -2,7 +2,7 @@
     "name": "demo1",
     "version": "8.1.0",
     "private": true,
-    "homepage": "/omni-hr",
+    "homepage": "/apms",
     "dependencies": {
         "@ant-design/pro-components": "^2.6.3",
         "@devexpress/analytics-core": "22.2.6",

@@ -260,6 +260,13 @@ const PrivateRoutes = () => (
         </SuspensedView>} />
 
       <Route
+        path='setup/employee/departments'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Departments</PageTitle>
+          <Department />
+        </SuspensedView>} />
+
+      <Route
         path='setup/payroll/period/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Periods</PageTitle>

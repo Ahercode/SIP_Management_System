@@ -80,6 +80,7 @@ export function AsideMenuMain() {
             ? <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/general/gen019.svg' hasBullet={false}>
               <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
               <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Employee Groups' />
+              <AsideMenuItem to='setup/employee/departments' hasBullet={true} title='Departments' />
               <AsideMenuItem to='setup/employee/categories' hasBullet={true} title='Categories' />
               <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
               <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
