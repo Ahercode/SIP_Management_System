@@ -177,7 +177,7 @@ const UserRole = () => {
   const checkRole = (roleId: any) => {
     let isAssigned = false
     allUserRoles?.data.map((item: any) => {
-      if (item.userId.toString() === param.id && item.roleId.toString() === roleId.toString()) {
+      if (item.userId.toString() === userID && item.roleId.toString() === roleId.toString()) {
         isAssigned = true
       }
     })

@@ -119,13 +119,13 @@ const UserApplication = () => {
     return appName
   }
   const dataByID = gridData?.filter((section:any) =>{
-    return section.userId.toString() === param.id
+    return section.userId?.toString() === param.id
   })
 
   const getUserName= async (id:any) =>{
     let newName=null
-     const itemTest = await allUsers?.data.find((item:any) =>
-      item.id.toString()===id
+     const itemTest = await allUsers?.data?.find((item:any) =>
+      item.id?.toString()===id
     )
      newName = await itemTest
     return newName

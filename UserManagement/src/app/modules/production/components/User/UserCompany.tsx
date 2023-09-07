@@ -183,7 +183,7 @@ const UserCompany = () => {
   const checkCompany = (companyId: any) => {
     let isAssigned = false
     userCompanies?.data.map((item: any) => {
-      if (item.userId?.toString() === param.id && item.companyId?.toString() === companyId?.toString()) {
+      if (item.userId?.toString() === userID && item.companyId?.toString() === companyId?.toString()) {
         isAssigned = true
       }
     })
