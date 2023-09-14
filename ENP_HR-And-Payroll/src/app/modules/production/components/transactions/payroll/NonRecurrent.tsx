@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import "../../employeeFormEntry/formStyle.css"
+import "../../employeeComponent/formStyle.css"
 import { NonRecurrentBenefitTab } from './nonrecurrentTabs/NonRecurrentBenefitTab';
 import { NonRecurrentDeductionTab } from './nonrecurrentTabs/NonRecurrentDeductionTab';
 const NonRecurrent= () =>{

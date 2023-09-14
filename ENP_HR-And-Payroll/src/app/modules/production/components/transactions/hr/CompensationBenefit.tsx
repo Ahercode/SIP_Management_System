@@ -6,6 +6,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useQuery } from 'react-query'
 import { Api_Endpoint, fetchEmployees, fetchGradePerks,  fetchJobTitles, fetchPaygroups,  fetchPerks, fetchUnits } from '../../../../../services/ApiCalls'
 import { useForm } from 'react-hook-form'
+import { forUdateButton } from './Common/customInfoAlert';
 
 const CompensationBenefit = () => {
   const [gridData, setGridData] = useState([])
@@ -111,6 +112,8 @@ const CompensationBenefit = () => {
     console.log('radio checked', e.target.value);
     setCompanyPropertyValue(e.target.value);
   };
+
+  
 
   function handleDelete(element: any) {
     deleteData(element)
@@ -218,7 +221,7 @@ const CompensationBenefit = () => {
           {/* <a href='#' onClick={showShortModal} className='btn btn-light-primary btn-sm'>
             Shortlist
           </a> */}
-          <a  className='btn btn-light-primary btn-sm'>
+          <a onClick={forUdateButton} className='btn btn-light-primary btn-sm'>
             Update
           </a>
          
@@ -467,7 +470,8 @@ const allPerkByGrade:any = allGradePerks?.data?.filter((item:any) =>{
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+            {/* will be updated soon */}
+              <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
             </button>

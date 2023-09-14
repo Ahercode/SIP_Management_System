@@ -1,6 +1,6 @@
 import { useState } from 'react';
 // import { DEPARTMENTS, employeedata, PAYGROUP } from '../../../../../data/DummyData';
-import "../../employeeFormEntry/formStyle.css"
+import "../../employeeComponent/formStyle.css"
 import { BenefitTab } from './recurrentTabs/BenefitTab';
 import { DeductionTab } from './recurrentTabs/DeductionTab';
 

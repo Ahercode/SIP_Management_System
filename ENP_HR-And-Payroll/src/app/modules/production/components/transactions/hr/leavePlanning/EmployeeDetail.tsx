@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import "../../../employeeFormEntry/formStyle.css";
+import "../../../employeeComponent/formStyle.css";
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { Space,  } from 'antd';
 
