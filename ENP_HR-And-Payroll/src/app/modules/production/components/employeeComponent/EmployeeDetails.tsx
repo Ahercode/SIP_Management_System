@@ -5,8 +5,6 @@ import "./formStyle.css"
 import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchEmployees, fetchExperiences, fetchGrades, fetchJobTitles, fetchNationalities, fetchNotches, fetchPaygroups, fetchQualifications, fetchSkills, fetchUnits } from '../../../../services/ApiCalls';
 
 import { useQuery } from 'react-query';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
 
 const EmplyeeDetails= () =>{
   const param:any  = useParams();
@@ -22,7 +20,6 @@ const EmplyeeDetails= () =>{
   const [nation, setNation] = useState<any>()
   const tenantId = localStorage.getItem('tenant')
   const [tempImage, setTempImage] = useState<any>();
-
 
   const onFileChange = (e:any) => {
     // Update the state
@@ -264,6 +261,7 @@ const EmplyeeDetails= () =>{
             <h5  style={{ color:"GrayText"}}>Email: <span style={{ color:"black"}}>{tempData?.email===null?" NULL":tempData?.email.toLowerCase()}</span></h5>
         </div>
       </div>
+
       {/* Administration */}
       {/* <br></br> */}
       <div className='row mb-5'>
@@ -304,6 +302,7 @@ const EmplyeeDetails= () =>{
             <h5  style={{ color:"GrayText"}}>Employment Date: <span style={{ color:"black"}}>{tempData?.employmentDate===null?" NULL":tempData?.employmentDate}</span></h5>
         </div>
       </div>
+      
       {/* Payroll */}
       {/* <br></br> */}
       <div className='row mb-5'>

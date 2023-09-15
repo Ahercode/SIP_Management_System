@@ -52,11 +52,40 @@
   .tab1-content{
     margin-bottom: 30px;
   }
-.tab2s{
+
+.tab2s {
     margin-bottom: 10px;
 }
 
-.tab2s .tab2 {
+.tab2s  .tab2 {
+    background-color: white;
+    color: #000;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    padding: 8px;
+    margin-right: 10px;
+    /* margin-bottom: -20px; */
+    cursor: pointer;
+    /* transition: border-bottom .3s ease-in; */
+    transition: all .5s ease-in;
+  }
+  
+  .tab2s  .tab2.active {
+    /* background-color: #000; */
+    color: #009EF7;
+    border-bottom: 3px solid #009EF7;
+  }
+
+  .tab2-content{
+    margin-bottom: 30px;
+  }
+
+ .skillTabs{
+    margin-bottom: 10px;
+}
+
+  .skillTab  .skillTabs {
     background-color: white;
     color: #000;
     font-size: 18px;
@@ -68,13 +97,14 @@
     cursor: pointer;
   }
   
-  .tab2s .tab2.active {
+   .skillTab  .skillTab.active {
     /* background-color: #000; */
     color: #009EF7;
     border-bottom: 3px solid #009EF7;
+    
   }
 
 
-  .tab2-content{
+   .skillTab-content{
     margin-bottom: 30px;
   }

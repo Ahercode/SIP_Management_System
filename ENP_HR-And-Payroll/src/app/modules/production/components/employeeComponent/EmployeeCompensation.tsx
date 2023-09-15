@@ -1,11 +1,11 @@
 import { Space, Table } from "antd"
 
-const EmployeeTraining = () => {
+const EmployeeCompensation = () => {
 
-    const trainingColumns: any = [
+    const compensationColumns: any = [
 
         {
-          title: 'Code',
+          title: 'Period',
           dataIndex: 'code',
           sorter: (a: any, b: any) => {
             if (a.code > b.code) {
@@ -18,7 +18,7 @@ const EmployeeTraining = () => {
           },
         },
         {
-          title: 'Traning Type',
+          title: 'Compensation Type',
           dataIndex: 'name',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {
@@ -51,9 +51,9 @@ const EmployeeTraining = () => {
 
     return (
         <div>
-            <Table columns={trainingColumns} />
+            <Table columns={compensationColumns} />
         </div>
-    )   
+    )
 }
 
-export default EmployeeTraining
+export default EmployeeCompensation

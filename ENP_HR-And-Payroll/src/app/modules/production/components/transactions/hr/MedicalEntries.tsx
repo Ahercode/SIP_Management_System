@@ -6,6 +6,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useForm } from 'react-hook-form'
 import {  Api_Endpoint, fetchEmployees, fetchMedicals, fetchPaygroups, fetchPeriods, fetchProducts, fetchServiceCost, fetchServiceProviders } from '../../../../../services/ApiCalls'
 import { useQuery } from 'react-query'
+import { forUdateButton } from './Common/customInfoAlert';
 
 const MedicalEntries = () => {
   const [gridData, setGridData] = useState([])
@@ -231,13 +232,6 @@ const MedicalEntries = () => {
     }
   }
 
-
-
-  const dataWithIndex = gridData.map((item: any, index) => ({
-    ...item,
-    key: index,
-  }))  
-
   const dataByID:any = gridData.filter((refId:any) =>{
     return  refId.periodId===parseInt(selectedValue2)&&refId.paygroupId===parseInt(selectedValue1)
   })
@@ -392,7 +386,7 @@ const MedicalEntries = () => {
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
             </button>
@@ -557,21 +551,7 @@ const MedicalEntries = () => {
                           }
                           <hr></hr>
                         </Modal>
-                        {/* <Select
-                         mode="multiple"
-                         style={{ width: '100%' }}
-                         placeholder="select products"
-                         onChange={handleNewChange}
-                         optionLabelProp="label"
-                        >
-                          {
-                            productByProvider.map((item:any)=>(
-                              <Option value={item.id}>
-                                {item.id}
-                              </Option>
-                            ))
-                          }
-                        </Select> */}
+                        
                       </>
                     }
                     </div>

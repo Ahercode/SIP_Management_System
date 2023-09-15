@@ -7,6 +7,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useForm } from 'react-hook-form'
 import {  useQuery, useQueryClient } from 'react-query'
 import { Api_Endpoint, fetchCategories, fetchJobTitles, fetchPaygroups, fetchRecruitmentTransactions, fetchUnits } from '../../../../../services/ApiCalls'
+import { forUdateButton } from './Common/customInfoAlert'
 
 
 
@@ -261,7 +262,7 @@ const onRadio4Change = (e: RadioChangeEvent) => {
           <a href='#' onClick={() => { showShortModal(record) }} className=' btn btn-light-info btn-sm'>
             Shortlist
           </a>
-          <a href='#' className='btn btn-light-primary btn-sm'>
+          <a onClick={forUdateButton} className='btn btn-light-primary btn-sm'>
             Selection
           </a>
         </Space>
@@ -439,38 +440,7 @@ const OnSUbmit = handleSubmit(async (values) => {
         selectedValue==="Select"?"":
         <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-           {/*<div style={{display:"flex", gap:"20px", marginBottom:"40px"}} className='col-6'>
-              <select value={selectedValue} onChange={(e) => setSelectedValue(e.target.value)} className="form-select form-select-solid"  aria-label="Select example">
-                <option>select</option>
-                {allRecuitments?.data.map((item: any) => (
-                  <option value={item.id}>{item.reference}</option>
-                ))}
-              </select>
-              <Select
-              value={selectedValue} 
-              onChange={(e) => setSelectedValue(e.target.value)}
-                style={{
-                  // backgroundColor:"gray",
-                  width:"300px"
-                }}
-                showSearch
-                placeholder="select a reference"
-                optionFilterProp="children"
-              >
-                <option
-                  style={{
-                    backgroundColor:"#F5F8FA", 
-                  }}
-                >select</option>
-                {allRecuitments?.data.map((item: any) => (
-                  <option value={item.id}>{item.reference}</option>
-                ))}
-              </Select> 
-              <button type='button' className='btn btn-primary me-3' onClick={showRefModal}>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
-          </div>*/} 
+           
           <div className='d-flex justify-content-between'>
             <Space style={{ marginBottom: 16 }}>
               <Input
@@ -491,7 +461,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
               </button>

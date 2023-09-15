@@ -8,6 +8,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useForm } from 'react-hook-form'
 import { Api_Endpoint, fetchEmployees, fetchJobTitles, fetchTrainees, fetchTrainingDevTransactions, fetchTrainings, fetchTrainingSchedules } from '../../../../../services/ApiCalls'
 import { useQuery } from 'react-query'
+import { forUdateButton } from './Common/customInfoAlert';
 
 const TrainingDevelopment = () => {
   const [gridData, setGridData] = useState([])
@@ -308,12 +309,6 @@ const TrainingDevelopment = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          {/* <a href='#' onClick={showShortModal} className='btn btn-light-primary btn-sm'>
-            Shortlist
-          </a> */}
-          {/* <a  className='btn btn-light-primary btn-sm'>
-            Delete
-          </a> */}
           <a onClick={() => handleScheduleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
           </a>
@@ -409,33 +404,6 @@ const TrainingDevelopment = () => {
     })
     return phone
   }
-
-
-  const  data = [
-
-    {
-      key:'1',
-      id:'1',
-      date:"Day 1 - Morning", 
-      phone:"0249920482",
-    
-      topic: "Sage Installation",
-    },
-    {
-      key:'2',
-      id:'2',
-      date:"Day 2 - Morning",
-      topic: "DevOps",
-
-    },
-    {
-      key:'3',
-      id:'3',
-      date:"Day 3 - Morning", 
-      topic: "MySQL Basics",
-
-    }
-  ];
 
   const dataByID:any = allTrainingDevTransactions?.data.find((refId:any) =>{
     return  (refId.id===parseInt(selectedRef))
@@ -705,7 +673,7 @@ const TrainingDevelopment = () => {
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
             </button>

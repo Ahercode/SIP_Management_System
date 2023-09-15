@@ -10,9 +10,15 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { BANKS } from '../../../../data/DummyData';
+import EmployeeAppraisal from './EmployeeAppraisal';
+import EmployeeLeave from './EmployeeLeave';
+import { Employee } from '../employee/Employee';
+import EmployeeNote from './EmployeeNote';
+import EmployeeTraining from './EmployeeTraining';
+import EmployeeCompensation from './EmployeeCompensation';
+import EmployeeSkillnQualification from './EmployeeSkillnQual';
 
 const EmployeeEditForm = () => {
-  const [formData, setFormData] = useState({});
   const [activeTab, setActiveTab] = useState('tab1');
   const [activeTab1, setActiveTab1] = useState('skill');
   const [activeTab2, setActiveTab2] = useState('medical');
@@ -21,9 +27,6 @@ const EmployeeEditForm = () => {
   const [experienceOpen, setExperienceOpen] = useState(false)
   const [medicalOpen, setMedicalOpen] = useState(false)
   const [familyOpen, setFamilyOpen] = useState(false)
-  const [trainingOpen, setTrainingOpen] = useState(false)
-  const [leaveOpen, setLeaveOpen] = useState(false)
-  const [appraisalOpen, setAppraisalOpen] = useState(false)
   const [statusModalOpen, setIsStatusModalOpen] = useState(false)
   const [statusGridModalOpen, setStatusGridModalOpen] = useState(false)
   const [noteOpen, setNoteOpen] = useState(false)
@@ -50,7 +53,6 @@ const EmployeeEditForm = () => {
   const tenantId = localStorage.getItem('tenant')
   const [tempImage, setTempImage] = useState<any>();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState('');
   const navigate = useNavigate();
 
@@ -94,17 +96,6 @@ const EmployeeEditForm = () => {
     setFamilyOpen(true)
   }
 
-  const showTrainingModal = () => {
-    setTrainingOpen(true)
-  }
-
-  const showLeaveModal = () => {
-    setLeaveOpen(true)
-  }
-
-  const showAppraisalModal = () => {
-    setAppraisalOpen(true)
-  }
   const showNoteModal = () => {
     setNoteOpen(true)
   }
@@ -194,9 +185,6 @@ const EmployeeEditForm = () => {
     setQualificationOpen(false)
     setMedicalOpen(false)
     setFamilyOpen(false)
-    setTrainingOpen(false)
-    setLeaveOpen(false)
-    setAppraisalOpen(false)
     setNoteOpen(false)
     setExperienceOpen(false)
     setStatusGridModalOpen(false)
@@ -546,53 +534,6 @@ const EmployeeEditForm = () => {
     },
   ]
 
-  const recruitColumns: any = [
-
-    {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-
-
-          <a className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
   const compensationColumns: any = [
 
     {
@@ -610,100 +551,6 @@ const EmployeeEditForm = () => {
     },
     {
       title: 'Compensation',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-
-
-          <a className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
-  const noteColumns: any = [
-
-    {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-
-
-          <a className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
-  const appraisalColumns: any = [
-
-    {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'Name',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -837,6 +684,7 @@ const EmployeeEditForm = () => {
     })
     return skillName
   }
+
   const getQualificationName = (qualificationId: any) => {
     let qualificationName = null
     allQualifications?.data.map((item: any) => {
@@ -851,8 +699,8 @@ const EmployeeEditForm = () => {
     if (!/[0-9]/.test(event.key)) {
       event.preventDefault();
     }
-
   }
+
   const { data: allEmployees } = useQuery('employees', () => fetchEmployees(tenantId), { cacheTime: 5000 })
   const { data: allDepartments } = useQuery('departments', () => fetchDepartments(tenantId), { cacheTime: 5000 })
   const { data: allDivisions } = useQuery('divisions', () => fetchDivisions(tenantId), { cacheTime: 5000 })
@@ -1206,6 +1054,7 @@ const EmployeeEditForm = () => {
       return error.statusText
     }
   })
+
   const url3 = `${Api_Endpoint}/FamilyMembers`
   const submitFamilys = handleSubmit(async (values: any) => {
     setLoading(true)
@@ -1559,7 +1408,7 @@ const EmployeeEditForm = () => {
 
           }
 
-          
+
           {/* Administration */}
           {activeTab === 'tab3' &&
             <div className='row col-12'>
@@ -1777,391 +1626,45 @@ const EmployeeEditForm = () => {
 
           {/* skills & qualifications */}
           {activeTab === 'tab8' &&
-            <div >
-              {/* tabs for skills and qualification */}
-              <div className="tab1s">
 
-                <button
-                  className={`tab1 ${activeTab1 === 'skill' ? 'active' : ''}`}
-                  onClick={() => handleTab1Click('skill')}
-                >
-                  Skills
-                </button>
-                <button
-                  className={`tab1 ${activeTab1 === 'qual' ? 'active' : ''}`}
-                  onClick={() => handleTab1Click('qual')}
-                >
-                  Qualifications
-                </button>
-                <button
-                  className={`tab1 ${activeTab1 === 'exper' ? 'active' : ''}`}
-                  onClick={() => handleTab1Click('exper')}
-                >
-                  Experiences
-                </button>
-              </div>
-              {/* <hr></hr> */}
-              <br></br>
-              <div className='tab1-content'>
-                {activeTab1 === 'skill' &&
-                  <div >
+            <EmployeeSkillnQualification employeeId={tempData?.id} />
 
-                    <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showSkillModal}>
-                      <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                      Add Skill
-                    </button>
-
-                    <Table columns={skillColumns} dataSource={skillByEmployee} loading={loading} />
-                    <Modal
-                      title="Add skill"
-                      open={skillOpen}
-                      onCancel={handleCancel}
-                      closable={true}
-                      footer={[
-                        <Button key='back' onClick={handleCancel}>
-                          Cancel
-                        </Button>,
-                        <Button
-                          key='submit'
-                          type='primary'
-                          htmlType='submit'
-                          loading={submitLoading}
-                          onClick={submitSkills}
-                        >
-                          Submit
-                        </Button>,
-                      ]}
-                    >
-                      <form
-                        onSubmit={submitSkills}
-                      >
-                        <hr></hr>
-                        {/* <div style={{padding: "20px 20px 20px 20px"}} className='row mb-0 '>
-                            <div className=' mb-7'>
-                              <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                              <input type="text" {...register("name")} className="form-control form-control-solid"/>
-                            </div>
-                            
-                          </div> */}
-                        <div className=' mb-7'>
-                          <label htmlFor="exampleFormControlInput1" className="form-label">Skill</label>
-                          {/* <input type="text" {...register("code")}  className="form-control form-control-solid"/> */}
-                          <select {...register("skillId")} className="form-select form-select-solid" aria-label="Select example">
-                            <option>select </option>
-                            {allSkills?.data.map((item: any) => (
-                              <option value={item.id}>{item.name}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </form>
-                    </Modal>
-                  </div>}
-                {activeTab1 === 'qual' &&
-                  <div >
-                    <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showQualificationModal}>
-                      <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                      Add Qualification
-                    </button>
-
-                    <Table columns={qualificationColumns} dataSource={qualificationData} />
-                    <Modal
-                      title="Add Qualification"
-                      open={qualificationOpen}
-                      onCancel={handleCancel}
-                      closable={true}
-                      footer={[
-                        <Button key='back' onClick={handleCancel}>
-                          Cancel
-                        </Button>,
-                        <Button
-                          key='submit'
-                          type='primary'
-                          htmlType='submit'
-                          loading={submitLoading}
-                          onClick={submitQualifications}
-                        >
-                          Submit
-                        </Button>,
-                      ]}
-                    >
-                      <form
-                        onSubmit={submitQualifications}
-                      >
-                        <hr></hr>
-                        {/* <div style={{padding: "20px 20px 20px 20px"}} className='row mb-0 '>
-                            <div className=' mb-7'>
-                              <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                              <input type="text" {...register("name")}  className="form-control form-control-solid"/>
-                            </div>
-                            
-                          </div> */}
-                        <div className=' mb-7'>
-                          <label htmlFor="exampleFormControlInput1" className="form-label">Qualification</label>
-                          {/* <input type="text" {...register("code")}  className="form-control form-control-solid"/> */}
-                          <select {...register("qualificationId")} className="form-select form-select-solid" aria-label="Select example">
-                            <option>select </option>
-                            {allQualifications?.data.map((item: any) => (
-                              <option value={item.id}>{item.name}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </form>
-                    </Modal>
-                  </div>}
-                {activeTab1 === 'exper' &&
-                  <div >
-                    <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showExperienceModal}>
-                      <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                      Add Experience
-                    </button>
-
-                    <Table columns={experienceColumns} />
-                    <Modal
-                      title="Add Experience"
-                      open={experienceOpen}
-                      onCancel={handleCancel}
-                      closable={true}
-                      footer={[
-                        <Button key='back' onClick={handleCancel}>
-                          Cancel
-                        </Button>,
-                        <Button
-                          key='submit'
-                          type='primary'
-                          htmlType='submit'
-                          loading={submitLoading}
-                          onClick={submitExperiences}
-                        >
-                          Submit
-                        </Button>,
-                      ]}
-                    >
-                      <form
-                        onSubmit={submitExperiences}
-
-                      >
-                        <hr></hr>
-                        <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                          <div className=' mb-7'>
-                            <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                            <input type="text" {...register("name")} className="form-control form-control-solid" />
-                          </div>
-
-                        </div>
-                      </form>
-                    </Modal>
-                  </div>}
-              </div>
-
-
-            </div>
           }
 
           {/* Compensation */}
           {activeTab === 'tab7' &&
-            <div >
-              <Table columns={compensationColumns} />
-            </div>}
+
+            <EmployeeCompensation/>
+            
+            // <div >
+            //   <Table columns={compensationColumns} />
+            // </div>
+            
+          }
 
           {/* Trainings */}
           {activeTab === 'tab6' &&
-            <div >
-              <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showTrainingModal}>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
-              <Table columns={trainingColumns} />
-              <Modal
-                title="Add Training"
-                open={trainingOpen}
-                onCancel={handleCancel}
-                closable={true}
-                footer={[
-                  <Button key='back' onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={() => {
 
-                    }}
-                  >
-                    Submit
-                  </Button>,
-                ]}
-              >
-                <Form
-                  labelCol={{ span: 7 }}
-                  wrapperCol={{ span: 14 }}
-                  layout='horizontal'
-                  name='control-hooks'
-                >
-                  <hr></hr>
-                  <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                    <div className=' mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                      <input type="text" name="name" className="form-control form-control-solid" />
-                    </div>
+            <EmployeeTraining/>
 
-                  </div>
-                </Form>
-              </Modal>
-            </div>
           }
 
           {/* Appraisal */}
           {activeTab === 'tab9' &&
-            <div >
-              <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showAppraisalModal}>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
-              <Table columns={appraisalColumns} />
-              <Modal
-                title="Add Appraisal"
-                open={appraisalOpen}
-                onCancel={handleCancel}
-                closable={true}
-                footer={[
-                  <Button key='back' onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={() => {
-
-                    }}
-                  >
-                    Submit
-                  </Button>,
-                ]}
-              >
-                <Form
-                  labelCol={{ span: 7 }}
-                  wrapperCol={{ span: 14 }}
-                  layout='horizontal'
-                  name='control-hooks'
-
-                >
-                  <hr></hr>
-                  <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                    <div className=' mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                      <input type="text" name="name" className="form-control form-control-solid" />
-                    </div>
-
-                  </div>
-                </Form>
-              </Modal>
-
-            </div>}
+            <EmployeeAppraisal/>
+            
+          }
 
           {/* Notes */}
           {activeTab === 'tab5' &&
-            <div >
-              <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showNoteModal}>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
-              <Table columns={recruitColumns} />
-              <Modal
-                title="Add Note"
-                open={noteOpen}
-                onCancel={handleCancel}
-                closable={true}
-                footer={[
-                  <Button key='back' onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={() => {
-
-                    }}
-                  >
-                    Submit
-                  </Button>,
-                ]}
-              >
-                <Form
-                  labelCol={{ span: 7 }}
-                  wrapperCol={{ span: 14 }}
-                  layout='horizontal'
-                  name='control-hooks'
-
-                >
-                  <hr></hr>
-                  <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                    <div className=' mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                      <input type="text" name="name" className="form-control form-control-solid" />
-                    </div>
-
-                  </div>
-                </Form>
-              </Modal>
-
-            </div>
+            <EmployeeNote/>
           }
 
           {/* Leave */}
           {activeTab === 'tab10' &&
-            <div >
-              <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showLeaveModal}>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
-              <Table columns={leaveColumns} />
-
-              <Modal
-                title="Add Leave"
-                open={leaveOpen}
-                onCancel={handleCancel}
-                closable={true}
-                footer={[
-                  <Button key='back' onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key='submit'
-                    type='primary'
-                    htmlType='submit'
-                    loading={submitLoading}
-                    onClick={() => {
-
-                    }}
-                  >
-                    Submit
-                  </Button>,
-                ]}
-              >
-                <Form
-                  labelCol={{ span: 7 }}
-                  wrapperCol={{ span: 14 }}
-                  layout='horizontal'
-                  name='control-hooks'
-
-                >
-                  <hr></hr>
-                  <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                    <div className=' mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                      <input type="text" name="name" className="form-control form-control-solid" />
-                    </div>
-
-                  </div>
-                </Form>
-              </Modal>
-            </div>}
+            
+            <EmployeeLeave/>
+          }
 
           {/* Medical */}
           {activeTab === 'tab11' &&
@@ -2282,6 +1785,8 @@ const EmployeeEditForm = () => {
                             listType="picture-card"
                             fileList={fileList}
                             onChange={onChange}
+
+
                             onPreview={onPreview}
                           > 
                             <UploadOutlined />

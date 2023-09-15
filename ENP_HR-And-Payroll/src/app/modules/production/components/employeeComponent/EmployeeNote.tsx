@@ -1,8 +1,9 @@
 import { Space, Table } from "antd"
+import { Tab } from "bootstrap"
 
-const EmployeeTraining = () => {
+const EmployeeNote = () => {
 
-    const trainingColumns: any = [
+    const noteColumns: any = [
 
         {
           title: 'Code',
@@ -18,7 +19,7 @@ const EmployeeTraining = () => {
           },
         },
         {
-          title: 'Traning Type',
+          title: 'Note Type',
           dataIndex: 'name',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {
@@ -51,9 +52,9 @@ const EmployeeTraining = () => {
 
     return (
         <div>
-            <Table columns={trainingColumns} />
+            <Table columns={noteColumns} />
         </div>
-    )   
+    )
 }
 
-export default EmployeeTraining
+export default EmployeeNote

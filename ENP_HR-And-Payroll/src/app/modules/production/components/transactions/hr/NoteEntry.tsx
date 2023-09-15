@@ -6,6 +6,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { Api_Endpoint, fetchEmployees, fetchMedicals, fetchNoteCategories, fetchPaygroups, fetchPeriods } from '../../../../../services/ApiCalls'
+import { forUdateButton } from './Common/customInfoAlert';
 
 const NoteEntry = () => {
   const [gridData, setGridData] = useState([])
@@ -18,6 +19,7 @@ const NoteEntry = () => {
   const [selectedValue1, setSelectedValue1] = useState<any>(null);
   const [selectedValue2, setSelectedValue2] = useState<any>(null);
   const [selectedType, setSelectedType] = useState<any>(null);
+  const [selectedNoteType, setSelectedNoteType] = useState<any>(null);
   const {register, reset, handleSubmit} = useForm()
   const [employeeRecord, setEmployeeRecord]= useState<any>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -166,7 +168,7 @@ const NoteEntry = () => {
       render: (_: any, record: any) => (
         <Space size='middle'>
          
-          <a href='#' className='btn btn-light-warning btn-sm'>
+          <a onClick={forUdateButton} className='btn btn-light-warning btn-sm'>
             Update
           </a>
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
@@ -261,7 +263,7 @@ const NoteEntry = () => {
       employeeId: employeeRecord?.id,
       comment: values.comment,
       tenantId: tenantId,
-      noteCategoryId: parseInt(selectedType),
+      noteCategoryId: parseInt(selectedNoteType),
     }
     console.log(data)
       try { 
@@ -304,7 +306,7 @@ const NoteEntry = () => {
           </div>
           <div className='col-4 mb-7'>
             <label htmlFor="exampleFormControlInput1" className=" form-label">Note Category</label>
-            <select className="form-select form-select-solid" value={selectedType} onChange={(e) => setSelectedType(e.target.value)} aria-label="Select example">
+            <select className="form-select form-select-solid" value={selectedNoteType} onChange={(e) => setSelectedNoteType(e.target.value)} aria-label="Select example">
               <option value="select period"> Select period</option>
               <option value="N/A">N/A</option>
               {allNoteCategories?.data.map((item: any) => (
@@ -348,7 +350,7 @@ const NoteEntry = () => {
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
             </button>
@@ -438,19 +440,6 @@ const NoteEntry = () => {
                         <label htmlFor="exampleFormControlInput1" className="form-label">Comments</label>
                         <textarea {...register("comment")} className="form-control form-control-solid" aria-label="With textarea"></textarea>
                       </div>
-                      {/* <div className='col-6 mb-3'>
-                      <Upload
-                      
-                        listType="picture-card"
-                        onChange={onChange}
-                        onPreview={onPreview}
-                        
-                      >                  
-                        
-                        <UploadOutlined/>
-                      </Upload>
-                 
-                    </div> */}
                     </div>
                 </form>
             </Modal>
