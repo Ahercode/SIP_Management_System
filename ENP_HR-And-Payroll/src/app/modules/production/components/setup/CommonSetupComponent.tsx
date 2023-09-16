@@ -268,7 +268,7 @@ const SetupComponent = (props: any) => {
             item.data = dataWithoutMedicalTypeId;
         }
 
-        // console.log('before post', item.data)
+        console.log('before post', item.data)
         postData(item)
     })
 
