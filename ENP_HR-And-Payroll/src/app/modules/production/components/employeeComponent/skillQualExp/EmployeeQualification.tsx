@@ -40,7 +40,7 @@ const EmployeeQualification = () => {
 
     return (
         <div>
-            <h1>EmployeeSkillnQualification</h1>
+            <h1>EmployeeSkill  Qualification</h1>
         </div>
     )   
 }
