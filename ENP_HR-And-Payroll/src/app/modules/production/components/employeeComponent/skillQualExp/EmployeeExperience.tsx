@@ -1,12 +1,15 @@
 import { Button, Modal, Space, Table } from "antd"
 import { Api_Endpoint } from "../../../../../services/ApiCalls"
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { KTSVG } from "../../../../../../_metronic/helpers"
 import { useForm } from "react-hook-form"
+import { useParams } from "react-router-dom"
 
 const EmployeeExperience = () => {
 
+  const tenantId = localStorage.getItem('tenant')
+  const param: any = useParams();
     const [experienceData, setExperienceData] = useState([])
     const [experienceOpen, setExperienceOpen] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -68,13 +71,32 @@ const EmployeeExperience = () => {
     
       }
 
+      const loadExperiences = async () => {
+        setLoading(true)
+        try {
+          const response = await axios.get(`${Api_Endpoint}/Experiences/tenant/${tenantId}`)
+          setExperienceData(response.data)
+          setLoading(false)
+        } catch (error) {
+          console.log(error)  
+        }
+      }
+
+      useEffect (() => {
+        loadExperiences()
+      },[]);
+
+      const experienceByEmployee = experienceData?.filter((experience: any) => {
+        return experience.employeeId.toString() === param.id
+      })
+
       const url1 = `${Api_Endpoint}/Experiences`
       const submitExperiences = handleSubmit(async (values: any) => {
         setLoading(true)
         const data = {
           name: values.name,
-        //   employeeId: parseInt(param.id),
-        //   tenantId: tenantId,
+          employeeId: parseInt(param.id),
+          tenantId: tenantId,
         }
         try {
           const response = await axios.post(url1, data)
@@ -89,6 +111,8 @@ const EmployeeExperience = () => {
         }
       })
 
+
+
     return (
         <div >
         <button style={{ margin: "0px 0px 20px 0" }} type='button' className='btn btn-primary me-3' onClick={showExperienceModal}>
@@ -96,7 +120,7 @@ const EmployeeExperience = () => {
           Add Experience
         </button>
 
-        <Table columns={experienceColumns} />
+        <Table columns={experienceColumns} dataSource={experienceByEmployee} />
         <Modal
           title="Add Experience"
           open={experienceOpen}

@@ -23,7 +23,6 @@ const EmployeeEditForm = () => {
   const [activeTab1, setActiveTab1] = useState('skill');
   const [activeTab2, setActiveTab2] = useState('medical');
   const [skillOpen, setSkillOpen] = useState(false)
-  const [qualificationOpen, setQualificationOpen] = useState(false)
   const [experienceOpen, setExperienceOpen] = useState(false)
   const [medicalOpen, setMedicalOpen] = useState(false)
   const [familyOpen, setFamilyOpen] = useState(false)
@@ -77,27 +76,13 @@ const EmployeeEditForm = () => {
     event.preventDefault()
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
-
-  // console.log(tempData)
-
-  const showSkillModal = () => {
-    setSkillOpen(true)
-  }
-  const showQualificationModal = () => {
-    setQualificationOpen(true)
-  }
-  const showExperienceModal = () => {
-    setExperienceOpen(true)
-  }
+ 
   const showMedicalModal = () => {
     setMedicalOpen(true)
   }
+
   const showFamilyModal = () => {
     setFamilyOpen(true)
-  }
-
-  const showNoteModal = () => {
-    setNoteOpen(true)
   }
 
   const deleteFamMem = async (element: any) => {
@@ -124,28 +109,6 @@ const EmployeeEditForm = () => {
     }
   }
 
-  const deleteQualification = async (element: any) => {
-    try {
-      const response = await axios.delete(`${Api_Endpoint}/EmployeeQualifications/${element.id}`)
-      // update the local state so that react can refecth and re-render the table with the new data
-      const newData = qualificationData.filter((item: any) => item.id !== element.id)
-      setQualificationData(newData)
-      return response.status
-    } catch (e) {
-      return e
-    }
-  }
-  const deleteExperience = async (element: any) => {
-    try {
-      const response = await axios.delete(`${Api_Endpoint}/Experiences/${element.id}`)
-      // update the local state so that react can refecth and re-render the table with the new data
-      const newData = experienceData.filter((item: any) => item.id !== element.id)
-      setExperienceData(newData)
-      return response.status
-    } catch (e) {
-      return e
-    }
-  }
 
   const deleteMedicalEntry = async (element: any) => {
     try {
@@ -159,19 +122,6 @@ const EmployeeEditForm = () => {
     }
   }
 
-
-  function handleSkillDelete(element: any) {
-    deleteSkill(element)
-  }
-
-  function handleExperienceDelete(element: any) {
-    deleteExperience(element)
-  }
-
-  function handleQualificationDelete(element: any) {
-    deleteQualification(element)
-  }
-
   function handleFamilyDelete(element: any) {
     deleteFamMem(element)
   }
@@ -181,12 +131,9 @@ const EmployeeEditForm = () => {
   }
 
   const handleCancel = () => {
-    setSkillOpen(false)
-    setQualificationOpen(false)
     setMedicalOpen(false)
     setFamilyOpen(false)
     setNoteOpen(false)
-    setExperienceOpen(false)
     setStatusGridModalOpen(false)
 
   }
@@ -390,40 +337,6 @@ const EmployeeEditForm = () => {
     },
   ]
 
-  const skillColumns: any = [
-    {
-      title: 'Name',
-      key: 'skillId',
-      render: (row: any) => {
-        return getSkillName(row.skillId)
-      },
-      sorter: (a: any, b: any) => {
-        if (a.skillId > b.skillId) {
-          return 1
-        }
-        if (b.skillId > a.skillId) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-          <a onClick={() => handleSkillDelete(record)} className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
   const statusColumns: any = [
 
     {
@@ -467,70 +380,6 @@ const EmployeeEditForm = () => {
         }
         return 0
       },
-    },
-  ]
-
-  const experienceColumns: any = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-          <a onClick={() => handleExperienceDelete(record)} className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-  const qualificationColumns: any = [
-    {
-      title: 'Name',
-      key: 'qualificationId',
-      render: (row: any) => {
-        return getQualificationName(row.qualificationId)
-      },
-      sorter: (a: any, b: any) => {
-        if (a.qualificationId > b.qualificationId) {
-          return 1
-        }
-        if (b.qualificationId > a.qualificationId) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-          <a onClick={() => handleQualificationDelete(record)} className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
     },
   ]
 
@@ -675,25 +524,6 @@ const EmployeeEditForm = () => {
     },
   ]
 
-  const getSkillName = (skillId: any) => {
-    let skillName = null
-    allSkills?.data.map((item: any) => {
-      if (item.id === skillId) {
-        skillName = item.name
-      }
-    })
-    return skillName
-  }
-
-  const getQualificationName = (qualificationId: any) => {
-    let qualificationName = null
-    allQualifications?.data.map((item: any) => {
-      if (item.id === qualificationId) {
-        qualificationName = item.name
-      }
-    })
-    return qualificationName
-  }
   // validates input field to accept only numbers
   const validatePhoneNumber = (event: any) => {
     if (!/[0-9]/.test(event.key)) {
@@ -992,47 +822,9 @@ const EmployeeEditForm = () => {
   })
 
   // for posting employee skills
-  const url = `${Api_Endpoint}/EmployeeSkills`
-  const submitSkills = handleSubmit(async (values: any) => {
-    setLoading(true)
-    const data = {
-      skillId: values.skillId,
-      employeeId: parseInt(param.id),
-      tenantId: tenantId,
-    }
-    try {
-      const response = await axios.post(url, data)
-      setSubmitLoading(false)
-      reset()
-      setSkillOpen(false)
-      loadSkills()
-      return response.statusText
-    } catch (error: any) {
-      setSubmitLoading(false)
-      return error.statusText
-    }
-  })
 
-  const url1 = `${Api_Endpoint}/Experiences`
-  const submitExperiences = handleSubmit(async (values: any) => {
-    setLoading(true)
-    const data = {
-      name: values.name,
-      employeeId: parseInt(param.id),
-      tenantId: tenantId,
-    }
-    try {
-      const response = await axios.post(url1, data)
-      setSubmitLoading(false)
-      reset()
-      setExperienceOpen(false)
-      loadExperiences()
-      return response.statusText
-    } catch (error: any) {
-      setSubmitLoading(false)
-      return error.statusText
-    }
-  })
+
+
 
   const url2 = `${Api_Endpoint}/EmployeeQualifications`
   const submitQualifications = handleSubmit(async (values: any) => {
@@ -1046,7 +838,6 @@ const EmployeeEditForm = () => {
       const response = await axios.post(url2, data)
       setSubmitLoading(false)
       reset()
-      setQualificationOpen(false)
       loadQualifications()
       return response.statusText
     } catch (error: any) {
@@ -1866,3 +1657,7 @@ const EmployeeEditForm = () => {
 }
 
 export { EmployeeEditForm }
+
+
+
+

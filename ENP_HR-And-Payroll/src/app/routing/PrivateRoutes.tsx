@@ -36,7 +36,7 @@ import { RecruitmentSelection } from '../modules/production/components/transacti
 import { CompensationBenefit } from '../modules/production/components/transactions/hr/CompensationBenefit'
 import { TrainingDevelopment } from '../modules/production/components/transactions/hr/TrainingDevelopment'
 import { AppraisalPerformance } from '../modules/production/components/transactions/hr/AppraisalPerformance'
-import { MedicalEntries } from '../modules/production/components/transactions/hr/MedicalEntries'
+import { MedicalEntries } from '../modules/production/components/transactions/hr/medical/MedicalEntries'
 import { TimeSheet } from '../modules/production/components/transactions/payroll/TimeSheet'
 import { Recurrent } from '../modules/production/components/transactions/payroll/Recurrent'
 import { NonRecurrent } from '../modules/production/components/transactions/payroll/NonRecurrent'

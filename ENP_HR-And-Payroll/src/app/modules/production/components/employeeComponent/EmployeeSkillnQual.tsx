@@ -2,6 +2,8 @@ import { Space } from "antd"
 import { useState } from "react";
 import "./formStyle.css"
 import EmployeeExperience from "./skillQualExp/EmployeeExperience";
+import EmployeeSkill from "./skillQualExp/EmployeeSkill";
+import EmployeeQualification from "./skillQualExp/EmployeeQualification";
 
 const EmployeeSkillnQualification = (props:any) => {
 
@@ -36,25 +38,18 @@ const EmployeeSkillnQualification = (props:any) => {
         </div>
         <div className="skillTab-content">
             {skillTab === 'skill' && 
-                <h3>Skills</h3>
+                <EmployeeSkill/>
             }
     
-            {skillTab === 'qual' && 
-            <h3>Qualifications</h3>
-            
+            {skillTab === 'qual' &&   
+                <EmployeeQualification/>
             }
 
             {skillTab === 'exper' && 
-              
               <EmployeeExperience/> 
-            
             }
         </div>
-
-        
         </>
-
-        
     )   
 }
 
