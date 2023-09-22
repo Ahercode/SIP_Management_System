@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { DxReportViewer} from 'devexpress-reporting/dx-webdocumentviewer';
-import "@grapecity/activereports/styles/ar-js-ui.css";
-import "@grapecity/activereports/styles/ar-js-viewer.css";
-import "@grapecity/activereports/styles/ar-js-designer.css";
-import "@grapecity/activereports/pdfexport";
-import "@grapecity/activereports/htmlexport";
-import "@grapecity/activereports/tabulardataexport";
+// import "@grapecity/activereports/styles/ar-js-ui.css";
+// import "@grapecity/activereports/styles/ar-js-viewer.css";
+// import "@grapecity/activereports/styles/ar-js-designer.css";
+// import "@grapecity/activereports/pdfexport";
+// import "@grapecity/activereports/htmlexport";
+// import "@grapecity/activereports/tabulardataexport";
 import ko from "knockout";
 import "devexpress-reporting/dx-webdocumentviewer";
 import "../../../../../../../node_modules/devextreme/dist/css/dx.light.css";
@@ -13,8 +13,8 @@ import "../../../../../../../node_modules/devexpress-reporting/dist/css/dx-webdo
 import "../../../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analytics.common.css";
 import "../../../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analytics.light.css";
 
-export const ReportViewer = (reportEndpoint) => {
-    const reportUrl = ko.observable(reportEndpoint);
+export const ReportViewer = (props) => {
+    const reportUrl = ko.observable(`${props.url}`);
     const viewerRef = useRef();
     const requestOptions = {
       host: "http://208.117.44.15/serverside/",

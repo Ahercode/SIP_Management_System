@@ -2,9 +2,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import "./formStyle.css"
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { Button, Form, Modal, Space, Table, } from 'antd';
-import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchEmployees, fetchExperiences, fetchGrades, fetchJobTitles, fetchMedicals, fetchNationalities, fetchNotches, fetchPaygroups, fetchQualifications, fetchSkills, fetchUnits, updateEmployee } from '../../../../services/ApiCalls';
+import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchEmployees, fetchGrades, fetchJobTitles, fetchMedicals, fetchNationalities, fetchNotches, fetchPaygroups, fetchUnits, updateEmployee } from '../../../../services/ApiCalls';
 import { KTSVG } from '../../../../../_metronic/helpers';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
@@ -12,7 +11,6 @@ import { useForm } from 'react-hook-form';
 import { BANKS } from '../../../../data/DummyData';
 import EmployeeAppraisal from './EmployeeAppraisal';
 import EmployeeLeave from './EmployeeLeave';
-import { Employee } from '../employee/Employee';
 import EmployeeNote from './EmployeeNote';
 import EmployeeTraining from './EmployeeTraining';
 import EmployeeCompensation from './EmployeeCompensation';
@@ -20,7 +18,6 @@ import EmployeeSkillnQualification from './EmployeeSkillnQual';
 
 const EmployeeEditForm = () => {
   const [activeTab, setActiveTab] = useState('tab1');
-  const [activeTab1, setActiveTab1] = useState('skill');
   const [activeTab2, setActiveTab2] = useState('medical');
   const [medicalOpen, setMedicalOpen] = useState(false)
   const [familyOpen, setFamilyOpen] = useState(false)
@@ -34,15 +31,15 @@ const EmployeeEditForm = () => {
   const { register, reset, handleSubmit } = useForm()
   const param: any = useParams();
   const [tempData, setTempData] = useState<any>()
-  const [graName, setGraName] = useState<any>()
-  const [depName, setDepName] = useState<any>()
-  const [divName, setDivName] = useState<any>()
-  const [jobTName, setJobTName] = useState<any>()
-  const [uniName, setUniName] = useState<any>()
-  const [paygName, setPaygName] = useState<any>()
-  const [catName, setCatName] = useState<any>()
-  const [notchName, setNotchName] = useState<any>()
-  const [newPay, setNewPay] = useState([])
+  // const [graName, setGraName] = useState<any>()
+  // const [depName, setDepName] = useState<any>()
+  // const [divName, setDivName] = useState<any>()
+  // const [jobTName, setJobTName] = useState<any>()
+  // const [uniName, setUniName] = useState<any>()
+  // const [paygName, setPaygName] = useState<any>()
+  // const [catName, setCatName] = useState<any>()
+  // const [notchName, setNotchName] = useState<any>()
+  // const [newPay, setNewPay] = useState([])
   const tenantId = localStorage.getItem('tenant')
   const [tempImage, setTempImage] = useState<any>();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
@@ -64,7 +61,7 @@ const EmployeeEditForm = () => {
   }
 
   const handleChange = (event: any) => {
-    event.preventDefault()
+    // event.preventDefault()
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
  
@@ -367,7 +364,7 @@ const EmployeeEditForm = () => {
     }
   }
 
-  const { data: allEmployees } = useQuery('employees', () => fetchEmployees(tenantId), { cacheTime: 5000 })
+  const { data: allEmployees } = useQuery('employees', () => fetchEmployees(tenantId), { cacheTime: 100000 })
   const { data: allDepartments } = useQuery('departments', () => fetchDepartments(tenantId), { cacheTime: 5000 })
   const { data: allDivisions } = useQuery('divisions', () => fetchDivisions(tenantId), { cacheTime: 5000 })
   const { data: allCategories } = useQuery('categories', () => fetchCategories(tenantId), { cacheTime: 5000 })
@@ -382,12 +379,12 @@ const EmployeeEditForm = () => {
 
 
 
-  const fetchImage = async () => {
-    const res = await fetch("https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80");
-    const imageBlob = await res.blob();
-    const imageObjectURL: any = URL.createObjectURL(imageBlob);
-    setImg(imageObjectURL);
-  };
+  // const fetchImage = async () => {
+  //   const res = await fetch("https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80");
+  //   const imageBlob = await res.blob();
+  //   const imageObjectURL: any = URL.createObjectURL(imageBlob);
+  //   setImg(imageObjectURL);
+  // };
 
   const loadStatus = async () => {
     setLoading(true)
@@ -423,102 +420,102 @@ const EmployeeEditForm = () => {
 
 
 
+  // useEffect(() => {
+
+
+  //   const getDepartmentName = () => {
+  //     let departmentName = null
+  //     allDepartments?.data.map((item: any) => {
+  //       if (item.id === tempData?.departmentId) {
+  //         departmentName = item.name
+  //       }
+  //     })
+  //     return setDepName(departmentName)
+  //   }
+
+  //   const getGradeName = () => {
+  //     let gradeName = ""
+  //     allGrades?.data.map((item: any) => {
+  //       if (item.id === tempData?.gradeId) {
+  //         gradeName = item.name
+  //       }
+  //     })
+  //     return setGraName(gradeName)
+  //   }
+
+  //   const getUnitName = () => {
+  //     let unitName = ""
+  //     allUnits?.data.map((item: any) => {
+  //       if (item.id === tempData?.unitId) {
+  //         unitName = item.name
+  //       }
+  //     })
+  //     return setUniName(unitName)
+  //   }
+
+  //   const getJobTName = () => {
+  //     let jobTitleName = ""
+  //     allJobTitles?.data.map((item: any) => {
+  //       if (item.id === tempData?.jobTitleId) {
+  //         jobTitleName = item.name
+  //       }
+  //     })
+  //     return setJobTName(jobTitleName)
+  //   }
+
+  //   const getCatName = () => {
+  //     let categoryName = ""
+  //     allCategories?.data.map((item: any) => {
+  //       if (item.id === tempData?.categoryId) {
+  //         categoryName = item.name
+  //       }
+  //     })
+  //     return setCatName(categoryName)
+  //   }
+
+  //   const getDivisionName = () => {
+  //     let divisionName = ""
+  //     allDivisions?.data.map((item: any) => {
+  //       if (item.id === tempData?.divisionId) {
+  //         divisionName = item.name
+  //       }
+  //     })
+  //     return setDivName(divisionName)
+  //   }
+
+  //   const getPaygroupName = () => {
+  //     let paygroupName = null
+  //     allPaygroups?.data.map((item: any) => {
+  //       if (item.id === tempData?.paygroupId) {
+  //         paygroupName = item.name
+  //       }
+  //     })
+  //     return setPaygName(paygroupName)
+  //   }
+
+  //   const getNotchName = () => {
+  //     let notchName = null
+  //     allNotches?.data.map((item: any) => {
+  //       if (item.id === tempData?.notchId) {
+  //         notchName = item.name
+  //       }
+  //     })
+  //     return setNotchName(notchName)
+  //   }
+
+  //   getCatName()
+  //   getJobTName()
+  //   getUnitName()
+  //   getDivisionName()
+  //   getDepartmentName()
+  //   getPaygroupName()
+  //   getNotchName()
+  //   getGradeName()
+  // })
+
   useEffect(() => {
-
-
-    const getDepartmentName = () => {
-      let departmentName = null
-      allDepartments?.data.map((item: any) => {
-        if (item.id === tempData?.departmentId) {
-          departmentName = item.name
-        }
-      })
-      return setDepName(departmentName)
-    }
-
-    const getGradeName = () => {
-      let gradeName = ""
-      allGrades?.data.map((item: any) => {
-        if (item.id === tempData?.gradeId) {
-          gradeName = item.name
-        }
-      })
-      return setGraName(gradeName)
-    }
-
-    const getUnitName = () => {
-      let unitName = ""
-      allUnits?.data.map((item: any) => {
-        if (item.id === tempData?.unitId) {
-          unitName = item.name
-        }
-      })
-      return setUniName(unitName)
-    }
-
-    const getJobTName = () => {
-      let jobTitleName = ""
-      allJobTitles?.data.map((item: any) => {
-        if (item.id === tempData?.jobTitleId) {
-          jobTitleName = item.name
-        }
-      })
-      return setJobTName(jobTitleName)
-    }
-
-    const getCatName = () => {
-      let categoryName = ""
-      allCategories?.data.map((item: any) => {
-        if (item.id === tempData?.categoryId) {
-          categoryName = item.name
-        }
-      })
-      return setCatName(categoryName)
-    }
-
-    const getDivisionName = () => {
-      let divisionName = ""
-      allDivisions?.data.map((item: any) => {
-        if (item.id === tempData?.divisionId) {
-          divisionName = item.name
-        }
-      })
-      return setDivName(divisionName)
-    }
-
-    const getPaygroupName = () => {
-      let paygroupName = null
-      allPaygroups?.data.map((item: any) => {
-        if (item.id === tempData?.paygroupId) {
-          paygroupName = item.name
-        }
-      })
-      return setPaygName(paygroupName)
-    }
-
-    const getNotchName = () => {
-      let notchName = null
-      allNotches?.data.map((item: any) => {
-        if (item.id === tempData?.notchId) {
-          notchName = item.name
-        }
-      })
-      return setNotchName(notchName)
-    }
-
-    getCatName()
-    getJobTName()
-    getUnitName()
-    getDivisionName()
-    getDepartmentName()
-    getPaygroupName()
-    getNotchName()
-    getGradeName()
-  })
-
-  useEffect(() => {
-    const newData = allPaygroups?.data.filter((item: any) => item.id !== tempData?.paygroupId)
-    setNewPay(newData)
+    // const newData = allPaygroups?.data.filter((item: any) => item.id !== tempData?.paygroupId)
+    // setNewPay(newData)
 
     const dataByID = allEmployees?.data.find((employee: any) => {
       return employee.id.toString() === param.id
@@ -531,7 +528,6 @@ const EmployeeEditForm = () => {
     loadMedicalEntry()
     loadFamilyMembers()
     loadStatus()
-    fetchImage()
   }, [param.id, allEmployees])
 
 
@@ -1016,7 +1012,6 @@ const EmployeeEditForm = () => {
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
                 <select  {...register("jobTitleId")} name="jobTitleId" onChange={handleChange} value={tempData?.gradeId} className="form-select form-select-solid" aria-label="Select example">
-                  <option>{jobTName} </option>
                   {allJobTitles?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
                   ))}

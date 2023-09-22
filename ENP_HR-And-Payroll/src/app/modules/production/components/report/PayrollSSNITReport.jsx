@@ -41,7 +41,7 @@ const ReportViewer = () => {
 
 function PayrollSSNITReport() {
 return (<div style={{ width: "100%", height: "1000px" }}>
-    <ReportViewer />
+    <ReportViewer url="PayrollSSNITReport" />
 </div>);
 }
 export default PayrollSSNITReport;
