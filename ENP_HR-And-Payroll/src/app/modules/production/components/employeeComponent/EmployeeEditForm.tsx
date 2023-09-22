@@ -22,18 +22,12 @@ const EmployeeEditForm = () => {
   const [activeTab, setActiveTab] = useState('tab1');
   const [activeTab1, setActiveTab1] = useState('skill');
   const [activeTab2, setActiveTab2] = useState('medical');
-  const [skillOpen, setSkillOpen] = useState(false)
-  const [experienceOpen, setExperienceOpen] = useState(false)
   const [medicalOpen, setMedicalOpen] = useState(false)
   const [familyOpen, setFamilyOpen] = useState(false)
   const [statusModalOpen, setIsStatusModalOpen] = useState(false)
   const [statusGridModalOpen, setStatusGridModalOpen] = useState(false)
-  const [noteOpen, setNoteOpen] = useState(false)
   const [medicalEntryData, setMedicalEntryData] = useState([])
   const [familyData, setFamilyData] = useState([])
-  const [experienceData, setExperienceData] = useState([])
-  const [qualificationData, setQualificationData] = useState([])
-  const [skillData, setSkillData] = useState([])
   const [statusData, setStatusData] = useState([])
   const [loading, setLoading] = useState(false)
   const [img, setImg] = useState()
@@ -57,9 +51,6 @@ const EmployeeEditForm = () => {
 
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
-  }
-  const handleTab1Click = (tab1: any) => {
-    setActiveTab1(tab1);
   }
   const handleTab2Click = (tab2: any) => {
     setActiveTab2(tab2);
@@ -97,19 +88,6 @@ const EmployeeEditForm = () => {
     }
   }
 
-  const deleteSkill = async (element: any) => {
-    try {
-      const response = await axios.delete(`${Api_Endpoint}/EmployeeSkills/${element.id}`)
-      // update the local state so that react can refecth and re-render the table with the new data
-      const newData = skillData.filter((item: any) => item.id !== element.id)
-      setSkillData(newData)
-      return response.status
-    } catch (e) {
-      return e
-    }
-  }
-
-
   const deleteMedicalEntry = async (element: any) => {
     try {
       const response = await axios.delete(`${Api_Endpoint}/MedicalEntries/${element.id}`)
@@ -133,7 +111,6 @@ const EmployeeEditForm = () => {
   const handleCancel = () => {
     setMedicalOpen(false)
     setFamilyOpen(false)
-    setNoteOpen(false)
     setStatusGridModalOpen(false)
 
   }
@@ -383,147 +360,6 @@ const EmployeeEditForm = () => {
     },
   ]
 
-  const compensationColumns: any = [
-
-    {
-      title: 'Period',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'Compensation',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-
-
-          <a className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
-  const leaveColumns: any = [
-
-    {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-
-
-          <a className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
-  const trainingColumns: any = [
-
-    {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a: any, b: any) => {
-        if (a.code > b.code) {
-          return 1
-        }
-        if (b.code > a.code) {
-          return -1
-        }
-        return 0
-      },
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Action',
-      fixed: 'right',
-      width: 100,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-
-
-          <a className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-        </Space>
-      ),
-
-    },
-  ]
-
   // validates input field to accept only numbers
   const validatePhoneNumber = (event: any) => {
     if (!/[0-9]/.test(event.key)) {
@@ -540,9 +376,6 @@ const EmployeeEditForm = () => {
   const { data: allGrades } = useQuery('grades', () => fetchGrades(tenantId), { cacheTime: 5000 })
   const { data: allNotches } = useQuery('notches', () => fetchNotches(tenantId), { cacheTime: 5000 })
   const { data: allNations } = useQuery('nations', () => fetchNationalities(tenantId), { cacheTime: 5000 })
-  const { data: allSkills } = useQuery('skill', () => fetchSkills(tenantId), { cacheTime: 5000 })
-  const { data: allQualifications } = useQuery('qualifications', () => fetchQualifications(tenantId), { cacheTime: 5000 })
-  const { data: allExperiences } = useQuery('experiences', () => fetchExperiences(tenantId), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchJobTitles(tenantId), { cacheTime: 5000 })
   const { data: paygroups } = useQuery('paygroups', () => fetchPaygroups(tenantId), { cacheTime: 5000 })
   const { data: medicals } = useQuery('medicals', () => fetchMedicals(tenantId), { cacheTime: 5000 })
@@ -556,18 +389,6 @@ const EmployeeEditForm = () => {
     setImg(imageObjectURL);
   };
 
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-
-  const loadSkills = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${Api_Endpoint}/EmployeeSkills/tenant/${tenantId}`)
-      setSkillData(response.data)
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const loadStatus = async () => {
     setLoading(true)
     try {
@@ -578,26 +399,7 @@ const EmployeeEditForm = () => {
       console.log(error)
     }
   }
-  const loadQualifications = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${Api_Endpoint}/EmployeeQualifications/tenant/${tenantId}`)
-      setQualificationData(response.data)
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  const loadExperiences = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${Api_Endpoint}/Experiences/tenant/${tenantId}`)
-      setExperienceData(response.data)
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+
   const loadFamilyMembers = async () => {
     setLoading(true)
     try {
@@ -727,17 +529,11 @@ const EmployeeEditForm = () => {
 
     getEmployeeById()
     loadMedicalEntry()
-    loadQualifications()
     loadFamilyMembers()
-    loadExperiences()
-    loadSkills()
     loadStatus()
     fetchImage()
   }, [param.id, allEmployees])
 
-  const skillByEmployee = skillData.filter((section: any) => {
-    return section.employeeId.toString() === param.id
-  })
 
   const statusByEmployee: any = statusData.filter((section: any) => {
     return section.employeeId.toString() === param.id
@@ -760,9 +556,6 @@ const EmployeeEditForm = () => {
   // check date be make sure users can not select date before today
   const today = new Date().toISOString().split('T')[0];
 
-  const qualificationByEmployee = qualificationData.filter((qualification: any) => {
-    return qualification.employeeId.toString() === param.id
-  })
   const familyByEmployee = familyData.filter((qualification: any) => {
     return qualification.employeeId.toString() === param.id
   })
@@ -814,31 +607,6 @@ const EmployeeEditForm = () => {
       reset()
       setIsStatusModalOpen(false)
       loadStatus()
-      return response.statusText
-    } catch (error: any) {
-      setSubmitLoading(false)
-      return error.statusText
-    }
-  })
-
-  // for posting employee skills
-
-
-
-
-  const url2 = `${Api_Endpoint}/EmployeeQualifications`
-  const submitQualifications = handleSubmit(async (values: any) => {
-    setLoading(true)
-    const data = {
-      qualificationId: values.qualificationId,
-      employeeId: parseInt(param.id),
-      tenantId: tenantId,
-    }
-    try {
-      const response = await axios.post(url2, data)
-      setSubmitLoading(false)
-      reset()
-      loadQualifications()
       return response.statusText
     } catch (error: any) {
       setSubmitLoading(false)

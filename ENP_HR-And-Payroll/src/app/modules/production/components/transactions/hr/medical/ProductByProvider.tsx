@@ -1,7 +1,7 @@
 import { Button, Modal, Space, Table } from "antd";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { fetchDocument, fetchProducts, fetchServiceCost } from "../../../../../../services/ApiCalls";
+import { fetchDocument} from "../../../../../../services/ApiCalls";
 import { KTSVG } from "../../../../../../../_metronic/helpers";
 
 const ProductByProvider = () => {
@@ -17,7 +17,6 @@ const ProductByProvider = () => {
     const handleProductCancel = () => {
         setIsProductModalOpen(false)
     }
-
 
     const handleSelect = (product: any) => {
         setSelectedProducts((prevSelectedProducts: any) => [...prevSelectedProducts, product]);
