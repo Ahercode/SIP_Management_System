@@ -153,7 +153,7 @@ const Paygroups = () => {
 
   const globalSearch = () => {
     // @ts-ignore
-    filteredData = dataWithVehicleNum.filter((value) => {
+    filteredData = dataWithIndex.filter((value) => {
       return (
         value.name.toLowerCase().includes(searchText.toLowerCase())
       )

@@ -1,15 +1,11 @@
 import { Button, Input, Modal, Space, Table, RadioChangeEvent, Select, Divider, message } from 'antd'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { ENP_URL } from '../../../urls'
-import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { Api_Endpoint, fetchAppraisals, fetchAppraisalTransactions, fetchEmployees, fetchJobTitles, fetchPaygroups, fetchPeriods, fetchParameters, postItem, deleteItem, fetchDocument, updateItem } from '../../../../../services/ApiCalls'
+import { fetchAppraisals, fetchAppraisalTransactions, fetchEmployees, fetchJobTitles, fetchPaygroups, fetchPeriods, fetchParameters, postItem, deleteItem, fetchDocument, updateItem } from '../../../../../services/ApiCalls'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import "./cusStyle.css"
 import { useForm } from 'react-hook-form'
-import { PlusOutlined } from "@ant-design/icons"
-import moment from 'moment'
+import { forUdateButton } from './Common/customInfoAlert'
 
 
 const AppraisalPerformance = () => {
@@ -51,6 +47,8 @@ const AppraisalPerformance = () => {
   const [referenceId, setReferenceId] = useState<any>(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
   const [currentObjective, setCurrentObjective] = useState<any>([])
   const [isEmailSent, setIsEmailSent] = useState<any>(false)
+  const [beforeSearch, setBeforeSearch] = useState([])
+  const [afterSearch, setSfterSearch] = useState([])
 
   const { data: allEmployees } = useQuery('employees', () => fetchEmployees(tenantId), { cacheTime: 5000 })
   const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
@@ -66,57 +64,30 @@ const AppraisalPerformance = () => {
 
 
 
-  const [objValue, setObjValue] = useState<any>('');
-  const [textareaHeight, setTextareaHeight] = useState('auto');
+  // const [objValue, setObjValue] = useState<any>('');
+  // const [textareaHeight, setTextareaHeight] = useState('auto');
 
-  const handleTextareaChange = (event: any) => {
-    event.preventDefault()
-    setObjValue(event.target.value);
-    // setCurrentObjective({ ...currentObjective, [event.target.name]: event.target.value })
-    adjustTextareaHeight();
-  };
-
-  const adjustTextareaHeight = () => {
-    const textarea: any = document.getElementById('resizable-textarea');
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-
-    // Limit height to 10 lines
-    if (textarea.scrollHeight > 10 * parseFloat(getComputedStyle(textarea).lineHeight)) {
-      textarea.style.overflowY = 'scroll';
-      textarea.style.height = `${10 * parseFloat(getComputedStyle(textarea).lineHeight)}px`;
-    } else {
-      textarea.style.overflowY = 'hidden';
-    }
-
-    setTextareaHeight(`${textarea.style.height}`);
-  };
-
-
-  // const handleTabClick = (tab: any) => {
-  //   setActiveTab(tab);
+  // const handleTextareaChange = (event: any) => {
+  //   event.preventDefault()
+  //   setObjValue(event.target.value);
+  //   // setCurrentObjective({ ...currentObjective, [event.target.name]: event.target.value })
+  //   adjustTextareaHeight();
   // };
 
+  // const adjustTextareaHeight = () => {
+  //   const textarea: any = document.getElementById('resizable-textarea');
+  //   textarea.style.height = 'auto';
+  //   textarea.style.height = `${textarea.scrollHeight}px`;
 
-  // const onRadioChange = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadioValue(e.target.value);
-  // };
-  // const onRadio1Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio1Value(e.target.value);
-  // };
-  // const onRadio2Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio2Value(e.target.value);
-  // };
-  // const onRadio3Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio3Value(e.target.value);
-  // };
-  // const onRadio4Change = (e: RadioChangeEvent) => {
-  //   console.log('radio checked', e.target.value);
-  //   setRadio4Value(e.target.value);
+  //   // Limit height to 10 lines
+  //   if (textarea.scrollHeight > 10 * parseFloat(getComputedStyle(textarea).lineHeight)) {
+  //     textarea.style.overflowY = 'scroll';
+  //     textarea.style.height = `${10 * parseFloat(getComputedStyle(textarea).lineHeight)}px`;
+  //   } else {
+  //     textarea.style.overflowY = 'hidden';
+  //   }
+
+  //   setTextareaHeight(`${textarea.style.height}`);
   // };
 
   const handleCancel = () => {
@@ -124,7 +95,7 @@ const AppraisalPerformance = () => {
     setEmployeeRecord([])
     setIsModalOpen(false)
     setUpdateModalOpen(false)
-
+    setjobTitleName(null)
   }
 
   const handleReviewDateCancel = () => {
@@ -132,32 +103,32 @@ const AppraisalPerformance = () => {
     setIsReviewDateModalOpen(false)
   }
 
-  const getTimeLeft = (reviewDate: any) => {
+  // const getTimeLeft = (reviewDate: any) => {
 
-    const currentDate = new Date();
-    const targetDate = new Date(reviewDate);
-    targetDate.setHours(0, 0, 0, 0); // Set targetDate to the start of the day
+  //   const currentDate = new Date();
+  //   const targetDate = new Date(reviewDate);
+  //   targetDate.setHours(0, 0, 0, 0); // Set targetDate to the start of the day
 
-    if (currentDate > targetDate) {
-      return "Expired";
-    }
+  //   if (currentDate > targetDate) {
+  //     return "Expired";
+  //   }
 
-    const timeDifference = targetDate.getTime() - currentDate.getTime();
-    const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Calculate days left
+  //   const timeDifference = targetDate.getTime() - currentDate.getTime();
+  //   const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Calculate days left
 
-    const monthsLeft = Math.floor(daysLeft / 30); // Calculate months left
+  //   const monthsLeft = Math.floor(daysLeft / 30); // Calculate months left
 
-    if (monthsLeft > 0) {
-      return `${monthsLeft} ${monthsLeft === 1 ? "month" : "months"}`;
-    } else {
-      return `${daysLeft} ${daysLeft === 1 ? "day" : "days"}`;
-    }
-  }
+  //   if (monthsLeft > 0) {
+  //     return `${monthsLeft} ${monthsLeft === 1 ? "month" : "months"}`;
+  //   } else {
+  //     return `${daysLeft} ${daysLeft === 1 ? "day" : "days"}`;
+  //   }
+  // }
 
 
-  const showTabModal = () => {
-    setTabModalOpen(true)
-  }
+  // const showTabModal = () => {
+  //   setTabModalOpen(true)
+  // }
   const handleUpdateCancel = () => {
     setUpdateModalOpen(false)
   }
@@ -195,23 +166,21 @@ const AppraisalPerformance = () => {
     deleteData(item)
   }
 
-  const [fileList, setFileList] = useState<UploadFile[]>([
+  // const [fileList, setFileList] = useState<UploadFile[]>([
 
-  ]);
+  // ]);
 
-  const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-
+  // const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+  //   setFileList(newFileList);
+  // };
 
   const columns: any = [
     {
       title: 'Id',
       dataIndex: 'employeeId',
       key: 'employeeId',
-      render: (text: any) => {
-        return <span className='text-primary'>{getEmployeeCode(text)}</span>
+      render: (id: any) => {
+        return <span className='text-primary'>{getEmployeeCode(id)}</span>
       },
       sorter: (a: any, b: any) => {
         if (a.employeeId > b.employeeId) {
@@ -256,21 +225,7 @@ const AppraisalPerformance = () => {
         return 0
       },
     },
-    // {
-    //   title: 'DOB',
-    //   render: (row: any) => {
-    //     return getDOB(row.employeeId)
-    //   },
-    //   sorter: (a: any, b: any) => {
-    //     if (a.dob > b.dob) {
-    //       return 1
-    //     }
-    //     if (b.dob > a.dob) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
+   
     {
       title: 'Job Title',
       render: (row: any) => {
@@ -301,22 +256,7 @@ const AppraisalPerformance = () => {
         return 0
       },
     },
-    // {
-    //   title: 'Line Manager',
-    //   dataIndex: 'employeeId',
-    //   render: (row: any) => {
-    //     return getSupervisor(row)
-    //   },
-    //   sorter: (a: any, b: any) => {
-    //     if (a.jobt > b.jobt) {
-    //       return 1
-    //     }
-    //     if (b.jobt > a.jobt) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
+
 
     {
       title: 'Action',
@@ -335,70 +275,70 @@ const AppraisalPerformance = () => {
 
     },
   ]
-  const columnTab1 = [
+  // const columnTab1 = [
 
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
-  const columnTab4 = [
+  //   {
+  //     title: '#',
+  //     dataIndex: 'key',
+  //     sorter: (a: any, b: any) => {
+  //       if (a.key > b.key) {
+  //         return 1
+  //       }
+  //       if (b.key > a.key) {
+  //         return -1
+  //       }
+  //       return 0
+  //     },
+  //   },
+  // ]
+  // const columnTab4 = [
 
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
-  const columnTab2 = [
+  //   {
+  //     title: '#',
+  //     dataIndex: 'key',
+  //     sorter: (a: any, b: any) => {
+  //       if (a.key > b.key) {
+  //         return 1
+  //       }
+  //       if (b.key > a.key) {
+  //         return -1
+  //       }
+  //       return 0
+  //     },
+  //   },
+  // ]
+  // const columnTab2 = [
 
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
-  const columnTab3 = [
+  //   {
+  //     title: '#',
+  //     dataIndex: 'key',
+  //     sorter: (a: any, b: any) => {
+  //       if (a.key > b.key) {
+  //         return 1
+  //       }
+  //       if (b.key > a.key) {
+  //         return -1
+  //       }
+  //       return 0
+  //     },
+  //   },
+  // ]
+  // const columnTab3 = [
 
-    {
-      title: '#',
-      dataIndex: 'key',
-      sorter: (a: any, b: any) => {
-        if (a.key > b.key) {
-          return 1
-        }
-        if (b.key > a.key) {
-          return -1
-        }
-        return 0
-      },
-    },
-  ]
+  //   {
+  //     title: '#',
+  //     dataIndex: 'key',
+  //     sorter: (a: any, b: any) => {
+  //       if (a.key > b.key) {
+  //         return 1
+  //       }
+  //       if (b.key > a.key) {
+  //         return -1
+  //       }
+  //       return 0
+  //     },
+  //   },
+  // ]
 
   const loadData = async () => {
     setLoading(true)
@@ -411,7 +351,7 @@ const AppraisalPerformance = () => {
         return item.referenceId === referenceId
       })
       const objText = !objectiveData ? '' : objectiveData[0]?.description
-      setObjValue(objText)
+      // setObjValue(objText)
       setCurrentObjective(objectiveData[0])
 
       setLoading(false)
@@ -426,24 +366,24 @@ const AppraisalPerformance = () => {
   })
 
   // return from employees, all employees that are in dataByID using employeeId
-  const employeesInDataByID = allEmployees?.data?.filter((item: any) => {
-    return dataByID?.map((item: any) => {
-      return item.employeeId
-    })?.includes(item.id)
-  })
+  // const employeesInDataByID = allEmployees?.data?.filter((item: any) => {
+  //   return dataByID?.map((item: any) => {
+  //     return item.employeeId
+  //   })?.includes(item.id)
+  // })
 
 
-  const reviewDateByID: any = allReviewdates?.data?.filter((refId: any) => {
-    return refId?.referenceId === referenceId
-  })
+  // const reviewDateByID: any = allReviewdates?.data?.filter((refId: any) => {
+  //   return refId?.referenceId === referenceId
+  // })
 
   const emplyeesByPaygroup: any = allEmployees?.data?.filter((item: any) => {
     return item.paygroupId === parseInt(selectedPaygroup)
   })
 
-  const emplyeeDetails: any = allAppraisalTransactions?.data?.find((item: any) => {
-    return item.id === employeeId
-  })
+  // const emplyeeDetails: any = allAppraisalTransactions?.data?.find((item: any) => {
+  //   return item.id === employeeId
+  // })
 
   // console.log(emplyeeDetails)
 
@@ -499,6 +439,17 @@ const AppraisalPerformance = () => {
     return jobTitleName
   }
 
+  //get jobtitle name from jobtitle table
+  const GetJobTitle = (employeeId: any) => {
+    const jobTitleId = allEmployees?.data?.find((item: any) => {
+      return item.id === employeeId
+    })
+    const jobTitleName = allJobTitles?.data?.find((item: any) => {
+      return item.id === jobTitleId?.jobTitleId
+    })
+    return setjobTitleName( jobTitleName?.name)
+  }
+
   const getEmployeeCode = (employeeId: any) => {
     const employeeCode = allEmployees?.data?.find((item: any) => {
       return item.id === employeeId
@@ -507,30 +458,30 @@ const AppraisalPerformance = () => {
   }
 
   // get supervisor name from organogram table
-  const getSupervisor = (employeeId: any) => {
+  // const getSupervisor = (employeeId: any) => {
 
-    // get employee code from employee table
-    const employeeIdFromEmployee = allEmployees?.data?.find((item: any) => {
-      return item.id === employeeId
-    })
+  //   // get employee code from employee table
+  //   const employeeIdFromEmployee = allEmployees?.data?.find((item: any) => {
+  //     return item.id === employeeId
+  //   })
 
-    // get supervisor  id from organogram table
-    const supervisorFromEmployeeInOrganogram = allOrganograms?.data?.find((item: any) => {
-      return item.employeeId === employeeIdFromEmployee?.employeeId
-    })
+  //   // get supervisor  id from organogram table
+  //   const supervisorFromEmployeeInOrganogram = allOrganograms?.data?.find((item: any) => {
+  //     return item.employeeId === employeeIdFromEmployee?.employeeId
+  //   })
 
-    const employeeIdOfSupervisorFromOrganogram = parseInt(supervisorFromEmployeeInOrganogram?.supervisorId) === 0 ?
-      supervisorFromEmployeeInOrganogram :
-      allOrganograms?.data.find((item: any) => {
-        return item.id === parseInt(supervisorFromEmployeeInOrganogram?.supervisorId)
-      })
+  //   const employeeIdOfSupervisorFromOrganogram = parseInt(supervisorFromEmployeeInOrganogram?.supervisorId) === 0 ?
+  //     supervisorFromEmployeeInOrganogram :
+  //     allOrganograms?.data.find((item: any) => {
+  //       return item.id === parseInt(supervisorFromEmployeeInOrganogram?.supervisorId)
+  //     })
 
-    const supervisorName = allEmployees?.data?.find((item: any) => {
-      return item.employeeId === employeeIdOfSupervisorFromOrganogram?.employeeId
-    })
+  //   const supervisorName = allEmployees?.data?.find((item: any) => {
+  //     return item.employeeId === employeeIdOfSupervisorFromOrganogram?.employeeId
+  //   })
 
-    return supervisorName === undefined ? 'No Supervisor' : `${supervisorName?.firstName} ${supervisorName?.surname}`
-  }
+  //   return supervisorName === undefined ? 'No Supervisor' : `${supervisorName?.firstName} ${supervisorName?.surname}`
+  // }
 
   const parameterByAppraisal = allParameters?.data.filter((section: any) => section.appraisalId === parseInt(selectedAppraisalType))
     .map((item: any) => ({
@@ -570,29 +521,35 @@ const AppraisalPerformance = () => {
 
   useEffect(() => {
     loadData()
-    setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
+    setSfterSearch(dataByID)
+    GetJobTitle(employeeRecord?.id)
+    // setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
   
   }, [
-    allJobTitles?.data, employeeRecord?.jobTitleId, selectedAppraisalType,
-    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, allObjectives?.data,
-    allReviewdates?.data, currentObjective, referenceId
+    // allJobTitles?.data, employeeRecord?.jobTitleId, selectedAppraisalType,
+    selectedPaygroup, 
+    employeeRecord?.id,
+    selectedStartPeriod, selectedEndPeriod, allObjectives?.data,
+    // allReviewdates?.data, currentObjective, referenceId
   ])
 
-  const handleInputChange = (e: any) => {
-    setSearchText(e.target.value)
-    if (e.target.value === '') {
-      loadData()
-    }
-  }
-
-  const globalSearch = () => {
-    // @ts-ignore
-    filteredData = dataWithVehicleNum.filter((value) => {
+  const globalSearch = (searchValue: string) => {
+    if (searchValue !== '') {
+    const searchResult = dataByID?.filter((item: any) => {
       return (
-        value.name.toLowerCase().includes(searchText.toLowerCase())
+        Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
       )
-    })
-    setGridData(filteredData)
+    })//search the grid data
+    setSfterSearch(searchResult)
+  }
+}
+
+const handleInputChange = (e: any) => {
+    globalSearch(e.target.value)
+    if (e.target.value === '') {
+      setBeforeSearch(dataByID)
+      setSfterSearch(beforeSearch)
+    }
   }
 
 
@@ -637,7 +594,7 @@ const AppraisalPerformance = () => {
           comment: item.comment,
         })),
         tenantId: tenantId,
-        referenceId: referenceId,
+        // referenceId: referenceId,
       },
       url: endpoint,
     }
@@ -655,7 +612,7 @@ const AppraisalPerformance = () => {
       setIsModalOpen(false)
       loadData()
       setSubmitLoading(false)
-      setObjValue('')
+      // setObjValue('')
       setIsEmailSent(false)
     },
     onError: (error: any) => {
@@ -664,90 +621,90 @@ const AppraisalPerformance = () => {
     }
   })
 
-  const handleNotificationSend = () => {
+  // const handleNotificationSend = () => {
 
-    //map throw dataById and return employeeId and name of employee as a new array
-    const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
-      email: item.email,
-      username: `${item.firstName} ${item.surname}`
-    }))
-    console.log('employeeMailAndName: ', employeeMailAndName)
+  //   //map throw dataById and return employeeId and name of employee as a new array
+  //   const employeeMailAndName = employeesInDataByID?.map((item: any) => ({
+  //     email: item.email,
+  //     username: `${item.firstName} ${item.surname}`
+  //   }))
+  //   console.log('employeeMailAndName: ', employeeMailAndName)
 
-    const item = {
-      data: {
-        subject: 'Appraisal Review Date',
-        formLink: `http://208.117.44.15/enp-hr-payroll/appraisalForm'`,
-        recipients: employeeMailAndName
-      },
-      url: 'appraisalperftransactions/sendMail',
-    }
-    setIsEmailSent(true)
-    postData(item)
-  }
+  //   const item = {
+  //     data: {
+  //       subject: 'Appraisal Review Date',
+  //       formLink: `http://208.117.44.15/enp-hr-payroll/appraisalForm'`,
+  //       recipients: employeeMailAndName
+  //     },
+  //     url: 'appraisalperftransactions/sendMail',
+  //   }
+  //   setIsEmailSent(true)
+  //   postData(item)
+  // }
 
-  const reviewDatesColumn = [
-    {
-      title: 'Date',
-      dataIndex: 'reviewDate',
-      render: (text: any) => moment(text).format('DD/MM/YYYY')
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-    },
-    {
-      title: 'Count down',
-      dataIndex: 'reviewDate',
-      render: (text: any) => getTimeLeft(text),
-    },
-    {
-      title: 'Action',
-      render: (text: any, record: any) => (
-        <Space>
-          <a className='text-primary me-2' onClick={() => handleNotificationSend()}>
-            Send Notification
-          </a>
-          <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
-            Delete
-          </a>
-        </Space>
-      ),
-    }
-  ]
+  // const reviewDatesColumn = [
+  //   {
+  //     title: 'Date',
+  //     dataIndex: 'reviewDate',
+  //     render: (text: any) => moment(text).format('DD/MM/YYYY')
+  //   },
+  //   {
+  //     title: 'Description',
+  //     dataIndex: 'description',
+  //   },
+  //   {
+  //     title: 'Count down',
+  //     dataIndex: 'reviewDate',
+  //     render: (text: any) => getTimeLeft(text),
+  //   },
+  //   {
+  //     title: 'Action',
+  //     render: (text: any, record: any) => (
+  //       <Space>
+  //         <a className='text-primary me-2' onClick={() => handleNotificationSend()}>
+  //           Send Notification
+  //         </a>
+  //         <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
+  //           Delete
+  //         </a>
+  //       </Space>
+  //     ),
+  //   }
+  // ]
 
-  const handleObjectiveSave = handleSubmit(async (values) => {
-    if (objValue === '') {
-      message.error('Please enter objective description')
-      return
-    }
+  // const handleObjectiveSave = handleSubmit(async (values) => {
+  //   if (objValue === '') {
+  //     message.error('Please enter objective description')
+  //     return
+  //   }
 
-    // check if current objective exist allObjectives using referenceId
-    const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
-    if (currentObjective) {
-      const item = {
-        data: currentObjective,
-        url: 'appraisalperfobjectives'
-      }
-      console.log('objItem: ', item)
-      updateData(item)
-      return
-    } else {
-      const item = {
-        data: {
-          description: values.description,
-          tenantId: tenantId,
-          referenceId: referenceId,
-        },
-        url: 'appraisalperfobjectives',
-      }
-      console.log('objItem: ', item)
-      postData(item)
-    }
-  })
+  //   // check if current objective exist allObjectives using referenceId
+  //   const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
+  //   if (currentObjective) {
+  //     const item = {
+  //       data: currentObjective,
+  //       url: 'appraisalperfobjectives'
+  //     }
+  //     console.log('objItem: ', item)
+  //     updateData(item)
+  //     return
+  //   } else {
+  //     const item = {
+  //       data: {
+  //         description: values.description,
+  //         tenantId: tenantId,
+  //         referenceId: referenceId,
+  //       },
+  //       url: 'appraisalperfobjectives',
+  //     }
+  //     console.log('objItem: ', item)
+  //     postData(item)
+  //   }
+  // })
 
-  const showReviewDateModal = () => {
-    setIsReviewDateModalOpen(true)
-  }
+  // const showReviewDateModal = () => {
+  //   setIsReviewDateModalOpen(true)
+  // }
 
   return (
     <div
@@ -809,62 +766,14 @@ const AppraisalPerformance = () => {
           || selectedEndPeriod === "select end period" ? "" :
           <KTCardBody className='py-4 '>
             <div className='table-responsive'>
-              {/* {
-                <>
-                  <div style={{ padding: "0px 0px 0 0px" }} className='col-12 row mb-0'>
-                    <div className='col-6 mb-7'>
-                      <form onSubmit={handleObjectiveSave}>
-
-                        <span className='form-label' >Objectives</span>
-                        <textarea
-                          {...register("description")}
-                          name='objectives'
-                          id="resizable-textarea"
-                          className="form-control mb-0 mt-2"
-                          defaultValue={currentObjective?.description }
-                          // onChange={handleTextareaChange}
-                          style={{ height: textareaHeight }}
-                        />
-                      </form>
-                      <a className='justify-content-end align-items-end d-flex btn text-primary' onClick={() => handleObjectiveSave()}>Save Objective</a>
-                    </div>
-                    <div className='col-6 mb-7'>
-                      <div className='d-flex justify-content-between'>
-                        <span className='form-label'>Schedule Dates</span>
-                      </div>
-                      <div
-                        style={{
-                          backgroundColor: 'white',
-                          padding: '20px',
-                          borderRadius: '5px',
-                          boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-                        }}
-                        className="border border-gray-400"
-                      >
-                        <Space className="justify-content-end align-items-end d-flex mb-2" >
-                          <Button
-                            onClick={showReviewDateModal}
-                            className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
-                            type="primary" shape="circle" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'middle'} />
-                        </Space>
-                        <Table columns={reviewDatesColumn} dataSource={reviewDateByID} loading={loading} />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              } */}
               <div className='d-flex justify-content-between'>
                 <Space style={{ marginBottom: 16 }}>
                   <Input
-                    placeholder='Enter Search Text'
-                    onChange={handleInputChange}
+                    placeholder='Seasrch'
+                    // onChange={handleInputChange}
                     type='text'
                     allowClear
-                    value={searchText}
                   />
-                  <Button type='primary' onClick={globalSearch}>
-                    Search
-                  </Button>
                 </Space>
                 <Space style={{ marginBottom: 16 }}>
                   <button type='button' className='btn btn-primary me-3' onClick={showModal}>
@@ -872,14 +781,14 @@ const AppraisalPerformance = () => {
                     Add
                   </button>
 
-                  <button type='button' className='btn btn-light-primary me-3'>
+                  <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                     <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                     Export
                   </button>
                 </Space>
               </div>
 
-              <Table columns={columns} dataSource={dataByID} />
+              <Table columns={columns} dataSource={afterSearch} />
 
               <Modal
                 title='Employee Details '
@@ -927,7 +836,7 @@ const AppraisalPerformance = () => {
                       </Select>
                     </div>
                   </div>
-                  <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
+                  <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0'>
 
                     <div className='col-6 mb-3'>
                       <label htmlFor="exampleFormControlInput1" className="form-label">Job Title</label>
@@ -1005,7 +914,7 @@ const AppraisalPerformance = () => {
 
                 </form>
               </Modal>
-              <Modal
+              {/* <Modal
                 title={"Details of ID " + employeeId}
                 open={updateModalOpen}
                 onCancel={handleUpdateCancel}
@@ -1066,7 +975,7 @@ const AppraisalPerformance = () => {
                     </div>
                   </div>
                 </form>
-              </Modal>
+              </Modal> */}
             </div>
           </KTCardBody>
       }

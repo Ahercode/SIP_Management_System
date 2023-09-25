@@ -1413,7 +1413,10 @@ const EmployeeEditForm = () => {
             </div>}
         </div>
       </div >
-      <button className='btn btn-primary' onClick={OnSUbmitUpdate} type="submit">Submit</button>
+      {
+        activeTab === 'tab1'||activeTab === 'tab2'||activeTab === 'tab3'||activeTab === 'tab4' ?
+        <button className='btn btn-primary' onClick={OnSUbmitUpdate} type="submit">Submit</button>:null
+      }
 
     </div>
   );

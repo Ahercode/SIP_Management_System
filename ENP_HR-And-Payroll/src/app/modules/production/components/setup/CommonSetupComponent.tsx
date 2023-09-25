@@ -5,6 +5,7 @@ import { useQueryClient, useMutation, useQuery } from "react-query"
 import { KTCardBody, KTSVG } from "../../../../../_metronic/helpers"
 import { deleteItem, fetchDocument, updateItem, postItem } from "../../../../services/ApiCalls"
 import { Link, useNavigate, useParams } from "react-router-dom"
+import { forUdateButton } from "../transactions/hr/Common/customInfoAlert"
 
 // common setup component
 const SetupComponent = (props: any) => {
@@ -27,6 +28,8 @@ const SetupComponent = (props: any) => {
     const { data: allDivisions } = useQuery('divisions', () => fetchDocument(`divisions/tenant/${tenantId}`), { cacheTime: 5000 })
     const path = props.data.title === 'Units' ? 'Departments' : 'Divisions'
     const { data: prevPath } = useQuery(`${path}`, () => fetchDocument(`${path}/tenant/${tenantId}`), { cacheTime: 5000 })
+
+    const [beforeSearch, setBeforeSearch] = useState([])
 
     const showModal = () => {
         setIsModalOpen(true)
@@ -169,32 +172,32 @@ const SetupComponent = (props: any) => {
         }
     }
 
+    const {data: allData} = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}/tenant/${tenantId}`), {cacheTime: 50000}) 
+
+    const globalSearch = (searchValue: string) => {
+        if (searchValue !== '') {
+        const searchResult = allData?.data?.filter((item: any) => {
+          return (
+            Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
+          )
+        })//search the grid data
+        setGridData(searchResult)
+      }
+    }
+
+    const handleInputChange = (e: any) => {
+        globalSearch(e.target.value)
+        if (e.target.value === '') {
+          setBeforeSearch(allData?.data)
+          setGridData(beforeSearch)
+        }
+      }
+
     useEffect(() => {
         pathName()
         loadData()
+        setBeforeSearch(allData?.data)
     }, [param])
-
-    const dataWithIndex = gridData.map((item: any, index) => ({
-        ...item,
-        key: index,
-    }))
-
-    const handleInputChange = (e: any) => {
-        setSearchText(e.target.value)
-        if (e.target.value === '') {
-            loadData()
-        }
-    }
-
-    const globalSearch = () => {
-        // @ts-ignore
-        filteredData = dataWithVehicleNum.filter((value) => {
-            return (
-                value.name.toLowerCase().includes(searchText.toLowerCase())
-            )
-        })
-        setGridData(filteredData)
-    }
 
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
@@ -247,9 +250,9 @@ const SetupComponent = (props: any) => {
         showModal()
         setIsUpdateModalOpen(true)
         setTempData(values);
-        console.log(values)
     }
 
+    
 
     const OnSubmit = handleSubmit(async (values) => {
         setLoading(true)
@@ -304,20 +307,16 @@ const SetupComponent = (props: any) => {
                                     <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
                                 </div> : null
                         }
-
                     </div>
                     <div className='d-flex justify-content-between'>
                         <Space style={{ marginBottom: 16 }}>
                             <Input
-                                placeholder='Enter Search Text'
+                                placeholder='Search...'
                                 onChange={handleInputChange}
                                 type='text'
                                 allowClear
-                                value={searchText}
                             />
-                            <Button type='primary' onClick={globalSearch}>
-                                Search
-                            </Button>
+                            
                         </Space>
                         <Space style={{ marginBottom: 16 }}>
                             <button type='button' className='btn btn-primary me-3' onClick={showModal}>
@@ -325,13 +324,13 @@ const SetupComponent = (props: any) => {
                                 Add
                             </button>
 
-                            <button type='button' className='btn btn-light-primary me-3'>
+                            <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                                 Export
                             </button>
                         </Space>
                     </div>
-                    <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+                    <Table columns={columns} dataSource={gridData} loading={loading} />
                     <Modal
                         title={isUpdateModalOpen ? `${props.data.title} Update` : `${props.data.title} Setup`}
                         open={isModalOpen}

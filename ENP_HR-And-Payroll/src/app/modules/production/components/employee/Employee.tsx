@@ -9,6 +9,8 @@ import { read, utils, writeFile } from "xlsx"
 import { Api_Endpoint, axioInstance, fetchDepartments, fetchEmployees, fetchGrades, fetchNotches, fetchPaygroups } from '../../../../services/ApiCalls'
 import { Roaster } from '../setup/hr/Roater'
 import { EmpSummaryDashBoard } from '../../../../pages/dashboard/charts/HRNewDashBoard'
+import { get } from 'jquery'
+import { forUdateButton } from '../transactions/hr/Common/customInfoAlert'
 
 
 const Employee = () => {
@@ -32,6 +34,7 @@ const Employee = () => {
   const showModal = () => {
     setIsModalOpen(true)
   }
+
 
   const handleOk = () => {
     setIsModalOpen(false)
@@ -278,11 +281,6 @@ const Employee = () => {
   }
 
   useEffect(() => {
-    const dataWithIndex = allEmployee?.data?.map((item: any, index:any) => ({
-      ...item,
-      key: index,
-    }))
-    setGridData(dataWithIndex)
     loadData()
     setBeforeSearch(allEmployee?.data)
   }, [allEmployee?.data])
@@ -306,28 +304,8 @@ const Employee = () => {
     utils.sheet_add_json(ws, gridData, { origin: "A2", skipHeader: true })
     utils.book_append_sheet(wb, ws, "Report")
     writeFile(wb, "Report.xlsx")
-  }  
+  } 
 
-  // const handleInputChange = (e: any) => {
-  //   setSearchText(e.target.value)
-  //   if (e.target.value === '') {
-  //     queryClient.invalidateQueries('employees')  
-  //     loadData()
-  //   }
-  // }
-
-  // const globalSearch = () => {
-  //   // @ts-ignore
-  //   filteredData = dataWithIndex?.filter((value) => {
-  //     return (
-  //       value.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-  //       value.surname.toLowerCase().includes(searchText.toLowerCase()) ||
-  //       value.gender.toLowerCase().includes(searchText.toLowerCase()) ||
-  //       value.employeeId.toLowerCase().includes(searchText.toLowerCase())
-  //     )
-  //   })
-  //   setGridData(filteredData)
-  // }
   const globalSearch = (searchValue: string) => {
     const searchResult = allEmployee?.data?.filter((item: any) => {
       return (
@@ -363,12 +341,6 @@ const Employee = () => {
             >
               Details
             </button>
-            {/* <button
-              className={`tab ${activeTab === 'roaster' ? 'active' : ''}`}
-              onClick={() => handleTabClick('roaster')}
-            >
-              Roster
-            </button> */}
             <button
               className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
               onClick={() => handleTabClick('summary')}
@@ -390,11 +362,8 @@ const Employee = () => {
                     onChange={handleInputChange}
                     type='text'
                     allowClear
-                    // value={searchText}
                   />
-                  {/* <Button type='primary' onClick={globalSearch}>
-                    Search
-                  </Button> */}
+                  
                 </Space>
                 <Space style={{marginBottom: 16}}>
                   <Link to='/employee-form'>
@@ -403,8 +372,7 @@ const Employee = () => {
                     Add
                   </button>
                   </Link>
-                  {/* <a onClick={handleExport} className='btn btn-light-primary me-3'>Export Data</a> */}
-                  <button onClick={handleExport} type='button' className='btn btn-light-primary me-3'>
+                  <button onClick={forUdateButton} type='button' className='btn btn-light-primary me-3'>
                     <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                     Export
                 </button>

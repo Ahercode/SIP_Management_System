@@ -27,10 +27,6 @@ const Grades = () => {
     setIsModalOpen(true)
   }
 
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
-
   const handleCancel = () => {
     reset()
     setIsModalOpen(false)
@@ -100,19 +96,6 @@ const Grades = () => {
         return 0
       },
     },
-    // {
-    //   title: 'Paygroup',
-    //   dataIndex: 'paygroupId',
-    //   sorter: (a: any, b: any) => {
-    //     if (a.paygroupId > b.paygroupId) {
-    //       return 1
-    //     }
-    //     if (b.paygroupId > a.paygroupId) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
 
     {
       title: 'Action',
@@ -192,6 +175,8 @@ const Grades = () => {
     }
   }
 
+
+  
   const globalSearch = () => {
     // @ts-ignore
     filteredData = dataWithVehicleNum.filter((value) => {
@@ -223,6 +208,7 @@ const Grades = () => {
   }
 
   const showUpdateModal = (values: any) => {
+    showModal()
     setIsUpdateModalOpen(true)
     setTempData(values);
     console.log(values)
@@ -327,24 +313,16 @@ const Grades = () => {
                 </div>
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
-                  <textarea style={{ margin: "10px 0px 0 0px" }} {...register("description")} className="form-control form-control-solid" aria-label="With textarea"></textarea>
-                  {/* <input type="text" {...register("description")} className="form-control form-control-solid"/> */}
+                  <textarea style={{ margin: "10px 0px 0 0px" }} {...register("description")} value={isUpdateModalOpen ===true? tempData.description:null} className="form-control form-control-solid" aria-label="With textarea"></textarea>
+                
                 </div>
-                {/* <div className=' mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Status</label>
-                      <select className="form-select form-select-solid" aria-label="Select example">
-                        <option> select</option>
-                        <option value="1">Active </option>
-                        <option value="2">Not Active </option>
-                      </select>
-                    </div> */}
               </div>
             </form>
           </Modal>
 
           {/* update modal */}
 
-          <Modal
+          {/* <Modal
             title='Grade Update'
             open={isUpdateModalOpen}
             onCancel={handleCancel}
@@ -380,19 +358,11 @@ const Grades = () => {
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
                   <textarea style={{ margin: "10px 0px 0 0px" }} {...register("description")} value={tempData?.description} onChange={handleChange} className="form-control form-control-solid" aria-label="With textarea"></textarea>
-                  {/* <input type="text" {...register("description")} className="form-control form-control-solid"/> */}
+                  
                 </div>
-                {/* <div className=' mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Status</label>
-                      <select className="form-select form-select-solid" aria-label="Select example">
-                        <option> select</option>
-                        <option value="1">Active </option>
-                        <option value="2">Not Active </option>
-                      </select>
-                    </div> */}
               </div>
             </form>
-          </Modal>
+          </Modal> */}
         </div>
       </KTCardBody>
     </div>
