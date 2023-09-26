@@ -9,10 +9,8 @@ import { useAuth } from '../core/Auth'
 import { useQuery } from 'react-query'
 import { 
   fetchCompanies, 
-  fetchDocument, 
   fetchUserApplications, 
   fetchUserCompany } from '../../../services/ApiCalls'
-import ChangePasswordModal from './ChangePasswordModal'
 import ForgotPasswordModal from './ForgotPasswordModal';
 
 const loginSchema = Yup.object().shape({
@@ -177,7 +175,6 @@ export function Login() {
               data-allow-clear='true'
               {...formik.getFieldProps('tenantId')}
             >
-
               {
                 formik.values.username === '' || formik.values.password === '' ?
                   '' : 
