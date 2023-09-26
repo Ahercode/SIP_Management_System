@@ -98,10 +98,8 @@ export function AsideMenuMain() {
           <>
           {
             currentUserRoles?.find((rolId: any) => rolId?.includes('7'))?
-            <AsideMenuItem to='demo-parameter' icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />:""
-
+            <AsideMenuItem to='parameterEntry' icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />:""
           }
-
           </>
           : ""
       }

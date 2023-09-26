@@ -201,7 +201,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         const item = {
             data: {
                 subject: 'Appraisal Review Date',
-                formLink: `${FormsBaseUrl}/appraisalObjectivesForm`,
+                formLink: `${FormsBaseUrl}/parameterEntry`,
                 recipients: employeeMailAndName
             },
             url: 'appraisalperftransactions/sendMail',
