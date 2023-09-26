@@ -42,9 +42,9 @@ import { NotificationsBoard } from '../modules/production/components/lineManager
 import { PerformanceBoard } from '../modules/production/components/transactions/hr/PerformanceBoard'
 import { Processes } from '../modules/production/components/setup/hr/Processes'
 import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjective/EmployeeObjectivePage'
-import { TestParameter } from '../modules/production/entry/TestParameter'
-import { TestEmployeeObjective } from '../modules/production/entry/TestEmplyeeObjectives'
-import { TestEmployeeDeliverable } from '../modules/production/entry/TestEmployeeDeliverable'
+import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
+import { EmployeeObjectiveEntry } from '../modules/production/entry/EmplyeeObjectiveEntry'
+import { EmployeeDeliverableEntry } from '../modules/production/entry/EmployeeDeliverableEntry'
 
 const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -94,22 +94,22 @@ const PrivateRoutes = () => (
           <EmployeeObjectivePage />
         </SuspensedView>} />
       <Route
-        path='new-employee-objectives/:parameterId'
+        path='objectiveEntry/:parameterId'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
-          <TestEmployeeObjective />
+          <EmployeeObjectiveEntry />
         </SuspensedView>} />
       <Route
-        path='new-employee-deliverables/:objectiveId'
+        path='deliverableEntry/:objectiveId'
         element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Deliverables</PageTitle>
-          <TestEmployeeDeliverable />
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Deliverables Entries</PageTitle>
+          <EmployeeDeliverableEntry />
         </SuspensedView>} />
       <Route
-        path='demo-parameter/*'
+        path='parameterEntry/*'
         element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Parameters</PageTitle>
-          <TestParameter />
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Parameter Entries</PageTitle>
+          <ParameterEntry/>
         </SuspensedView>} />
 
       <Route

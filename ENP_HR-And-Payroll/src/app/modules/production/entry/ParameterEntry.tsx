@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { set, useForm } from 'react-hook-form'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-const TestParameter = () => {
+const ParameterEntry = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const { register, reset, handleSubmit } = useForm()
   const param: any = useParams();
@@ -64,7 +64,7 @@ const TestParameter = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <Link to={`/new-employee-objectives/${record.id}`}>
+          <Link to={`/objectiveEntry/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Objectives</span>
           </Link>
         </Space>
@@ -108,7 +108,7 @@ const TestParameter = () => {
                 expandable={{
                   rowExpandable: (record) => record,
                   expandedRowRender: (record) =>
-                    <div>
+                    <div key={record}>
                       <div className='d-flex flex-direction-row align-items-center align-content-center py-4'>
                         <div className='d-flex flex-direction-row me-4'>
                           <span className=''>Objectives</span>
@@ -130,4 +130,4 @@ const TestParameter = () => {
   )
 }
 
-export { TestParameter }
+export { ParameterEntry }

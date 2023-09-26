@@ -11,7 +11,7 @@ import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '.
 import { ArrowLeftOutlined } from "@ant-design/icons"
 
 
-const TestEmployeeDeliverable = () => {
+const EmployeeDeliverableEntry = () => {
   const [gridData, setGridData] = useState([])
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
@@ -162,7 +162,6 @@ const TestEmployeeDeliverable = () => {
 
   const loadData = async () => {
     try {
-      console.log('param', param)
       setGridData(allObjectiveDeliverables?.data?.filter((item: any) => item?.objectiveId.toString() === param.objectiveId))
       setPathData(getItemData(param?.objectiveId, appraisalobjectives?.data))
     } catch (error) {
@@ -172,7 +171,8 @@ const TestEmployeeDeliverable = () => {
 
   useEffect(() => {
     loadData()
-  }, [allObjectiveDeliverables?.data])
+  }, [])
+  // }, [allObjectiveDeliverables?.data])
 
 
   const getItemData = (fieldProp: any, data: any) => {
@@ -449,7 +449,7 @@ const TestEmployeeDeliverable = () => {
   )
 }
 
-export { TestEmployeeDeliverable }
+export { EmployeeDeliverableEntry }
 
 
 

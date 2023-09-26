@@ -9,7 +9,7 @@ import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '.
 import { ArrowLeftOutlined } from "@ant-design/icons"
 
 
-const TestEmployeeObjective = () => {
+const EmployeeObjectiveEntry = () => {
   const [gridData, setGridData] = useState([])
 
   const { register, reset, handleSubmit } = useForm()
@@ -21,6 +21,8 @@ const TestEmployeeObjective = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const queryClient = useQueryClient()
   const [pathData, setPathData] = useState<any>("")
+
+
   const { data: appraisalobjectives, isLoading: loading } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
   const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
 
@@ -105,8 +107,7 @@ const TestEmployeeObjective = () => {
       width: 100,
       render: (record: any) => (
         <Space size='middle'>
-
-          <Link to={`/new-employee-deliverables/${record.id}`}>
+          <Link to={`/deliverableEntry/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Deliverables</span>
           </Link>
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
@@ -115,7 +116,6 @@ const TestEmployeeObjective = () => {
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
           </a>
-
         </Space>
       ),
 
@@ -316,9 +316,18 @@ const TestEmployeeObjective = () => {
               />
               <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
                 <span className="fw-bold d-block fs-2">{`${pathData?.name}`}</span>
-                <div className="bullet bg-danger ms-4"></div>
+                  <div className="bullet bg-danger ms-4"></div>
                 <span className=' fs-2 ms-4 fw-bold'>{`${pathData?.weight}%`}</span>
               </div>
+              {/* {
+                parameterData?.data?.map((item: any) => (
+                  <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
+                    <span className="fw-bold d-block fs-2">{`${item?.name}`}</span>
+                    <div className="bullet bg-danger ms-4"></div>
+                    <span className=' fs-2 ms-4 fw-bold'>{`${item?.weight}%`}</span>
+                  </div>
+                ))
+              } */}
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
@@ -382,7 +391,7 @@ const TestEmployeeObjective = () => {
    * 
    */
 }
-export { TestEmployeeObjective }
+export { EmployeeObjectiveEntry }
 
 
 

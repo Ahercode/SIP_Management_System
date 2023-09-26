@@ -228,7 +228,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
     return (
         <>
-            <div className='col-9 mb-7'>
+            <div className='col-12'>
                 <div className='d-flex justify-content-between'>
                     <span className='form-label'>Schedule Dates</span>
                 </div>
@@ -238,7 +238,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                             backgroundColor: 'white',
                             padding: '20px',
                             borderRadius: '5px',
-                            boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+                            // boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
                         }}
                         className="border border-gray-400"
                     >

@@ -138,20 +138,20 @@ export function Login() {
         //   setStatus("you don't have access to this application")
         //  }
         saveTenant('test')
-        const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
-          return filteredItem?.applicationId?.toString()
-        })
+        // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
+        //   return filteredItem?.applicationId?.toString()
+        // })
 
-        const newIt = userApp?.find((applicationId:any)=>{
-          return applicationId==='10'
-        })
+        // const newIt = userApp?.find((applicationId:any)=>{
+        //   return applicationId==='10'
+        // })
         
-        if(!newIt)
-        {
-          setStatus("You can't access this application, contact your Administrator!")
-          setSubmitting(false)
-          setLoading(false)
-        }
+        // if(!newIt)
+        // {
+        //   setStatus("You can't access this application, contact your Administrator!")
+        //   setSubmitting(false)
+        //   setLoading(false)
+        // }
       } catch (error) {
         console.error(error)
         setStatus('The login detail is incorrect')

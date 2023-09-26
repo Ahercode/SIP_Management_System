@@ -365,7 +365,6 @@ const AppraisalPerformance = () => {
     // postData(item)
   })
 
-
   return (
     <div>
       <form onSubmit={submitApplicant}>
@@ -419,10 +418,10 @@ const AppraisalPerformance = () => {
           || selectedEndPeriod === "select end period" ? "" :
 
           <div className='table-responsive'>
-            <div className='col-12 row mb-7 py-4'>
-              <div className='col-3 mb-7'>
+            <div className='col-12 mb-7'>
                 <AppraisalObjective referenceId={referenceId} />
               </div>
+            <div className='col-12 row mb-7'>
               < ReviewDateComponent
                 referenceId={referenceId}
                 selectedAppraisalType={selectedAppraisalType}
