@@ -6,14 +6,14 @@
  */
 
 import { FC } from 'react'
-import { useQuery } from 'react-query'
+// import { useQuery } from 'react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { App } from '../App'
 import { AuthPage, Logout, useAuth } from '../modules/auth'
 import { ErrorsPage } from '../modules/errors/ErrorsPage'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
 import { ObjectivesForm } from '../modules/production/components/appraisalForms/ObjectivesForm '
-import { fetchDocument } from '../services/ApiCalls'
+// import { fetchDocument } from '../services/ApiCalls'
 import { PrivateRoutes } from './PrivateRoutes'
 
 /**
@@ -25,15 +25,15 @@ const { PUBLIC_URL } = process.env
 
 const AppRoutes: FC = () => {
   const { currentUser, tenant } = useAuth()
-  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
-  const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
-    return filteredItem?.applicationId?.toString()
-  })
+  // const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
+  // const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
+  //   return filteredItem?.applicationId?.toString()
+  // })
 
-  const hasApp = userApp?.find((applicationId: any) => applicationId === '10')
+  // const hasApp = userApp?.find((applicationId: any) => applicationId === '10')
 
-  const expiringDate: any = currentUser?.exp
-  const dateObj: any = new Date(expiringDate * 1000);
+  // const expiringDate: any = currentUser?.exp
+  // const dateObj: any = new Date(expiringDate * 1000);
 
   return (
     <BrowserRouter basename={PUBLIC_URL}>

@@ -1,5 +1,5 @@
 {
-    "name": "demo1",
+    "name": "ahercode",
     "version": "8.1.0",
     "private": true,
     "homepage": "/apms",
@@ -48,6 +48,7 @@
         "react-router-dom": "6.3.0",
         "react-scripts": "^5.0.1",
         "react-toastify": "^9.1.2",
+        "react-topbar-progress-indicator": "^4.1.1",
         "sass": "1.50.1",
         "socicon": "3.0.5",
         "xlsx": "^0.18.5",
