@@ -252,8 +252,6 @@ const EmployeeDeliverableEntry = () => {
     }
   }
 
-
-
   const OnSubmit = handleSubmit(async (values) => {
     // input validations
     // make sure all values are filled
@@ -275,13 +273,15 @@ const EmployeeDeliverableEntry = () => {
         subWeight: parseInt(values.subWeight),
         unitOfMeasureId: parseInt(values.unitOfMeasureId),
         target: parseInt(values.target),
+        comment: 'testst',
+        status: 0,
         tenantId: tenantId
       },
-      url: `appraisalObjectives`,
+      url: `AppraisalDeliverable`,
     }
 
     // check if item already exist
-    const itemExist = gridData.find((item: any) =>
+    const itemExist = gridData?.find((item: any) =>
       item.name === itemToPost.data.name &&
       item.objectiveId === itemToPost.data.objectiveId &&
       item.description === itemToPost.data.description &&
@@ -300,11 +300,16 @@ const EmployeeDeliverableEntry = () => {
       if (sums + itemToPost.data.subWeight > 100) {
         return message.error(`Total weight for ${pathData?.name} cannot exceed 100`);
       } else {
+
+        console.log('itemToPost from inner inner else: ', itemToPost.data)
         postData(itemToPost)
       }
     } else {
+      console.log('itemToPost from inner else: ', itemToPost.data)
       postData(itemToPost)
     }
+    console.log('itemToPost from actual: ', itemToPost.data)
+    postData(itemToPost)
   })
 
   const { mutate: postData } = useMutation(postItem, {
@@ -389,13 +394,14 @@ const EmployeeDeliverableEntry = () => {
             ]}
           >
             <form
-              onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
+              onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
             >
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                 <div className='col-4 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
                   <input
                     {...register("name")}
+                    type='text'
                     defaultValue={isUpdateModalOpen === true ? tempData.name : null}
                     onChange={handleChange}
                     className="form-control form-control-solid" />
@@ -404,6 +410,7 @@ const EmployeeDeliverableEntry = () => {
                   <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
                   <input
                     {...register("description")}
+                    type='text'
                     defaultValue={isUpdateModalOpen === true ? tempData.description : null}
                     onChange={handleChange}
                     className="form-control form-control-solid" />

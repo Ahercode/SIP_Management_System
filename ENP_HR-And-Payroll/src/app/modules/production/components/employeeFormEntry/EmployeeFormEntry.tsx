@@ -310,7 +310,7 @@ const MultiTabForm = () => {
     },
     {
       key: '2',
-      label: <><span className="fw-bold d-block fs-2">Communication details</span></>,
+      label: <><span className="fw-bold d-block fs-2">Contact details</span></>,
       children: (
         <form onSubmit={OnSUbmit}>
           <div className='row'>

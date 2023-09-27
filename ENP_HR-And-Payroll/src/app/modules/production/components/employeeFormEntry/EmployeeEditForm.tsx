@@ -497,7 +497,7 @@ const EmployeeEditForm = () => {
     },
     {
       key: '2',
-      label: <><span className="fw-bold d-block fs-2">Communication details</span></>,
+      label: <><span className="fw-bold d-block fs-2">Contact details</span></>,
       children: (
         <>
           <div className='row'>
