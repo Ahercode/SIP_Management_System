@@ -215,12 +215,12 @@ const ServiceCost = () => {
     console.log(values)
   }
 
-  const url = `${Api_Endpoint}/ServiceCosts1`
+  const url = `${Api_Endpoint}/ServiceCosts`
   const OnSUbmit = handleSubmit(async (values) => {
     setLoading(true)
     const data = {
       serviceProviderId: parseInt(param.id),
-      medicalServiceId: parseInt(selectedValue),
+      medicalServiceId: parseInt(values.medicalServiceId),
       tenantId: tenantId,
       cost: parseFloat(values.cost).toFixed(2)
     }
@@ -307,8 +307,9 @@ const ServiceCost = () => {
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Product/Service</label>
                   <select {...register("medicalServiceId")} 
-                  value={isUpdateModalOpen === true ? tempData?.medicalServiceId : 'Select service'} 
-                  onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">
+                  defaultValue={isUpdateModalOpen === true ? tempData?.medicalServiceId : 'Select service'} 
+                  onChange={handleChange}
+                  className="form-select form-select-solid" aria-label="Select example">
                     {isUpdateModalOpen === false ? <option value="Select service">Select service</option> : null}
                     {
                       allProducts?.data.map((item: any) => (

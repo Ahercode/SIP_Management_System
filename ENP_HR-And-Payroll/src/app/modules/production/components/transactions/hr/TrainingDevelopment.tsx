@@ -58,9 +58,7 @@ const TrainingDevelopment = () => {
     setIsScheduleModalOpen(true)
   }
 
-  // const handleShortOk = () => {
-  //   setIsShortModalOpen(false)
-  // }
+ 
 
   const handleShortCancel = () => {
     reset()
@@ -381,7 +379,7 @@ const TrainingDevelopment = () => {
     let firstName = null
     allEmployees?.data.map((item: any) => {
       if (item.id === emId) {
-        firstName=item.dob
+        firstName=item.dob?.substring(0,10)
       }
     })
     return firstName
@@ -591,44 +589,40 @@ const TrainingDevelopment = () => {
         selectedRef===""||
         selectedRef==="Select"?"":
         <div className='col-12 row'>
-        <div className='col-6'>
-          <div style={{padding: "20px 0px 0 0px"}} className='col-12 row mb-0'>
-            <div className='col-6 mb-7'>
+        <div className='col-12 row' style={{margin: "10px 0px 10px 0px"}}>
+          <h3 className='text-gray' style={{margin: "1px 0px 20px 0px", fontSize:"18px", fontWeight:"600", color:"gray"}}>Training Details</h3>
+          {/* <div style={{padding: "20px 0px 0 0px"}} className='col-12  mb-0'> */}
+            <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Reference#</label>
               <input type="text" readOnly value={dataByID.reference} className="form-control form-control-solid" />
             </div>
 
-            <div className='col-6 mb-7'>
+            <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Training Type</label>
               <input type="text" readOnly value={trainingName} className="form-control form-control-solid" />
             </div>
-          </div>
-          <div style={{padding: "20px 0px 0 0px"}} className='col-12 row mb-0'>
-            <div className='col-6 mb-3'>
+            <div className='col-4 mb-3'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Start date</label>
               <input type="text" readOnly value={dataByID.startDate} className="form-control form-control-solid" />
             </div>
 
-            <div className='col-6 mb-7'>
+            <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">End date</label>
               <input type="text" readOnly value={dataByID.startDate} className="form-control form-control-solid" />
             </div>
-          </div>
-          <div style={{padding: "20px 0px 0 0px"}} className='col-12 row mb-0'>
-            <div className='col-6 mb-7'>
+            <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Facilitator</label>
               <input type="text" readOnly value={dataByID.facilitator} className="form-control form-control-solid" />
             </div>
-            <div className='col-6 mb-7'>
+            <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Venue</label>
               <input type="text" readOnly value={dataByID.venue} className="form-control form-control-solid" />
             </div>
-          </div>
         </div>
-        <div className='col-6'>
+        <div className='col-12' style={{margin: "10px 0px 0 0px"}}>
           <div className='d-flex justify-content-between'>
             <Space style={{marginBottom: 16}}>
-            <h3><b>Training Schedule Table</b></h3>
+            <h3 style={{margin: "1px 0px 20px 0px", fontSize:"18px", fontWeight:"600", color:"gray"}}>Training Schedule Table</h3>
             </Space>
             <Space style={{marginBottom: 16}}>
               <button type='button' className='btn btn-primary me-3' onClick={showShortModal}>
@@ -643,14 +637,14 @@ const TrainingDevelopment = () => {
               padding: '20px',
               borderRadius: '5px',
               boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+              border: '1px solid #ebedf2',
             }}
           >
 
-          <Table columns={columnSchedules} dataSource={trainSchData} pagination={{defaultPageSize:3}} />
+          <Table columns={columnSchedules} dataSource={trainSchData} pagination={{defaultPageSize:2}} />
           </div>
         </div>
         <div>
-        <hr></hr>
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
             <br></br>
@@ -706,7 +700,7 @@ const TrainingDevelopment = () => {
                 <form
                     onSubmit={submitTrainee}
                 >
-                  <hr></hr>
+                  <hr style={{background:"#ebedf2"}}></hr>
                   <div style={{padding: "20px 20px 0 20px"}} className='row mb-0 '>
                     <div className='col-6 mb-3'>
                       <label htmlFor="exampleFormControlInput1" className="form-label">Employee ID</label>

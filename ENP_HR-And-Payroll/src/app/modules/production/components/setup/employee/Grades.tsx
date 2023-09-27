@@ -4,7 +4,7 @@ import axios from 'axios'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Api_Endpoint, fetchGrades, fetchPaygroups, updateGrade } from '../../../../../services/ApiCalls'
+import { Api_Endpoint, fetchDocument, fetchGrades, fetchPaygroups, updateGrade } from '../../../../../services/ApiCalls'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 const Grades = () => {
@@ -127,13 +127,14 @@ const Grades = () => {
   ]
 
 
-  const { data: allPaygroups } = useQuery('paygroups', ()=> fetchPaygroups(`/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroups', ()=> fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
+
+
   const { data: allGrades } = useQuery('grades',()=>  fetchGrades(tenantId), { cacheTime: 5000 })
   
   const getItemName = async (param: any) => {
     let newName = null
-    const itemTest = await allPaygroups?.data.find((item: any) => item.id === param)
-    console.log("itemTest: ",itemTest)
+    const itemTest = await allPaygroups?.data.find((item: any) => item.id === parseInt(param))
     newName = itemTest?.name
     return newName
   }
@@ -174,12 +175,10 @@ const Grades = () => {
       loadData()
     }
   }
-
-
   
   const globalSearch = () => {
     // @ts-ignore
-    filteredData = dataWithVehicleNum.filter((value) => {
+    filteredData = dataWithIndex.filter((value) => {
       return (
         value.name.toLowerCase().includes(searchText.toLowerCase())
       )

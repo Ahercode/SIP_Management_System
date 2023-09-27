@@ -1,4 +1,4 @@
-import {Button, Input, Modal, Radio, RadioChangeEvent, Select, Space, Table} from 'antd'
+import {Button, Input, Modal, Radio, RadioChangeEvent, Select, Space, Table, message} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../../_metronic/helpers'
@@ -50,9 +50,9 @@ const MedicalEntries = () => {
     
   ]);
 
-  const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
+  // const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+  //   setFileList(newFileList);
+  // };
 
   const {data:allEmployee} = useQuery('employee',()=> fetchEmployees(tenantId), {cacheTime:5000})
   const {data:allMedicals} = useQuery('medicals', ()=> fetchMedicals(tenantId), {cacheTime:5000})
@@ -269,7 +269,7 @@ const MedicalEntries = () => {
 
   const globalSearch = () => {
     // @ts-ignore
-    filteredData = dataWithVehicleNum.filter((value) => {
+    filteredData = dataByID.filter((value) => {
       return (
         value.name.toLowerCase().includes(searchText.toLowerCase())
       )
@@ -330,6 +330,7 @@ const MedicalEntries = () => {
       return response.statusText
     } catch (error: any) {
       setSubmitLoading(false)
+      message.error(error.response.data.message)
       return error.statusText
     }
   })
@@ -502,23 +503,23 @@ const MedicalEntries = () => {
 
                         <Table columns={productColumn} dataSource={dataByProvider}/>
                         <Modal
-                          title='Product list'
+                          title='Product list '
                           open={isProductModalOpen}
                           onCancel={handleProductCancel}
                           closable={true}
                           footer={[
-                            <Button key='back' onClick={handleProductCancel}>
-                                Cancel
+                            <Button type='primary' key='back' onClick={handleProductCancel}>
+                                Done
                             </Button>,
-                            <Button
-                            key='submit'
-                            type='primary'
-                            htmlType='submit'
-                            loading={submitLoading}
-                            onClick={OnSubmit}
-                            >
-                              Submit
-                            </Button>,
+                            // <Button
+                            // key='submit'
+                            // type='primary'
+                            // htmlType='submit'
+                            // loading={submitLoading}
+                            // // onClick={OnSubmit}
+                            // >
+                            //   Submit
+                            // </Button>,
                           ]}
                         
                         >
@@ -547,7 +548,7 @@ const MedicalEntries = () => {
                                     <button 
                                       onClick={() => handleSelect(item)}
                                       className='btn btn-light-primary btn-sm mb-3'
-                                      >Add</button>
+                                      >Add </button>
                                   </div>
                                 </>
                               );
