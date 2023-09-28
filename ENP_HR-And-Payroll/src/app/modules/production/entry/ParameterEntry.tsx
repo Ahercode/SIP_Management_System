@@ -99,7 +99,7 @@ const ParameterEntry = () => {
             <Button type='primary' disabled={true} size='large'>
               Submit
             </Button>
-          </div>
+          </div> 
           {
             loading ? <Skeleton active /> :
               <Table
