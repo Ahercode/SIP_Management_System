@@ -5,7 +5,7 @@
  * components (e.g: `src/app/modules/Auth/pages/AuthPage`, `src/app/BasePage`).
  */
 
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 // import { useQuery } from 'react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { App } from '../App'
@@ -14,7 +14,11 @@ import { ErrorsPage } from '../modules/errors/ErrorsPage'
 import { AppraisalForm } from '../modules/production/components/appraisalForms/AppraisalForm'
 import { ObjectivesForm } from '../modules/production/components/appraisalForms/ObjectivesForm '
 // import { fetchDocument } from '../services/ApiCalls'
-import { PrivateRoutes } from './PrivateRoutes'
+import { PrivateRoutes, SuspensedView, accountBreadCrumbs } from './PrivateRoutes'
+import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
+import { EmployeeObjectiveEntry } from '../modules/production/entry/EmplyeeObjectiveEntry'
+import { EmployeeDeliverableEntry } from '../modules/production/entry/EmployeeDeliverableEntry'
+import { PageTitle } from '../../_metronic/layout/core'
 
 /**
  * Base URL of the website.
@@ -30,6 +34,14 @@ const AppRoutes: FC = () => {
   //   return filteredItem?.applicationId?.toString()
   // })
 
+
+ 
+  // console.log(currentUser?.isAdmin)
+  // useEffect(() => {
+  //   if (currentUser?.isAdmin?.trim() === testValue) {
+  //     setTest(true)
+  //   }
+  // }, [testValue])
   // const hasApp = userApp?.find((applicationId: any) => applicationId === '10')
 
   // const expiringDate: any = currentUser?.exp
@@ -49,7 +61,9 @@ const AppRoutes: FC = () => {
           {currentUser && tenant ? (
             <>
               <Route path='/*' element={<PrivateRoutes />} />
+              
               <Route index element={<Navigate to='/hr-dashboard' />} />
+              
             </>
           ) : (
             <>
@@ -59,6 +73,7 @@ const AppRoutes: FC = () => {
 
             </>
           )}
+          
         </Route>
       </Routes>
     </BrowserRouter>

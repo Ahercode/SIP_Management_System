@@ -23,7 +23,7 @@ const HeaderUserMenu: FC = () => {
               {currentUser?.firstName} {currentUser?.surname}
               {/*<span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>Pro</span>*/}
             </div>
-            <a href='#' className='fw-bold text-muted text-hover-primary fs-7'>
+            <a style={{maxWidth:"160px", overflow:"auto"}} href='#' className='fw-bold text-muted text-hover-primary fs-7'>
               {currentUser?.email}
             </a>
           </div>

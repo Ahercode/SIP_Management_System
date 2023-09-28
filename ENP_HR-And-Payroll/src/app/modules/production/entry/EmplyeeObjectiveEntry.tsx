@@ -7,11 +7,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { useAuth } from '../../auth'
 
 
 const EmployeeObjectiveEntry = () => {
   const [gridData, setGridData] = useState([])
-
+  const { currentUser } = useAuth()
   const { register, reset, handleSubmit } = useForm()
   const param: any = useParams();
   const navigate = useNavigate();
@@ -124,7 +125,7 @@ const EmployeeObjectiveEntry = () => {
 
   const loadData = async () => {
     try {
-      setGridData(appraisalobjectives?.data?.filter((item: any) => item?.parameterId.toString() === param?.parameterId))
+      setGridData(appraisalobjectives?.data?.filter((item: any) => item?.parameterId.toString() === param?.parameterId && item?.employeeId === currentUser?.id))
       setPathData(getItemData(param?.parameterId, parameterData?.data))
     } catch (error) {
       console.log(error)
@@ -133,7 +134,7 @@ const EmployeeObjectiveEntry = () => {
 
   useEffect(() => {
     loadData()
-  }, [appraisalobjectives?.data])
+  }, [appraisalobjectives?.data, currentUser?.id, parameterData?.data, param?.parameterId])
 
   const getItemData = (fieldProp: any, data: any) => {
     const item = data?.find((item: any) =>
@@ -236,7 +237,7 @@ const EmployeeObjectiveEntry = () => {
         weight: parseInt(values.weight),
         tenantId: tenantId,
         referenceId: '',
-        employeeId: 'EB61', //use logged in employee id here
+        employeeId: currentUser?.id, //use logged in employee id here
         comment: "",
         status: "Pending",
       },

@@ -1,31 +1,42 @@
 /* eslint-disable react/jsx-no-target-blank */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useAuth } from '../../../../app/modules/auth'
 import { fetchDocument, fetchRoles, fetchUserRoles } from '../../../../app/services/ApiCalls'
 import { AsideMenuItem } from './AsideMenuItem'
 import { AsideMenuItemWithSub } from './AsideMenuItemWithSub'
+import { message } from 'antd'
 
 export function AsideMenuMain() {
   const intl = useIntl()
   const { currentUser } = useAuth()
   const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
 
-  const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
-    return filteredItem?.applicationId?.toString()
-  })
+  // const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
+  //   return filteredItem?.applicationId?.toString()
+  // })
 
-  const [isHR, setIsHR] = useState(false)
-  const [isPayroll, setIsPayroll] = useState(false)
   const [isPayrollHR, setIsPayrollHR] = useState(true)
-
-  const { data: allRoles } = useQuery('roles', fetchRoles, { cacheTime: 5000 })
   const { data: allUserRoles } = useQuery('user-roles', fetchUserRoles, { cacheTime: 5000 })
 
   const currentUserRoles = allUserRoles?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
     return filteredItem?.roleId?.toString()
   })
+
+  const [test, setTest] = useState(false)
+  const testValue = "yes"
+  console.log(currentUser?.isAdmin)
+
+  useEffect(() => { 
+    if(currentUser?.isAdmin?.trim() === testValue){
+      setTest(true)
+      
+    }else{
+      // message.error(`Hi ${currentUser?.firstName}  ${currentUser?.surname}! Contact your administrator to activate your account`, 10)
+      setTest(false)
+    }
+  } , [testValue])
 
 
   return (
@@ -63,17 +74,17 @@ export function AsideMenuMain() {
                 title='Notifications Board'
               />
               <AsideMenuItem
-              to='employee-report-page/'
-              hasBullet={false}
-              icon='/media/icons/duotune/general/gen028.svg'
-              title='Reports'
+                to='employee-report-page/'
+                hasBullet={false}
+                icon='/media/icons/duotune/general/gen028.svg'
+                title='Reports'
             />
             </>
             : ""
         }
 
         {/* Setups authorizations */}
-        {
+        {/* {
           currentUserRoles?.find((rolId: any) => rolId?.includes('1'))
             || currentUserRoles?.find((rolId: any) => rolId?.includes('2'))
             || currentUserRoles?.find((rolId: any) => rolId?.includes('3'))
@@ -88,7 +99,7 @@ export function AsideMenuMain() {
               <AsideMenuItem to='setup/employee/unitOfMeasure' hasBullet={true} title='Units of Measure' />
             </AsideMenuItemWithSub>
             : ""
-        }
+        } */}
       </>
 
 
@@ -104,6 +115,58 @@ export function AsideMenuMain() {
           : ""
       }
 
+      {
+        test? 
+        <>
+            <AsideMenuItem
+                to='employee/'
+                hasBullet={false}
+                icon='/media/icons/duotune/communication/com013.svg'
+                title='Employee Details'
+              />
+              <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={false}
+                icon='/media/icons/duotune/general/gen032.svg' title='Performance' />
+
+              <AsideMenuItem to='processes' hasBullet={false}
+                icon='/media/icons/duotune/general/gen022.svg' title='Processes' />
+
+              <AsideMenuItem
+                to={`notifications-board/lineManger`}
+                hasBullet={false}
+                icon='/media/icons/duotune/general/gen007.svg'
+                title='Notifications Board'
+              />
+              <AsideMenuItem
+                to='employee-report-page/'
+                hasBullet={false}
+                icon='/media/icons/duotune/general/gen028.svg'
+                title='Reports'
+            />
+            <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/general/gen019.svg' hasBullet={false}>
+              <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
+              <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Employee Groups' />
+              <AsideMenuItem to='setup/employee/departments' hasBullet={true} title='Departments' />
+              <AsideMenuItem to='setup/employee/categories' hasBullet={true} title='Categories' />
+              <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
+              <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
+              <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
+              <AsideMenuItem to='setup/employee/unitOfMeasure' hasBullet={true} title='Units of Measure' />
+            </AsideMenuItemWithSub>
+        </>
+        :
+        <>
+          <AsideMenuItem
+            to={`notifications-board/lineManger`}
+            hasBullet={false}
+            icon='/media/icons/duotune/general/gen007.svg'
+            title='Notifications Board'
+          />
+          <AsideMenuItem to='parameterEntry' icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />
+        
+        </>
+
+      }
+      {/* <AsideMenuItem to='setup/administration/audit' hasBullet={true} title='Audits' /> */}
       <div className='menu-item'>
         <div className='menu-content'>
           <div className='separator  mx-1 my-4'></div>

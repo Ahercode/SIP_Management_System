@@ -35,7 +35,9 @@ const Topbar: FC = () => {
           data-kt-menu-flip='bottom'
         >
           
-          <img src={toAbsoluteUrl('/media/avatars/user.png')} alt='ENP user Profile' />
+              <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
+            
+          {/* <img src={toAbsoluteUrl('/media/avatars/user.png')} alt='ENP user Profile' /> */}
           <p>{currentUser?.phone}</p>
         </div>
         <HeaderUserMenu />

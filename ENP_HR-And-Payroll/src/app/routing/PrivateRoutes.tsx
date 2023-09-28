@@ -1,4 +1,4 @@
-import { FC, Suspense } from 'react'
+import { FC, Suspense, useEffect, useState } from 'react'
 import { Route, Routes, Navigate} from 'react-router-dom'
 import { MasterLayout } from '../../_metronic/layout/MasterLayout'
 import { getCSSVariableValue } from '../../_metronic/assets/ts/_utils'
@@ -45,8 +45,10 @@ import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjecti
 import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
 import { EmployeeObjectiveEntry } from '../modules/production/entry/EmplyeeObjectiveEntry'
 import { EmployeeDeliverableEntry } from '../modules/production/entry/EmployeeDeliverableEntry'
+import { useAuth } from '../modules/auth'
+import { message } from 'antd'
 
-const accountBreadCrumbs: Array<PageLink> = [
+export const accountBreadCrumbs: Array<PageLink> = [
   {
     title: '',
     path: '/cycle_details/cycle-details',
@@ -55,7 +57,22 @@ const accountBreadCrumbs: Array<PageLink> = [
   },
 ]
 
-const PrivateRoutes = () => (
+const PrivateRoutes = () => {
+
+  const { currentUser, tenant } = useAuth()
+  const [test, setTest] = useState(false)
+
+
+  useEffect(() => {
+    if (currentUser?.isAdmin?.trim() === "no") {
+      setTest(true)
+    }else{
+      setTest(false)
+    }
+  }, [currentUser?.isAdmin])
+  
+  return (
+  
   <Routes>
     <Route element={<MasterLayout />}>
       {/* Redirect to Dashboard after success login/registartion */}
@@ -93,7 +110,7 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Entries</PageTitle>
           <EmployeeObjectivePage />
         </SuspensedView>} />
-      <Route
+      {/* <Route
         path='objectiveEntry/:parameterId'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
@@ -110,7 +127,36 @@ const PrivateRoutes = () => (
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Parameter Entries</PageTitle>
           <ParameterEntry/>
-        </SuspensedView>} />
+        </SuspensedView>} /> */}
+
+{
+              test ?(
+                <>
+                  <Route
+                    path='objectiveEntry/:parameterId'
+                    element={<SuspensedView>
+                      <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
+                      <EmployeeObjectiveEntry />
+                    </SuspensedView>} />
+                  <Route
+                    path='deliverableEntry/:objectiveId'
+                    element={<SuspensedView>
+                      <PageTitle breadcrumbs={accountBreadCrumbs}>Deliverables Entries</PageTitle>
+                      <EmployeeDeliverableEntry />
+                    </SuspensedView>} />
+                  <Route
+                    path='parameterEntry/'
+                    element={<SuspensedView>
+                      <PageTitle breadcrumbs={accountBreadCrumbs}>Parameter Entries</PageTitle>
+                      <ParameterEntry/>
+                    </SuspensedView>} />
+                </>
+                
+                )
+              :(
+                null
+                )
+              }
 
       <Route
         path='employee-edit-form/:id'
@@ -182,7 +228,6 @@ const PrivateRoutes = () => (
           <PageTitle breadcrumbs={accountBreadCrumbs}>User Management</PageTitle>
           <UserManagement />
         </SuspensedView>} />
-
       {/* Employee Routes  */}
 
 
@@ -354,9 +399,8 @@ const PrivateRoutes = () => (
       <Route path='*' element={<Navigate to='/error/404' />} />
     </Route>
   </Routes>
-)
-
-const SuspensedView: FC<WithChildren> = ({ children }) => {
+) }
+export const SuspensedView: FC<WithChildren> = ({ children }) => {
   // const baseColor = getCSSVariableValue('--kt-primary')
 
   

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useQuery } from 'react-query'
 
 import {  fetchUsers } from '../../../services/ApiCalls'
-import { Button, Modal } from 'antd'
+import { Button, Modal, message } from 'antd'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
@@ -14,11 +14,9 @@ import { useAuth } from '../core/Auth'
 import { login, parseJwt } from '../core/_requests'
 
 const loginSchema = Yup.object().shape({
-  username: Yup.string()
-    // .email('Wrong username')
-    .min(3, 'Minimum 5 characters')
-    .max(50, 'Maximum 50 characters')
-    .required('Username is required'),
+  email: Yup.string()
+    .email('Wrong format')
+    .required('Email is required'),
   password: Yup.string()
     .min(3, 'Minimum 6 characters')
     .max(50, 'Maximum 50 characters')
@@ -27,7 +25,7 @@ const loginSchema = Yup.object().shape({
 })
 
 const initialValues = {
-  username: '',
+  email: '',
   password: '',
   // tenantId: 'test',
 }
@@ -45,7 +43,6 @@ export function Login() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { register, reset, handleSubmit } = useForm()
   
-  const { data: users } = useQuery('users', fetchUsers, { cacheTime: 5000 })
 
   const handleChange = (e:any) => {
     // e.target.value 
@@ -106,8 +103,8 @@ export function Login() {
     // }
     
   })
-  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
-  const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
+  // const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
+  // const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
 
 
  
@@ -117,7 +114,7 @@ export function Login() {
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true)
       try {
-        const { data: auth } = await login(values.username, values.password)
+        const { data: auth } = await login(values.email, values.password)
         saveAuth(auth)
 
         //this gets the jwtToken of the login user!
@@ -138,6 +135,14 @@ export function Login() {
         //   setStatus("you don't have access to this application")
         //  }
         saveTenant('test')
+
+        // check if user isAdmin
+        if(!curUser?.isAdmin){
+          message.error(`Hi ${curUser?.firstName}  ${curUser?.surname}! Contact your administrator to activate your account`, 10)
+        }
+
+
+
         // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
         //   return filteredItem?.applicationId?.toString()
         // })
@@ -175,25 +180,25 @@ export function Login() {
         </div>
         : null}
       <div className='fv-row mb-10'>
-        <label className='form-label fs-6 fw-bolder text-dark'>Username</label>
+        <label className='form-label fs-6 fw-bolder text-dark'>Email</label>
         <input
-          placeholder='Username'
+          placeholder='Email'
           
-          {...formik.getFieldProps('username')}
+          {...formik.getFieldProps('email')}
           className={clsx(
             'form-control form-control-lg form-control-solid',
-            { 'is-invalid': formik.touched.username && formik.errors.username },
+            { 'is-invalid': formik.touched.email && formik.errors.email },
             {
-              'is-valid': formik.touched.username && !formik.errors.username,
+              'is-valid': formik.touched.email && !formik.errors.email,
             }
           )}
-          type='text'
-          name='username'
+          type='email'
+          name='email'
           autoComplete='off'
         />
-        {formik.touched.username && formik.errors.username && (
+        {formik.touched.email && formik.errors.email && (
           <div className='fv-plugins-message-container'>
-            <span role='alert'>{formik.errors.username}</span>
+            <span role='alert'>{formik.errors.email}</span>
           </div>
         )}
       </div>
@@ -228,45 +233,7 @@ export function Login() {
         <br></br>
         <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forgot your password?</a>
       </div>
-{/* <<<<<<< HEAD
-     
-      <div className='fv-row mb-10'>
-======= */}
-      {/* <div className='fv-row mb-10'>
-        <div className='mb-10'>
-          <label className='form-label fw-bold'>Company:</label>
-          <div>
-            <select
-              className='form-select form-select-solid'
-              data-kt-select2='true'
-              data-placeholder='Select option'
-              data-allow-clear='true'
-              {...formik.getFieldProps('tenantId')}
-            >
 
-              {
-                formik.values.username === '' || formik.values.password === '' ?
-                  '' : 
-                  <>
-                    <option >Select Company</option>
-                    {
-                      allCompanies?.data.map((item:any)=>(
-                        <option value={item.name.toLowerCase()}>{item.description}</option>
-                      ))
-                    }
-                  </>
-              }
-            </select>
-          </div>
-          {formik.touched.tenantId && formik.errors.tenantId && (
-            <div className='fv-plugins-message-container'>
-              <div className='fv-help-block'>
-                <span role='alert'>{formik.errors.tenantId}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div> */}
       <div className='text-center'>
         <button
           type='submit'
