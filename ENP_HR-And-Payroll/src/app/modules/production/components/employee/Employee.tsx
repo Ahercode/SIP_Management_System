@@ -13,7 +13,6 @@ const Employee = () => {
   const [gridData, setGridData] = useState<any>([])
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
-  const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
   const [img, setImg] = useState();
   const [imgNew, setImgNew] = useState();
@@ -205,7 +204,6 @@ const Employee = () => {
     {
       title: 'Phone',
       dataIndex: 'phone',
-      // width: 120,
       render: (row: any) => {
         return <a href={`tel:${row}`}>{row}</a>
       },

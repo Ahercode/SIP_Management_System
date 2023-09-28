@@ -2,7 +2,7 @@
 import react, {FC} from 'react'
 import {PageTitle} from '../../../_metronic/layout/core'
 import { useQuery } from 'react-query'
-import {  fetchDashBoardData } from '../../services/ApiCalls'
+// import {  fetchDashBoardData } from '../../services/ApiCalls'
 import { Table } from 'antd'
 import { HRNewDashBoard } from './charts/HRNewDashBoard'
 
@@ -102,7 +102,7 @@ const columns: any = [
 
 const HRDashboardPage = () => {
   const tenantId = localStorage.getItem('tenant')
-  const { data: dashboardData } = useQuery('dashboarddata',()=> fetchDashBoardData(tenantId), { cacheTime: 5000 })
+  // const { data: dashboardData } = useQuery('dashboarddata',()=> fetchDashBoardData(tenantId), { cacheTime: 5000 })
 
   return(
     <div
@@ -128,7 +128,7 @@ const HRDashboardPage = () => {
         }} 
       >
           
-        <Table columns={columns} dataSource={dashboardData?.data} />
+        <Table columns={columns}  />
       </div>
     </div>
 

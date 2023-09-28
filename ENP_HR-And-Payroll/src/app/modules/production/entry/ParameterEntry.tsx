@@ -109,7 +109,7 @@ const ParameterEntry = () => {
                   rowExpandable: (record) => record,
                   expandedRowRender: (record) =>
                     <div key={record}>
-                      <div className='d-flex flex-direction-row align-items-center align-content-center py-4'>
+                      <div key={dataByID?.id} className='d-flex flex-direction-row align-items-center align-content-center py-4'>
                         <div className='d-flex flex-direction-row me-4'>
                           <span className=''>Objectives</span>
                           <Tag color='red' className='mx-2'>Incomplete</Tag>

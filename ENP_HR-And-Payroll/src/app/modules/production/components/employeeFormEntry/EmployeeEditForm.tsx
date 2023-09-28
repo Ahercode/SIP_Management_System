@@ -2,19 +2,17 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import "./formStyle.css"
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import { Button, Divider, Form, Modal, Space, Table, Tabs, TabsProps, } from 'antd';
-import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDivisions, fetchDocument, fetchEmployees, fetchExperiences, fetchGrades, fetchJobTitles, fetchMedicals, fetchNationalities, fetchNotches, fetchPaygroups, fetchQualifications, fetchSkills, fetchUnits, updateEmployee } from '../../../../services/ApiCalls';
+// import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
+import { Button, Divider, Space, Tabs, TabsProps, } from 'antd';
+import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
 import { KTSVG } from '../../../../../_metronic/helpers';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { BANKS } from '../../../../data/DummyData';
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { getFieldName } from '../ComponentsFactory';
 
 const EmployeeEditForm = () => {
-  const [formData, setFormData] = useState({});
   const [statusModalOpen, setIsStatusModalOpen] = useState(false)
   const [statusGridModalOpen, setStatusGridModalOpen] = useState(false)
   const [statusData, setStatusData] = useState([])

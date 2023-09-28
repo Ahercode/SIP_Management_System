@@ -162,19 +162,6 @@ export const updateJobTitle = (data: any) => {
     return axios.put(`${Api_Endpoint}/JobTitles/${data.id}`, data)
 }
 
-export const fetchMedicals = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/Medicals/tenant/${tId}`)
-}
-
-export const updateMedical = (data: any) => {
-    return axios.put(`${Api_Endpoint}/Medicals/${data.id}`, data)
-}
-export const fetchNoteCategories = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/NoteCategories/tenant/${tId}`)
-}
-export const updateNoteCategory = (data: any) => {
-    return axios.put(`${Api_Endpoint}/NoteCategories/${data.id}`, data)
-}
 
 export const fetchGradeLeaves = (tId:any) => {
     return axios.get(`${Api_Endpoint}/GradeLeaves/tenant/${tId}`)
@@ -204,117 +191,10 @@ export const updateAppraisal = (data: any) => {
 export const fetchPeriods = (tId:any) => {
     return axios.get(`${Api_Endpoint}/Periods/tenant/${tId}`)
 }
-export const fetchProducts = () => {
-    return axios.get(`${Api_Endpoint}/Products`)
-}
-export const updateProduct = (data: any) => {
-    return axios.put(`${Api_Endpoint}/Products/${data.id}`, data)
-}
 
-export const fetchTrainees = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/Trainees/tenant/${tId}`)
-}
 
-export const fetchTrainings = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/trainings/tenant/${tId}`)
-}
-export const updateTraining = (data: any) => {
-    return axios.put(`${Api_Endpoint}/trainings/${data.id}`, data)
-}
-export const fetchTrainingSchedules = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/TrainingSchedules/tenant/${tId}`)
-}
 
-export const fetchNoteTransactions = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/NoteTransactions/tenant/${tId}`)
-}
 
-export const fetchServiceProviders = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/ServiceProviders/tenant/${tId}`)
-}
 
-export const updateServiceProvider = (data: any) => {
-    return axios.put(`${Api_Endpoint}/ServiceProviders/${data.id}`, data)
-}
 
-export const fetchServiceCost = (tId: any) => {
-    return axios.get(`${Api_Endpoint}/ServiceCosts/tenant/${tId}`)
-}
 
-export const updateServiceCost = (data: any) => {
-    return axios.put(`${Api_Endpoint}/ServiceCosts/${data.id}`, data)
-}
-
-export const fetchRecruitmentTransactions = (tId:any ) => {
-    return axios.get(`${Api_Endpoint}/RecruitmentTransactions/tenant/${tId}`)
-}
-
-export const fetchTrainingDevTransactions = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/TrainingDevTransactions/tenant/${tId}`)
-}
-export const fetchAppraisalTransactions = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/AppraisalPerfTransactions/tenant/${tId}`)
-}
-
-export const fetchDashBoardData = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/SortedData/tenant/${tId}`)
-}
-export const fetchChartData = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/SortedData/chart/tenant/${tId}`)
-}
-
-export const fetchBenefitsCategory = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/BenefitCats/tenant/${tId}`)
-}
-
-export const updateBenefitCats = (data: any) => {
-    return axios.put(`${Api_Endpoint}/BenefitCats/${data.id}`, data)
-}
-
-export const fetchDeductionsCategory = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/DeductionCats/tenant/${tId}`)
-}
-
-export const updateDeductionsCategory = (data: any) => {
-    return axios.put(`${Api_Endpoint}/DeductionCats/${data.id}`, data)
-}
-
-export const updateDeductions = (data: any) => {
-    return axios.put(`${Api_Endpoint}/Deductions/${data.id}`, data)
-}
-
-export const postLeavePlanning = (data: any) => {
-    return axios.post(`${Api_Endpoint}/LeavePlanings`, data)
-}
-
-export const deleteLeavePlanning = (id: any) => {
-    return axios.delete(`${Api_Endpoint}/LeavePlanings/${id}`)
-}
-
-export const updateLeavePlanning = (data: any) => {
-    return axios.put(`${Api_Endpoint}/LeavePlanings/${data.id}`, data)
-}
-
-export const fetchTaxes = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/Taxes/tenant/${tId}`)
-}
-
-export const updateTaxes = (data: any) => {
-    return axios.put(`${Api_Endpoint}/Taxes/${data.id}`, data)
-}
-
-export const fetchTaxFormulas = (tId:any) => {
-    return axios.get(`${Api_Endpoint}/TaxFormulas/tenant/${tId}`)
-}
-
-export const updateTaxFormulas = (data: any) => {
-    return axios.put(`${Api_Endpoint}/TaxFormulas/${data.id}`, data)
-}
-
-export const updateRecruitment = (data: any) => {
-    return axios.put(`${Api_Endpoint}/Recruitments/${data.id}`, data)
-}
-
-export const updateCompanyAssets = (data: any) => {
-    return axios.put(`${Api_Endpoint}/CompanyAssets/${data.id}`, data)
-}

@@ -48,8 +48,8 @@ const EmployeeObjectiveEntry = () => {
 
   const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
-      queryClient.invalidateQueries('appraisalObjective')
-      loadData()
+      message.warning('Record deleted successfully')
+      queryClient.invalidateQueries(`appraisalObjectives`)
     },
     onError: (error) => {
       console.log('delete error: ', error)
@@ -126,7 +126,6 @@ const EmployeeObjectiveEntry = () => {
     try {
       setGridData(appraisalobjectives?.data?.filter((item: any) => item?.parameterId.toString() === param?.parameterId))
       setPathData(getItemData(param?.parameterId, parameterData?.data))
-
     } catch (error) {
       console.log(error)
     }
@@ -334,10 +333,6 @@ const EmployeeObjectiveEntry = () => {
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
-              {/* <button type='button' className='btn btn-light-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                Export
-              </button> */}
             </Space>
           </div>
           {
@@ -384,12 +379,6 @@ const EmployeeObjectiveEntry = () => {
       </KTCardBody>
     </div>
   )
-}
-
-{
-  /**
-   * 
-   */
 }
 export { EmployeeObjectiveEntry }
 

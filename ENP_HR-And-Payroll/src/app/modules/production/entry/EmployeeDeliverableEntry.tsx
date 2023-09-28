@@ -1,7 +1,4 @@
-
-
 import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -9,6 +6,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { getFieldName } from '../components/ComponentsFactory'
 
 
 const EmployeeDeliverableEntry = () => {
@@ -25,6 +23,8 @@ const EmployeeDeliverableEntry = () => {
   const [secondTempData, setSecondTempData] = useState<any>()
   let [appraisalName, setAppraisalName] = useState<any>("")
   const [pathData, setPathData] = useState<any>("")
+
+
   const { data: allObjectiveDeliverables, isLoading: loading } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 5000 })
   const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 5000 })
@@ -53,7 +53,8 @@ const EmployeeDeliverableEntry = () => {
 
   const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
-      queryClient.invalidateQueries('appraisaldeliverable')
+      queryClient.invalidateQueries('appraisalDeliverables')
+      message.warning('Item deleted successfully')
       loadData()
     },
     onError: (error) => {
@@ -63,7 +64,7 @@ const EmployeeDeliverableEntry = () => {
 
   function handleDelete(element: any) {
     const item = {
-      url: 'appraisaldeliverable',
+      url: 'AppraisalDeliverable',
       data: element
     }
     deleteData(item)
@@ -112,15 +113,18 @@ const EmployeeDeliverableEntry = () => {
     },
     {
       title: 'Unit Of Measure',
-      dataIndex: 'unitOfMeasure',
+      key: 'unitOfMeasureId',
       sorter: (a: any, b: any) => {
-        if (a.unitOfMeasure > b.unitOfMeasure) {
+        if (a.unitOfMeasureId > b.unitOfMeasureId) {
           return 1
         }
-        if (b.unitOfMeasure > a.unitOfMeasure) {
+        if (b.unitOfMeasureId > a.unitOfMeasureId) {
           return -1
         }
         return 0
+      },
+      render: (record: any) => {
+        return getFieldName(record.unitOfMeasureId, allUnitsOfMeasure?.data)
       },
     },
     {
@@ -162,7 +166,8 @@ const EmployeeDeliverableEntry = () => {
 
   const loadData = async () => {
     try {
-      setGridData(allObjectiveDeliverables?.data?.filter((item: any) => item?.objectiveId.toString() === param.objectiveId))
+      const neewData = allObjectiveDeliverables?.data?.filter((item: any) => item?.objectiveId?.toString() === param.objectiveId)
+      setGridData(neewData)
       setPathData(getItemData(param?.objectiveId, appraisalobjectives?.data))
     } catch (error) {
       console.log(error)
@@ -171,7 +176,7 @@ const EmployeeDeliverableEntry = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [allObjectiveDeliverables?.data])
   // }, [allObjectiveDeliverables?.data])
 
 
@@ -190,15 +195,14 @@ const EmployeeDeliverableEntry = () => {
 
 
   const { mutate: updateData } = useMutation(updateItem, {
-    onSuccess: () => {
+    onSuccess: async(newData: any) => {
       queryClient.invalidateQueries(`appraisalDeliverables`)
-      loadData()
       reset()
       setTempData({})
       setSecondTempData({})
       setIsUpdateModalOpen(false)
       setIsModalOpen(false)
-      message.success('Item updated successfully')
+      message.success('Updated successfully')
     },
     onError: (error) => {
       console.log('error: ', error)
@@ -209,7 +213,7 @@ const EmployeeDeliverableEntry = () => {
   const handleUpdate = async (e: any) => {
     e.preventDefault()
     console.log('tempData: ', tempData)
-    if (tempData.name = '') {
+    if (tempData.name ==='') {
       return message.error('Name is required.')
     } else if (parseInt(tempData.subWeight) <= 0) {
       return message.error('Sub Weight cannot be zero or negative')
@@ -227,7 +231,7 @@ const EmployeeDeliverableEntry = () => {
         return message.error(`Total sub-weight for ${pathData?.name} cannot be greater than 100`);
       } else {
         const item: any = {
-          url: 'appraisalDeliverables',
+          url: 'AppraisalDeliverable',
           data: tempData
         }
         updateData(item)
@@ -235,7 +239,7 @@ const EmployeeDeliverableEntry = () => {
 
     } else {
       //cheeck if new name already exists
-      const itemExists = gridData.find((item: any) =>
+      const itemExists = gridData?.find((item: any) =>
         item.name === tempData.name &&
         item.description === tempData.description &&
         item.unitOfMeasureId === tempData.unitOfMeasureId &&
@@ -244,7 +248,7 @@ const EmployeeDeliverableEntry = () => {
 
       if (itemExists) { return message.error('Item already exists') } else {
         const item: any = {
-          url: 'appraisalDeliverables',
+          url: 'AppraisalDeliverable',
           data: tempData
         }
         updateData(item)
@@ -255,8 +259,8 @@ const EmployeeDeliverableEntry = () => {
   const OnSubmit = handleSubmit(async (values) => {
     // input validations
     // make sure all values are filled
-    if (values.name = '' || values.unitOfMeasureId === 'Select') {
-      // return message.error('Please fill all fields')
+    if (values.name ==='' || values.unitOfMeasureId === 'Select') {
+      return message.error('Please fill all fields')
     } else if (parseInt(values.subWeight) <= 0) {
       return message.error('Sub Weight cannot be zero or negative')
     } else if (parseInt(values.target) <= 0) {
@@ -268,17 +272,17 @@ const EmployeeDeliverableEntry = () => {
     const itemToPost = {
       data: {
         name: values.name,
-        objectiveId: parseInt(param.id),
+        objectiveId: parseInt(param.objectiveId),
         description: values.description,
         subWeight: parseInt(values.subWeight),
         unitOfMeasureId: parseInt(values.unitOfMeasureId),
         target: parseInt(values.target),
-        comment: 'testst',
-        status: 0,
         tenantId: tenantId
       },
       url: `AppraisalDeliverable`,
     }
+
+    console.log('itemToPost: ', itemToPost.data)
 
     // check if item already exist
     const itemExist = gridData?.find((item: any) =>
@@ -300,16 +304,13 @@ const EmployeeDeliverableEntry = () => {
       if (sums + itemToPost.data.subWeight > 100) {
         return message.error(`Total weight for ${pathData?.name} cannot exceed 100`);
       } else {
-
-        console.log('itemToPost from inner inner else: ', itemToPost.data)
+        // message.success('Adding item...')
         postData(itemToPost)
       }
     } else {
-      console.log('itemToPost from inner else: ', itemToPost.data)
+      // message.error(`Total weight for ${pathData?.name} is less than 0!`);
       postData(itemToPost)
     }
-    console.log('itemToPost from actual: ', itemToPost.data)
-    postData(itemToPost)
   })
 
   const { mutate: postData } = useMutation(postItem, {
@@ -318,7 +319,6 @@ const EmployeeDeliverableEntry = () => {
       reset()
       setTempData({})
       setSecondTempData({})
-      loadData()
       setIsModalOpen(false)
       message.success('Item added successfully')
     },
@@ -362,10 +362,7 @@ const EmployeeDeliverableEntry = () => {
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
-              {/* <button type='button' className='btn btn-light-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                Export
-              </button> */}
+              
             </Space>
           </div>
           {

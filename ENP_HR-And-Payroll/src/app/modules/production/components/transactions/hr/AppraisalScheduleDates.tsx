@@ -76,6 +76,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
     const { mutate: deleteData } = useMutation(deleteItem, {
         onSuccess: () => {
+            queryClient.invalidateQueries('reviewDates')
+            message.warning('Record deleted successfully')
             loadData()
         },
         onError: (error) => {
@@ -176,7 +178,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             setIsReviewDateModalOpen(false)
             loadData()
             setSendLoading(false)
-            isEmailSent && message.success('Email notifications sent successfully')
+            message.success('Email notifications sent successfully')
             setIsEmailSent(false)
         },
         onError: (error: any) => {
@@ -218,7 +220,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             data: employeePerformanceData,
             url: 'EmployeePerfDetails',
         }
-
         console.log('EmployeePerfDetails: ', item2)
      
         console.log('email sent: ', item)
