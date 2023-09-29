@@ -11,7 +11,6 @@ import { message } from 'antd'
 export function AsideMenuMain() {
   const intl = useIntl()
   const { currentUser } = useAuth()
-  const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
 
   // const userApp = userApplications?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
   //   return filteredItem?.applicationId?.toString()
@@ -26,7 +25,6 @@ export function AsideMenuMain() {
 
   const [test, setTest] = useState(false)
   const testValue = "yes"
-  console.log(currentUser?.isAdmin)
 
   useEffect(() => { 
     if(currentUser?.isAdmin?.trim() === testValue){

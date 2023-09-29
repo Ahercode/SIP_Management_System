@@ -137,11 +137,6 @@ export function Login() {
         saveTenant('test')
 
         // check if user isAdmin
-        if(!curUser?.isAdmin){
-          message.error(`Hi ${curUser?.firstName}  ${curUser?.surname}! Contact your administrator to activate your account`, 10)
-        }
-
-
 
         // const  userApp = userApplications?.data.filter((item:any )=> item.userId === parseInt(curUser?.id)).map((filteredItem:any) => {
         //   return filteredItem?.applicationId?.toString()

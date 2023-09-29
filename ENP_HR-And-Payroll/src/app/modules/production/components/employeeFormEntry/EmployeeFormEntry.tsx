@@ -8,8 +8,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Api_Endpoint, fetchDocument } from '../../../../services/ApiCalls';
 import { useAuth } from '../../../auth';
 import "./formStyle.css";
-import { Button, Divider, Space, Tabs, TabsProps } from 'antd';
+import { Button, Divider,  Space, Tabs, TabsProps } from 'antd';
+import Select from 'react-select'
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { all } from '@devexpress/analytics-core/analytics-elements-metadata';
 
 
 const MultiTabForm = () => {
@@ -19,6 +21,7 @@ const MultiTabForm = () => {
   const [loading, setLoading] = useState(false)
   const [submitLoading, setSubmitLoading] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null);
+  const [lineManagerId, setLineManagerId] = useState<any>(null);
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
   }
@@ -35,6 +38,15 @@ const MultiTabForm = () => {
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
 
 
+
+  const customOptions = allEmployees?.data?.map((item: any) => ({
+    value: item.id,
+    label: item.firstName + ' ' + item.surname
+  }))
+
+  // const handleChangeId = (selectedOption:any ) => {
+  //   setLineManagerId(selectedOption?.value)
+  // };
 
   const handleTabChange = (newTab: any) => {
     setActiveTab(newTab);
@@ -106,32 +118,21 @@ const MultiTabForm = () => {
     formData.append('dob', values.dob)
     formData.append('gender', values.gender)
     formData.append('maritalStatus', values.maritalStatus)
-    formData.append('nationality', values.nationality)
-    formData.append('nationalId', values.nationalId)
     formData.append('phone', values.phone)
     formData.append('alternativePhone', values.alternativePhone)
     formData.append('address', values.address)
     formData.append('residentialAddress', values.residentialAddress)
     formData.append('email', values.email)
     formData.append('personalEmail', values.personalEmail)
-    formData.append('nextOfKin', values.nextOfKin)
-    formData.append('guarantor', values.guarantor)
     formData.append('paygroupId', parseInt(values.paygroupId))
     formData.append('categoryId', parseInt(values.categoryId))
-    formData.append('divisionId', parseInt(values.divisionId))
     formData.append('departmentId', parseInt(values.departmentId))
-    formData.append('gradeId', parseInt(values.gradeId))
-    formData.append('notchId', parseInt(values.notchId))
     formData.append('jobTitleId', parseInt(values.jobTitleId))
     formData.append('annualSalary', parseInt(values.annualSalary))
     formData.append('categoryId', parseInt(values.categoryId))
     formData.append('employmentDate', values.employmentDate)
-    formData.append('payType', values.payType)
-    formData.append('paymentMethod', selectedPaymentMethod)
-    formData.append('bankId', parseInt(values.bankId))
-    formData.append('account', values.account)
-    formData.append('tin', values.tin)
-    formData.append('ssf', values.ssf)
+    formData.append('lineManagerId', lineManagerId)
+    formData.append('jobRole', values.jobRole)
     formData.append('imageFile', tempImage)
     formData.append('tenantId', tenantId)
 
@@ -169,8 +170,6 @@ const MultiTabForm = () => {
                     <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={previewImage} width={120} height={120}>
                     </img>
                     <p style={{
-                      // backgroundColor:"light-blue", 
-
                       width: "90px",
                       height: "20px",
                       fontSize: "14px",
@@ -186,7 +185,6 @@ const MultiTabForm = () => {
                       onClick={clearImage}
                     >Remove</p>
                   </>
-
                 )
               }{
                 !previewImage && (
@@ -236,6 +234,13 @@ const MultiTabForm = () => {
               </div>
             </div>
             <div className='row mt-3'>
+              <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Line Manager</label>
+                <Select  
+                  isSearchable
+                  // onChange={handleChangeId}
+                  options={customOptions}/>
+              </div>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
                 <select {...register("maritalStatus")} className="form-select form-select-solid" aria-label="Select example">

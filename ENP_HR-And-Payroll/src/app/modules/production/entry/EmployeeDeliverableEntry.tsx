@@ -11,26 +11,21 @@ import { getFieldName } from '../components/ComponentsFactory'
 
 const EmployeeDeliverableEntry = () => {
   const [gridData, setGridData] = useState([])
-  const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const { register, reset, handleSubmit } = useForm()
-  const param: any = useParams();
+  const param: any = useParams();   
   const navigate = useNavigate();
   const [tempData, setTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [secondTempData, setSecondTempData] = useState<any>()
-  let [appraisalName, setAppraisalName] = useState<any>("")
+  // let [appraisalName, setAppraisalName] = useState<any>("")
   const [pathData, setPathData] = useState<any>("")
-
 
   const { data: allObjectiveDeliverables, isLoading: loading } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 5000 })
   const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 5000 })
   const queryClient = useQueryClient()
-
-
 
 
   const tenantId = localStorage.getItem('tenant')
@@ -54,7 +49,7 @@ const EmployeeDeliverableEntry = () => {
   const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('appraisalDeliverables')
-      message.warning('Item deleted successfully')
+      message.warning('Deliverable deleted successfully')
       loadData()
     },
     onError: (error) => {
@@ -202,7 +197,7 @@ const EmployeeDeliverableEntry = () => {
       setSecondTempData({})
       setIsUpdateModalOpen(false)
       setIsModalOpen(false)
-      message.success('Updated successfully')
+      message.success('Deliverable updated successfully')
     },
     onError: (error) => {
       console.log('error: ', error)
@@ -246,7 +241,7 @@ const EmployeeDeliverableEntry = () => {
         item.target === tempData.target
       )
 
-      if (itemExists) { return message.error('Item already exists') } else {
+      if (itemExists) { return message.error('Deliverable already exists') } else {
         const item: any = {
           url: 'AppraisalDeliverable',
           data: tempData
@@ -294,7 +289,7 @@ const EmployeeDeliverableEntry = () => {
       item.target === itemToPost.data.target
     )
     if (itemExist) {
-      message.error('Item already exist')
+      message.error('Deliverable already exist')
       return
     }
 
@@ -320,7 +315,7 @@ const EmployeeDeliverableEntry = () => {
       setTempData({})
       setSecondTempData({})
       setIsModalOpen(false)
-      message.success('Item added successfully')
+      message.success('Deliverable added successfully')
     },
     onError: (error: any) => {
       console.log('post error: ', error)

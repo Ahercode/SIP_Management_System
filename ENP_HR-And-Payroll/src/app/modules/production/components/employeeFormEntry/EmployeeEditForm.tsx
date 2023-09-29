@@ -2,13 +2,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import "./formStyle.css"
-// import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { Button, Divider, Space, Tabs, TabsProps, } from 'antd';
+import Select from 'react-select'
 import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
-import { KTSVG } from '../../../../../_metronic/helpers';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { getFieldName } from '../ComponentsFactory';
 
@@ -21,10 +20,9 @@ const EmployeeEditForm = () => {
   const { register, reset, handleSubmit } = useForm()
   const param: any = useParams();
   const [tempData, setTempData] = useState<any>()
-
   const [jobTName, setJobTName] = useState<any>()
   const [catName, setCatName] = useState<any>()
-
+  
   const [paygName, setPaygName] = useState<any>()
   const [newPay, setNewPay] = useState([])
   const tenantId = localStorage.getItem('tenant')
@@ -32,28 +30,38 @@ const EmployeeEditForm = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState('');
-  const [activeTab, setActiveTab] = useState('tab1');
+  // const [activeTab, setActiveTab] = useState('tab1');
   const navigate = useNavigate();
-  const openStatus = () => {
-    setIsStatusModalOpen(true)
-  }
-  const openStatusGrid = () => {
-    setStatusGridModalOpen(true)
-  }
+  
+  const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  
+  const customOptions = allEmployees?.data?.map((item: any) => ({
+    value: item.id,
+    label: item.firstName + ' ' + item.surname
+  }))
+  // const [lineManagerId, setLineManagerId] = useState<any>(customOptions?.find((op: any) => parseInt(op.value)=== tempData?.lineManagerId));
+  const[defaultSelect, setDefaultSelect] = useState<any>(null)
 
-  const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-  }
+console.log('defaultSelect',defaultSelect)
+  // const openStatus = () => {
+  //   setIsStatusModalOpen(true)
+  // }
+  // const openStatusGrid = () => {
+  //   setStatusGridModalOpen(true)
+  // }
 
+  // const handleTabClick = (tab: any) => {
+  //   setActiveTab(tab);
+  // }
   const handleChange = (event: any) => {
     event.preventDefault()
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const handleStatusCancel = () => {
-    reset()
-    setIsStatusModalOpen(false)
-  }
+  // const handleStatusCancel = () => {
+  //   reset()
+  //   setIsStatusModalOpen(false)
+  // }
 
   const [submitLoading, setSubmitLoading] = useState(false)
 
@@ -130,13 +138,22 @@ const EmployeeEditForm = () => {
     }
 
   }
-  const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  
   const { data: allDepartments } = useQuery('departments', () => fetchDepartments(tenantId), { cacheTime: 5000 })
   // const { data: allDivisions } = useQuery('divisions',()=> fetchDivisions(tenantId), { cacheTime: 5000 })
   const { data: allCategories } = useQuery('categories', () => fetchCategories('Categories'), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument('paygroups'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
 
+  
+
+  const handleChangeId = (selectedOption:any ) => {
+    setDefaultSelect(selectedOption)
+    // setLineManagerId(selectedOption?.value)
+  };
+
+  // console.log(customOptions?.find((op: any) => parseInt(op.value)=== tempData?.lineManagerId));
+  
 
 
   const fetchImage = async () => {
@@ -149,7 +166,7 @@ const EmployeeEditForm = () => {
 
   useEffect(() => {
 
-
+    
     const getJobTName = () => {
       let jobTitleName = ""
       allJobTitles?.data.map((item: any) => {
@@ -174,9 +191,11 @@ const EmployeeEditForm = () => {
 
     getJobTName()
     getPaygroupName()
-  })
+  },[])
 
   useEffect(() => {
+    setDefaultSelect(customOptions?.find((op: any) => parseInt(op.value)=== tempData?.lineManagerId))
+    
     const newData = allPaygroups?.data.filter((item: any) => item.id !== tempData?.paygroupId)
     setNewPay(newData)
 
@@ -190,6 +209,7 @@ const EmployeeEditForm = () => {
     getEmployeeById()
     fetchImage()
   }, [param.id, allEmployees])
+
 
 
   const statusByEmployee: any = statusData.filter((section: any) => {
@@ -282,8 +302,8 @@ const EmployeeEditForm = () => {
     formData.append('dob', tempData.dob == null ? "" : tempData.dob)
     formData.append('gender', tempData.gender == null ? "" : tempData.gender)
     formData.append('maritalStatus', tempData.maritalStatus == null ? "" : tempData.maritalStatus)
-    formData.append('nationality', tempData.nationality == null ? "" : tempData.nationality)
-    formData.append('nationalId', tempData.nationalId == null ? "" : tempData.nationalId)
+    // formData.append('nationality', tempData.nationality == null ? "" : tempData.nationality)
+    // formData.append('nationalId', tempData.nationalId == null ? "" : tempData.nationalId)
     formData.append('phone', tempData.phone == null ? "" : tempData.phone)
     formData.append('alternativePhone', tempData.alternativePhone == null ? "" : tempData.alternativePhone)
     formData.append('address', tempData.address == null ? "" : tempData.address)
@@ -291,22 +311,12 @@ const EmployeeEditForm = () => {
     formData.append('email', tempData.email == null ? "" : tempData.email)
     formData.append('personalEmail', tempData.personalEmail == null ? "" : tempData.personalEmail)
     formData.append('jobRole', tempData.jobRole == null ? "" : tempData.jobRole)
-    formData.append('nextOfKin', tempData.nextOfKin == null ? "" : tempData.nextOfKin)
-    formData.append('guarantor', tempData.guarantor == null ? "" : tempData.guarantor)
     formData.append('paygroupId', tempData.paygroupId == null ? "" : parseInt(tempData.paygroupId))
     formData.append('categoryId', tempData.categoryId == null ? "" : parseInt(tempData.categoryId))
-    formData.append('divisionId', tempData.divisionId == null ? "" : parseInt(tempData.divisionId))
     formData.append('departmentId', tempData.departmentId == null ? "" : parseInt(tempData.departmentId))
-    formData.append('gradeId', tempData.gradeId == null ? "" : parseInt(tempData.gradeId))
-    formData.append('notchId', tempData.notchId == null ? "" : tempData.notchId)
     formData.append('jobTitleId', tempData.jobTitleId == null ? "" : parseInt(tempData.jobTitleId))
     formData.append('employmentDate', tempData.employmentDate == null ? "" : tempData.employmentDate)
-    formData.append('payType', tempData.payType == null ? "" : tempData.payType)
-    formData.append('paymentMethod', tempData.paymentMethod == null ? "" : tempData.paymentMethod)
-    formData.append('bankId', tempData.bankId == null ? "" : tempData.bankId)
-    formData.append('account', tempData.account == null ? "" : tempData.account)
-    formData.append('tin', tempData.tin == null ? "" : tempData.tin)
-    formData.append('ssf', tempData.ssf == null ? "" : tempData.ssf)
+    formData.append('lineManagerId', defaultSelect== null ? "" : parseInt(defaultSelect?.value))
     formData.append('imageFile', tempImage ? tempImage : "")
     formData.append('tenantId', tenantId)
 
@@ -318,6 +328,7 @@ const EmployeeEditForm = () => {
     }
 
     console.log(Object.fromEntries(formData))
+
     try {
       const response = await axios.put(uRL, formData, config)
       setSubmitLoading(false)
@@ -413,6 +424,14 @@ const EmployeeEditForm = () => {
               </div>
             </div>
             <div className='row mt-3'>
+            <div className='col-4 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Line Manager</label>
+                <Select  
+                  isSearchable
+                  value={defaultSelect}
+                  onChange={handleChangeId}
+                  options={customOptions}/>
+              </div>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
                 <select

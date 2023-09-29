@@ -49,7 +49,7 @@ const EmployeeObjectiveEntry = () => {
 
   const { mutate: deleteData } = useMutation(deleteItem, {
     onSuccess: () => {
-      message.warning('Record deleted successfully')
+      message.warning('Objective deleted successfully')
       queryClient.invalidateQueries(`appraisalObjectives`)
     },
     onError: (error) => {
@@ -160,7 +160,7 @@ const EmployeeObjectiveEntry = () => {
       setSecondTempData({})
       setIsUpdateModalOpen(false)
       setIsModalOpen(false)
-      message.success('Item updated successfully')
+      message.success('Objective updated successfully')
     },
     onError: (error) => {
       console.log('error: ', error)
@@ -200,7 +200,7 @@ const EmployeeObjectiveEntry = () => {
         item.code === tempData.description
       )
 
-      if (itemExists) { return message.error('Item already exists') } else {
+      if (itemExists) { return message.error('Objective already exists') } else {
         if ((weightSum(tempData) - secondTempData.weight) + parseInt(tempData.weight) > pathData?.weight) {
           return message.error(`Total weight for ${pathData} cannot be greater than ${pathData?.weight}`);
         } else {
@@ -253,7 +253,7 @@ const EmployeeObjectiveEntry = () => {
       item.weight === itemToPost.data.weight
     )
     if (itemExist) {
-      message.error('Item already exist')
+      message.error('Objective already exist')
       return
     }
 
@@ -281,7 +281,7 @@ const EmployeeObjectiveEntry = () => {
       setSecondTempData({})
       loadData()
       setIsModalOpen(false)
-      message.success('Item added successfully')
+      message.success('Objective added successfully')
     },
     onError: (error: any) => {
       console.log('post error: ', error)
