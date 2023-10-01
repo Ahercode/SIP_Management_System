@@ -105,7 +105,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
 
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
-        const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
+        const employee = allEmployees?.data?.find((item: any) => (item.id).toString() === record?.employeeId)
         setEmployeeData(employee)
         setObjectivesData(record)
     }
@@ -150,10 +150,10 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
         },
         {
             title: 'Name',
-            dataIndex: 'employeeId',
+            key: 'employeeId',
             render: (record: any) => {
-                const employee = allEmployees?.data?.find((item: any) => item.employeeId === record)
-                return employee?.firstName + ' ' + employee?.surname
+                
+                return getEmployeeDetails(record?.employeeId)
             }
         },
         {
@@ -174,6 +174,11 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
             ),
         },
     ]
+
+    const getEmployeeDetails = (employeeId: any) => {
+        const employee = allEmployees?.data?.find((item: any) => (item.id )?.toString() === employeeId)
+        return employee?.firstName + ' ' + employee?.surname
+    }
 
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {

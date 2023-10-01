@@ -195,7 +195,7 @@ console.log('defaultSelect',defaultSelect)
 
   useEffect(() => {
     setDefaultSelect(customOptions?.find((op: any) => parseInt(op.value)=== tempData?.lineManagerId))
-    
+
     const newData = allPaygroups?.data.filter((item: any) => item.id !== tempData?.paygroupId)
     setNewPay(newData)
 
@@ -317,9 +317,11 @@ console.log('defaultSelect',defaultSelect)
     formData.append('jobTitleId', tempData.jobTitleId == null ? "" : parseInt(tempData.jobTitleId))
     formData.append('employmentDate', tempData.employmentDate == null ? "" : tempData.employmentDate)
     formData.append('lineManagerId', defaultSelect== null ? "" : parseInt(defaultSelect?.value))
+    formData.append('password', tempData.password)
+    formData.append('username', tempData.username)
+    formData.append('isAdmin', "no")
     formData.append('imageFile', tempImage ? tempImage : "")
     formData.append('tenantId', tenantId)
-
 
     const config = {
       headers: {

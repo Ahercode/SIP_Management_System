@@ -4,17 +4,30 @@ import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../services/ApiCalls";
 import { DownLines } from "./DownLines";
 import { NotificationsComponent } from "./NotificationsComponent";
+import { useAuth } from "../../../auth";
 
 const NotificationsBoard = () => {
+
+    const { currentUser } = useAuth()
+    
+    const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
     const { data: downlines, isLoading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+
+
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === '1')
     const [filteredObjectives, setFilteredObjectives] = useState<any>([])
 
-
+    // check get all employees with line manager id = current user id
+    // console.log('currentUser: ', currentUser?.id)
+    const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
+    // const data = employeeObjectives?.data?.filter((item: any) => allTeamMembers?.map((item: any) => (item.id)?.toString()).includes(item.employeeId))
+    console.log('allTeamMembers: ', allTeamMembers)
+    // console.log('data: ', data)
     const loadData = async () => {
         try {
-            const data = employeeObjectives?.data?.filter((item: any) => filteredByLineManger?.map((item: any) => item.employeeId).includes(item.employeeId))
+            const data = employeeObjectives?.data?.filter((item: any) => allTeamMembers?.map((item: any) => (item.id)?.toString()).includes(item.employeeId))
+            console.log('data: ', data)
             setFilteredObjectives(data)
         } catch (error) {
             console.log('loadError: ', error)
@@ -35,13 +48,13 @@ const NotificationsBoard = () => {
         {
             key: '1',
             label: <>
-                <Badge count={filteredObjectives?.length} showZero={true} title="Downlines" size="small">
+                <Badge count={allTeamMembers?.length} showZero={true} title="Downlines" size="small">
                     <span>Team</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <DownLines filteredByLineManger={filteredObjectives} loading={isLoading} />
+                    <DownLines filteredByLineManger={allTeamMembers} loading={isLoading} />
                 </>
             ),
         },
