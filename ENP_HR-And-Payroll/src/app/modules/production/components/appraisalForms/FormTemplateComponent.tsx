@@ -13,6 +13,7 @@ interface ComponentWrapperProps {
 
 interface ContentProps {
     component: React.ComponentType<any>;
+    employeeId?: any;
     parametersData: any;
 }
 
@@ -99,17 +100,17 @@ const AppraisalFormHeader: React.FC<AppraisalFormHeaderProps> = ({ employeeData,
                         <span className="ms-3" style={{ color: "black" }}>{!department ? `Unknown` : `${department}`}</span>
                     </h5>
                 </div>
-                <div className='me-9'>
+                {/* <div className='me-9'>
                     <h5 style={{ color: "GrayText" }}>{`Line Manager`}:
                         <span className="ms-3" style={{ color: "black" }}>{!lineManager ? 'Unknown' : `${lineManager?.firstName} ${lineManager?.surname}`}</span>
                     </h5>
-                </div>
+                </div> */}
             </div>
         </div>
     )
 }
 
-const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, component: Component }) => {
+const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, component: Component, employeeId }) => {
     return (
         parametersData?.map((item: any) => (
             <div className="align-items-start mt-7" >
@@ -120,7 +121,7 @@ const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, componen
                 </div>
 
                 <ErrorBoundary>
-                    <Component parameterId={item.id} />
+                    <Component parameterId={item.id} employeeId ={employeeId.toString()}/>
                 </ErrorBoundary>
             </div>
         ))

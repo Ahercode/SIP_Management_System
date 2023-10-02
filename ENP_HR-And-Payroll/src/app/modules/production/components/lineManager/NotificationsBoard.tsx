@@ -10,13 +10,14 @@ const NotificationsBoard = () => {
 
     const { currentUser } = useAuth()
     
-    const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
-    const { data: downlines, isLoading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
 
 
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === '1')
+    // const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === '1')
     const [filteredObjectives, setFilteredObjectives] = useState<any>([])
+    const [employeeWhoSubmitted, setEmployeeWhoSubmitted] = useState<any>([])
 
     // check get all employees with line manager id = current user id
     // console.log('currentUser: ', currentUser?.id)
@@ -25,11 +26,31 @@ const NotificationsBoard = () => {
     // console.log('allTeamMembers: ', allTeamMembers)
     // console.log('data: ', data)
     // console.log('employeeObjectives: ', employeeObjectives?.data)
+
+    // get all objectives with submitted status
+    const allSubmittedObjectives = employeeObjectives?.data?.map((item: any) => {
+        if(item?.status === 'Submitted'){
+
+            return item?.employeeId
+        }
+        else
+        {
+            return null
+        }
+    })
+    
+    // console.log('allSubmittedObjectives3: ', allSubmittedObjectives)
+    // console.log('allTeamMembers: ', allTeamMembers  )
+  
+            // console.log('data1: ', data)
+
+          
     const loadData = async () => {
         try {
-            const data = employeeObjectives?.data?.filter((item: any) => allTeamMembers?.map((item: any) => (item.id)?.toString()).includes(item.employeeId))
-            console.log('data: ', data)
-            setFilteredObjectives(data)
+            const data = allTeamMembers?.filter((item: any) => allSubmittedObjectives.includes(item.id.toString()))
+            console.log('data2: ', data)
+            setEmployeeWhoSubmitted(data)
+            // setFilteredObjectives(data)
         } catch (error) {
             console.log('loadError: ', error)
         }
@@ -37,7 +58,7 @@ const NotificationsBoard = () => {
 
     useEffect(() => {
         loadData()
-    }, [employeeObjectives?.data])
+    }, [employeeObjectives?.data, allEmployees?.data])
 
 
     const onTabsChange = (key: string) => {
@@ -62,13 +83,13 @@ const NotificationsBoard = () => {
         {
             key: '2',
             label: <>
-                <Badge count={filteredObjectives?.filter((item: any) => item?.status === 'Submitted')?.length} showZero={true} title="Awaiting approval" size="small">
+                <Badge count={employeeWhoSubmitted?.length} showZero={true} title="Awaiting approval" size="small">
                     <span>Approvals</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <NotificationsComponent loading={objectivesLoading} filter={'Submitted'} filteredByObjectives={filteredObjectives} />
+                    <NotificationsComponent loading={objectivesLoading} filter={'Submitted'} employeeWhoSubmitted={employeeWhoSubmitted} />
                 </>
             ),
         },

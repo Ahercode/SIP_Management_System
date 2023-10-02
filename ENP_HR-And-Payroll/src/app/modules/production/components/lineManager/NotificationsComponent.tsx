@@ -11,7 +11,8 @@ import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 import { PrinterOutlined } from '@ant-design/icons'
 import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/AppraisalPdfPrintView"
 
-const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
+const NotificationsComponent = ({ loading, filter, employeeWhoSubmitted }: any) => {
+// const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
     const { data: allSubmittedObjectives } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
@@ -105,8 +106,8 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
 
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
-        const employee = allEmployees?.data?.find((item: any) => (item.id).toString() === record?.employeeId)
-        const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.id).toString() === record?.employeeId)
+        const employee = allEmployees?.data?.find((item: any) => (item.id) === record?.id)
+        const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
         console.log('employee: ', employee)
         console.log('record: ', record)
         console.log('objectiveByEMployee: ', objectiveByEMployee)
@@ -127,15 +128,19 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
     }
 
     const loadData = () => {
-        const data = filteredByObjectives?.filter((item: any) => item?.status === filter)
-        setComponentData(data)
         const parametersResponse = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
         setParametersData(parametersResponse)
+        const dataWithFullName = employeeWhoSubmitted?.map((item: any) => ({
+            ...item,
+            firstName: item?.firstName+ ' ' + item?.surname,
+        
+        }  ) )
+        setComponentData(dataWithFullName)
     }
 
     useEffect(() => {
         loadData()
-    }, [componentData, parameters?.data, employeeData])
+    }, [ parameters?.data, employeeData])
 
 
     const onObjectivesRejected = () => {
@@ -153,11 +158,11 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
         },
         {
             title: 'Name',
-            key: 'employeeId',
-            render: (record: any) => {
+            dataIndex: 'firstName',
+            // render: (record: any) => {
                 
-                return getEmployeeDetails(record?.employeeId)
-            }
+            //     return getEmployeeDetails(record?.id)
+            // }
         },
         {
             title: 'Approval Status',
@@ -177,11 +182,6 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
             ),
         },
     ]
-
-    const getEmployeeDetails = (employeeId: any) => {
-        const employee = allEmployees?.data?.find((item: any) => (item.id )?.toString() === employeeId)
-        return employee?.firstName + ' ' + employee?.surname
-    }
 
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
@@ -237,7 +237,7 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
                             <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
                         }
                     />
-                    <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
+                    <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
                 </div>
             </Modal>
             {/* comment modal */}

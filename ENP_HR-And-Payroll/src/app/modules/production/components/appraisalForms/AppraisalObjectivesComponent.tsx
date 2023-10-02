@@ -9,7 +9,7 @@ import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from
 
 
 
-const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
+const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any) => {
 
     const [gridData, setGridData] = useState([])
     const [searchText, setSearchText] = useState('')
@@ -249,7 +249,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const dataByID = componentData?.data.filter((section: any) => {
         return !showDeliverablesEntry ?
-            section.parameterId === parameterId && section.objectiveId === objectivesData?.id :
+            section.parameterId === parameterId && section.employeeId === employeeId :
             section.objectiveId === objectivesData?.id
     })
 
