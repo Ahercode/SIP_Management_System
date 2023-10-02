@@ -3,8 +3,8 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useQuery} from 'react-query'
 import {useState} from 'react'
 import {KTCard, KTCardBody, KTSVG} from "../../../../../../../_metronic/helpers";
-import {Input, Space} from "antd";
-import {DropDownListComponent} from "@syncfusion/ej2-react-dropdowns";
+// import {Input, Space} from "antd";
+// import {DropDownListComponent} from "@syncfusion/ej2-react-dropdowns";
 import {fetchDepartments, fetchLeaveTypes} from "../../../../../../services/ApiCalls";
 import { NewLeavePlanner } from './NewCalendar/NewLeavePlanner';
 

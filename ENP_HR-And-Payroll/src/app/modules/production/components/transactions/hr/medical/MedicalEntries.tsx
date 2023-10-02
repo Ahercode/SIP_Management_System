@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form'
 import {  Api_Endpoint, fetchEmployees, fetchMedicals, fetchPaygroups, fetchPeriods, fetchProducts, fetchServiceCost, fetchServiceProviders } from '../../../../../../services/ApiCalls'
 import { useQuery } from 'react-query'
 import { forUdateButton } from '../Common/customInfoAlert';
+import { Employee } from '../../../employee/Employee';
+import { EmployeeProfile } from '../../../employee/EmployeeProfile';
 
 const MedicalEntries = () => {
   const [gridData, setGridData] = useState([])
@@ -95,8 +97,10 @@ const MedicalEntries = () => {
       // update the local state so that react can refecth and re-render the table with the new data
       const newData = gridData.filter((item: any) => item.id !== element.id)
       setGridData(newData)
+      message.success('Medical Entry deleted successfully')
       return response.status
     } catch (e) {
+      message.warning('Cannot delete medical entry with sub entries, please delete sub entries first!')
       return e
     }
   }
@@ -108,21 +112,17 @@ const MedicalEntries = () => {
   const columns: any = [
    
     {
-      title: 'Employee ID',
-      key: 'employeeId',
+      title: 'Employee',
+      // key: 'employeeId',
+      key: 'imageUrl',
+      fixed: 'left',
+      width: 270,
       render: (row: any) => {
-        return getEmployeeName(row.employeeId)
+        return( <EmployeeProfile employee={row} />)
       },
-      sorter: (a: any, b: any) => {
-        if (a.employeeId > b.employeeId) {
-          return 1
-        }
-        if (b.employeeId > a.employeeId) {
-          return -1
-        }
-        return 0
-      },
+      
     },
+    
     {
       title: 'Medical Type',
       key:'medicalTypeId',
@@ -171,8 +171,8 @@ const MedicalEntries = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <a onClick={() => handleRemove(record)} className='btn btn-light-danger btn-sm'>
-            Remove
+          <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+            Delete
           </a>
         </Space>
       ),
@@ -318,6 +318,10 @@ const MedicalEntries = () => {
       medicalTypeId: parseInt(values.medicalTypeId),
       date: values.date,
       comment: values.comment,
+      medicalTranItems: selectedProducts.map((item:any)=>({
+          productId: item.id,
+          cost: item.cost,
+      })),
       tenantId: tenantId,
     }
     console.log(data)
@@ -330,7 +334,7 @@ const MedicalEntries = () => {
       return response.statusText
     } catch (error: any) {
       setSubmitLoading(false)
-      message.error(error.response.data.message)
+      message.error(error.message)
       return error.statusText
     }
   })
