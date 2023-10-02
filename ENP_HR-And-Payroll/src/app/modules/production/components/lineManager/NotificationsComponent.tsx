@@ -106,10 +106,13 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => (item.id).toString() === record?.employeeId)
+        const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.id).toString() === record?.employeeId)
+        console.log('employee: ', employee)
+        console.log('record: ', record)
+        console.log('objectiveByEMployee: ', objectiveByEMployee)
         setEmployeeData(employee)
-        setObjectivesData(record)
+        setObjectivesData(objectiveByEMployee)
     }
-
 
     const onObjectivesApproved = () => {
         const item = {
@@ -203,11 +206,11 @@ const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) 
     return (
         <>
             {
-                loading ? <Skeleton active /> :
-                    <Table
-                        columns={columns}
-                        dataSource={componentData}
-                    />
+            loading ? <Skeleton active /> :
+                <Table
+                    columns={columns}
+                    dataSource={componentData}
+                />
             }
 
             <Modal

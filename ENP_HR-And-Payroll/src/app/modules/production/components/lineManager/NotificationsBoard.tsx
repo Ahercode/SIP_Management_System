@@ -22,8 +22,9 @@ const NotificationsBoard = () => {
     // console.log('currentUser: ', currentUser?.id)
     const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
     // const data = employeeObjectives?.data?.filter((item: any) => allTeamMembers?.map((item: any) => (item.id)?.toString()).includes(item.employeeId))
-    console.log('allTeamMembers: ', allTeamMembers)
+    // console.log('allTeamMembers: ', allTeamMembers)
     // console.log('data: ', data)
+    // console.log('employeeObjectives: ', employeeObjectives?.data)
     const loadData = async () => {
         try {
             const data = employeeObjectives?.data?.filter((item: any) => allTeamMembers?.map((item: any) => (item.id)?.toString()).includes(item.employeeId))

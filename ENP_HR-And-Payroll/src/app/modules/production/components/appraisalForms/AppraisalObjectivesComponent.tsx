@@ -60,6 +60,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
     })
 
     const deliverablesEntry = (objectivesData: any) => {
+        console.log('objectivesData: ', objectivesData)
         setObjectivesData(objectivesData)
         setShowDeliverablesEntry(true)
     }
@@ -248,7 +249,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId }: any) => {
 
     const dataByID = componentData?.data.filter((section: any) => {
         return !showDeliverablesEntry ?
-            section.parameterId === parameterId :
+            section.parameterId === parameterId && section.objectiveId === objectivesData?.id :
             section.objectiveId === objectivesData?.id
     })
 
