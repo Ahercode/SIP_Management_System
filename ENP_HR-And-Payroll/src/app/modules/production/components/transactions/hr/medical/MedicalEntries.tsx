@@ -9,6 +9,7 @@ import { useQuery } from 'react-query'
 import { forUdateButton } from '../Common/customInfoAlert';
 import { Employee } from '../../../employee/Employee';
 import { EmployeeProfile } from '../../../employee/EmployeeProfile';
+import { MedicalSubEntry } from './MedicalSubEntry';
 
 const MedicalEntries = () => {
   const [gridData, setGridData] = useState([])
@@ -113,7 +114,6 @@ const MedicalEntries = () => {
    
     {
       title: 'Employee',
-      // key: 'employeeId',
       key: 'imageUrl',
       fixed: 'left',
       width: 270,
@@ -171,6 +171,7 @@ const MedicalEntries = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
+          <MedicalSubEntry record={record} />
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
           </a>
@@ -310,12 +311,13 @@ const MedicalEntries = () => {
 
   const url = `${Api_Endpoint}/MedicalTransactions`
   const OnSubmit = handleSubmit( async (values)=> {
+
     setLoading(true)
     const data = {
       employeeId: employeeRecord.id,
       paygroupId: parseInt(selectedValue1),
       periodId: parseInt(selectedValue2),
-      medicalTypeId: parseInt(values.medicalTypeId),
+      serviceProviderId: parseInt(values.serviceProviderId),
       date: values.date,
       comment: values.comment,
       medicalTranItems: selectedProducts.map((item:any)=>({
@@ -473,7 +475,7 @@ const MedicalEntries = () => {
                     }
                     <div className='col-6 mb-3'>
                       <label htmlFor="exampleFormControlInput1" className="form-label">Service Provider</label>
-                      <select {...register("medicalTypeId")} value={selectedProvider} onChange={(e:any)=>{setSeletedProvider(e.target.value)}} className="form-select form-select-solid" aria-label="Select example">
+                      <select {...register("serviceProviderId")} value={selectedProvider} onChange={(e:any)=>{setSeletedProvider(e.target.value)}} className="form-select form-select-solid" aria-label="Select example">
                         <option> select </option>
                         {serviceProviders?.data.map((item: any) => (
                           <option value={item.id}>{item.name}</option>

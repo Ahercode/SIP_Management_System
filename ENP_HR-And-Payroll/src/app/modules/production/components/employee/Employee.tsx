@@ -11,6 +11,7 @@ import { Roaster } from '../setup/hr/Roater'
 import { EmpSummaryDashBoard } from '../../../../pages/dashboard/charts/HRNewDashBoard'
 import { get } from 'jquery'
 import { forUdateButton } from '../transactions/hr/Common/customInfoAlert'
+import { EmployeeProfile } from './EmployeeProfile'
 
 
 const Employee = () => {
@@ -65,54 +66,12 @@ const Employee = () => {
     {
       title: 'Profile',
       key: 'imageUrl',
-      render: (row:any) => {
-       
-        return  (
-          row.imageUrl!==null?  
-          <img style={{borderRadius:"10px"}} src={`https://enp.sipconsult.net/hrwebapi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img>:
-          <img style={{borderRadius:"10px"}} src={`https://enp.sipconsult.net/hrwebapi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
-        )
-      }
-    },
-    {
-      title: 'EmployeeID',
-      dataIndex: 'employeeId',
-      sorter: (a: any, b: any) => {
-        if (a.employeeId > b.employeeId) {
-          return 1
-        }
-        if (b.employeeId > a.employeeId) {
-          return -1
-        }
-        return 0
+      fixed: 'left',
+      width: 270,
+      render: (row: any) => {
+        return( <EmployeeProfile employee={row} />)
       },
-    },
-    {
-      title: 'First Name',
-      dataIndex: 'firstName',
-      sorter: (a: any, b: any) => {
-        if (a.firstName > b.firstName) {
-          return 1
-        }
-        if (b.firstName > a.firstName) {
-          return -1
-        }
-        return 0
-      },
-    },
-
-    {
-      title: 'Surname',
-      dataIndex: 'surname',
-      sorter: (a: any, b: any) => {
-        if (a.surname > b.surname) {
-          return 1
-        }
-        if (b.surname > a.surname) {
-          return -1
-        }
-        return 0
-      },
+      
     },
 
     {
@@ -295,16 +254,6 @@ const Employee = () => {
       out_data[row.departmentId] = [row];
     }
   });
-
-  const handleExport = () => {
-    const headings = [["FirstName", "Surname", "Gender", "Paygroup", "Salary-Grade", "Unit"]]
-    const wb = utils.book_new()
-    const ws = utils.json_to_sheet([])
-    utils.sheet_add_aoa(ws, headings)
-    utils.sheet_add_json(ws, gridData, { origin: "A2", skipHeader: true })
-    utils.book_append_sheet(wb, ws, "Report")
-    writeFile(wb, "Report.xlsx")
-  } 
 
   const globalSearch = (searchValue: string) => {
     const searchResult = allEmployee?.data?.filter((item: any) => {
