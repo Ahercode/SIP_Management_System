@@ -15,9 +15,9 @@ const HeaderUserMenu: FC = () => {
       <div className='menu-item px-3'>
         <div className='menu-content d-flex align-items-center px-3'>
           <div className='symbol symbol-50px me-5'>
-            <img alt='Logo' src={toAbsoluteUrl('/media/avatars/user.png')} />
+            {/* <img alt='Logo' src={toAbsoluteUrl('/media/avatars/user.png')} /> */}
+            <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
           </div>
-
           <div className='d-flex flex-column'>
             <div className='fw-bolder d-flex align-items-center fs-5'>
               {currentUser?.firstName} {currentUser?.surname}
@@ -29,7 +29,6 @@ const HeaderUserMenu: FC = () => {
           </div>
         </div>
       </div>
-
       <div className='separator my-2'></div>
 
       {/*<div className='menu-item px-5'>*/}

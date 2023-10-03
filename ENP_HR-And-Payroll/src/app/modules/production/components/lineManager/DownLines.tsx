@@ -11,6 +11,7 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 5000 })
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 5000 })
+    const { data: appraisalobjective} = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -29,8 +30,16 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
+
+        // const employee = allEmployees?.data?.find((item: any) => (item.id) === record?.id)
+        const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
+        console.log('employee: ', employee)
+        console.log('record: ', record)
+        console.log('objectiveByEMployee: ', objectiveByEMployee)
+        // setEmployeeData(employee)
+        setObjectivesData(objectiveByEMployee)
         setEmployeeData(employee)
-        setObjectivesData(record)
+        // setObjectivesData(record)
     }
 
     const handleCancel = () => {
@@ -118,7 +127,7 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
                 <div className="py-9 px-9">
                     <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
 
-                    <AppraisalFormContent component={AppraisalObjectivesComponent} parametersData={parametersData} />
+                    <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
                 </div>
             </Modal>
         </>

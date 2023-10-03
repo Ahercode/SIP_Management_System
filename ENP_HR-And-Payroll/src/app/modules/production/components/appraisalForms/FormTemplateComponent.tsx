@@ -121,15 +121,12 @@ const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, componen
                 </div>
 
                 <ErrorBoundary>
-                    <Component parameterId={item.id} employeeId ={employeeId.toString()}/>
+                    <Component parameterId={item?.id} employeeId ={employeeId?.toString()}/>
                 </ErrorBoundary>
             </div>
         ))
     )
 }
-
-
-
 
 
 export { AppraisalFormContent, AppraisalFormHeader, FormTemplate, }
