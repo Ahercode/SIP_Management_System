@@ -1,9 +1,9 @@
-import {FC} from 'react'
 import clsx from 'clsx'
-import {Link} from 'react-router-dom'
-import {useLocation} from 'react-router'
-import {checkIsActive, KTSVG, WithChildren} from '../../../helpers'
-import {useLayout} from '../../core'
+import { FC } from 'react'
+import { useLocation } from 'react-router'
+import { Link } from 'react-router-dom'
+import { checkIsActive, KTSVG, WithChildren } from '../../../helpers'
+import { useLayout } from '../../core'
 
 type Props = {
   to: string
@@ -47,4 +47,4 @@ const AsideMenuItem: FC<Props & WithChildren> = ({
   )
 }
 
-export {AsideMenuItem}
+export { AsideMenuItem }

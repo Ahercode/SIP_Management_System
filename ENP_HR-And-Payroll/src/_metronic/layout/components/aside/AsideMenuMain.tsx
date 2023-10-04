@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useAuth } from '../../../../app/modules/auth'
-import { fetchDocument, fetchRoles, fetchUserRoles } from '../../../../app/services/ApiCalls'
+import { fetchUserRoles } from '../../../../app/services/ApiCalls'
 import { AsideMenuItem } from './AsideMenuItem'
 import { AsideMenuItemWithSub } from './AsideMenuItemWithSub'
-import { message } from 'antd'
 
 export function AsideMenuMain() {
   const intl = useIntl()

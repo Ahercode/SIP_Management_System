@@ -1,8 +1,8 @@
 import { Collapse, CollapseProps, Space, Table } from "antd"
 import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
-import { useForm } from "react-hook-form"
 
 function AppraisalFormComponent({ parameterId }: any) {
 

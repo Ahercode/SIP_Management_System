@@ -61,4 +61,4 @@ const employeeObjectiveColumns: any = [
     },
   ]
 
-  export {employeeObjectiveColumns}
+  export { employeeObjectiveColumns }

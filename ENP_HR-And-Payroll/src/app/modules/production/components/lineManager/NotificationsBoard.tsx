@@ -2,9 +2,9 @@ import { Badge, Tabs, TabsProps } from "antd";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../services/ApiCalls";
+import { useAuth } from "../../../auth";
 import { DownLines } from "./DownLines";
 import { NotificationsComponent } from "./NotificationsComponent";
-import { useAuth } from "../../../auth";
 
 const NotificationsBoard = () => {
 

@@ -1,10 +1,10 @@
 import { Button, Input, Modal, Skeleton, Space, Table, message } from "antd"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useQueryClient, useMutation, useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useNavigate, useParams } from "react-router-dom"
 import { KTCardBody, KTSVG } from "../../../../../_metronic/helpers"
-import { deleteItem, fetchDocument, updateItem, postItem } from "../../../../services/ApiCalls"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { deleteItem, fetchDocument, postItem, updateItem } from "../../../../services/ApiCalls"
 
 // common setup component
 const SetupComponent = (props: any) => {

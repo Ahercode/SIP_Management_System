@@ -1,7 +1,7 @@
-import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
-import {useEffect, useState} from 'react'
+import { Button, Form, Input, Modal, Space, Table } from 'antd'
 import axios from 'axios'
-import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
+import { useEffect, useState } from 'react'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { ENP_URL } from '../../../urls'
 
 const Company = () => {
@@ -225,4 +225,4 @@ const Company = () => {
   )
 }
 
-export {Company}
+export { Company }

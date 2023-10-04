@@ -1,19 +1,12 @@
-import { Button, Divider, Input, Modal, Select, Skeleton, Space, Table, Tag, message } from 'antd'
+import { Skeleton, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { FormsBaseUrl, deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
+import { fetchDocument, updateItem } from '../../../../../services/ApiCalls'
 import { getFieldName, getSupervisorData } from '../../ComponentsFactory'
-import { ReviewDateComponent } from './AppraisalScheduleDates'
 
-import "./cusStyle.css"
-import { EmployeeGroups } from './EmployeeGroups'
-import { AppraisalObjective } from './AppraisalObjective'
-import { AppraisalObjectivesComponent } from '../../appraisalForms/AppraisalObjectivesComponent'
-import { AppraisalFormHeader, AppraisalFormContent } from '../../appraisalForms/FormTemplateComponent'
-import { filter } from 'devexpress-dashboard/model/index.metadata'
 import { useParams } from 'react-router-dom'
+import "./cusStyle.css"
 
 
 const PerformanceDetails = () => {

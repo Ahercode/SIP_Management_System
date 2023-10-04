@@ -1,13 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { fetchDocument } from '../../../../services/ApiCalls';
 import "./formStyle.css";
 
-import { useQuery } from 'react-query';
-import { getFieldName, getSupervisorData } from '../ComponentsFactory';
-import { JobTitle } from '../setup/employee/JobTitle';
 import { Tabs, TabsProps } from 'antd';
+import { useQuery } from 'react-query';
+import { getFieldName } from '../ComponentsFactory';
 
 const EmplyeeDetails = ({employeeData}: any) => {
   const param: any = useParams();

@@ -72,4 +72,4 @@ const getEmployeePropertyName = ({ employeeId, employeeProperty, allEmployees, O
 
 
 
-export { getTimeLeft, getSupervisorData, getFieldName, getEmployeeProperty, getEmployeePropertyName }
+export { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft };

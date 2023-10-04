@@ -1,6 +1,5 @@
-import { Button } from "antd";
-import { AppraisalObjectivesComponent } from "./AppraisalObjectivesComponent"
-import { FormTemplate } from "./FormTemplateComponent"
+import { AppraisalObjectivesComponent } from "./AppraisalObjectivesComponent";
+import { FormTemplate } from "./FormTemplateComponent";
 
 
 const ObjectivesForm = () => {
@@ -19,6 +18,6 @@ const ObjectivesForm = () => {
     )
 }
 
-export { ObjectivesForm }
+export { ObjectivesForm };
 
 

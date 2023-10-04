@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-import {KTCardBody, KTSVG} from '../../../../../_metronic/helpers'
 import { ReportCard } from './ReportCardItem'
 
 
@@ -62,4 +60,4 @@ const PayrollReportPage = () => {
   )
 }
 
-export {PayrollReportPage}
+export { PayrollReportPage }

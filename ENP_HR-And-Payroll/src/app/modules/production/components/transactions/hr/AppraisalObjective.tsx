@@ -1,7 +1,7 @@
 import { message } from "antd";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { fetchDocument, postItem, updateItem } from "../../../../../services/ApiCalls";
 
 const AppraisalObjective = ({ referenceId }: any) => {
@@ -138,4 +138,4 @@ const AppraisalObjective = ({ referenceId }: any) => {
     )
 }
 
-export { AppraisalObjective }
+export { AppraisalObjective };

@@ -26,6 +26,4 @@ function createEmployeeTree(data: any) {
     return rootEmployees;
   }
 
-  export {
-    
-  }
+  export { };

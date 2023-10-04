@@ -1,8 +1,8 @@
 import clsx from 'clsx'
-import React, {FC} from 'react'
-import {Link} from 'react-router-dom'
-import {useLayout} from '../../../core/LayoutProvider'
-import {usePageData} from '../../../core/PageData'
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
+import { useLayout } from '../../../core/LayoutProvider'
+import { usePageData } from '../../../core/PageData'
 
 const DefaultTitle: FC = () => {
   const {pageTitle, pageDescription, pageBreadcrumbs} = usePageData()
@@ -64,4 +64,4 @@ const DefaultTitle: FC = () => {
   )
 }
 
-export {DefaultTitle}
+export { DefaultTitle }

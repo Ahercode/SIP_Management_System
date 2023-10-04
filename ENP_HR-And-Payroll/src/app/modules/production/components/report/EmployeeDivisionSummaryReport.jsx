@@ -1,11 +1,11 @@
-import {  useEffect, useRef } from 'react';
-import { DxReportViewer} from 'devexpress-reporting/dx-webdocumentviewer';
-import ko from "knockout";
 import "devexpress-reporting/dx-webdocumentviewer";
-import "../../../../../../node_modules/devextreme/dist/css/dx.light.css";
-import "../../../../../../node_modules/devexpress-reporting/dist/css/dx-webdocumentviewer.css";
+import { DxReportViewer } from 'devexpress-reporting/dx-webdocumentviewer';
+import ko from "knockout";
+import { useEffect, useRef } from 'react';
 import "../../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analytics.common.css";
 import "../../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analytics.light.css";
+import "../../../../../../node_modules/devexpress-reporting/dist/css/dx-webdocumentviewer.css";
+import "../../../../../../node_modules/devextreme/dist/css/dx.light.css";
 
 const ReportViewer = () => {
     const reportUrl = ko.observable(`EmployeeDivisionSummaryReport`);

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName } from '../ComponentsFactory'
-import { size } from '@devexpress/analytics-core/analytics-diagram'
 import { EmplyeeDetails } from '../employeeFormEntry/EmployeeDetails'
 
 

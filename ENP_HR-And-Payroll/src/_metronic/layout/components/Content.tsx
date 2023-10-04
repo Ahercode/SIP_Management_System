@@ -1,9 +1,9 @@
-import {FC, useEffect} from 'react'
-import {useLocation} from 'react-router'
 import clsx from 'clsx'
-import {useLayout} from '../core'
-import {DrawerComponent} from '../../assets/ts/components'
-import {WithChildren} from '../../helpers'
+import { FC, useEffect } from 'react'
+import { useLocation } from 'react-router'
+import { DrawerComponent } from '../../assets/ts/components'
+import { WithChildren } from '../../helpers'
+import { useLayout } from '../core'
 
 const Content: FC<WithChildren> = ({children}) => {
   const {classes} = useLayout()
@@ -19,4 +19,4 @@ const Content: FC<WithChildren> = ({children}) => {
   )
 }
 
-export {Content}
+export { Content }

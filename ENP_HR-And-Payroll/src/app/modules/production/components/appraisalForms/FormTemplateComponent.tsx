@@ -129,6 +129,6 @@ const AppraisalFormContent: React.FC<ContentProps> = ({ parametersData, componen
 }
 
 
-export { AppraisalFormContent, AppraisalFormHeader, FormTemplate, }
+export { AppraisalFormContent, AppraisalFormHeader, FormTemplate }
 
 

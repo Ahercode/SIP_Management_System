@@ -1,11 +1,9 @@
 import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { useForm } from 'react-hook-form'
-import { Api_Endpoint, deleteItem, fetchDocument, fetchPaygroups, postItem, updateItem, updatePaygroup } from '../../../../../services/ApiCalls'
-import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
+import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
 const Paygroups = () => {
   const [gridData, setGridData] = useState([])

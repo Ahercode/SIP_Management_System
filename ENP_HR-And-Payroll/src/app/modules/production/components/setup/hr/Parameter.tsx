@@ -1,14 +1,11 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { ENP_URL } from '../../../urls'
-import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { set, useForm } from 'react-hook-form'
-import form from 'antd/es/form'
-import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeftOutlined } from "@ant-design/icons"
+import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useNavigate, useParams } from 'react-router-dom'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
+import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
 
 const Parameter = () => {

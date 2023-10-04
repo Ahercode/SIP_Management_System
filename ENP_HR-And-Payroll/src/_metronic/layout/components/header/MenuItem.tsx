@@ -1,8 +1,8 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
-import {useLocation} from 'react-router'
 import clsx from 'clsx'
-import {checkIsActive, KTSVG} from '../../../helpers'
+import React from 'react'
+import { useLocation } from 'react-router'
+import { Link } from 'react-router-dom'
+import { checkIsActive, KTSVG } from '../../../helpers'
 
 type Props = {
   to: string
@@ -57,4 +57,4 @@ const MenuItem: React.FC<Props> = ({
   )
 }
 
-export {MenuItem}
+export { MenuItem }

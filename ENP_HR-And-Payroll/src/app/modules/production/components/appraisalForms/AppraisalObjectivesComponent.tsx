@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
-import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
+import { KTCardBody } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 
 

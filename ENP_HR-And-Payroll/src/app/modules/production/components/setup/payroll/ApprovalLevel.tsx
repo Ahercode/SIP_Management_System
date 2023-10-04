@@ -1,11 +1,9 @@
-import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
-import {useEffect, useState} from 'react'
-import axios from 'axios'
-import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
-import { ENP_URL } from '../../../urls'
+import { Button, Form, Input, Modal, Space, Table } from 'antd'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQueryClient, useMutation, useQuery } from 'react-query'
-import { deleteItem, fetchDocument, updateItem, postItem, Api_Endpoint } from '../../../../../services/ApiCalls'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
+import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
 const ApprovalLevel = () => {
   const [gridData, setGridData] = useState([])
@@ -329,4 +327,4 @@ const ApprovalLevel = () => {
   )
 }
 
-export {ApprovalLevel}
+export { ApprovalLevel }

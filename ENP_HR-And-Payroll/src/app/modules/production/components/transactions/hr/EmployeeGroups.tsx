@@ -1,6 +1,6 @@
 import { message, Skeleton, Table } from "antd"
-import { useState, useEffect } from "react"
-import { useQuery, useQueryClient, useMutation } from "react-query"
+import { useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { fetchDocument, postItem } from "../../../../../services/ApiCalls"
 import { getEmployeeProperty, getEmployeePropertyName, getSupervisorData } from "../../ComponentsFactory"
 

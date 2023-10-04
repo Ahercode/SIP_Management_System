@@ -1,8 +1,7 @@
-import React from 'react'
-import {MenuItem} from './MenuItem'
-import {useIntl} from 'react-intl'
-import { fetchEmployees } from '../../../../app/services/ApiCalls'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
+import { fetchEmployees } from '../../../../app/services/ApiCalls'
+import { MenuItem } from './MenuItem'
 
 const tenantId = localStorage.getItem('tenant')
 

@@ -1,10 +1,9 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, message } from 'antd'
+import { Button, Form, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 import { useForm } from 'react-hook-form'
-import { useQueryClient, useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
+import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
 const Period = () => {
   const [gridData, setGridData] = useState([])

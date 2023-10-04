@@ -112,26 +112,6 @@ console.log('defaultSelect',defaultSelect)
     },
   ]
 
-
-  // const getSkillName = (skillId: any) => {
-  //   let skillName = null
-  //   allSkills?.data.map((item: any) => {
-  //     if (item.id === skillId) {
-  //       skillName = item.name
-  //     }
-  //   })
-  //   return skillName
-  // }
-  // const getQualificationName = (qualificationId: any) => {
-  //   let qualificationName = null
-  //   allQualifications?.data.map((item: any) => {
-  //     if (item.id === qualificationId) {
-  //       qualificationName = item.name
-  //     }
-  //   })
-  //   return qualificationName
-  // }
-  // validates input field to accept only numbers
   const validatePhoneNumber = (event: any) => {
     if (!/[0-9]/.test(event.key)) {
       event.preventDefault();
@@ -151,9 +131,6 @@ console.log('defaultSelect',defaultSelect)
     setDefaultSelect(selectedOption)
     // setLineManagerId(selectedOption?.value)
   };
-
-  // console.log(customOptions?.find((op: any) => parseInt(op.value)=== tempData?.lineManagerId));
-  
 
 
   const fetchImage = async () => {

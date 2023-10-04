@@ -2,8 +2,8 @@ import { Badge, Button, Tabs, TabsProps } from "antd";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../../services/ApiCalls";
-import { AppraisalPerformance } from "./AppraisalPerformance";
 import { NotificationsComponent } from "../../lineManager/NotificationsComponent";
+import { AppraisalPerformance } from "./AppraisalPerformance";
 import { PerformanceDetails } from "./PerfDetails";
 
 const PerformanceBoard = () => {

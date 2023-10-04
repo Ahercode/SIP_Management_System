@@ -1,7 +1,7 @@
-import {FC, useRef, useEffect} from 'react'
-import {useLocation} from 'react-router'
 import clsx from 'clsx'
-import {checkIsActive, KTSVG, WithChildren} from '../../../helpers'
+import { FC, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router'
+import { KTSVG, WithChildren, checkIsActive } from '../../../helpers'
 
 type Props = {
   to: string
@@ -79,4 +79,4 @@ const MenuInnerWithSub: FC<Props & WithChildren> = ({
   )
 }
 
-export {MenuInnerWithSub}
+export { MenuInnerWithSub }

@@ -1,5 +1,5 @@
-import React, {FC} from 'react'
-import {MenuInner} from './MenuInner'
+import { FC } from 'react'
+import { MenuInner } from './MenuInner'
 
 const Header: FC = () => {
   return (
@@ -27,4 +27,4 @@ const Header: FC = () => {
   )
 }
 
-export {Header}
+export { Header }

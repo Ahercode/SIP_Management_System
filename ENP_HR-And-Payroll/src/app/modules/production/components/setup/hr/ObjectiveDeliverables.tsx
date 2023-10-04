@@ -14,4 +14,4 @@ const AppraisalDeliverables = () => {
 
 } 
 
-export {AppraisalDeliverables }
+export { AppraisalDeliverables }

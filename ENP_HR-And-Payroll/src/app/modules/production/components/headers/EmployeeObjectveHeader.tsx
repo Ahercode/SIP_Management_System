@@ -29,4 +29,4 @@ const EmployeeObjectiveHeaders = ()=>{
     )
 }
 
-export {EmployeeObjectiveHeaders}
+export { EmployeeObjectiveHeaders }

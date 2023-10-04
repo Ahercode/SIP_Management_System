@@ -1,12 +1,11 @@
+import { ArrowLeftOutlined } from "@ant-design/icons"
 import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
-import { ArrowLeftOutlined } from "@ant-design/icons"
 
 const OrgLevel = () => {
   const [searchText, setSearchText] = useState('')

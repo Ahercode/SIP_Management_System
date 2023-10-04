@@ -1,7 +1,7 @@
-import React, {FC} from 'react'
+import { FC } from 'react'
 
 const Toolbar2: FC = () => {
   return <>Toolbar 2</>
 }
 
-export {Toolbar2}
+export { Toolbar2 }

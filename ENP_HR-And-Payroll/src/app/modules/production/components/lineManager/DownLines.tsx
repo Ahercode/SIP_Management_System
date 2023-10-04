@@ -1,4 +1,4 @@
-import { Button, Modal, Skeleton, Space, Table, Tag } from "antd"
+import { Button, Modal, Skeleton, Table, Tag } from "antd"
 import { useState } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
