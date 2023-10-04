@@ -1,11 +1,11 @@
 import clsx from 'clsx'
-import React, {FC} from 'react'
-import {KTSVG, toAbsoluteUrl} from '../../../helpers'
+import { FC } from 'react'
+import { useAuth } from '../../../../app/modules/auth'
+import { KTSVG } from '../../../helpers'
 import {
   HeaderUserMenu,
 } from '../../../partials'
-import {useLayout} from '../../core'
-import { useAuth } from '../../../../app/modules/auth'
+import { useLayout } from '../../core'
 
 const toolbarButtonMarginClass = 'ms-1 ms-lg-3',
   toolbarButtonHeightClass = 'w-30px h-30px w-md-40px h-md-40px',
@@ -63,4 +63,4 @@ const Topbar: FC = () => {
   )
 }
 
-export {Topbar}
+export { Topbar }

@@ -1,17 +1,16 @@
 
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Divider, Space, Tabs, TabsProps } from 'antd';
 import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 import { Api_Endpoint, fetchDocument } from '../../../../services/ApiCalls';
 import { useAuth } from '../../../auth';
 import "./formStyle.css";
-import { Button, Divider,  Space, Tabs, TabsProps } from 'antd';
-import Select from 'react-select'
-import { ArrowLeftOutlined } from "@ant-design/icons"
-import { all } from '@devexpress/analytics-core/analytics-elements-metadata';
 
 
 const MultiTabForm = () => {

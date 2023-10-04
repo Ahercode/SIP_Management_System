@@ -1,15 +1,14 @@
+import { PrinterOutlined } from '@ant-design/icons'
 import { Button, Modal, Skeleton, Space, Table, Tag, message } from "antd"
 import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { fetchDocument, updateItem } from "../../../../services/ApiCalls"
-import { ObjectivesForm } from "../appraisalForms/ObjectivesForm "
-import { set, useForm } from "react-hook-form"
-import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
-import { AppraisalFormHeader, AppraisalFormContent } from "../appraisalForms/FormTemplateComponent"
 import { useParams } from "react-router-dom"
+import { fetchDocument, updateItem } from "../../../../services/ApiCalls"
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
-import { PrinterOutlined } from '@ant-design/icons'
+import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
 import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/AppraisalPdfPrintView"
+import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
 
 const NotificationsComponent = ({ loading, filter, employeeWhoSubmitted }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
