@@ -35,7 +35,7 @@ import { SavingScheme } from '../modules/production/components/setup/payroll/Sav
 import { RecruitmentSelection } from '../modules/production/components/transactions/hr/RecruitmentSelection'
 import { CompensationBenefit } from '../modules/production/components/transactions/hr/CompensationBenefit'
 import { TrainingDevelopment } from '../modules/production/components/transactions/hr/TrainingDevelopment'
-import { AppraisalPerformance } from '../modules/production/components/transactions/hr/AppraisalPerformance'
+import { AppraisalPerformance } from '../modules/production/components/transactions/hr/appraisal/AppraisalPerformance'
 import { MedicalEntries } from '../modules/production/components/transactions/hr/medical/MedicalEntries'
 import { TimeSheet } from '../modules/production/components/transactions/payroll/TimeSheet'
 import { Recurrent } from '../modules/production/components/transactions/payroll/Recurrent'

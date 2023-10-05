@@ -8,7 +8,7 @@ const EmployeeProfile = (employee: any) => {
     const tenantId = localStorage.getItem('tenant')
     const location = useLocation()
     const {data:allEmployee} = useQuery('employee',()=> fetchEmployees(tenantId), {cacheTime:5000})
-
+ const pasth = location.pathname === "/employee/"
     const employeeData = allEmployee?.data?.find((item:any)=>{
         if(location.pathname === "/employee/"){
             return item.id === employee?.employee?.id
@@ -17,7 +17,7 @@ const EmployeeProfile = (employee: any) => {
     })
 
     useEffect(() => {
-    },  [employee])
+    },  [employee, location])
 
     return (
       <>

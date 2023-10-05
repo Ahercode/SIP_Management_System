@@ -1,51 +1,52 @@
-import { Button, Input, Modal, Space, Table, RadioChangeEvent, Select, Divider, message } from 'antd'
+import { Button, Input, Modal, Select, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
-import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
-import { fetchAppraisals, fetchAppraisalTransactions, fetchEmployees, fetchJobTitles, fetchPaygroups, fetchPeriods, fetchParameters, postItem, deleteItem, fetchDocument, updateItem } from '../../../../../services/ApiCalls'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import "./cusStyle.css"
 import { useForm } from 'react-hook-form'
-import { forUdateButton } from './Common/customInfoAlert'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { KTCardBody, KTSVG } from '../../../../../../../_metronic/helpers'
+import { deleteItem, fetchAppraisals, fetchDocument, fetchEmployees, fetchJobTitles, fetchParameters, fetchPaygroups, fetchPeriods, postItem } from '../../../../../../services/ApiCalls'
+import { EmployeesDetail } from '../../../employee/EmployeesDetail'
+import { forUdateButton } from '../Common/customInfoAlert'
+import "../cusStyle.css"
 
 
 const AppraisalPerformance = () => {
   const [gridData, setGridData] = useState([])
   const [loading, setLoading] = useState(false)
-  const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
+  // const [searchText, setSearchText] = useState('')
+  // let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const { reset, register, handleSubmit } = useForm()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [tabModalOpen, setTabModalOpen] = useState(false)
-  const [updateModalOpen, setUpdateModalOpen] = useState(false)
-  const [tab1ModalOpen, setTab1Modal1Open] = useState(false)
-  const [tab2ModalOpen, setTab2ModalOpen] = useState(false)
-  const [tab3ModalOpen, setTab3ModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("tab1");
+  // const [tabModalOpen, setTabModalOpen] = useState(false)
+  // const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  // const [tab1ModalOpen, setTab1Modal1Open] = useState(false)
+  // const [tab2ModalOpen, setTab2ModalOpen] = useState(false)
+  // const [tab3ModalOpen, setTab3ModalOpen] = useState(false)
+  // const [activeTab, setActiveTab] = useState("tab1");
   const [employeeRecord, setEmployeeRecord] = useState<any>([])
-  const [employeeId, setEmployeeId] = useState<any>()
+  // const [employeeId, setEmployeeId] = useState<any>()
   const [jobTitleName, setjobTitleName] = useState<any>(null);
   const [selectedPaygroup, setSelectedPaygroup] = useState<any>(null);
   const [selectedAppraisalType, setSelectedAppraisaltype] = useState<any>(null);
   const [selectedStartPeriod, setSelectedStartPeriod] = useState<any>(null);
   const [selectedEndPeriod, setSelectedEndPeriod] = useState<any>(null);
-  const [selectedValue5, setSelectedValue5] = useState<any>(null);
-  const [radioValue, setRadioValue] = useState(1);
-  const [radio1Value, setRadio1Value] = useState(1);
-  const [radio2Value, setRadio2Value] = useState(1);
-  const [radio3Value, setRadio3Value] = useState(1);
-  const [radio4Value, setRadio4Value] = useState(1);
+  // const [selectedValue5, setSelectedValue5] = useState<any>(null);
+  // const [radioValue, setRadioValue] = useState(1);
+  // const [radio1Value, setRadio1Value] = useState(1);
+  // const [radio2Value, setRadio2Value] = useState(1);
+  // const [radio3Value, setRadio3Value] = useState(1);
+  // const [radio4Value, setRadio4Value] = useState(1);
   const tenantId = localStorage.getItem('tenant')
   const [fieldInit, setFieldInit] = useState([])
   const [isReviewDateModalOpen, setIsReviewDateModalOpen] = useState(false)
-  const [reivewDateSubmitLoading, setReviewDateSubmitLoading] = useState(false)
-  const [reviewDatesData, setReviewDatesData] = useState<any>([])
+  // const [reivewDateSubmitLoading, setReviewDateSubmitLoading] = useState(false)
+  // const [reviewDatesData, setReviewDatesData] = useState<any>([])
   const queryClient = useQueryClient()
-  const [appraisalData, setAppraisalData] = useState<any>([])
-  const [currentDate, setCurrentDate] = useState<any>(new Date())
-  const [referenceId, setReferenceId] = useState<any>(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
-  const [currentObjective, setCurrentObjective] = useState<any>([])
+  // const [appraisalData, setAppraisalData] = useState<any>([])
+  // const [currentDate, setCurrentDate] = useState<any>(new Date())
+  // const [referenceId, setReferenceId] = useState<any>(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
+  // const [currentObjective, setCurrentObjective] = useState<any>([])
   const [isEmailSent, setIsEmailSent] = useState<any>(false)
   const [beforeSearch, setBeforeSearch] = useState([])
   const [afterSearch, setSfterSearch] = useState([])
@@ -55,12 +56,12 @@ const AppraisalPerformance = () => {
   const { data: allPeriods } = useQuery('periods', () => fetchPeriods(tenantId), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobTitles', () => fetchJobTitles(tenantId), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('recruitments', () => fetchPaygroups(tenantId), { cacheTime: 5000 })
-  const { data: allAppraisalTransactions } = useQuery('appraisalTransactions', () => fetchAppraisalTransactions(tenantId), { cacheTime: 5000 })
+  // const { data: allAppraisalTransactions } = useQuery('appraisalTransactions', () => fetchAppraisalTransactions(tenantId), { cacheTime: 5000 })
   const { data: allParameters } = useQuery('parameters', () => fetchParameters(tenantId), { cacheTime: 5000 })
   const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
+  // const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
 
 
 
@@ -94,7 +95,7 @@ const AppraisalPerformance = () => {
     reset()
     setEmployeeRecord([])
     setIsModalOpen(false)
-    setUpdateModalOpen(false)
+    // setUpdateModalOpen(false)
     setjobTitleName(null)
   }
 
@@ -129,14 +130,14 @@ const AppraisalPerformance = () => {
   // const showTabModal = () => {
   //   setTabModalOpen(true)
   // }
-  const handleUpdateCancel = () => {
-    setUpdateModalOpen(false)
-  }
-  const showUpdateModal = (record: any) => {
-    console.log(record)
-    setUpdateModalOpen(true)
-    setEmployeeId(record)
-  }
+  // const handleUpdateCancel = () => {
+  //   setUpdateModalOpen(false)
+  // }
+  // const showUpdateModal = (record: any) => {
+  //   console.log(record)
+  //   setUpdateModalOpen(true)
+  //   // setEmployeeId(record)
+  // }
 
   const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
     onSuccess: (data: any) => {
@@ -157,14 +158,14 @@ const AppraisalPerformance = () => {
     deleteData(item)
   }
 
-  function handleDeleteReviewDate(element: any) {
-    const item = {
-      url: 'AppraisalReviewDates',
-      data: element
-    }
-    setLoading(true)
-    deleteData(item)
-  }
+  // function handleDeleteReviewDate(element: any) {
+  //   const item = {
+  //     url: 'AppraisalReviewDates',
+  //     data: element
+  //   }
+  //   setLoading(true)
+  //   deleteData(item)
+  // }
 
   // const [fileList, setFileList] = useState<UploadFile[]>([
 
@@ -264,9 +265,12 @@ const AppraisalPerformance = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <a onClick={() => showUpdateModal(record.id)} className='btn btn-light-info btn-sm'>
+          {/* <a onClick={() => showUpdateModal(record.id)} className='btn btn-light-info btn-sm'>
             Details
-          </a>
+          </a> */}
+
+          <EmployeesDetail employeeData={record} title={"Appraisal"}/>
+          
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
             Delete
           </a>
@@ -344,15 +348,15 @@ const AppraisalPerformance = () => {
     setLoading(true)
     try {
       const response = allAppraisalsPerfTrans?.data
-      setReviewDatesData(allReviewdates?.data)
+      // setReviewDatesData(allReviewdates?.data)
       setGridData(response)
       //find objective with matching referenceId from all objectives
-      const objectiveData: any = allObjectives?.data?.filter((item: any) => {
-        return item.referenceId === referenceId
-      })
-      const objText = !objectiveData ? '' : objectiveData[0]?.description
+      // const objectiveData: any = allObjectives?.data?.filter((item: any) => {
+      //   return item.referenceId === referenceId
+      // })
+      // const objText = !objectiveData ? '' : objectiveData[0]?.description
       // setObjValue(objText)
-      setCurrentObjective(objectiveData[0])
+      // setCurrentObjective(objectiveData[0])
 
       setLoading(false)
     } catch (error) {
@@ -544,26 +548,26 @@ const AppraisalPerformance = () => {
   }
 }
 
-const handleInputChange = (e: any) => {
-    globalSearch(e.target.value)
-    if (e.target.value === '') {
-      setBeforeSearch(dataByID)
-      setSfterSearch(beforeSearch)
-    }
-  }
+// const handleInputChange = (e: any) => {
+//     globalSearch(e.target.value)
+//     if (e.target.value === '') {
+//       setBeforeSearch(dataByID)
+//       setSfterSearch(beforeSearch)
+//     }
+//   }
 
 
 
-  const {mutate: updateData } = useMutation(updateItem, {
-    onSuccess: () => {
-      reset()
-      loadData()
-      message.success('Appraisal objective updated successfully')
-    },
-    onError: (error) => {
-      console.log('error: ', error)
-    }
-  })
+  // const {mutate: updateData } = useMutation(updateItem, {
+  //   onSuccess: () => {
+  //     reset()
+  //     loadData()
+  //     message.success('Appraisal objective updated successfully')
+  //   },
+  //   onError: (error) => {
+  //     console.log('error: ', error)
+  //   }
+  // })
 
   const endpoint = isReviewDateModalOpen ? `AppraisalReviewDates` : `AppraisalPerfTransactions`
   const submitApplicant = handleSubmit(async (values) => {
@@ -578,7 +582,7 @@ const handleInputChange = (e: any) => {
         reviewDate: selectedDate.toISOString(),
         description: values.description,
         tenantId: tenantId,
-        referenceId: referenceId,
+        // referenceId: referenceId,
       },
       url: endpoint,
     } : {
@@ -600,7 +604,17 @@ const handleInputChange = (e: any) => {
     }
     console.log('item: ', item)
     setLoading(true)
-    postData(item)
+
+    // check if employee already exist in appraisalPerfTransactions
+    const currentEmployee = allAppraisalsPerfTrans?.data.find((item: any) => item.employeeId === employeeRecord.id)
+    if(!currentEmployee){
+      postData(item)
+      return message.success('Successfully added')
+    }
+    else{
+      return message.warning('Sorry this Employee has already been added')
+    }
+    // postData(item)
   })
 
   const { mutate: postData } = useMutation(postItem, {

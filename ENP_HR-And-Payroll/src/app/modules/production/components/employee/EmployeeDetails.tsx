@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import "./formStyle.css"
-import {  fetchDocument} from '../../../../services/ApiCalls';
+// import "./formStyle.css"
+import { fetchDocument } from '../../../../services/ApiCalls';
 
 import { useQuery } from 'react-query';
 
@@ -27,7 +27,7 @@ const EmplyeeDetails= () =>{
   };
 
 
-  const {data:allEmployees} = useQuery('employees',()=> fetchDocument(`Employees/${tenantId}`), {cacheTime:5000})
+  // const {data:allEmployees} = useQuery('employees',()=> fetchDocument(`Employees/${tenantId}`), {cacheTime:5000})
   const {data:allDepartments} = useQuery('departments',()=> fetchDocument(`Departments/${tenantId}`), {cacheTime:5000})
   const {data:allDivisions} = useQuery('divisions',()=> fetchDocument(`Divisions/${tenantId}`), {cacheTime:5000})
   const {data:allCategories} = useQuery('categories', ()=>fetchDocument(`Categories/${tenantId}`), {cacheTime:5000})
@@ -36,9 +36,9 @@ const EmplyeeDetails= () =>{
   const {data:allGrades} = useQuery('grades',()=> fetchDocument(`Grades/${tenantId}`), {cacheTime:5000})
   const {data:allNotches} = useQuery('notches',()=> fetchDocument(`Notches/${tenantId}`), {cacheTime:5000})
   const {data:allNations} = useQuery('nations',()=> fetchDocument(`/${tenantId}`), {cacheTime:5000})
-  const {data:allSkills} = useQuery('skill',()=> fetchDocument(`Skills/${tenantId}`), {cacheTime:5000})
-  const {data:allQualifications} = useQuery('qualifications',()=> fetchDocument(`Qualifications/${tenantId}`), {cacheTime:5000})
-  const {data:allExperiences} = useQuery('experiences',()=> fetchDocument(`Experiences/${tenantId}`), {cacheTime:5000})
+  // const {data:allSkills} = useQuery('skill',()=> fetchDocument(`Skills/${tenantId}`), {cacheTime:5000})
+  // const {data:allQualifications} = useQuery('qualifications',()=> fetchDocument(`Qualifications/${tenantId}`), {cacheTime:5000})
+  // const {data:allExperiences} = useQuery('experiences',()=> fetchDocument(`Experiences/${tenantId}`), {cacheTime:5000})
   const {data:allJobTitles} = useQuery('jobtitle',()=> fetchDocument(`Jobtitles/${tenantId}`), {cacheTime:5000})
 
   useEffect(()=>{
@@ -139,16 +139,16 @@ const EmplyeeDetails= () =>{
     getGradeName()
   })
 
-  useEffect(() => {
-    const dataByID = allEmployees?.data.find((employee:any) =>{
-      return employee.id.toString() ===param.id
-    })
-    const getEmployeeById = ()=>{
-      setTempData(dataByID)
-    }
-    getEmployeeById()
+  // useEffect(() => {
+  //   const dataByID = allEmployees?.data.find((employee:any) =>{
+  //     return employee.id.toString() ===param.id
+  //   })
+  //   const getEmployeeById = ()=>{
+  //     setTempData(dataByID)
+  //   }
+  //   getEmployeeById()
     
-  })
+  // })
 
   return (
     <div
@@ -325,4 +325,4 @@ const EmplyeeDetails= () =>{
 }
 
 
-export  {EmplyeeDetails}
+export { EmplyeeDetails };

@@ -12,6 +12,7 @@ import { EmpSummaryDashBoard } from '../../../../pages/dashboard/charts/HRNewDas
 import { get } from 'jquery'
 import { forUdateButton } from '../transactions/hr/Common/customInfoAlert'
 import { EmployeeProfile } from './EmployeeProfile'
+import { EmployeesDetail } from './EmployeesDetail'
 
 
 const Employee = () => {
@@ -27,7 +28,7 @@ const Employee = () => {
   const [activeTab, setActiveTab] = useState('employeeDetail');
   const queryClient = useQueryClient()
   const [beforeSearch, setBeforeSearch] = useState([])
-
+  const [employeeData, setEmployeeData] = useState<any>({})
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
   }
@@ -37,13 +38,15 @@ const Employee = () => {
   }
 
 
-  const handleOk = () => {
-    setIsModalOpen(false)
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false)
+
+  const showDetailsModal = (record: any) => {
+    setDetailsModalOpen(true)
+    setEmployeeData(record)
   }
 
-  const handleCancel = () => {
-    form.resetFields()
-    setIsModalOpen(false)
+  const handleDetailsModalCancel = () => {
+    setDetailsModalOpen(false)
   }
 
   const deleteData = async (element: any) => {
@@ -172,11 +175,14 @@ const Employee = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
+          {/* <Link to={`/employee-details/${record.id}`}>
+            <span className='btn btn-light-success btn-sm'>Details</span>
+            
+          </Link> */}
+          
+          <EmployeesDetail employeeData={record} title={"Employee"}/>
           <Link to={`/employee-edit-form/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Update</span>
-          </Link>
-          <Link to={`/employee-details/${record.id}`}>
-            <span className='btn btn-light-success btn-sm'>Details</span>
           </Link>
         </Space>
       ),
@@ -338,8 +344,21 @@ const Employee = () => {
           </div>
         </div>
       </KTCardBody>
+
+      {/* <Modal
+        open={detailsModalOpen}
+        onCancel={handleDetailsModalCancel}
+        closable={true}
+        width="1000px"
+        footer={null}>
+          <EmplyeeDetail employeeData={employeeData} />
+      </Modal> */}
     </div>
   )
+
+  
 }
+
+
 
 export { Employee }

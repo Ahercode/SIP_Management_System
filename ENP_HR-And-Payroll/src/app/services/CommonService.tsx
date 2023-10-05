@@ -1,6 +1,6 @@
-export const getFieldName = (fieldId: any, fieldData: any) => {
+export const getFieldName = (fieldId: number, fieldData: any) => {
     const field = fieldData?.find((item: any) => {
-        return parseInt(item.id) === parseInt(fieldId)
+        return item.id === fieldId
     })
     return field?.name
 }
