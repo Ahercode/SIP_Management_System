@@ -74,9 +74,9 @@ const EmplyeeDetails = ({employeeData}: any) => {
       <div className="d-flex row-auto align-items-center align-content-center ">
         <div>
           {
-            employeeData?.imageUrl !== null ?
-              <img style={{ borderRadius: "5%", width: "160px", height: "160px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> :
-              <img style={{ borderRadius: "5%", width: "160px", height: "160px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>
+            employeeData?.imageUrl === null || employeeData?.imageUrl ===""?
+            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> 
           }
         </div>
         <div className="column-auto align-items-center align-content-center" >

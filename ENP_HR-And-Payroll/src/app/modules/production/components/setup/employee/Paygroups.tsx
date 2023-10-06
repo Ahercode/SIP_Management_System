@@ -15,7 +15,7 @@ const Paygroups = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data: allPaygroups, isLoading: loading } = useQuery('paygroups', () => fetchDocument("paygroups"), { cacheTime: 5000 })
+  const { data: allPaygroups, isLoading: loading } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
   const queryClient = useQueryClient()
 
   const tenantId = localStorage.getItem('tenant')

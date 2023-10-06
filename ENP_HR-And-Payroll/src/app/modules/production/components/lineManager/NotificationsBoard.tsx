@@ -9,8 +9,9 @@ import { NotificationsComponent } from "./NotificationsComponent";
 const NotificationsBoard = () => {
 
     const { currentUser } = useAuth()
-    
-    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+    const tenantId = localStorage.getItem('tenant')
+    // const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
     const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
 
 
