@@ -233,7 +233,7 @@ const Parameter = () => {
       }
     } else {
       //cheeck if new name already exists
-      const itemExists = gridData.find((item: any) =>
+      const itemExists = gridData?.find((item: any) =>
         item.name === tempData.name &&
         item.code === tempData.code
       )

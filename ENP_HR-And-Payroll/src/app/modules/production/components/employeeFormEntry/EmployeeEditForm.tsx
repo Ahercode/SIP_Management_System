@@ -33,7 +33,7 @@ const EmployeeEditForm = () => {
   // const [activeTab, setActiveTab] = useState('tab1');
   const navigate = useNavigate();
   
-  const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
   
   const customOptions = allEmployees?.data?.map((item: any) => ({
     value: item.id,
@@ -119,11 +119,11 @@ console.log('defaultSelect',defaultSelect)
 
   }
   
-  const { data: allDepartments } = useQuery('departments', () => fetchDepartments(tenantId), { cacheTime: 5000 })
+  const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments/tenant/${tenantId}`), { cacheTime: 5000 })
   // const { data: allDivisions } = useQuery('divisions',()=> fetchDivisions(tenantId), { cacheTime: 5000 })
-  const { data: allCategories } = useQuery('categories', () => fetchCategories('Categories'), { cacheTime: 5000 })
-  const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument('paygroups'), { cacheTime: 5000 })
-  const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
+  const { data: allCategories } = useQuery('categories', () => fetchDocument(`Categories/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument(`JobTitles/tenant/${tenantId}`), { cacheTime: 5000 })
 
   
 

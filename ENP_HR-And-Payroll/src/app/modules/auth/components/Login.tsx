@@ -134,7 +134,7 @@ export function Login() {
         //  }else{
         //   setStatus("you don't have access to this application")
         //  }
-        saveTenant('test')
+        saveTenant('omnigroup')
 
         // check if user isAdmin
 

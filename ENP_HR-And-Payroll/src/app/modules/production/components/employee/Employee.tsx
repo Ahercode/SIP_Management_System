@@ -19,11 +19,11 @@ const Employee = () => {
   const tenantId = localStorage.getItem('tenant')
   console.log('tenantId: ', tenantId)
   const queryClient = useQueryClient()
-  const { data: allEmployee, isLoading: loading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
+  const { data: allEmployee, isLoading: loading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 5000 })
-  const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument('paygroups'), { cacheTime: 5000 })
-  const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
-  const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
+  const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument(`JobTitles/tenant/${tenantId}`), { cacheTime: 5000 })
+  // const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
   const [employeeData, setEmployeeData] = useState<any>({})
 
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)
@@ -344,9 +344,10 @@ const EmployeeProfile = (employee: any) => {
       <div className='d-flex display-direction-row align-items-center align-content-center'>
         <div>
           {
-            employee?.employee?.imageUrl !== null ?
-              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> :
-              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>
+            employee?.employee?.imageUrl === null || employee?.employee?.imageUrl ===""?
+            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> 
+             
           }
         </div>
         <div className='col px-4 align-items-center align-content-center'>
