@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import "./formStyle.css"
-import { Button, Divider, Space, Tabs, TabsProps, } from 'antd';
+import { Button, Divider, Space, Tabs, TabsProps, message, } from 'antd';
 import Select from 'react-select'
 import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -30,6 +30,7 @@ const EmployeeEditForm = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState('');
+  const [level , setLevel] = useState<any>()
   // const [activeTab, setActiveTab] = useState('tab1');
   const navigate = useNavigate();
   
@@ -42,7 +43,7 @@ const EmployeeEditForm = () => {
   // const [lineManagerId, setLineManagerId] = useState<any>(customOptions?.find((op: any) => parseInt(op.value)=== tempData?.lineManagerId));
   const[defaultSelect, setDefaultSelect] = useState<any>(null)
 
-console.log('defaultSelect',defaultSelect)
+// console.log('defaultSelect',defaultSelect)
   // const openStatus = () => {
   //   setIsStatusModalOpen(true)
   // }
@@ -264,12 +265,38 @@ console.log('defaultSelect',defaultSelect)
     }
   })
 
-  console.log('New', param.id);
+  // console.log('New', param.id);
 
 
-  const uRL = `${Api_Endpoint}/Employees/${param.id}`
+  // get the employee whoae id is equal the default select
+  const getEmployee = allEmployees?.data.find((item: any) => {
+
+    let newLevel = null
+    if(item.id === parseInt(defaultSelect?.value) ){
+      newLevel = item.currentLevel + 1
+      // return message.success(`${newLevel}`)
+      return setLevel(newLevel)
+    }
+    else{
+      return ""
+    }
+
+  })
+
+  console.log('getEmployee', getEmployee);
+
+  const uRL = `${Api_Endpoint}/Employees11/${param.id}`
   const OnSUbmitUpdate = handleSubmit(async () => {
     setLoading(true)
+    
+    // let newLevel = null
+    // if(item.id === parseInt(defaultSelect?.value) ){
+    //   newLevel = item.currentLevel + 1
+    //   return message.success(`${newLevel}`)
+    // }
+    // else{
+    //   return ""
+    // }
     const formData: any = new FormData();
     formData.append('id', parseInt(tempData.id))
     formData.append('employeeId', tempData.employeeId == null ? "" : tempData.employeeId)
@@ -294,6 +321,7 @@ console.log('defaultSelect',defaultSelect)
     formData.append('jobTitleId', tempData.jobTitleId == null ? "" : parseInt(tempData.jobTitleId))
     formData.append('employmentDate', tempData.employmentDate == null ? "" : tempData.employmentDate)
     formData.append('lineManagerId', defaultSelect== null ? "" : parseInt(defaultSelect?.value))
+    formData.append('currentLevel', level)
     formData.append('password', tempData.password)
     formData.append('username', tempData.username)
     formData.append('isAdmin', "no")
@@ -309,10 +337,18 @@ console.log('defaultSelect',defaultSelect)
     console.log(Object.fromEntries(formData))
 
     try {
-      const response = await axios.put(uRL, formData, config)
-      setSubmitLoading(false)
-      navigate('/employee', { replace: true })
-      return response.statusText
+      if(parseInt(tempData?.lineManagerId) !== parseInt(defaultSelect?.value)){
+
+
+
+        message.success('Good!!')
+        const response = await axios.put(uRL, formData, config)
+        setSubmitLoading(false)
+        navigate('/employee', { replace: true })
+        return response.statusText 
+      }else{
+        message.error('You can not assign an employee as his/her own line manager')
+      }
     } catch (error: any) {
       setSubmitLoading(false)
       return error.statusText

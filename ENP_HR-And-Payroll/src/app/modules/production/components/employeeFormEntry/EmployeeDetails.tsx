@@ -85,9 +85,18 @@ const EmplyeeDetails = ({employeeData}: any) => {
             <div className='badge badge-light-primary'>
               <span className='fs-4'>{employeeData?.employeeId}</span>
             </div>
+            <div style={{marginLeft:"10px"}} className='badge badge-light-info'>
+              {/* <span className='fs-4'>{employeeData?.employeeId}</span> */}
+               <span className='px-3  fs-4'>Level</span>
+              <div className='px-3 fs-4'>{!employeeData?.currentLevel ? `Unavailable` : employeeData?.currentLevel}</div>
+            </div>
           </div>
 
           <div className="d-flex row-auto align-items-center align-content-center mb-6">
+            {/* <div className=' d-flex px-4 row-auto align-items-center align-content-center '>
+              Level
+              <div className='px-3'>{!employeeData?.currentLevel ? `Unavailable` : employeeData?.currentLevel}</div>
+            </div> */}
             <div className=' d-flex px-4 row-auto align-items-center align-content-center text-gray-500'>
               <i className="bi bi-envelope"></i>
               <div className='px-3'>{!employeeData?.email ? `Unavailable` : employeeData?.email}</div>
@@ -96,6 +105,11 @@ const EmplyeeDetails = ({employeeData}: any) => {
               <i className="bi bi-telephone"></i>
               <div className='px-3'>{!employeeData?.phone ? `Unavailable` : employeeData?.phone}</div>
             </div>
+            {/* <div className=' d-flex row-auto align-items-center align-content-center text-gray-500'>
+              <i className="bi bi-telephone"></i>
+              Level
+              
+            </div> */}
           </div>
 
           <div className="d-flex px-4 row-auto align-items-center align-content-center ">
@@ -123,12 +137,12 @@ const EmplyeeDetails = ({employeeData}: any) => {
                 <div className='text-gray-500'>Department</div>
               </div>
             </div>
-            <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
+            {/* <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
               <div className='column-auto justify-content-start align-content-start'>
                 <div className='fs-5 fw-bold'>{`${!division ? 'Unavailable' : division}`}</div>
                 <div className='text-gray-500'>Division</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ const SetupComponent = (props: any) => {
     const [detailName, setDetailName] = useState('')
     const [objectivesId, setObjectivesId] = useState<any>()
 
-    const { data: componentData, isLoading: loading } = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}`), { cacheTime: 5000 })
+    const { data: componentData, isLoading: loading } = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}/tenant/${tenantId}`), { cacheTime: 5000 })
 
 
     const showModal = () => {
