@@ -30,7 +30,7 @@ const EmployeeEditForm = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState('');
-  const [level , setLevel] = useState<any>()
+  // const [level , setLevel] = useState<any>()
   // const [activeTab, setActiveTab] = useState('tab1');
   const navigate = useNavigate();
   
@@ -269,26 +269,32 @@ const EmployeeEditForm = () => {
 
 
   // get the employee whoae id is equal the default select
-  const getEmployee = allEmployees?.data.find((item: any) => {
+  
 
-    let newLevel = null
-    if(item.id === parseInt(defaultSelect?.value) ){
-      newLevel = item.currentLevel + 1
-      // return message.success(`${newLevel}`)
-      return setLevel(newLevel)
-    }
-    else{
-      return ""
-    }
+  // console.log('getEmployee', getEmployee);
 
-  })
-
-  console.log('getEmployee', getEmployee);
-
-  const uRL = `${Api_Endpoint}/Employees11/${param.id}`
+  const uRL = `${Api_Endpoint}/Employees/${param.id}`
   const OnSUbmitUpdate = handleSubmit(async () => {
     setLoading(true)
     
+
+    let newLevel = null
+    const  lineManger = allEmployees?.data.find((item: any) => {
+
+      if(item.id === parseInt(defaultSelect?.value) ){
+        if(item.currentLevel === null){
+        newLevel = null
+        }else{
+          newLevel = parseInt(item.currentLevel) + 1
+        }
+        // return message.success(`${newLevel}`)
+        return newLevel
+      }
+      else{
+        return ""
+      }
+  
+    })
     // let newLevel = null
     // if(item.id === parseInt(defaultSelect?.value) ){
     //   newLevel = item.currentLevel + 1
@@ -321,7 +327,7 @@ const EmployeeEditForm = () => {
     formData.append('jobTitleId', tempData.jobTitleId == null ? "" : parseInt(tempData.jobTitleId))
     formData.append('employmentDate', tempData.employmentDate == null ? "" : tempData.employmentDate)
     formData.append('lineManagerId', defaultSelect== null ? "" : parseInt(defaultSelect?.value))
-    formData.append('currentLevel', level)
+    formData.append('currentLevel', newLevel)
     formData.append('password', tempData.password)
     formData.append('username', tempData.username)
     formData.append('isAdmin', "no")

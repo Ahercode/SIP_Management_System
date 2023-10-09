@@ -87,7 +87,7 @@ const EmplyeeDetails = ({employeeData}: any) => {
             </div>
             <div style={{marginLeft:"10px"}} className='badge badge-light-info'>
               {/* <span className='fs-4'>{employeeData?.employeeId}</span> */}
-               <span className='px-3  fs-4'>Level</span>
+               <span className='px-3  fs-4'>Level: </span>
               <div className='px-3 fs-4'>{!employeeData?.currentLevel ? `Unavailable` : employeeData?.currentLevel}</div>
             </div>
           </div>
