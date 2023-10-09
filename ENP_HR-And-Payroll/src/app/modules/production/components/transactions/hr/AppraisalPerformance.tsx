@@ -180,9 +180,9 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Line Manager',
-      dataIndex: 'employeeId',
+      key: 'lineManagerId',
       render: (row: any) => {
-        return getSupervisorName(row)
+        return getLinemanager(row?.lineManagerId)
       },
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
@@ -274,6 +274,16 @@ const AppraisalPerformance = () => {
       return item.employeeId
     })?.includes(item.id)
   })
+
+
+  const getLinemanager = (id:any) => {
+    const emp = allEmployees?.data?.find((item: any) => {
+        return item.id === id
+    })
+    return emp?.firstName + " " + emp?.surname
+}
+
+console.log("notificationsGroupData", notificationsGroupData)
 
   // get supervisor name from organogram table
   const getSupervisorName = (employeeId: any) => {

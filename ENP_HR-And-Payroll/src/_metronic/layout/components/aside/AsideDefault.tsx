@@ -42,7 +42,7 @@ const AsideDefault: FC = () => {
                 className='h-55px logo'
                 src={toAbsoluteUrl('/media/logos/hr-payroll-Logo.png')}
               /> */}
-              <h3 style={{color: "#009EF7"}}>APPRAISAL SYSTEM</h3>
+              <h3 style={{color: "#009EF7"}}>OMNI PMS</h3>
           </Link>
         )}
         {aside.theme === 'light' && (

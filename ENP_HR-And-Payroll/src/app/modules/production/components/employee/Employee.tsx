@@ -1,5 +1,5 @@
 import { Button, Form, Input, Modal, Skeleton, Space, Table, message } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
@@ -10,6 +10,7 @@ import { EmplyeeDetails } from '../employeeFormEntry/EmployeeDetails'
 
 const Employee = () => {
   const [gridData, setGridData] = useState<any>([])
+  const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   let [filteredData] = useState([])
   const [form] = Form.useForm()
@@ -19,12 +20,13 @@ const Employee = () => {
   const tenantId = localStorage.getItem('tenant')
   console.log('tenantId: ', tenantId)
   const queryClient = useQueryClient()
-  const { data: allEmployee, isLoading: loading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allEmployee } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument(`JobTitles/tenant/${tenantId}`), { cacheTime: 5000 })
   // const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
   const [employeeData, setEmployeeData] = useState<any>({})
+  const [beforeSearch, setBeforeSearch] = useState([])
 
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)
 
@@ -147,7 +149,7 @@ const Employee = () => {
       },
     },
     {
-      title: 'Paygroup',
+      title: 'Employee Group',
       key: 'paygroupId',
       // width: 120,
       render: (row: any) => {
@@ -164,7 +166,7 @@ const Employee = () => {
       },
     },
     {
-      title: 'job Title',
+      title: 'Job Title',
       dataIndex: 'jobTitleId',
       key: 'jobTitle',
       // width: 140,
@@ -250,30 +252,61 @@ const Employee = () => {
     }
   });
 
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      const response = allEmployee?.data
+      setGridData(response)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const dataWithIndex = allEmployee?.data.map((item: any, index: any) => ({
     ...item,
     key: index,
   }))
 
-  const handleInputChange = (e: any) => {
-    setSearchText(e.target.value)
-    if (e.target.value === '') {
-      // loadData()
-    }
+  // const handleInputChange = (e: any) => {
+  //   setSearchText(e.target.value)
+  //   if (e.target.value === '') {
+  //     return dataWithIndex
+  //   }
+  // }
+
+  // const globalSearch = () => {
+  //   // @ts-ignore
+  //   filteredData = dataWithIndex.filter((value) => {
+  //     return (
+  //       value.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+  //       value.surname.toLowerCase().includes(searchText.toLowerCase()) ||
+  //       value.gender.toLowerCase().includes(searchText.toLowerCase()) ||
+  //       value.employeeId.toLowerCase().includes(searchText.toLowerCase())
+  //     )
+  //   })
+  //   setGridData(filteredData)
+  // }
+
+  useEffect(() => {
+    loadData()
+    setBeforeSearch(allEmployee?.data)
+  }, [allEmployee?.data])
+
+  const globalSearch = (searchValue: string) => {
+    const searchResult = allEmployee?.data?.filter((item: any) => {
+      return (
+        Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
+      )
+    })//search the grid data
+    setGridData(searchResult)
   }
 
-  const globalSearch = () => {
-    // @ts-ignore
-    filteredData = dataWithIndex.filter((value) => {
-      return (
-        value.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-        value.surname.toLowerCase().includes(searchText.toLowerCase()) ||
-        value.gender.toLowerCase().includes(searchText.toLowerCase()) ||
-        value.employeeId.toLowerCase().includes(searchText.toLowerCase())
-      )
-    })
-    setGridData(filteredData)
+  const handleInputChange = (e: any) => {
+    globalSearch(e.target.value)
+    if (e.target.value === '') {
+      setGridData(beforeSearch)
+    }
   }
 
   return (
@@ -293,12 +326,12 @@ const Employee = () => {
               onChange={handleInputChange}
               type='text'
               allowClear
-              value={searchText}
+              // value={searchText}
               size='large'
             />
-            <Button type='primary' onClick={globalSearch} size='large'>
+            {/* <Button type='primary' onClick={globalSearch} size='large'>
               Search
-            </Button>
+            </Button> */}
           </Space>
           <div className="card-toolbar">
             <Space style={{ marginBottom: 16 }}>
@@ -321,7 +354,7 @@ const Employee = () => {
         <div className='table-responsive'>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={dataWithIndex} scroll={{ x: 1300 }} />
+              <Table columns={columns} dataSource={gridData} scroll={{ x: 1300 }} />
           }
         </div>
       </KTCardBody>

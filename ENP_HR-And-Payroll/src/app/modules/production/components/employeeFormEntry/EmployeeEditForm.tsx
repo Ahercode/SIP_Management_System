@@ -34,6 +34,12 @@ const EmployeeEditForm = () => {
   // const [activeTab, setActiveTab] = useState('tab1');
   const navigate = useNavigate();
   
+
+  // michael@omni
+  // michael@omnigroupafrica.com
+  // francis@omni
+  // francis.afrane@omnigroupafrica.com
+
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
   
   const customOptions = allEmployees?.data?.map((item: any) => ({
@@ -344,10 +350,7 @@ const EmployeeEditForm = () => {
 
     try {
       if(parseInt(tempData?.lineManagerId) !== parseInt(defaultSelect?.value)){
-
-
-
-        message.success('Good!!')
+        message.success('Employee updated successfully')
         const response = await axios.put(uRL, formData, config)
         setSubmitLoading(false)
         navigate('/employee', { replace: true })
