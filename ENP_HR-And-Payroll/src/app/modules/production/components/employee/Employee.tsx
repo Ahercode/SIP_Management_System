@@ -244,13 +244,13 @@ const Employee = () => {
   ]
   var out_data: any = {};
 
-  gridData.forEach(function (row: any) {
-    if (out_data[row.departmentId]) {
-      out_data[row.departmentId].push(row);
-    } else {
-      out_data[row.departmentId] = [row];
-    }
-  });
+  // gridData.forEach(function (row: any) {
+  //   if (out_data[row.departmentId]) {
+  //     out_data[row.departmentId].push(row);
+  //   } else {
+  //     out_data[row.departmentId] = [row];
+  //   }
+  // });
 
   const loadData = async () => {
     setLoading(true)
@@ -268,25 +268,7 @@ const Employee = () => {
     key: index,
   }))
 
-  // const handleInputChange = (e: any) => {
-  //   setSearchText(e.target.value)
-  //   if (e.target.value === '') {
-  //     return dataWithIndex
-  //   }
-  // }
 
-  // const globalSearch = () => {
-  //   // @ts-ignore
-  //   filteredData = dataWithIndex.filter((value) => {
-  //     return (
-  //       value.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-  //       value.surname.toLowerCase().includes(searchText.toLowerCase()) ||
-  //       value.gender.toLowerCase().includes(searchText.toLowerCase()) ||
-  //       value.employeeId.toLowerCase().includes(searchText.toLowerCase())
-  //     )
-  //   })
-  //   setGridData(filteredData)
-  // }
 
   useEffect(() => {
     loadData()

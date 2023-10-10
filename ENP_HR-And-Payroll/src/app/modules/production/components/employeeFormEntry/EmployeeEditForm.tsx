@@ -349,15 +349,15 @@ const EmployeeEditForm = () => {
     console.log(Object.fromEntries(formData))
 
     try {
-      if(parseInt(tempData?.lineManagerId) !== parseInt(defaultSelect?.value)){
+      // if(parseInt(tempData?.lineManagerId) === parseInt(defaultSelect?.value)){
+      //   message.error('You can not assign an employee as his/her own line manager')
+      // }else{
         message.success('Employee updated successfully')
         const response = await axios.put(uRL, formData, config)
         setSubmitLoading(false)
         navigate('/employee', { replace: true })
         return response.statusText 
-      }else{
-        message.error('You can not assign an employee as his/her own line manager')
-      }
+      // }
     } catch (error: any) {
       setSubmitLoading(false)
       return error.statusText
