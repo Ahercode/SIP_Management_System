@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { FC } from 'react'
 import { useAuth } from '../../../../app/modules/auth'
-import { KTSVG } from '../../../helpers'
+import { KTSVG, toAbsoluteUrl } from '../../../helpers'
 import {
   HeaderUserMenu,
 } from '../../../partials'
@@ -17,8 +17,10 @@ const Topbar: FC = () => {
   const tenantId = localStorage.getItem('tenant')
   return (
     <div className='d-flex align-items-stretch flex-shrink-0'>
-      <div style={{paddingRight: "10px"}} className='d-flex align-items-center fs-5'>
-          Company: <strong style={{borderRight:"1px solid grey", paddingLeft: "8px",paddingRight:"25px"}}>{ tenantId?.toLocaleUpperCase()}</strong>
+      <div style={{paddingRight: "30px"}} className='d-flex align-items-center fs-5'>
+          {/* Company:  */}
+          <img style={{width: "120px"}} src={toAbsoluteUrl('/media/logos/OmniGroupLogo.png')} alt='Omni Group Logo' /> 
+          {/* <strong style={{borderRight:"1px solid grey", paddingLeft: "8px",paddingRight:"25px"}}>{ tenantId?.toLocaleUpperCase()}</strong> */}
       </div>
       
       <div
@@ -36,8 +38,8 @@ const Topbar: FC = () => {
         >
           {
             currentUser?.imageUrl === null || currentUser?.imageUrl ===""?
-            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
-              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
+            <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+              <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
           }
               {/* <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img> */}
             

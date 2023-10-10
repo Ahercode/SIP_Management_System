@@ -77,7 +77,7 @@ const EmployeeObjectiveEntry = () => {
   const columns: any = [
 
     {
-      title: 'Name',
+      title: 'Objective',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -145,7 +145,7 @@ const EmployeeObjectiveEntry = () => {
 
 
   const weightSum = (itemToPost: any) => {
-    return appraisalobjectives?.data.filter((item: any) => item.parameterId === itemToPost.parameterId)
+    return appraisalobjectives?.data.filter((item: any) => item.parameterId === itemToPost.parameterId && item.employeeId === currentUser?.id)
       .map((item: any) => item.weight)
       .reduce((a: any, b: any) => a + b, 0)
   };
@@ -259,9 +259,9 @@ const EmployeeObjectiveEntry = () => {
 
     const sums = weightSum(itemToPost.data)
 
-
-    if (sums > 0) {
-      if (sums + itemToPost.data.weight > pathData?.weight) {
+    if (sums > 0 || itemToPost.data.weight > 0) {
+      if (parseInt(sums + itemToPost.data.weight) > parseInt(pathData?.weight) || itemToPost.data.weight > pathData?.weight) {
+        console.log("what I got: ",sums + itemToPost.data.weight)
         return message.error(`Total weight for ${pathData?.name} cannot be greater than ${pathData?.weight}`);
       } else {
         console.log('item to post: ', itemToPost)
@@ -269,7 +269,8 @@ const EmployeeObjectiveEntry = () => {
       }
     } else {
       console.log('item to post: ', itemToPost)
-      postData(itemToPost)
+      message.error(`Total weight for ${pathData?.name} is less than 0!`);
+      // postData(itemToPost)
     }
   })
 
@@ -366,7 +367,7 @@ const EmployeeObjectiveEntry = () => {
               <hr></hr>
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Objective </label>
                   <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
                 <div className=' mb-7'>

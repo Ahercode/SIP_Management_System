@@ -81,7 +81,7 @@ const EmployeeDeliverableEntry = () => {
       },
     },
     {
-      title: 'Description',
+      title: 'Deliverable',
       dataIndex: 'description',
       sorter: (a: any, b: any) => {
         if (a.description > b.description) {
@@ -183,7 +183,7 @@ const EmployeeDeliverableEntry = () => {
   }
 
   const weightSum = (itemToPost: any) => {
-    return allObjectiveDeliverables?.data.filter((item: any) => item.objectiveId === itemToPost.objectiveId)
+    return allObjectiveDeliverables?.data.filter((item: any) => item.objectiveId === itemToPost.objectiveId )
       .map((item: any) => item.subWeight)
       .reduce((a: any, b: any) => a + b, 0)
   };
@@ -295,16 +295,17 @@ const EmployeeDeliverableEntry = () => {
 
     const sums = weightSum(itemToPost.data)
 
-    if (sums > 0) {
-      if (sums + itemToPost.data.subWeight > 100) {
+    if (sums > 0 || itemToPost?.data?.subWeight > 0) {
+      console.log('sums: ', sums)
+      if (parseInt(sums + itemToPost.data.subWeight) > 100 || itemToPost.data.subWeight > 100) {
         return message.error(`Total weight for ${pathData?.name} cannot exceed 100`);
       } else {
         // message.success('Adding item...')
         postData(itemToPost)
       }
     } else {
-      // message.error(`Total weight for ${pathData?.name} is less than 0!`);
-      postData(itemToPost)
+      message.error(`Total weight for ${pathData?.name} is less than 0!`);
+      // postData(itemToPost)
     }
   })
 
@@ -399,7 +400,7 @@ const EmployeeDeliverableEntry = () => {
                     className="form-control form-control-solid" />
                 </div>
                 <div className='col-8 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Deliverable</label>
                   <input
                     {...register("description")}
                     type='text'

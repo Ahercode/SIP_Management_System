@@ -67,7 +67,6 @@ const Employee = () => {
   }
 
 
-
   const columns: any = [
     {
       title: 'Profile',
