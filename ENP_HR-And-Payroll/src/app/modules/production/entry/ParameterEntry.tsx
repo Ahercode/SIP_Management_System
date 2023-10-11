@@ -33,7 +33,7 @@ const ParameterEntry = () => {
       },
     },
     {
-      title: 'Name',
+      title: 'Main Parameter',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {

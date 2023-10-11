@@ -68,7 +68,7 @@ const EmployeeDeliverableEntry = () => {
   const columns: any = [
 
     {
-      title: 'Name',
+      title: 'Objective',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -391,7 +391,7 @@ const EmployeeDeliverableEntry = () => {
             >
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                 <div className='col-4 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Objective</label>
                   <input
                     {...register("name")}
                     type='text'
