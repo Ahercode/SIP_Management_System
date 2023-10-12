@@ -10,27 +10,21 @@ const NotificationsBoard = () => {
 
     const { currentUser } = useAuth()
     const tenantId = localStorage.getItem('tenant')
-    // const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
-    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
-    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
+    
+    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
+    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 100000 })
 
 
-    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    // const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === '1')
+    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
+   
     const [filteredObjectives, setFilteredObjectives] = useState<any>([])
     const [employeeWhoSubmitted, setEmployeeWhoSubmitted] = useState<any>([])
-
-    // check get all employees with line manager id = current user id
-    // console.log('currentUser: ', currentUser?.id)
     const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
-    // const data = employeeObjectives?.data?.filter((item: any) => allTeamMembers?.map((item: any) => (item.id)?.toString()).includes(item.employeeId))
-    // console.log('allTeamMembers: ', allTeamMembers)
-    // console.log('data: ', data)
-    // console.log('employeeObjectives: ', employeeObjectives?.data)
+
 
     // get all objectives with submitted status
     const allSubmittedObjectives = employeeObjectives?.data?.map((item: any) => {
-        if(item?.status === 'Submitted'){
+        if(item?.status === 'submitted'){
 
             return item?.employeeId
         }
@@ -61,7 +55,6 @@ const NotificationsBoard = () => {
         loadData()
     }, [employeeObjectives?.data, allEmployees?.data])
 
-
     const onTabsChange = (key: string) => {
         console.log(key);
     };
@@ -90,7 +83,7 @@ const NotificationsBoard = () => {
             </>,
             children: (
                 <>
-                    <NotificationsComponent loading={objectivesLoading} filter={'Submitted'} employeeWhoSubmitted={employeeWhoSubmitted} />
+                    <NotificationsComponent loading={objectivesLoading} filter={'submitted'} employeeWhoSubmitted={employeeWhoSubmitted} />
                 </>
             ),
         },

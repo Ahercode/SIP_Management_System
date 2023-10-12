@@ -1,5 +1,5 @@
 import { Button, Modal, Skeleton, Table, Tag } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
 import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData } from "../ComponentsFactory"
@@ -99,6 +99,10 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             ),
         },
     ]
+    useEffect(() => {
+        console.log('objectivesData: ', objectivesData)
+    }
+        , [objectivesData, filteredByLineManger])
 
     return (
         <>
