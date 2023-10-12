@@ -85,7 +85,7 @@ const EmployeesDetail = ({employeeData, title}: any) => {
 
   const columns = [
     {
-      title: 'Parameter',
+      title: 'Parametres',
       dataIndex: 'parameter',
       key: 'parameter',
     },
@@ -95,7 +95,7 @@ const EmployeesDetail = ({employeeData, title}: any) => {
       key: 'score',
     },
     {
-      title: 'Comment',
+      title: 'Commentaires',
       dataIndex: 'comment',
       key: 'comment',
     }
@@ -153,25 +153,25 @@ const EmployeesDetail = ({employeeData, title}: any) => {
                   <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
                     <div className='column-auto justify-content-start align-content-start'>
                       <div className='fs-5 fw-bold'>{`${!jobTitle ? 'Unavailable' : jobTitle}`}</div>
-                      <div className='text-gray-500'>Job Title</div>
+                      <div className='text-gray-500'>Titre</div>
                     </div>
                   </div>
                   <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
                     <div className='column-auto justify-content-start align-content-start'>
                       <div className='fs-5 fw-bold'>{`${!employeeGroup ? 'Unavailable' : employeeGroup}`}</div>
-                      <div className='text-gray-500'>Employee group</div>
+                      <div className='text-gray-500'>Groupe</div>
                     </div>
                   </div>
                   <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
                     <div className='column-auto justify-content-start align-content-start'>
                       <div className='fs-5 fw-bold'>{`${!category ? 'Unavailable' : category}`}</div>
-                      <div className='text-gray-500'>Category</div>
+                      <div className='text-gray-500'>Categorie</div>
                     </div>
                   </div>
                   <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
                     <div className='column-auto justify-content-start align-content-start'>
                       <div className='fs-5 fw-bold'>{`${!department ? 'Unavailable' : department}`}</div>
-                      <div className='text-gray-500'>Department</div>
+                      <div className='text-gray-500'>Departement</div>
                     </div>
                   </div>
                   <div className='btn btn-outline btn-outline-dashed btn-outline-default me-3 mb-2 align-content-start align-item-start'>
@@ -185,7 +185,7 @@ const EmployeesDetail = ({employeeData, title}: any) => {
             </div>
             <div className='mt-6'>
               {
-                title === 'Employee' ?
+                title === 'Employé' ?
                 <Tabs defaultActiveKey="1"
                 type="line"
                 items={tabItems}

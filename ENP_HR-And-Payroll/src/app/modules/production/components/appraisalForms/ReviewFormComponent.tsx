@@ -112,7 +112,7 @@ const AppraisalFormDeliverableComponent = ({ appraisalObjectivesData }: any) => 
 
     const deliverableColumns = [
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
         },
         {
@@ -120,11 +120,11 @@ const AppraisalFormDeliverableComponent = ({ appraisalObjectivesData }: any) => 
             dataIndex: 'description',
         },
         {
-            title: 'Sub weight',
+            title: 'Sous Poids',
             dataIndex: 'subWeight',
         },
         {
-            title: 'Unit of measure',
+            title: 'Unité de mesure',
             dataIndex: 'unitOfMeasure',
         },
         {
@@ -132,7 +132,7 @@ const AppraisalFormDeliverableComponent = ({ appraisalObjectivesData }: any) => 
             dataIndex: 'target',
         },
         {
-            title: 'Actual',
+            title: 'Actuel',
             width: 200,
             render: (text: any, record: any) => (
                 <div className="d-flex align-items-center">

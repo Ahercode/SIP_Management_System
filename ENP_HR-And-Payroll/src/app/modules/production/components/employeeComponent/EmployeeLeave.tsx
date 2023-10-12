@@ -19,7 +19,7 @@ const EmployeeLeave = () => {
           },
         },
         {
-          title: 'Leave Type',
+          title: 'Type de Congé',
           dataIndex: 'name',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {

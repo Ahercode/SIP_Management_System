@@ -64,7 +64,7 @@ const ServiceCost = () => {
 
 
     {
-      title: 'Name',
+      title: 'Nom',
       key: 'medicalServiceId',
       render: (row: any) => {
         return getServiceName(row.medicalServiceId)
@@ -80,7 +80,7 @@ const ServiceCost = () => {
       },
     },
     {
-      title: 'Cost',
+      title: 'Cout',
       dataIndex: 'cost',
       sorter: (a: any, b: any) => {
         if (a.cost > b.cost) {
@@ -319,7 +319,7 @@ const ServiceCost = () => {
                   </select>
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Cost</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Cout</label>
                   <input
                     {...register("cost")}
                     type="number"

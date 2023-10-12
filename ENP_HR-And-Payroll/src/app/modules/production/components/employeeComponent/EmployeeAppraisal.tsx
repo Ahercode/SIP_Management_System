@@ -19,7 +19,7 @@ const EmployeeAppraisal = () => {
         },
         {
           title: 'Appraisal Type',
-          dataIndex: 'name',
+          dataIndex: 'Nom',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {
               return 1

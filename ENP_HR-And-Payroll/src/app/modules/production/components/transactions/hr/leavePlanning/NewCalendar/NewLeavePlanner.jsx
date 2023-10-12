@@ -138,7 +138,7 @@ const { mutate: postData, isLoading: postLoading } = useMutation(postItem
       />
       
       <Modal
-            title='New Leave Schedule'
+            title='Nouveau Calendrier de congés'
             open={isModalOpen}
             onCancel={handleCancel}
             closable={true}
@@ -184,11 +184,11 @@ const { mutate: postData, isLoading: postLoading } = useMutation(postItem
                 </div>
                 <div className="row">
                   <div className='col-md-6 mb-7'>
-                    <label className="form-label">Start</label>
+                    <label className="form-label">Début</label>
                     <input type="date" {...register("fromDate")} className="form-control form-control-solid" />
                   </div>
                   <div className='col-md-6 mb-7'>
-                    <label className="form-label">End</label>
+                    <label className="form-label">Fin</label>
                     <input type="date" {...register("toDate")} className="form-control form-control-solid" />
                   </div>
                 </div>

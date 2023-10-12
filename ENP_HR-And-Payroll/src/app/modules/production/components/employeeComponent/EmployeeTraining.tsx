@@ -18,7 +18,7 @@ const EmployeeTraining = () => {
           },
         },
         {
-          title: 'Traning Type',
+          title: 'Type Formation',
           dataIndex: 'name',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {

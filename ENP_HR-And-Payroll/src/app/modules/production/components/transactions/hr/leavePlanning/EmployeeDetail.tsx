@@ -87,7 +87,7 @@ const EmployeeDetail = () =>{
     const familyColumns: any = [
 
         {
-            title: 'National ID',
+            title: 'Numero ID',
             dataIndex: 'code',
             sorter: (a: any, b: any) => {
                 if (a.code > b.code) {
@@ -100,7 +100,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Full Name',
+            title: 'Nom et prénoms',
             dataIndex: 'code',
             sorter: (a: any, b: any) => {
                 if (a.code > b.code) {
@@ -113,7 +113,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Relationship',
+            title: 'Relation',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -126,7 +126,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Date of Birth',
+            title: 'Date de Naissance',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -139,7 +139,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Phone Number',
+            title: 'Num Téléphone',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -152,7 +152,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Address',
+            title: 'Addresse',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -198,7 +198,7 @@ const EmployeeDetail = () =>{
     const medicalColumns: any = [
 
         {
-            title: 'Medical Type',
+            title: 'Type médical',
             dataIndex: 'code',
             sorter: (a: any, b: any) => {
                 if (a.code > b.code) {
@@ -224,7 +224,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Comment',
+            title: 'Commentaires',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -270,7 +270,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -303,7 +303,7 @@ const EmployeeDetail = () =>{
     const compensationColumns: any = [
 
         {
-            title: 'Period',
+            title: 'Periode',
             dataIndex: 'code',
             sorter: (a: any, b: any) => {
                 if (a.code > b.code) {
@@ -363,7 +363,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -410,7 +410,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -457,7 +457,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -504,7 +504,7 @@ const EmployeeDetail = () =>{
             },
         },
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
             sorter: (a: any, b: any) => {
                 if (a.name > b.name) {
@@ -619,41 +619,41 @@ const EmployeeDetail = () =>{
                             </div>
                             <div className='row mb-0'>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className="required form-label">First Name</label>
+                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Prénoms</label>
                                     <input type="text" name="fname"  readOnly className="form-control form-control-solid" />
                                 </div>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Surname</label>
+                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Nom</label>
                                     <input type="text" name="mname"  readOnly className="form-control form-control-solid" />
                                 </div>
                             </div>
                             <div className='row mb-0'>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Other Name</label>
+                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Autre nom</label>
                                     <input type="text" name="lname" readOnly className="form-control form-control-solid" />
                                 </div>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Date of Birth</label>
+                                    <label htmlFor="exampleFormControlInput1" className="required form-label">Date de Naissance</label>
                                     <input type="date" name="dob" readOnly className="form-control form-control-solid" />
                                 </div>
                             </div>
                             <div className='row mb-0'>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
+                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Genre</label>
                                     <input type="text" name="gender"  readOnly className="form-control form-control-solid" />
                                 </div>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
+                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Situation Matrimoniale</label>
                                     <input type="text" name="marital" readOnly className="form-control form-control-solid" />
                                 </div>
                             </div>
                             <div className='row mb-0'>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Nationality</label>
+                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Nationalité</label>
                                     <input type="text" name="Nationality" readOnly className="form-control form-control-solid" />
                                 </div>
                                 <div className='col-6 mb-7'>
-                                    <label htmlFor="exampleFormControlInput1" className=" form-label">National ID</label>
+                                    <label htmlFor="exampleFormControlInput1" className=" form-label">Numero ID</label>
                                     <input type="text" name="Nationality" readOnly className="form-control form-control-solid" />
                                 </div>
                             </div>

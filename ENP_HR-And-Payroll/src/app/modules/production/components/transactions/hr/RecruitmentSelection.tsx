@@ -175,7 +175,7 @@ const onRadio4Change = (e: RadioChangeEvent) => {
 
   const columns: any = [
     {
-      title: 'First Name',
+      title: 'Prénoms',
       dataIndex: 'firstName',
       sorter: (a: any, b: any) => {
         if (a.firstName > b.firstName) {
@@ -188,7 +188,7 @@ const onRadio4Change = (e: RadioChangeEvent) => {
       },
     },
     {
-      title: 'Last Name',
+      title: 'Nom',
       dataIndex: 'lastName',
       sorter: (a: any, b: any) => {
         if (a.lastName > b.lastName) {
@@ -201,7 +201,7 @@ const onRadio4Change = (e: RadioChangeEvent) => {
       },
     },
     {
-      title: 'DOB',
+      title: 'Date de Naissance',
       dataIndex: 'dob',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -214,7 +214,7 @@ const onRadio4Change = (e: RadioChangeEvent) => {
       },
     },
     {
-      title: 'Gender',
+      title: 'Genre',
       dataIndex: 'gender',
       sorter: (a: any, b: any) => {
         if (a.gender > b.gender) {
@@ -227,7 +227,7 @@ const onRadio4Change = (e: RadioChangeEvent) => {
       },
     },
     {
-      title: 'Phone Number',
+      title: 'Num Téléphone',
       dataIndex: 'phone',
       sorter: (a: any, b: any) => {
         if (a.phone > b.phone) {
@@ -327,14 +327,14 @@ const onRadio4Change = (e: RadioChangeEvent) => {
     messageApi.open({
       type: 'warning',
       style:{fontSize:"18px"},
-      content: 'Sorry reference already exist',
+      content: 'Désolé la référence existe deja ',
     });
   };
   const success = () => {
     messageApi.open({
       type: 'success',
       style:{fontSize:"20px"},
-      content: 'Submitted successfully',
+      content: 'Soumis avec succès',
     });
   };
 
@@ -427,7 +427,7 @@ const OnSUbmit = handleSubmit(async (values) => {
             selectedValue==="Select"?
             <button type='button' className='btn btn-info me-3' onClick={showRefModal}>
               <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-              Add New Opening
+              Ajouter Nouveau
             </button>:
             ""
           }
@@ -498,33 +498,33 @@ const OnSUbmit = handleSubmit(async (values) => {
             <hr></hr>
             <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
               <div className='col-6 mb-3'>
-                <label htmlFor="exampleFormControlInput1" className="form-label">First Name</label>
+                <label htmlFor="exampleFormControlInput1" className="form-label">Prénoms</label>
                 <input type="text" {...register("firstName")} className="form-control form-control-solid" />
               </div>
               <div className='col-6 mb-3'>
-                <label htmlFor="exampleFormControlInput1" className="form-label">Last Name</label>
+                <label htmlFor="exampleFormControlInput1" className="form-label">Nom</label>
                 <input type="text" {...register("lastName")} className="form-control form-control-solid" />
               </div>
             </div>
             <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
               <div className='col-6 mb-3'>
-                <label htmlFor="exampleFormControlInput1" className="form-label">DOB</label>
+                <label htmlFor="exampleFormControlInput1" className="form-label">Date de Naissance</label>
                 <input type="date" {...register("dob")} className="form-control form-control-solid" />
               </div>
               <div className='col-6 mb-3'>
-                <label htmlFor="exampleFormControlInput1" className="form-label">Gender</label>
+                <label htmlFor="exampleFormControlInput1" className="form-label">Genre</label>
                 {/* <input type="phone" {...register("gender")} className="form-control form-control-solid" />
                  */}
                 <select value={selectedGen} onChange={(e) => setSelectedGen(e.target.value)} className="form-select form-select-solid"  aria-label="Select example">
                 <option value="">select</option>
-                <option value="MALE">MALE</option>
-                <option value="FEMALE">FEMALE</option>                
+                <option value="MALE">MASCULIN</option>
+                <option value="FEMALE">FEMININ</option>                
               </select>
               </div>
             </div>
             <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
               <div className='col-6 mb-3'>
-                <label htmlFor="exampleFormControlInput1" className="form-label">Phone Number</label>
+                <label htmlFor="exampleFormControlInput1" className="form-label">Num Téléphone</label>
                 <input type="text" {...register("phone")} className="form-control form-control-solid" />
               </div>
               <div className='col-6 mb-3'>
@@ -551,7 +551,7 @@ const OnSUbmit = handleSubmit(async (values) => {
 
           {/* shortlist form modal*/}
           <Modal
-            title='Short List'
+            title='Pré-sélectionné'
             open={isShortModalOpen}
             onCancel={handleShortCancel}
             closable={true}
@@ -577,27 +577,27 @@ const OnSUbmit = handleSubmit(async (values) => {
               <hr></hr>
               <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                 <div className='col-6 mb-3'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">First Name</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Prénoms</label>
                   <input type="text" name="code" value={employeeRecord?.firstName} className="form-control form-control-solid" />
                 </div>
                 <div className='col-6 mb-3'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Last Name</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Nom</label>
                   <input type="text" name="name" readOnly value={employeeRecord?.lastName} className="form-control form-control-solid" />
                 </div>
               </div>
               <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                 <div className='col-6 mb-3'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">DOB</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Date de Naissance</label>
                   <input type="text" name="code" readOnly value={employeeRecord?.dob} className="form-control form-control-solid" />
                 </div>
                 <div className='col-6 mb-3'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Genre</label>
                   <input type="text" name="name" readOnly value={employeeRecord?.gender} className="form-control form-control-solid" />
                 </div>
               </div>
               <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                 <div className='col-6 mb-3'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Phone Number</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Num Téléphone</label>
                   <input type="phone" name="code" readOnly value={employeeRecord?.phone} className="form-control form-control-solid" />
                 </div>
                 <div className='col-6 mb-3'>
@@ -660,7 +660,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                   {activeTab === "tab2" && 
                   <div>
                     <div className='col-12 mb-3'>
-                    <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Work skills score</label>
+                    <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Score de compétences professionnelles</label>
                     <Radio.Group onChange={onRadio1Change} value={radio1Value}>
                       <Radio value={1}>1</Radio>
                       <Radio value={2}>2</Radio>
@@ -675,7 +675,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                   {activeTab === "tab3" && 
                   <div>
                     <div className='col-12 mb-3'>
-                      <label style={{ padding: "0px 36px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Experiences score</label>
+                      <label style={{ padding: "0px 36px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Score des expériences</label>
                       <Radio.Group onChange={onRadio2Change} value={radio2Value}>
                         <Radio value={1}>1</Radio>
                         <Radio value={2}>2</Radio>
@@ -691,7 +691,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                   {activeTab === "tab4" && 
                   <div>
                     <div className='col-12 mb-3'>
-                      <label style={{ padding: "0px 48px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Reference score</label>
+                      <label style={{ padding: "0px 48px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Note de référence</label>
                       <Radio.Group onChange={onRadio3Change} value={radio3Value}>
                         <Radio value={1}>1</Radio>
                         <Radio value={2}>2</Radio>
@@ -705,7 +705,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                   {activeTab === "tab5" && 
                   <div>
                     <div className='col-12 mb-3'>
-                      <label style={{ padding: "0px 39px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Social skills score</label>
+                      <label style={{ padding: "0px 39px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Score de compétences sociales</label>
                       <Radio.Group onChange={onRadio4Change} value={radio4Value}>
                         <Radio value={1}>1</Radio>
                         <Radio value={2}>2</Radio>
@@ -724,7 +724,7 @@ const OnSUbmit = handleSubmit(async (values) => {
       </KTCardBody>
       }
       <Modal
-          title='Add New Opening'
+          title='Ajouter Nouveau'
           open={isRefModalOpen}
           onCancel={handleRefCancel}
           closable={true}
@@ -761,18 +761,18 @@ const OnSUbmit = handleSubmit(async (values) => {
               </div>
               <div style={{ padding: "20px 0px 0 0px" }} className='col-6 row mb-0'>
                 <div className='col-6 mb-3'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Start date</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Date de début</label>
                   <input type="date" {...register("startDate")} className="form-control form-control-solid" />
                 </div>
 
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">End date</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Date de fin</label>
                   <input type="date" {...register("endDate")} className="form-control form-control-solid" />
                 </div>
               </div>
               <div style={{ padding: "20px 20px 0 20px" }} className='col-6 row mb-0'>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Paygroup</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Groupe de paie</label>
                   <select className="form-select form-select-solid" {...register("paygroupId")} aria-label="Select example">
                     <option> Select</option>
                     <option> N/A</option>
@@ -782,7 +782,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                   </select>
                 </div>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Catégorie</label>
                   <select className="form-select form-select-solid" {...register("categoryId")} aria-label="Select example">
                     <option> Select</option>
                     <option> N/A</option>
@@ -794,7 +794,7 @@ const OnSUbmit = handleSubmit(async (values) => {
               </div>
               <div style={{ padding: "20px 0px 0 0px" }} className='col-6 row mb-0'>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Titre</label>
                   <select className="form-select form-select-solid" {...register("jobTitleId")} aria-label="Select example">
                     <option> Select</option>
                     <option> N/A</option>
@@ -805,7 +805,7 @@ const OnSUbmit = handleSubmit(async (values) => {
                   </select>
                 </div>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className=" form-label">Unit</label>
+                  <label htmlFor="exampleFormControlInput1" className=" form-label">Unité</label>
                   <select className="form-select form-select-solid" {...register("unitId")} aria-label="Select example">
                     <option> Select</option>
                     <option> N/A</option>

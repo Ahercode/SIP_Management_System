@@ -62,7 +62,7 @@ const GradeLeaves = () => {
   const columns: any = [
 
     {
-      title: 'Leave',
+      title: 'Congé',
       key: 'leaveId',
       render: (row: any) => {
         return getLeaveName(row.leaveId)
@@ -78,7 +78,7 @@ const GradeLeaves = () => {
       },
     },
     {
-      title: 'Number of Days',
+      title: 'Nombre de jours',
       dataIndex: 'numberOfDays',
       sorter: (a: any, b: any) => {
         if (a.numberOfDays > b.numberOfDays) {

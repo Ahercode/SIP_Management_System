@@ -2,7 +2,7 @@ import { SetupComponent } from '../CommonSetupComponent'
 
 const Leaves = () => {
   const data = {
-    title: 'Leave',
+    title: 'Congé',
     url: 'Leaves',
    }
   return (

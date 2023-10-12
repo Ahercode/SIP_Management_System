@@ -81,7 +81,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
 
   const columns: any = !showDeliverablesEntry ? [
     {
-      title: 'Name',
+      title: 'Nom',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -107,7 +107,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
     //   },
     // },
     {
-      title: 'Weight(%)',
+      title: 'Poids(%)',
       dataIndex: 'weight',
       sorter: (a: any, b: any) => {
         if (a.status > b.status) {
@@ -141,7 +141,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
   ] :
     [
       {
-        title: 'Name',
+        title: 'Nom',
         dataIndex: 'name',
         sorter: (a: any, b: any) => {
           if (a.name > b.name) {
@@ -167,7 +167,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
         },
       },
       {
-        title: 'Sub Weight(%)',
+        title: 'Sous Poids(%)',
         dataIndex: 'subWeight',
         sorter: (a: any, b: any) => {
           if (a.status > b.status) {
@@ -180,7 +180,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
         },
       },
       {
-        title: 'Unit of Measure',
+        title: 'Unité de mesure',
         dataIndex: 'unitOfMeasure',
         sorter: (a: any, b: any) => {
           if (a.status > b.status) {
@@ -628,7 +628,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
                 !showDeliverablesEntry ?
                   <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                     <div className='mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Nom</label>
                       <input
                         {...register("name")}
                         defaultValue={isUpdateModalOpen === true ? tempData.name : null}
@@ -657,7 +657,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
                   <>
                     <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                       <div className='col-4 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Nom</label>
                         <input
                           {...register("name")}
                           defaultValue={isUpdateModalOpen === true ? tempData.name : null}
@@ -675,7 +675,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
                     </div>
                     <div style={{ padding: "0px 20px 20px 20px" }} className='row mb-0 '>
                       <div className='col-4 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Unit of measure</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Unité de mesure</label>
                         <input
                           {...register("unitOfMeasure")}
                           defaultValue={isUpdateModalOpen === true ? tempData.unitOfMeasure : null}
@@ -691,7 +691,7 @@ function AppraisalObjectivesComponent({ parameterId }: any) {
                           className="form-control form-control-solid" />
                       </div>
                       <div className='col-4 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Sub Weight</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Sous Poids</label>
                         <input
                           {...register("subWeight")}
                           type='number' min='0'

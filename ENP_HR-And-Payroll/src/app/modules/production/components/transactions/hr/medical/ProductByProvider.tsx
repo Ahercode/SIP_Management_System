@@ -102,7 +102,7 @@ const ProductByProvider = () => {
             // dataSource={dataByProvider}
             />
             <Modal
-                title='Product list Test'
+                title='Liste de Produit  Test'
                 open={isProductModalOpen}
                 onCancel={handleProductCancel}
                 closable={true}

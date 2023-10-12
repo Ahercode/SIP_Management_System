@@ -43,10 +43,10 @@ const ObjectivesForm = () => {
                 <Divider className="mb-3 mt-0" />
                 <div className='d-flex row-auto mb-3'>
                     <div className='col-4 me-5'>
-                        <h5 style={{ color: "GrayText" }}>EmployeeId: <span style={{ color: "black" }}>{''}</span></h5>
+                        <h5 style={{ color: "GrayText" }}>IDEmployee: <span style={{ color: "black" }}>{''}</span></h5>
                     </div>
                     <div className='col-4 me-5'>
-                        <h5 style={{ color: "GrayText" }}>Department: <span style={{ color: "black" }}>{''}</span></h5>
+                        <h5 style={{ color: "GrayText" }}>Departement: <span style={{ color: "black" }}>{''}</span></h5>
                     </div>
                     <div className='col-4 me-5'>
                         <h5 style={{ color: "GrayText" }}>{`Line Manager`}: <span style={{ color: "black" }}>{''}</span></h5>

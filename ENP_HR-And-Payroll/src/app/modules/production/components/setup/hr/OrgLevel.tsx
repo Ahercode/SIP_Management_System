@@ -91,7 +91,7 @@ const OrgLevel = () => {
 
   const columns: any = [
     {
-      title: 'Employee',
+      title: 'Employé',
       dataIndex: 'employeeId',
       sorter: (a: any, b: any) => {
         if (a.code > b.code) {
@@ -105,7 +105,7 @@ const OrgLevel = () => {
       render: (employeeId: any) => employeeName(employeeId)
     },
     {
-      title: 'Job Role',
+      title: 'Role',
       dataIndex: 'employeeId',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -119,7 +119,7 @@ const OrgLevel = () => {
       render: (employeeId: any) => jobRole(employeeId)
     },
     {
-      title: 'Current Level',
+      title: 'Niveau Actuel',
       dataIndex: 'currentLevel',
       sorter: (a: any, b: any) => {
         if (a.startDate > b.startDate) {
@@ -428,7 +428,7 @@ const OrgLevel = () => {
 
 
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Employee</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Employé</label>
                   <select {...register("employeeId")}
                     value={isUpdateModalOpen === true ? tempData?.employeeId : null}
                     onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">
@@ -441,13 +441,13 @@ const OrgLevel = () => {
                   </select>
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Current Level</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Niveau Actuel</label>
                   <input type="text" {...register("currentLevel")} disabled={true}
                     defaultValue={isUpdateModalOpen === true ? tempData.currentLevel : `Level ${currentLevel}`}
                     onChange={handleChange} className="form-control form-control-solid" />
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Is assistant</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Est assistant</label>
                   <select {...register("isAssistant")}
                     value={isUpdateModalOpen === true ? tempData?.isAssistant : null}
                     onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">

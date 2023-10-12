@@ -186,43 +186,43 @@ const EmplyeeDetails= () =>{
         <br />
         <br />
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>EmployeeId: <span style={{ color:"black"}}>{tempData?.employeeId}</span></h5>
+            <h5  style={{ color:"GrayText"}}>ID Employé: <span style={{ color:"black"}}>{tempData?.employeeId}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>First Name: <span style={{ color:"black"}}>{tempData?.firstName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Prénoms: <span style={{ color:"black"}}>{tempData?.firstName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5 style={{ color:"GrayText"}}>Surname: <span style={{ color:"black"}}>{tempData?.surname}</span></h5>
+            <h5 style={{ color:"GrayText"}}>Nom: <span style={{ color:"black"}}>{tempData?.surname}</span></h5>
         </div>
         <div className='col-3 mb-5'>
             <h5 style={{ color:"GrayText"}}>
-              Other name: <span style={{ color:"black"}}>{tempData?.otherName===null?"NULL":tempData?.otherName}</span>
+              Autres Nom: <span style={{ color:"black"}}>{tempData?.otherName===null?"NULL":tempData?.otherName}</span>
             </h5>
         </div>
         <div className='col-3 mb-5'>
           <h5 style={{ color:"GrayText"}}>
-            Gender: <span style={{ color:"black"}}> {tempData?.gender}</span>
+            Genre: <span style={{ color:"black"}}> {tempData?.gender}</span>
           </h5>
         </div>
         <div className='col-3 mb-5'>
-          <h5 style={{ color:"GrayText"}}>Date of Birth: 
+          <h5 style={{ color:"GrayText"}}>Date de Naissance: 
             <span style={{ color:"black"}}> {tempData?.dob}</span>
           </h5>
         </div>
         
         <div className='col-3 mb-5'>
-          <h5 style={{ color:"GrayText"}} >Mrital Status:
+          <h5 style={{ color:"GrayText"}} >S. Matrimonial:
             <span style={{ color:"black"}}> {tempData?.maritalStatus===null?" NULL":tempData?.maritalStatus }</span>
           </h5>
         </div>
         <div className='col-3 mb-5'>
           <h5 style={{ color:"GrayText"}} >
-            Nationality: <span style={{ color:"black"}}>{tempData?.nationality===null?" NULL":nation}</span>
+            Nationalite: <span style={{ color:"black"}}>{tempData?.nationality===null?" NULL":nation}</span>
           </h5>
         </div>
         <div className='col-3 mb-5'>
           <h5 style={{ color:"GrayText"}} >
-            ID Card Number: <span style={{ color:"black"}}>{tempData?.nationalId}</span>
+            Numero ID: <span style={{ color:"black"}}>{tempData?.nationalId}</span>
             </h5> 
         </div>
       </div>
@@ -236,26 +236,26 @@ const EmplyeeDetails= () =>{
         <br />
         <br />
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Phone Number: <span style={{ color:"black"}}>{tempData?.phone===null?" NULL":tempData?.phone}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Contact: <span style={{ color:"black"}}>{tempData?.phone===null?" NULL":tempData?.phone}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Alternative Phone Number: <span style={{ color:"black"}}>{tempData?.alternativePhone===null?" NULL":tempData?.alternativePhone}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Autres Contact: <span style={{ color:"black"}}>{tempData?.alternativePhone===null?" NULL":tempData?.alternativePhone}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Address: <span style={{ color:"black"}}>{tempData?.address===null?" NULL":tempData?.address}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Addresse: <span style={{ color:"black"}}>{tempData?.address===null?" NULL":tempData?.address}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Residential Address: <span style={{ color:"black"}}>{tempData?.residentialAddress===null?" NULL":tempData?.residentialAddress}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Addresse Residentielle: <span style={{ color:"black"}}>{tempData?.residentialAddress===null?" NULL":tempData?.residentialAddress}</span></h5>
         </div>
         
         {/* <div className='col-3 mb-5'>
             <h5  style={{ color:"GrayText"}}>Per. Email: <span style={{ color:"black"}}>{tempData?.personalEmail===null?" NULL":tempData?.personalEmail.toLowerCase()}</span></h5>
         </div> */}
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Next Of Kin: <span style={{ color:"black"}}>{tempData?.nextOfKin===null?" NULL":tempData?.nextOfKin}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Proche: <span style={{ color:"black"}}>{tempData?.nextOfKin===null?" NULL":tempData?.nextOfKin}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Guarantor: <span style={{ color:"black"}}>{tempData?.guarantor===null?" NULL":tempData?.guarantor}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Garant: <span style={{ color:"black"}}>{tempData?.guarantor===null?" NULL":tempData?.guarantor}</span></h5>
         </div>
         <div className='col-3 mb-5'>
             <h5  style={{ color:"GrayText"}}>Email: <span style={{ color:"black"}}>{tempData?.email===null?" NULL":tempData?.email.toLowerCase()}</span></h5>
@@ -272,34 +272,34 @@ const EmplyeeDetails= () =>{
         <br />
         <br />
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Paygroup: <span style={{ color:"black"}}>{tempData?.paygroupId===null?" NULL":paygName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Groupe de paie: <span style={{ color:"black"}}>{tempData?.paygroupId===null?" NULL":paygName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Category: <span style={{ color:"black"}}>{ tempData?.categoryId===null?" NULL":catName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Categorie: <span style={{ color:"black"}}>{ tempData?.categoryId===null?" NULL":catName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
             <h5  style={{ color:"GrayText"}}>Division: <span style={{ color:"black"}}>{tempData?.divisionId===null?" NULL":divName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Salary Grade: <span style={{ color:"black"}}>{tempData?.gradeId===null?" NULL":graName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Grade: <span style={{ color:"black"}}>{tempData?.gradeId===null?" NULL":graName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Department: <span style={{ color:"black"}}>{tempData?.departmentId===null?" NULL":depName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Departement: <span style={{ color:"black"}}>{tempData?.departmentId===null?" NULL":depName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
             <h5  style={{ color:"GrayText"}}>Notch: <span style={{ color:"black"}}>{tempData?.notchId===null?" NULL":notchName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Unit: <span style={{ color:"black"}}>{tempData?.unitId===null?" NULL":uniName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Unité: <span style={{ color:"black"}}>{tempData?.unitId===null?" NULL":uniName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>JobTitle: <span style={{ color:"black"}}>{tempData?.jobTitleId===null?" NULL":jobTName}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Titre: <span style={{ color:"black"}}>{tempData?.jobTitleId===null?" NULL":jobTName}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Job Roles: <span style={{ color:"black"}}>{tempData?.jobRole===null?" NULL":tempData?.jobRole}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Roles: <span style={{ color:"black"}}>{tempData?.jobRole===null?" NULL":tempData?.jobRole}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Employment Date: <span style={{ color:"black"}}>{tempData?.employmentDate===null?" NULL":tempData?.employmentDate}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Date de prise fonction: <span style={{ color:"black"}}>{tempData?.employmentDate===null?" NULL":tempData?.employmentDate}</span></h5>
         </div>
       </div>
       
@@ -307,18 +307,18 @@ const EmplyeeDetails= () =>{
       {/* <br></br> */}
       <div className='row mb-5'>
         <div style={{ marginBottom:"10px"}}>
-          <h2 style={{color:"#f2f2f2", fontWeight:"bold", backgroundColor:"Highlight", maxWidth:"180px", padding:"8px"}}>Payroll</h2>
+          <h2 style={{color:"#f2f2f2", fontWeight:"bold", backgroundColor:"Highlight", maxWidth:"180px", padding:"8px"}}>Paye</h2>
         </div>
         <br />
         <br />
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Phone: <span style={{ color:"black"}}>{tempData?.phone}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Contact: <span style={{ color:"black"}}>{tempData?.phone}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Alternative Phone: <span style={{ color:"black"}}>{ tempData?.alternativePhone}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Alternative Contact: <span style={{ color:"black"}}>{ tempData?.alternativePhone}</span></h5>
         </div>
         <div className='col-3 mb-5'>
-            <h5  style={{ color:"GrayText"}}>Address: <span style={{ color:"black"}}>{tempData?.employmentDate===null?" NULL":tempData?.employmentDate}</span></h5>
+            <h5  style={{ color:"GrayText"}}>Addresse: <span style={{ color:"black"}}>{tempData?.employmentDate===null?" NULL":tempData?.employmentDate}</span></h5>
         </div>
       </div>
     </div>

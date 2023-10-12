@@ -122,7 +122,7 @@ const CompensationBenefit = () => {
   const columns: any = [
    
     {
-      title: 'First Name',
+      title: 'Prénoms',
       render: (row: any) => {
         return getFirstName(row.employeeId)
       }, 
@@ -137,7 +137,7 @@ const CompensationBenefit = () => {
       },
     },
     {
-      title: 'Last Name',
+      title: 'Nom',
       render: (row: any) => {
         return getSurname(row.employeeId)
       }, 
@@ -152,7 +152,7 @@ const CompensationBenefit = () => {
       },
     },
     {
-      title: 'DOB',
+      title: 'Date de Naissance',
       render: (row: any) => {
         return getDOB(row.employeeId)
       }, 
@@ -167,7 +167,7 @@ const CompensationBenefit = () => {
       },
     },
     {
-      title: 'Gender',
+      title: 'Genre',
       render: (row: any) => {
         return getGender(row.employeeId)
       }, 
@@ -182,7 +182,7 @@ const CompensationBenefit = () => {
       },
     },
     {
-      title: 'Phone Number',
+      title: 'Num Téléphone',
       render: (row: any) => {
         return getPhone(row.employeeId)
       }, 
@@ -197,7 +197,7 @@ const CompensationBenefit = () => {
       },
     },
     {
-      title: 'Unit',
+      title: 'Unité',
       render: (row: any) => {
         return getUnit(row.employeeId)
       }, 
@@ -480,7 +480,7 @@ const allPerkByGrade:any = allGradePerks?.data?.filter((item:any) =>{
           <Table columns={columns} key={dataByID.id} dataSource={dataByID} loading={loading} />
           {/* Add form */}
           <Modal
-                title='Employee Details'
+                title="Details de l'employé"
                 open={isModalOpen}
                 onCancel={handleCancel}
                 closable={true}
@@ -504,7 +504,7 @@ const allPerkByGrade:any = allGradePerks?.data?.filter((item:any) =>{
                     <hr></hr>
                     <div style={{padding: "20px 20px 0 20px"}} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Employee ID</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">ID Employé</label>
                       <br></br>
                       <Select
                           
@@ -525,7 +525,7 @@ const allPerkByGrade:any = allGradePerks?.data?.filter((item:any) =>{
                         </Select>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Unit</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Unité</label>
                       <input type="text" name="unitId" value={unitName} readOnly className="form-control form-control-solid"/>
 
               
@@ -533,21 +533,21 @@ const allPerkByGrade:any = allGradePerks?.data?.filter((item:any) =>{
                   </div>
                   <div style={{padding: "20px 20px 0 20px"}} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">First Name</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Prénoms</label>
                       <input type="text" name="firstName" value={employeeRecord?.firstName} readOnly  className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Surname</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Nom</label>
                       <input type="text" name="surname" value={employeeRecord?.surname} readOnly  className="form-control form-control-solid"/>
                     </div>
                   </div>
                   <div style={{padding: "20px 20px 10px 20px"}} className='row mb-7 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">DOB</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Date de Naissance</label>
                       <input type="text" name="dob" value={employeeRecord?.dob?.substring(0,10)}  readOnly  className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Genre</label>
                       <input type="text" name="gender" value={employeeRecord?.gender} readOnly  className="form-control form-control-solid"/>
                     </div>
                   </div>

@@ -132,7 +132,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
   ] :
     [
       {
-        title: 'Name',
+        title: 'Nom',
         dataIndex: 'name',
         sorter: (a: any, b: any) => {
           if (a.name > b.name) {
@@ -158,7 +158,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         },
       },
       {
-        title: 'Sub Weight(%)',
+        title: 'Sub Poids(%)',
         dataIndex: 'subWeight',
         sorter: (a: any, b: any) => {
           if (a.status > b.status) {
@@ -171,7 +171,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         },
       },
       {
-        title: 'Unit of Measure',
+        title: 'Unité de  mesure',
         dataIndex: 'unitOfMeasure',
         sorter: (a: any, b: any) => {
           if (a.status > b.status) {
@@ -184,7 +184,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         },
       },
       {
-        title: 'Target',
+        title: 'Objectif',
         dataIndex: 'target',
         sorter: (a: any, b: any) => {
           if (a.status > b.status) {

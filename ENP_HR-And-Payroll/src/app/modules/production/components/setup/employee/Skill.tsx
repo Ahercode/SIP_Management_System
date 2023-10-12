@@ -2,7 +2,7 @@ import { SetupComponent } from '../CommonSetupComponent'
 
 const Skill = () => {
   const data = {
-    title: 'Skills',
+    title: 'Competences',
     url: 'Skills',
   }
   

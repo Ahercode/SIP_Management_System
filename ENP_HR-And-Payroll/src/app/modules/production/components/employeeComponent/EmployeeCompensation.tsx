@@ -5,7 +5,7 @@ const EmployeeCompensation = () => {
     const compensationColumns: any = [
 
         {
-          title: 'Period',
+          title: 'Periode',
           dataIndex: 'code',
           sorter: (a: any, b: any) => {
             if (a.code > b.code) {
@@ -18,7 +18,7 @@ const EmployeeCompensation = () => {
           },
         },
         {
-          title: 'Compensation Type',
+          title: 'Type Compensation',
           dataIndex: 'name',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {

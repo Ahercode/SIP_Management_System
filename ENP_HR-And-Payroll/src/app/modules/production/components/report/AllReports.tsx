@@ -35,13 +35,13 @@ const AllReports = () => {
               </h2>
               <br />
               <ul>
-                <li><h4><Link to="#">Recruitment and Selection</Link></h4></li>
-                <li><h4><Link to="#">Compensations and Benefits</Link></h4></li>
-                <li><h4><Link to="#">Training and development</Link></h4></li>
-                <li><h4><Link to="#">Appraisal and Performance</Link></h4></li>
-                <li><h4><Link to="#">Disciplinary Actions</Link></h4></li>
-                <li><h4><Link to="#">Leave Planning</Link></h4></li>
-                <li><h4><Link to="#">Medical</Link></h4></li>
+                <li><h4><Link to="#">Recruitement et Selections</Link></h4></li>
+                <li><h4><Link to="#">Compensations et Avantages</Link></h4></li>
+                <li><h4><Link to="#">Formation et developpement</Link></h4></li>
+                <li><h4><Link to="#">Evaluation  et  Performance</Link></h4></li>
+                <li><h4><Link to="#">Actions Disciplinaires</Link></h4></li>
+                <li><h4><Link to="#">Plannification congés</Link></h4></li>
+                <li><h4><Link to="#">Médical</Link></h4></li>
               </ul>
             </div>
             <div className='col-4'>
@@ -50,8 +50,8 @@ const AllReports = () => {
               </h2>
               <br />
               <ul>
-                <li><h4><Link to="#">Transaction History</Link></h4></li>
-                <li><h4><Link to="#">Payslip</Link></h4></li>
+                <li><h4><Link to="#">Historique Transaction</Link></h4></li>
+                <li><h4><Link to="#">Fiche de paie</Link></h4></li>
                 <li><h4><Link to="#">Journal</Link></h4></li>
                 <li><h4><Link to="#">Basic Pay Reconciliation</Link></h4></li>
                 <li><h4><Link to="#">Bank Summary</Link></h4></li>

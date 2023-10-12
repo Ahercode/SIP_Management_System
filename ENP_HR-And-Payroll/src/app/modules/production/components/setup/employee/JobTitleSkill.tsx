@@ -67,7 +67,7 @@ const JobTitleSkill = () => {
     //   },
     // },
     {
-      title: 'Name',
+      title: 'Nom',
       key:'skillId',
       render: (row: any) => {
         return getSkillName(row.skillId)

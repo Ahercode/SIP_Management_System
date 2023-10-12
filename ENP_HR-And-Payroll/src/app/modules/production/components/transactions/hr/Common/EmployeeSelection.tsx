@@ -69,7 +69,7 @@ const EmployeeSelection = (props: any) => {
             </button>
 
             <Modal
-                title='Employee Details'
+                title='Details Employé'
                 open={isModalOpen}
                 onCancel={handleCancel}
                 closable={true}
@@ -95,7 +95,7 @@ const EmployeeSelection = (props: any) => {
                     <hr></hr>
                     <div style={{padding: "20px 20px 0 20px"}} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Employee ID</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">ID Employé</label>
                       <br></br>
                       <Select
                           showSearch
@@ -118,24 +118,24 @@ const EmployeeSelection = (props: any) => {
                     </div>
                    
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Job Title</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Titre</label>
                       <input type="text" name="jName" value={jobTitleName} className="form-control form-control-solid"/>
                     </div>
                   
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">First Name</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Prénoms</label>
                       <input type="text" name="firstName" value={employeeRecord?.firstName} className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="required form-label">Surname</label>
+                      <label htmlFor="exampleFormControlInput1" className="required form-label">Nom</label>
                       <input type="text" name="surname" value={employeeRecord?.surname} className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">DOB</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Date de Naissance</label>
                       <input type="text" name="dob" value={employeeRecord?.dob?.substring(0,10)} readOnly className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="required form-label">Gender</label>
+                      <label htmlFor="exampleFormControlInput1" className="required form-label">Genre</label>
                       <input type="text" name="gender" value={employeeRecord?.gender} className="form-control form-control-solid"/>
                     </div>
                   

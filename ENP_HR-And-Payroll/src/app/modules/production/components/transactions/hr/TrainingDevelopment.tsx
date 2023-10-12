@@ -144,7 +144,7 @@ const TrainingDevelopment = () => {
 
   const columns: any = [
     {
-      title: 'Employee ID',
+      title: 'ID Employé',
       key: 'employeeId',
       render: (record:any )=>{
         return getEmID(record.employeeId)
@@ -160,7 +160,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'First Name',
+      title: 'Prénoms',
       key: 'employeeId',
       render: (record:any )=>{
         return getFirstName(record.employeeId)
@@ -176,7 +176,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'Surname',
+      title: 'Nom',
       key: 'employeeId',
       render: (record:any )=>{
         return getSurname(record.employeeId)
@@ -192,7 +192,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'DOB',
+      title: 'Date de Naissance',
       key: 'employeeId',
       render: (record:any )=>{
         return getDOB(record.employeeId)
@@ -208,7 +208,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'Gender',
+      title: 'Genre',
       key: 'employeeId',
       render: (record:any )=>{
         return getGender(record.employeeId)
@@ -224,7 +224,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'Phone Number',
+      title: 'Num Téléphone',
       key: 'employeeId',
       render: (record:any )=>{
         return getPhone(record.employeeId)
@@ -275,7 +275,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'Day',
+      title: 'Jour',
       dataIndex: 'day',
       sorter: (a: any, b: any) => {
         if (a.day > b.day) {
@@ -288,7 +288,7 @@ const TrainingDevelopment = () => {
       },
     },
     {
-      title: 'Topic',
+      title: 'Sujet',
       dataIndex: 'topic',
       sorter: (a: any, b: any) => {
         if (a.topic > b.topic) {
@@ -590,7 +590,7 @@ const TrainingDevelopment = () => {
         selectedRef==="Select"?"":
         <div className='col-12 row'>
         <div className='col-12 row' style={{margin: "10px 0px 10px 0px"}}>
-          <h3 className='text-gray' style={{margin: "1px 0px 20px 0px", fontSize:"18px", fontWeight:"600", color:"gray"}}>Training Details</h3>
+          <h3 className='text-gray' style={{margin: "1px 0px 20px 0px", fontSize:"18px", fontWeight:"600", color:"gray"}}>Details Formation</h3>
           {/* <div style={{padding: "20px 0px 0 0px"}} className='col-12  mb-0'> */}
             <div className='col-4 mb-7'>
               <label htmlFor="exampleFormControlInput1" className=" form-label">Reference#</label>
@@ -598,36 +598,36 @@ const TrainingDevelopment = () => {
             </div>
 
             <div className='col-4 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Training Type</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Type Formation</label>
               <input type="text" readOnly value={trainingName} className="form-control form-control-solid" />
             </div>
             <div className='col-4 mb-3'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Start date</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Date de début</label>
               <input type="text" readOnly value={dataByID.startDate} className="form-control form-control-solid" />
             </div>
 
             <div className='col-4 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">End date</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Date de fin</label>
               <input type="text" readOnly value={dataByID.startDate} className="form-control form-control-solid" />
             </div>
             <div className='col-4 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Facilitator</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Facilitateur</label>
               <input type="text" readOnly value={dataByID.facilitator} className="form-control form-control-solid" />
             </div>
             <div className='col-4 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Venue</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Lieu</label>
               <input type="text" readOnly value={dataByID.venue} className="form-control form-control-solid" />
             </div>
         </div>
         <div className='col-12' style={{margin: "10px 0px 0 0px"}}>
           <div className='d-flex justify-content-between'>
             <Space style={{marginBottom: 16}}>
-            <h3 style={{margin: "1px 0px 20px 0px", fontSize:"18px", fontWeight:"600", color:"gray"}}>Training Schedule Table</h3>
+            <h3 style={{margin: "1px 0px 20px 0px", fontSize:"18px", fontWeight:"600", color:"gray"}}>Calendrier de la formation</h3>
             </Space>
             <Space style={{marginBottom: 16}}>
               <button type='button' className='btn btn-primary me-3' onClick={showShortModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
+                Ajouter
               </button>
             </Space>
           </div>
@@ -677,7 +677,7 @@ const TrainingDevelopment = () => {
 
           {/* Modal for adding Employeee to trainingRef*/}
           <Modal
-                title='Employee Details'
+                title='Details Employé'
                 open={isModalOpen}
                 onCancel={handleCancel}
                 closable={true}
@@ -725,27 +725,27 @@ const TrainingDevelopment = () => {
                         </Select>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Job Title</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Titre</label>
                       <input type="text" readOnly value={jobtitleName} className="form-control form-control-solid"/>
                     </div>
                   </div>
                   <div style={{padding: "20px 20px 0 20px"}} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">First Name</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Prénoms</label>
                       <input type="text" readOnly value={employeeRecord?.firstName} className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Last Name</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Nom</label>
                       <input type="text" readOnly value={employeeRecord?.surname} className="form-control form-control-solid"/>
                     </div>
                   </div>
                   <div style={{padding: "20px 20px 10px 20px"}} className='row mb-7 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">DOB</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Date de Naissance</label>
                       <input type="text" readOnly value={employeeRecord?.dob} className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Genre</label>
                       <input type="text" readOnly value={employeeRecord?.gender} className="form-control form-control-solid"/>
                     </div>
                   </div>
@@ -783,11 +783,11 @@ const TrainingDevelopment = () => {
                     
                   <div style={{padding: "20px 20px 0 20px"}} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Topic</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Sujet</label>
                       <input type="text" {...register("topic")} className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Day</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Jour</label>
                       <input type="text" {...register("day")} className="form-control form-control-solid"/>
                     </div>
                   </div>
@@ -803,7 +803,7 @@ const TrainingDevelopment = () => {
         {/* Modal for the trainingTransaction*/}
 
         <Modal
-                title='Add New Training '
+                title='Ajouter Nouveau '
                 open={isTraDevModalOpen}
                 onCancel={handleTranDevCancel}
                 closable={true}
@@ -837,7 +837,7 @@ const TrainingDevelopment = () => {
                       </div>
 
                       <div className='col-6 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className=" form-label">Training Type</label>
+                        <label htmlFor="exampleFormControlInput1" className=" form-label">Type Formation</label>
                         <select {...register("trainingId")} className="form-select form-select-solid" aria-label="Select example">
                           <option> select</option>
                           {
@@ -850,22 +850,22 @@ const TrainingDevelopment = () => {
                     </div>
                     <div style={{padding: "20px 0px 0 0px"}} className='col-12 row mb-0'>
                       <div className='col-6 mb-3'>
-                        <label htmlFor="exampleFormControlInput1" className=" form-label">Start date</label>
+                        <label htmlFor="exampleFormControlInput1" className=" form-label">Date de début</label>
                         <input {...register("startDate")} type="date" className="form-control form-control-solid" />
                       </div>
 
                       <div className='col-6 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className=" form-label">End date</label>
+                        <label htmlFor="exampleFormControlInput1" className=" form-label">Date de fin</label>
                         <input {...register("endDate")} type="date"  className="form-control form-control-solid" />
                       </div>
                     </div>
                     <div style={{padding: "20px 0px 0 0px"}} className='col-12 row mb-0'>
                       <div className='col-6 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className=" form-label">Facilitator</label>
+                        <label htmlFor="exampleFormControlInput1" className=" form-label">Facilitateur</label>
                         <input {...register("facilitator")} type="text"  className="form-control form-control-solid" />
                       </div>
                       <div className='col-6 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className=" form-label">Venue</label>
+                        <label htmlFor="exampleFormControlInput1" className=" form-label">Lieu</label>
                         <input {...register("venue")} type="text" className="form-control form-control-solid" />
                       </div>
                     </div>

@@ -71,7 +71,7 @@ const Shifts = () => {
       },
     },
     {
-      title: 'Name',
+      title: 'Nom',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -84,7 +84,7 @@ const Shifts = () => {
       },
     },
     {
-      title: 'Start Time',
+      title: 'Date debut',
       dataIndex: 'startTime',
       sorter: (a: any, b: any) => {
         if (a.startTime > b.startTime) {
@@ -97,7 +97,7 @@ const Shifts = () => {
       },
     },
     {
-      title: 'End Time',
+      title: 'Date Fin',
       dataIndex: 'endTime',
       sorter: (a: any, b: any) => {
         if (a.endTime > b.endTime) {
@@ -322,20 +322,20 @@ const Shifts = () => {
                     className="form-control form-control-solid" />
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Nom</label>
                   <input type="text" {...register("name")}
                     defaultValue={isUpdateModalOpen === true ? tempData.name : ''} 
                     onChange={handleChange} 
                     className="form-control form-control-solid" />
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Start Time</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Date debut</label>
                   <input type="time" {...register("startTime")} 
                   onChange={handleChange} 
                   className="form-control form-control-solid" />
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">End Time</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Date Fin</label>
                   <input type="time" {...register("endTime")} 
                   onChange={handleChange} 
                   className="form-control form-control-solid" />

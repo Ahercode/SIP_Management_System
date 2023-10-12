@@ -52,7 +52,7 @@ const JobTitleQualification = () => {
   }
   const columns: any = [
     {
-      title: 'Qualification Name',
+      title: 'Qualification',
       key:'qualificationId',
       render: (row: any) => {
         return getQualificationName(row.qualificationId)

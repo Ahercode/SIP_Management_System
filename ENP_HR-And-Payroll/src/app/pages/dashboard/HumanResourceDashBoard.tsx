@@ -10,7 +10,7 @@ import { HRNewDashBoard } from './charts/HRNewDashBoard'
 
 const columns: any = [
   {
-    title: 'Paygroup',
+    title: 'Groupe de paie',
     dataIndex: 'paygroupName',
     sorter: (a: any, b: any) => {
       if (a.paygroupName > b.paygroupName) {
@@ -36,7 +36,7 @@ const columns: any = [
     },
   },
   {
-    title: 'Department',
+    title: 'Departement',
     dataIndex: 'departmentName',
     sorter: (a: any, b: any) => {
       if (a.departmentName > b.departmentName) {
@@ -49,7 +49,7 @@ const columns: any = [
     },
   },
   {
-    title: 'Unit',
+    title: 'Unité',
     dataIndex: 'unitName',
     sorter: (a: any, b: any) => {
       if (a.unitName > b.unitName) {
@@ -62,7 +62,7 @@ const columns: any = [
     },
   },
   {
-    title: 'Number of Employees',
+    title: "Nombre d'employés",
     dataIndex: 'employeeCount',
     sorter: (a: any, b: any) => {
       if (a.employeeCount > b.employeeCount) {
@@ -75,7 +75,7 @@ const columns: any = [
     },
   },
   {
-    title: 'Male Count',
+    title: "Nombre d'hommes",
     dataIndex: 'countMale',
     sorter: (a: any, b: any) => {
       if (a.countMale > b.countMale) {
@@ -88,7 +88,7 @@ const columns: any = [
     },
   },
   {
-    title: 'Female Count',
+    title: "Nombres de femmes",
     dataIndex: 'countFemale',
     sorter: (a: any, b: any) => {
       if (a.countFemale > b.countFemale) {
@@ -151,7 +151,7 @@ const HRDashboardWrapper = () => {
   // const intl = useIntl()
   return (
     <>
-      <PageTitle breadcrumbs={[]}>{"Human Resource Dashboard"}</PageTitle>
+      <PageTitle breadcrumbs={[]}>{"Tableau de bord"}</PageTitle>
       <HRNewDashBoard/>
     </>
   )

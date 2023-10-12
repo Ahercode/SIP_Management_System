@@ -91,7 +91,7 @@ const NoteEntry = () => {
   const columns: any = [
    
     {
-      title: 'Employee ID',
+      title: 'ID Employé',
       key: 'employeeId',
       render: (record:any )=>{
         return getEmID(record.employeeId)
@@ -120,7 +120,7 @@ const NoteEntry = () => {
       },
     },
     {
-      title: 'Note Category',
+      title: 'Categorie de Note',
       key:'noteCategoryId',
       render: (record:any )=>{
         return getNoteName(record.noteCategoryId)
@@ -136,7 +136,7 @@ const NoteEntry = () => {
       },
     },
     {
-      title: 'Comments',
+      title: 'Commentaires',
       dataIndex: 'comment',
       sorter: (a: any, b: any) => {
         if (a.comment > b.comment) {
@@ -295,7 +295,7 @@ const NoteEntry = () => {
       <div style={{padding: "0px 0px 40px 0px"}}  className='col-12'>
         <div style={{padding: "20px 0px 0 0px"}} className='col-12 row mb-0'>
         <div className='col-4 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Paygroup</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Groupe de paie</label>
             <select value={selectedValue1} onChange={(e) => setSelectedValue1(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
               <option value="select paygroup" > Select paygroup</option>
               <option value="N/A">N/A</option>
@@ -305,7 +305,7 @@ const NoteEntry = () => {
             </select>
           </div>
           <div className='col-4 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Note Category</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Categorie de Note</label>
             <select className="form-select form-select-solid" value={selectedNoteType} onChange={(e) => setSelectedNoteType(e.target.value)} aria-label="Select example">
               <option value="select period"> Select period</option>
               <option value="N/A">N/A</option>
@@ -315,7 +315,7 @@ const NoteEntry = () => {
             </select>
           </div>
           <div className='col-4 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Period</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Période</label>
             <select className="form-select form-select-solid" value={selectedValue2} onChange={(e) => setSelectedValue2(e.target.value)} aria-label="Select example">
               <option value="select period"> Select period</option>
               <option value="N/A">N/A</option>
@@ -384,7 +384,7 @@ const NoteEntry = () => {
                     <hr></hr>
                     <div style={{padding: "20px 20px 0px 20px"}} className='row mb-0 '>
                       <div className='col-6 mb-3'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Employee ID</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">ID Employé</label>
                         <br></br>
                         <Select
                             
@@ -413,7 +413,7 @@ const NoteEntry = () => {
                         <input type="text" {...register("reference")}  className="form-control form-control-solid"/>
                       </div>
                       <div className='col-6 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Note Type</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Type de Note</label>
                         <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
                         <option> select</option>
                           <option value="Disciplinary">DISCIPLINARY ACTION</option>
@@ -422,7 +422,7 @@ const NoteEntry = () => {
                       </div>
                       
                        <div className='col-6 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Note Category</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Categorie de Note</label>
                         <select {...register("noteCategoryId")} className="form-select form-select-solid" aria-label="Select example">
                           <option> select</option>
                           {noteCategoriesByType?.map((item: any) => (
@@ -437,7 +437,7 @@ const NoteEntry = () => {
                         
                       </div>
                       <div className='col-12 mb-3'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Comments</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Commentaires</label>
                         <textarea {...register("comment")} className="form-control form-control-solid" aria-label="With textarea"></textarea>
                       </div>
                     </div>

@@ -60,7 +60,7 @@ const GradePerks = () => {
   }
   const columns: any = [
     {
-      title: 'Perk',
+      title: 'Avantage',
       key: 'perkId',
       render: (i: any) => {
         return getPerkName(i.perkId)

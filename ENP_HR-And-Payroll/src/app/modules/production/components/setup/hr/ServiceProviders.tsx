@@ -75,7 +75,7 @@ const ServiceProviders = () => {
       },
     },
     {
-      title: 'Name',
+      title: 'Nom',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -88,7 +88,7 @@ const ServiceProviders = () => {
       },
     },
     {
-      title: 'Phone',
+      title: 'Contact',
       dataIndex: 'phone',
       sorter: (a: any, b: any) => {
         if (a.phone > b.phone) {
@@ -114,7 +114,7 @@ const ServiceProviders = () => {
       },
     },
     {
-      title: 'Address',
+      title: 'Addresse',
       dataIndex: 'address',
       sorter: (a: any, b: any) => {
         if (a.address > b.address) {
@@ -335,7 +335,7 @@ const ServiceProviders = () => {
                     className="form-control form-control-solid" />
                 </div>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Nom</label>
                   <input type="text" {...register("name")}
                     defaultValue={isUpdateModalOpen === true ? tempData.name : ''}
                     onChange={handleChange}
@@ -344,14 +344,14 @@ const ServiceProviders = () => {
               </div>
               <div style={{ padding: "0px 20px 0px 20px" }} className='row mb-0 '>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Address</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Addresse</label>
                   <input type="text" {...register("address")}
                     defaultValue={isUpdateModalOpen === true ? tempData.address : ''}
                     onChange={handleChange}
                     className="form-control form-control-solid" />
                 </div>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Phone</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Contact</label>
                   <input type="tel" {...register("phone")}
                     defaultValue={isUpdateModalOpen === true ? tempData.phone : ''}
                     onChange={handleChange}
@@ -367,7 +367,7 @@ const ServiceProviders = () => {
                     className="form-control form-control-solid" />
                 </div>
                 <div className='col-6 mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Contact Person</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Personne Contact</label>
                   <input type="text" {...register("contactPerson")}
                     defaultValue={isUpdateModalOpen === true ? tempData.contactPerson : ''}
                     onChange={handleChange}

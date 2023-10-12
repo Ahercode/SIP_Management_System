@@ -3,7 +3,7 @@ import { SetupComponent } from '../CommonSetupComponent'
 const Trainings = () => {
 
   const data = {
-    title: 'Trainings',
+    title: 'Formations',
     url: 'Trainings',
    }
   return (

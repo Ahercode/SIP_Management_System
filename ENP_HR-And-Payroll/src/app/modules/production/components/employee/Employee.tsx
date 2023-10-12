@@ -78,7 +78,7 @@ const Employee = () => {
     },
 
     {
-      title: 'Gender',
+      title: 'Genre',
       dataIndex: 'gender',
       sorter: (a: any, b: any) => {
         if (a.gender > b.gender) {
@@ -91,7 +91,7 @@ const Employee = () => {
       },
     },
     {
-      title: 'Paygroup',
+      title: 'Groupe de paie',
       key: 'paygroupId',
       render: (row: any) => {
         return getPaygroupName(row.paygroupId)
@@ -107,7 +107,7 @@ const Employee = () => {
       },
     },
     {
-      title: 'Salary Grade',
+      title: 'Grade',
       key: 'gradeId',
       render: (row: any) => {
         return getGradeName(row.gradeId)
@@ -139,7 +139,7 @@ const Employee = () => {
       },
     },
     {
-      title: 'Department',
+      title: 'Departement',
       key: 'departmentId',
       render: (row: any) => {
         return getDepartmentName(row.departmentId)
@@ -156,7 +156,7 @@ const Employee = () => {
       },
     },
     {
-      title: 'Phone',
+      title: 'Contact',
       dataIndex: 'phone',
       sorter: (a: any, b: any) => {
         if (a.phone > b.phone) {

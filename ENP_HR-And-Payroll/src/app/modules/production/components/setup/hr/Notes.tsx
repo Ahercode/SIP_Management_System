@@ -79,7 +79,7 @@ const Notes = () => {
       },
     },
     {
-      title: 'Name',
+      title: 'Nom',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -362,7 +362,7 @@ const Notes = () => {
 
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Nom </label>
                   <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
 

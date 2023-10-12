@@ -19,7 +19,7 @@ const EmployeeNote = () => {
           },
         },
         {
-          title: 'Note Type',
+          title: 'Type Note',
           dataIndex: 'name',
           sorter: (a: any, b: any) => {
             if (a.name > b.name) {

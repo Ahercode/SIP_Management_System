@@ -72,19 +72,19 @@ const Organogram = () => {
 
   const columns: any = [
     {
-      title: 'Employee',
+      title: 'Employé',
       dataIndex: 'employeeId',
       render: (employeeId: any) => {
         return <span>{employeeName(employeeId)}</span>
       }
     },
     {
-      title: 'Job Role',
+      title: 'Role',
       dataIndex: 'employeeId',
       render: (employeeId: any) => jobRole(employeeId)
     },
     {
-      title: 'Current Level',
+      title: 'Niveau Actuel',
       dataIndex: 'currentLevel',
     },
     {
@@ -376,7 +376,7 @@ const Organogram = () => {
                   </select>
                 </div> */}
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Current level</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Niveau Actuel</label>
                   <select {...register("currentLevel")}
                     value={isUpdateModalOpen === true ? tempData?.currentLevel : null}
                     onChange={handleChange} disabled={true} className="form-select form-select-solid" aria-label="Select example">

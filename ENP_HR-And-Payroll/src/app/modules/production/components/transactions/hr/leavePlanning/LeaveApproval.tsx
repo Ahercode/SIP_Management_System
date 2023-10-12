@@ -114,7 +114,7 @@ const LeaveApproval = () => {
             }
         },
         {
-            title: 'Employee Id',
+            title: 'ID Employé',
             dataIndex: 'employeeId',
             sorter: (a: any, b: any) => {
                 if (a.empcode > b.empcode) {
@@ -146,7 +146,7 @@ const LeaveApproval = () => {
         //     }
         // },
         {
-            title: 'Type of Leave',
+            title: 'Type de congé',
             dataIndex: 'leaveId',
             sorter: (a: any, b: any) => {
                 if (a.depart > b.depart) {
@@ -162,7 +162,7 @@ const LeaveApproval = () => {
             }
         },
         {
-            title: 'From',
+            title: 'De',
             dataIndex: 'fromDate',
             sorter: (a: any, b: any) => {
                 if (a.depart > b.depart) {
@@ -178,7 +178,7 @@ const LeaveApproval = () => {
             }
         },
         {
-            title: 'To',
+            title: 'A',
             dataIndex: 'toDate',
             sorter: (a: any, b: any) => {
                 if (a.depart > b.depart) {
@@ -194,7 +194,7 @@ const LeaveApproval = () => {
             }
         },
         {
-            title: 'Duration of Leave',
+            title: 'Durée du congé',
             // dataIndex: 'depart',
             sorter: (a: any, b: any) => {
                 if (a.depart > b.depart) {

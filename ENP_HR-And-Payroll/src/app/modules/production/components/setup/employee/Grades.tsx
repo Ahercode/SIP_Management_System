@@ -71,7 +71,7 @@ const Grades = () => {
       },
     },
     {
-      title: 'Name',
+      title: 'Nom',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {

@@ -95,7 +95,7 @@ const Parameter = () => {
       },
     },
     {
-      title: 'Name',
+      title: 'Nom',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -108,7 +108,7 @@ const Parameter = () => {
       },
     },
     {
-      title: 'Weight per parameter (%)',
+      title: 'Poids per parameter (%)',
       dataIndex: 'weight',
       sorter: (a: any, b: any) => {
         if (a.status > b.status) {
@@ -362,13 +362,13 @@ const Parameter = () => {
                 value={searchText}
               />
               <Button type='primary' onClick={globalSearch}>
-                Search
+                Rechercher
               </Button>
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
+                Ajouter
               </button>
 
               <button type='button' className='btn btn-light-primary me-3'>

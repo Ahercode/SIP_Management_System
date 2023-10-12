@@ -3,7 +3,7 @@ import { SetupComponent } from "../CommonSetupComponent"
 const CompanyAsset = () => {
 
   const data = {
-    title: 'Company Assets',
+    title: 'Actifs',
     url: 'CompanyAssets',
     }
   return (

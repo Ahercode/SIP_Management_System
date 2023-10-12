@@ -3,7 +3,7 @@ import { SetupComponent } from "../CommonSetupComponent"
 const JobTitle = () => {
 
   const data = {
-    title: 'Job Titles',
+    title: 'Titre',
     url: 'JobTitles',
   }
 

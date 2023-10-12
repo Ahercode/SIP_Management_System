@@ -194,7 +194,7 @@ const AppraisalPerformance = () => {
       },
     },
     {
-      title: 'First Name',
+      title: 'Prénoms',
       key: 'employeeId',
       render: (row: any) => {
         return getFirstName(row.employeeId)
@@ -210,7 +210,7 @@ const AppraisalPerformance = () => {
       },
     },
     {
-      title: 'Surname',
+      title: 'Nom',
       //   dataIndex: 'surname',
       key: "employeeId",
       render: (row: any) => {
@@ -228,7 +228,7 @@ const AppraisalPerformance = () => {
     },
    
     {
-      title: 'Job Title',
+      title: 'Titre',
       render: (row: any) => {
         return getJobTitle(row.employeeId)
       },
@@ -572,7 +572,7 @@ const AppraisalPerformance = () => {
   const endpoint = isReviewDateModalOpen ? `AppraisalReviewDates` : `AppraisalPerfTransactions`
   const submitApplicant = handleSubmit(async (values) => {
     if (isReviewDateModalOpen && !values.reviewDate) {
-      message.error('Please select date')
+      message.error('Selectionnez une date svp')
       return
     }
     const selectedDate = new Date(values.reviewDate);
@@ -609,10 +609,10 @@ const AppraisalPerformance = () => {
     const currentEmployee = allAppraisalsPerfTrans?.data.find((item: any) => item.employeeId === employeeRecord.id)
     if(!currentEmployee){
       postData(item)
-      return message.success('Successfully added')
+      return message.success('Ajouter  avec succes')
     }
     else{
-      return message.warning('Sorry this Employee has already been added')
+      return message.warning("Désolé l'employé est déja ajouté")
     }
     // postData(item)
   })
@@ -621,7 +621,7 @@ const AppraisalPerformance = () => {
     onSuccess: () => {
       queryClient.invalidateQueries('appraisalPerfTransactions')
       reset()
-      isEmailSent && message.success('Email notifications sent successfully')
+      isEmailSent && message.success('La notification a été envoyé par email')
       setIsReviewDateModalOpen(false)
       setIsModalOpen(false)
       loadData()
@@ -732,7 +732,7 @@ const AppraisalPerformance = () => {
       <form onSubmit={submitApplicant}>
         <div style={{ padding: "20px 0px 0 0px" }} className='col-12 row mb-0'>
           <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Paygroup</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Groupe de paie</label>
             <select value={selectedPaygroup} onChange={(e) => setSelectedPaygroup(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
               <option value="select paygroup">select paygroup</option>
               {allPaygroups?.data.map((item: any) => (
@@ -741,7 +741,7 @@ const AppraisalPerformance = () => {
             </select>
           </div>
           <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Appraisal Type</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Type d'évaluation</label>
             <select value={selectedAppraisalType} onChange={handleSelectedChange} className="form-select form-select-solid" aria-label="Select example">
               <option value="select appraisal type">select appraisal type</option>
               {allAppraisals?.data.map((item: any) => (
@@ -750,7 +750,7 @@ const AppraisalPerformance = () => {
             </select>
           </div>
           <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Start Period</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Période de début</label>
             <select value={selectedStartPeriod} onChange={(e) => setSelectedStartPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
               <option value="select start period">select start period</option>
               {allPeriods?.data.map((item: any) => (
@@ -759,7 +759,7 @@ const AppraisalPerformance = () => {
             </select>
           </div>
           <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">End Period</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Fin de période</label>
             <select value={selectedEndPeriod} onChange={(e) => setSelectedEndPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
               <option value="select end period"> select end period</option>
               {allPeriods?.data.map((item: any) => (
@@ -774,10 +774,10 @@ const AppraisalPerformance = () => {
           || selectedAppraisalType === null
           || selectedStartPeriod === null
           || selectedEndPeriod === null
-          || selectedPaygroup === "select paygroup"
-          || selectedAppraisalType === "select appraisal type"
-          || selectedStartPeriod === "select start period"
-          || selectedEndPeriod === "select end period" ? "" :
+          || selectedPaygroup === "selectionnez le  groupe de paie"
+          || selectedAppraisalType === "selectionnez le  type d'évaluation"
+          || selectedStartPeriod === "selectionnez la  Période de début"
+          || selectedEndPeriod === "selectionnez la  Période de fin" ? "" :
           <KTCardBody className='py-4 '>
             <div className='table-responsive'>
               <div className='d-flex justify-content-between'>
@@ -805,7 +805,7 @@ const AppraisalPerformance = () => {
               <Table columns={columns} dataSource={afterSearch} />
 
               <Modal
-                title='Employee Details '
+                title='Details Employé'
                 open={isModalOpen}
                 onCancel={handleCancel}
                 closable={true}
@@ -829,7 +829,7 @@ const AppraisalPerformance = () => {
                   <hr></hr>
                   <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label ">Employee ID</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label ">ID Employé</label>
 
                       <br></br>
                       <Select
@@ -853,31 +853,31 @@ const AppraisalPerformance = () => {
                   <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0'>
 
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Job Title</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Titre</label>
                       <input type="text" name="code" readOnly value={jobTitleName} className="form-control form-control-solid" />
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Job Role</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Role</label>
                       <input type="text" name="code" readOnly className="form-control form-control-solid" />
                     </div>
                   </div>
                   <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">First Name</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Prénoms</label>
                       <input type="text" {...register("firstName")} readOnly defaultValue={employeeRecord?.firstName} className="form-control form-control-solid" />
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Surname</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Nom</label>
                       <input type="text" {...register("surname")} readOnly defaultValue={employeeRecord?.surname} className="form-control form-control-solid" />
                     </div>
                   </div>
                   <div style={{ padding: "20px 20px 10px 20px" }} className='row mb-7 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">DOB</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Date de Naissance</label>
                       <input type="text" {...register("dob")} readOnly defaultValue={employeeRecord?.dob?.substring(0, 10)} className="form-control form-control-solid" />
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
+                      <label htmlFor="exampleFormControlInput1" className=" form-label">Genre</label>
                       <input type="text" {...register("gender")} readOnly defaultValue={employeeRecord?.gender} className="form-control form-control-solid" />
 
                     </div>
@@ -907,7 +907,7 @@ const AppraisalPerformance = () => {
                         </div>
                         <div className='col-6'>
                           <label htmlFor="exampleFormControlInput1" className="form-label">
-                            Comment
+                            Commentaires
                           </label>
                           <textarea
                             value={user.comment}
@@ -921,7 +921,7 @@ const AppraisalPerformance = () => {
                     </div>
                   ))}
                   <div style={{ padding: "20px 20px 30px 20px" }} className='col-12 mb-3'>
-                    <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Supporting Document :</label>
+                    <label style={{ padding: "0px 40px 0 0px" }} htmlFor="exampleFormControlInput1" className=" form-label">Document justificatif :</label>
 
                     <input {...register("documentUrl")} className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' type="file" />
                   </div>

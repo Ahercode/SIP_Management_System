@@ -3,7 +3,7 @@ import { SetupComponent } from '../CommonSetupComponent'
 const Units = () => {
 
   const data = {
-    title: 'Units',
+    title: 'Unité',
     url: 'Units',
   }
   return (

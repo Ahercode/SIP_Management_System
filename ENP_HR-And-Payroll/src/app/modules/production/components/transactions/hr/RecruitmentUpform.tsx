@@ -27,21 +27,21 @@ function RecruitmentUpform() {
         messageApi.open({
           type: 'warning',
           style:{fontSize:"18px"},
-          content: 'Sorry reference already exist',
+          content: 'Désolé la référence existe deja',
         });
       };
       const success = () => {
         messageApi.open({
           type: 'success',
           style:{fontSize:"20px"},
-          content: 'Submitted successfully',
+          content: 'Soumis avec succès',
         });
       };
 
       const warnUser = () => {
         messageApi.open({
           type: 'error',
-          content: 'Can not submit without a reference number!',
+          content: 'Le numéro de référence est obligatoire!',
           className: 'custom-class',
           style: {
             marginTop: '10vh',
@@ -106,18 +106,18 @@ function RecruitmentUpform() {
           </div>
           <div style={{ padding: "20px 0px 0 0px" }} className='col-6 row mb-0'>
             <div className='col-6 mb-3'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Start date</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Date de début</label>
               <input type="date" {...register("startDate")} className="form-control form-control-solid" />
             </div>
 
             <div className='col-6 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">End date</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Date de fin</label>
               <input type="date" {...register("endDate")} className="form-control form-control-solid" />
             </div>
           </div>
           <div style={{ padding: "20px 20px 0 20px" }} className='col-6 row mb-0'>
             <div className='col-6 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Paygroup</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Groupe de paie</label>
               <select className="form-select form-select-solid" {...register("paygroupId")} aria-label="Select example">
                 <option> select</option>
                 {allPaygroups?.data.map((item: any) => (
@@ -126,7 +126,7 @@ function RecruitmentUpform() {
               </select>
             </div>
             <div className='col-6 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Catégorie</label>
               <select className="form-select form-select-solid" {...register("categoryId")} aria-label="Select example">
                 <option> select</option>
                 {allCategories?.data.map((item: any) => (
@@ -137,7 +137,7 @@ function RecruitmentUpform() {
           </div>
           <div style={{ padding: "20px 0px 0 0px" }} className='col-6 row mb-0'>
             <div className='col-6 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Titre</label>
               <select className="form-select form-select-solid" {...register("jobTitleId")} aria-label="Select example">
                 <option> select</option>
 
@@ -147,7 +147,7 @@ function RecruitmentUpform() {
               </select>
             </div>
             <div className='col-6 mb-7'>
-              <label htmlFor="exampleFormControlInput1" className=" form-label">Unit</label>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Unité</label>
               <select className="form-select form-select-solid" {...register("unitId")} aria-label="Select example">
                 <option> select</option>
                 {allUnits?.data.map((item: any) => (

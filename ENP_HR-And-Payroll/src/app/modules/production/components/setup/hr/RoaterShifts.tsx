@@ -75,7 +75,7 @@ const RoasterShifts = () => {
 
   const columns: any = [
     {
-      title: 'Order',
+      title: 'Ordre',
       dataIndex: 'ord',
       sorter: (a: any, b: any) => {
         if (a.code > b.code) {
@@ -116,7 +116,7 @@ const RoasterShifts = () => {
       },
     },
     {
-      title: 'Number of days',
+      title: 'Nombre de jours',
       dataIndex: 'numOfDays',
       sorter: (a: any, b: any) => {
         if (a.startDate > b.startDate) {
@@ -323,7 +323,7 @@ const RoasterShifts = () => {
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
 
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Order</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Ordre</label>
                   <input type="text" {...register("ord")}
                     defaultValue={isUpdateModalOpen === true ? tempData.ord.trim() : ''}
                     onChange={handleChange}
@@ -343,7 +343,7 @@ const RoasterShifts = () => {
                   </select>
                 </div>
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Number of days</label>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Nombre de jours</label>
                   <input type="number" {...register("numOfDays")}
                    defaultValue={isUpdateModalOpen === true ? parseInt(tempData.numOfDays.trim()) : ''}
                     onChange={handleChange}

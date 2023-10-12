@@ -33,7 +33,7 @@ const CommonComp = (props: any) => {
 
     const columns: any = [
         {
-          title: 'Name',
+          title: 'Nom',
           key: 'qualificationId',
           render: (row: any) => {
             // return getQualificationName(row.qualificationId)
@@ -116,12 +116,12 @@ const CommonComp = (props: any) => {
             onClick={showModal}
             >
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                {`Add ${props?.title}`}
+                {`Ajouter ${props?.title}`}
             </button>
 
             <Table  columns={columns}/>
             <Modal
-                title={`Add ${props?.title}`}
+                title={`Ajouter ${props?.title}`}
               open={modalOpen}
               onCancel={handleCancel}
                 closable={true}

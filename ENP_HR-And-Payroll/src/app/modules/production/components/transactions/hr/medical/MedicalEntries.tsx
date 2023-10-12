@@ -98,10 +98,10 @@ const MedicalEntries = () => {
       // update the local state so that react can refecth and re-render the table with the new data
       const newData = gridData.filter((item: any) => item.id !== element.id)
       setGridData(newData)
-      message.success('Medical Entry deleted successfully')
+      message.success('Entrée médicale supprimée avec succès')
       return response.status
     } catch (e) {
-      message.warning('Cannot delete medical entry with sub entries, please delete sub entries first!')
+      message.warning("Impossible de supprimer l'entrée médicale avec les sous-entrées, veuillez d'abord supprimer les sous-entrées!")
       return e
     }
   }
@@ -124,7 +124,7 @@ const MedicalEntries = () => {
     },
     
     {
-      title: 'Medical Type',
+      title: 'Type médical',
       key:'medicalTypeId',
       render: (row: any) => {
         return getMedicalName(row.medicalTypeId)
@@ -153,7 +153,7 @@ const MedicalEntries = () => {
       },
     },
     {
-      title: 'Comments',
+      title: 'Commentaires',
       dataIndex: 'comment',
       sorter: (a: any, b: any) => {
         if (a.comment > b.comment) {
@@ -182,7 +182,7 @@ const MedicalEntries = () => {
 
   const productColumn:any = [
     {
-      title: 'Product',
+      title: 'Produit',
       key: 'medicalServiceId',
       render: (row: any) => {
         return getProductName(row.medicalServiceId)
@@ -198,7 +198,7 @@ const MedicalEntries = () => {
       },
     },
     {
-      title: 'Cost',
+      title: 'Coût',
       dataIndex: 'cost',
       sorter: (a: any, b: any) => {
         if (a.cost > b.cost) {
@@ -353,18 +353,18 @@ const MedicalEntries = () => {
       <div style={{padding: "0px 0px 40px 0px"}} className='col-12'>
         <div style={{padding: "20px 0px 0 0px"}} className='col-6 row mb-0'>
           <div className='col-6 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Paygroup</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Groupe de paie</label>
             <select value={selectedValue1} onChange={(e) => setSelectedValue1(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select paygroup" style={{color:"GrayText"}}> select paygroup</option>
+              <option value="select paygroup" style={{color:"GrayText"}}> selectionnez  le Groupe de paie</option>
               {allPaygroups?.data.map((item: any) => (
                 <option value={item.id}>{item.name}</option>
               ))}
             </select>
           </div>
           <div className='col-6 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Period</label>
+            <label htmlFor="exampleFormControlInput1" className=" form-label">Periode</label>
             <select value={selectedValue2} onChange={(e) => setSelectedValue2(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select period">select period</option>
+              <option value="select period">selectionnez la periode</option>
               {allPeriods?.data.map((item: any) => (
                 <option value={item.id}>{item.name}</option>
               ))}
@@ -431,7 +431,7 @@ const MedicalEntries = () => {
                   <hr></hr>
                   <div className='row'>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Employee</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Employé</label>
                       <br></br>
                       <Select
                         {...register("employeeId")}
@@ -455,7 +455,7 @@ const MedicalEntries = () => {
                       <input type="text" {...register("reference")}  className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Dependant</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">dépendant</label>
                         <div className='mt-2'>
                           <Radio.Group value={radioValue} onChange={onRadioChange} >
                             <Radio value={1}>Yes</Radio>
@@ -466,7 +466,7 @@ const MedicalEntries = () => {
                     {
                       radioValue==1 &&(
                         <div className='col-6 mb-3'>
-                          <label htmlFor="exampleFormControlInput1" className="form-label">Select Dependant</label>
+                          <label htmlFor="exampleFormControlInput1" className="form-label">Selectionnez le dépendant</label>
                           <select {...register("dependantId")} className="form-select form-select-solid" aria-label="Select example">
                             <option> Select </option>
                           </select>
@@ -474,7 +474,7 @@ const MedicalEntries = () => {
                       )
                     }
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Service Provider</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Fournisseur de services</label>
                       <select {...register("serviceProviderId")} value={selectedProvider} onChange={(e:any)=>{setSeletedProvider(e.target.value)}} className="form-select form-select-solid" aria-label="Select example">
                         <option> select </option>
                         {serviceProviders?.data.map((item: any) => (
@@ -487,11 +487,11 @@ const MedicalEntries = () => {
                       <input type="date" {...register("date")}  className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Voucher Number</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Numéro du bon</label>
                       <input type="text" {...register("voucherNumber")}  className="form-control form-control-solid"/>
                     </div>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Comments</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Commentaires</label>
                       <textarea {...register("comment")} className="form-control form-control-solid" aria-label="With textarea"></textarea>
                     </div>
                     <div className='col-6 mb-3'>
