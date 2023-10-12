@@ -300,12 +300,10 @@ const EmployeeDeliverableEntry = () => {
       if (parseInt(sums + itemToPost.data.subWeight) > 100 || itemToPost.data.subWeight > 100) {
         return message.error(`Total weight for ${pathData?.name} cannot exceed 100`);
       } else {
-        // message.success('Adding item...')
         postData(itemToPost)
       }
     } else {
       message.error(`Total weight for ${pathData?.name} is less than 0!`);
-      // postData(itemToPost)
     }
   })
 
@@ -350,7 +348,8 @@ const EmployeeDeliverableEntry = () => {
               <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
                 <span className="fw-bold d-block fs-2">{`${pathData?.name}`}</span>
                 <div className="bullet bg-danger ms-4"></div>
-                <span className=' fs-2 ms-4 fw-bold'>{`${pathData?.weight}%`}</span>
+                <span className=' fs-2 ms-4 fw-bold'>{`100%`}</span>
+                {/* <span className=' fs-2 ms-4 fw-bold'>{`${pathData?.weight}%`}</span> */}
               </div>
             </Space>
             <Space style={{ marginBottom: 16 }}>

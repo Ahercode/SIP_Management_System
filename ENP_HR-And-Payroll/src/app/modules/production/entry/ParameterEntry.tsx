@@ -1,14 +1,11 @@
-import { Button, Form, Input, InputNumber, Modal, Skeleton, Space, Table, Tag, message } from 'antd'
+import { Button, Skeleton, Space, Table, Tag, message } from 'antd'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { set, useForm } from 'react-hook-form'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { get, map } from 'jquery'
+import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
+import { Link, useParams } from 'react-router-dom'
+import { KTCardBody } from '../../../../_metronic/helpers'
+import { fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../../auth'
-import { all } from '@devexpress/analytics-core/analytics-elements-metadata'
 
 const ParameterEntry = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -127,26 +124,16 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     return incompleteDeliverables?.length
   };
 
-  const weightSumStatus = (id: any) => {
+  // const weightSumStatus = (id: any) => {
 
-    console.log("para",id)
+  //   console.log("para",id)
+  //   const allObj = appraisalObjectives?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
 
-    
-    const allObj = appraisalObjectives?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
+  //   const allDeliverables = allObj?.map((item: any) => {
+  //     return appraisalObjectives?.data.filter((del: any) => del.id === item.id)
+  //   })
 
-    // return objectives whose sum of weight is !== para.weight
-
-    const allDeliverables = allObj?.map((item: any) => {
-      return appraisalObjectives?.data.filter((del: any) => del.id === item.id)
-    })
-    // const incompleteObjectives = allObj?.map((item: any) => {
-    //   return item?.map((del: any) => parseInt(del.weight))
-    //   .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) !== 80
-    // })
-
-    // console.log("incompleteObjectives",incompleteObjectives)
-
-  };
+  // };
 
   const getDeliverableStatus = (  )=>{
     const getOnlyparameters = allParameters?.data?.filter((item: any) => {
@@ -168,31 +155,43 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
       return item.appraisalId === 12
     }
   )   
-
-
     const allDeliverables = getOnlyparameters?.map((pare: any) => {
-      return appraisalObjectives?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
-    })
-    console.log("allDeliverables",allDeliverables)
 
-    
+      const objData = appraisalObjectives?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
+      const objStatus = objData?.map((item: any) => {
+        return item.weight
+      })
+
+      console.log("objData",objData)
+      console.log("objStatus",objStatus)
+      return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
+    })
+
+    console.log("allObjectives",allDeliverables)
   
+    setObjectiveStatus(allDeliverables)
   }
 
 useEffect(() => {
   getObjectiveStatus()
   getDeliverableStatus()
 }
-, [allParameters])
+, [allParameters?.data])
   
 
 const OnSubmit = handleSubmit(async (values) => {
 
   
-  if(deliverableStatus.every((item:any) => item === 0)){
-    message.success("You have successfully submitted your appraisal")
-  }else{
-    return message.error("You have some incomplete deliverables")
+  
+  if(objectiveStatus.every((item:any) => item === true)){
+    if(deliverableStatus.every((item:any) => item === 0)){
+      message.success("You have successfully submitted your appraisal")
+    }else{
+      return message.error("You have some incomplete deliverables. Make sure all deliverables are 100%")
+    }
+  }
+  else{
+    return message.error("You have some incomplete objectives")
   }
 
 
@@ -212,7 +211,7 @@ const OnSubmit = handleSubmit(async (values) => {
         <div className='table-responsive'>
           <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
             <div className='text-primary fs-2 fw-bold mb-4'>{`${appraisalData?.name}`}</div>
-            <Button onClick={OnSubmit} type='primary' size='large'>
+            <Button disabled={objectiveStatus===true && deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
               Submit
             </Button>
           </div> 
