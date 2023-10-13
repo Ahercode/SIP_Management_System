@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { Link, useParams } from 'react-router-dom'
 import { KTCardBody } from '../../../../_metronic/helpers'
-import { fetchDocument } from '../../../services/ApiCalls'
+import { Api_Endpoint, fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../../auth'
+import axios from 'axios'
 
 const ParameterEntry = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -17,10 +18,10 @@ const ParameterEntry = () => {
 const [objectiveStatus, setObjectiveStatus] = useState<any>("")
 
 const [deliverableStatus, setDeliverableStatus] = useState<any>("")
-  const { data: appraisalObjectives} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
-  const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 5000 })
-  const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
-  const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 5000 })
+  const { data: appraisalObjectives} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
+  const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
+  const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
+  const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
 
 
   const columns: any = [
@@ -124,17 +125,6 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     return incompleteDeliverables?.length
   };
 
-  // const weightSumStatus = (id: any) => {
-
-  //   console.log("para",id)
-  //   const allObj = appraisalObjectives?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
-
-  //   const allDeliverables = allObj?.map((item: any) => {
-  //     return appraisalObjectives?.data.filter((del: any) => del.id === item.id)
-  //   })
-
-  // };
-
   const getDeliverableStatus = (  )=>{
     const getOnlyparameters = allParameters?.data?.filter((item: any) => {
       return item.appraisalId === 12
@@ -143,27 +133,22 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     const statusAll = getOnlyparameters?.map((item: any) => {
       return weightSumDeliverables(item.id)
     })
-
     setDeliverableStatus(statusAll)
-    // console.log("deliverableStatus",statusAll)
   }
-
-
-  const getObjectiveStatus = (  )=>{
-
-    const getOnlyparameters = allParameters?.data?.filter((item: any) => {
+  const getOnlyparameters = allParameters?.data?.filter((item: any) => {
       return item.appraisalId === 12
     }
-  )   
+  )  
+
+  const getObjectiveStatus = ( )=>{
+
+   
     const allDeliverables = getOnlyparameters?.map((pare: any) => {
 
       const objData = appraisalObjectives?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
       const objStatus = objData?.map((item: any) => {
         return item.weight
       })
-
-      console.log("objData",objData)
-      console.log("objStatus",objStatus)
       return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
     })
 
@@ -180,12 +165,22 @@ useEffect(() => {
   
 
 const OnSubmit = handleSubmit(async (values) => {
-
-  
-  
   if(objectiveStatus.every((item:any) => item === true)){
     if(deliverableStatus.every((item:any) => item === 0)){
-      message.success("You have successfully submitted your appraisal")
+      const parameterIds = getOnlyparameters?.map((item: any) => {
+        return item.id
+      })
+      console.log("parameterIds",parameterIds)
+      const employeeId = currentUser?.id?.toString()
+      const statusText = "submitted"
+      axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, { parameterIds, employeeId, statusText})
+      .then(response => {
+        message.success("You have successfully submitted your appraisal")
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     }else{
       return message.error("You have some incomplete deliverables. Make sure all deliverables are 100%")
     }

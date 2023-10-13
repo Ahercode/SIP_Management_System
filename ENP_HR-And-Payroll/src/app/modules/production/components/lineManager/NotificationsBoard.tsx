@@ -17,14 +17,25 @@ const NotificationsBoard = () => {
 
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
    
-    const [filteredObjectives, setFilteredObjectives] = useState<any>([])
+    // const [filteredObjectives, setFilteredObjectives] = useState<any>([])
     const [employeeWhoSubmitted, setEmployeeWhoSubmitted] = useState<any>([])
     const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
 
 
     // get all objectives with submitted status
     const allSubmittedObjectives = employeeObjectives?.data?.map((item: any) => {
-        if(item?.status === 'submitted'){
+        if(item?.status === 'submitted'|| item?.status === 'approved'){
+
+            return item?.employeeId
+        }
+        else
+        {
+            return null
+        }
+    })
+
+    const allRejectedObjectives = employeeObjectives?.data?.map((item: any) => {
+        if(item?.status === 'rejected'){
 
             return item?.employeeId
         }
@@ -34,10 +45,9 @@ const NotificationsBoard = () => {
         }
     })
     
-    // console.log('allSubmittedObjectives3: ', allSubmittedObjectives)
-    // console.log('allTeamMembers: ', allTeamMembers  )
-  
-            // console.log('data1: ', data)
+
+    // console.log('allRejectedObjectives: ', allRejectedObjectives)
+
 
           
     const loadData = async () => {
@@ -70,7 +80,7 @@ const NotificationsBoard = () => {
             </>,
             children: (
                 <>
-                    <DownLines filteredByLineManger={allTeamMembers} loading={isLoading} />
+                    <DownLines filteredByLineManger={allTeamMembers} loading={isLoading} rejectedEmp={allRejectedObjectives}/>
                 </>
             ),
         },
@@ -83,7 +93,7 @@ const NotificationsBoard = () => {
             </>,
             children: (
                 <>
-                    <NotificationsComponent loading={objectivesLoading} filter={'submitted'} employeeWhoSubmitted={employeeWhoSubmitted} />
+                    <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeeWhoSubmitted} />
                 </>
             ),
         },

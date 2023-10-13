@@ -10,10 +10,9 @@ import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjecti
 import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/AppraisalPdfPrintView"
 import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
 
-const NotificationsComponent = ({ loading, filter, employeeWhoSubmitted }: any) => {
+const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
-    const { data: allSubmittedObjectives } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const queryClient = useQueryClient()
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -89,7 +88,7 @@ const NotificationsComponent = ({ loading, filter, employeeWhoSubmitted }: any) 
         const item = {
             data: {
                 ...objectivesData,
-                status: 'Rejected',
+                status: 'rejected',
                 comment: comment
             },
             url: 'appraisalobjective'
@@ -118,7 +117,7 @@ const NotificationsComponent = ({ loading, filter, employeeWhoSubmitted }: any) 
         const item = {
             data: {
                 ...objectivesData,
-                status: 'Approved'
+                status: 'approved'
             },
             url: 'appraisalobjective'
         }

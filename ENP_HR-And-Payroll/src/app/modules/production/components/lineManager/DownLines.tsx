@@ -6,7 +6,7 @@ import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervis
 import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
 import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
 
-const DownLines = ({ filteredByLineManger, loading }: any) => {
+const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
     // const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 5000 })
@@ -14,7 +14,10 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
     const { data: appraisalobjective} = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
-
+    // const [submittedStatus, setSubmittedStatus] = useState<any>([])
+    // const [draftedStatus, setDraftedStatus] = useState<any>([])
+    // const[approvedStatus, setApprovedStatus] = useState<any>([])
+    // const [rejectedStatus, setRejectedStatus] = useState<any>([])
     const [employeeData, setEmployeeData] = useState<any>({})
     const [objectivesData, setObjectivesData] = useState<any>([])
 
@@ -31,15 +34,13 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
 
-        // const employee = allEmployees?.data?.find((item: any) => (item.id) === record?.id)
         const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
         console.log('employee: ', employee)
         console.log('record: ', record)
-        console.log('objectiveByEMployee: ', objectiveByEMployee)
-        // setEmployeeData(employee)
+     
         setObjectivesData(objectiveByEMployee)
         setEmployeeData(employee)
-        // setObjectivesData(record)
+   
     }
 
     const handleCancel = () => {
@@ -85,7 +86,7 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             title: 'Approval Status',
             dataIndex: 'status',
             render: (text: any) => {
-                return <Tag color={text === "Not submitted" ? "error" : "purple"}>{text}</Tag>
+                return <Tag color={text === "drafted" ? "error" : "purple"}>{text}</Tag>
             }
         },
         {
@@ -93,16 +94,38 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
             fixed: 'right',
             width: 100,
             render: (record: any) => (
-                <button disabled={record.status === "Not submitted"} onClick={() => showObjectivesView(record)} className={record.status === "Not submitted" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
+                <button disabled={record.status === "drafted"} onClick={() => showObjectivesView(record)} className={record.status === "drafted" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
                     Amend
                 </button>
             ),
         },
     ]
+
+    // add a key to dataByID
+    const allDownlines = filteredByLineManger?.map((item: any) => {
+        return {
+            ...item,
+            key: item?.employeeId,
+            
+        }
+    })
+
+    const allApprovedObjectives = appraisalobjective?.data?.map((item: any) => {
+        if(item?.status === 'approved'){
+
+            return item?.employeeId +" "+ item?.status
+        }
+        else
+        {
+            return null
+        }
+    })
+    // console.log('allApprovedObjectives: ', allApprovedObjectives)
+
+
     useEffect(() => {
-        console.log('objectivesData: ', objectivesData)
-    }
-        , [objectivesData, filteredByLineManger])
+
+    }, [objectivesData, filteredByLineManger])
 
     return (
         <>
@@ -110,10 +133,11 @@ const DownLines = ({ filteredByLineManger, loading }: any) => {
                 loading ? <Skeleton active /> :
                     <Table
                         columns={columns}
-                        dataSource={filteredByLineManger}
+                        dataSource={allDownlines}
                         expandable={{
-                            rowExpandable: (record) => record.status === 'Rejected',
-                            expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.comment}</p>,
+                            rowExpandable: (record) => record?.id===5383,
+                            expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.comment}
+                            </p>,
                         }}
                     />
             }
