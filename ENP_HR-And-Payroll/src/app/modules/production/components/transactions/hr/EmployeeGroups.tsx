@@ -1,4 +1,4 @@
-import { message, Skeleton, Table } from "antd"
+import { message, Skeleton, Space, Switch, Table } from "antd"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { fetchDocument, postItem } from "../../../../../services/ApiCalls"
@@ -12,8 +12,8 @@ const EmployeeGroups = ({ allEmployeeGroups, loading, selectedPaygroup, openModa
     const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument('Paygroups'), { cacheTime: 5000 })
     const [gridDataToBeSaved, setGridDataToBeSaved] = useState<any>([])
     const [isModalOpen, setIsModalOpen] = useState(openModal)
-    const queryClient = useQueryClient()
-    const [submitLoading, setSubmitLoading] = useState(false)
+    // const queryClient = useQueryClient()
+    // const [submitLoading, setSubmitLoading] = useState(false)
 
     const columns: any = [
         {
@@ -121,6 +121,7 @@ const EmployeeGroups = ({ allEmployeeGroups, loading, selectedPaygroup, openModa
         const supervisorName = getSupervisorData({ employeeId, allEmployees, allOrganograms })
         return supervisorName === undefined ? 'Undefined' : `${supervisorName?.firstName} ${supervisorName?.surname}`
     }
+    
 
     const loadData = async () => {
         try {
@@ -161,23 +162,34 @@ const EmployeeGroups = ({ allEmployeeGroups, loading, selectedPaygroup, openModa
         }
     }
 
-    const { mutate: postData } = useMutation(postItem, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('appraisalPerfTransactions')
-            handleCancel()
-        },
-        onError: (error: any) => {
-            message.error('Error occurred while saving group')
-            console.log('post error: ', error)
-        }
-    })
+    // const { mutate: postData } = useMutation(postItem, {
+    //     onSuccess: () => {
+    //         queryClient.invalidateQueries('appraisalPerfTransactions')
+    //         handleCancel()
+    //     },
+    //     onError: (error: any) => {
+    //         message.error('Error occurred while saving group')
+    //         console.log('post error: ', error)
+    //     }
+    // })
+console.log("gridDataToBeSaved:", gridDataToBeSaved)
+    // add key field to gridDataToBeSaved
+    
+
 
 
     return (
         <>
             {
                 loading ? <Skeleton active /> :
-                    <Table columns={columns} dataSource={gridDataToBeSaved} />
+                <>
+                
+                    <Table columns={columns}
+                        // rowSelection={rowSelection}
+                        dataSource={gridDataToBeSaved} 
+                    />
+                </>
+                    
             }
         </>
     )

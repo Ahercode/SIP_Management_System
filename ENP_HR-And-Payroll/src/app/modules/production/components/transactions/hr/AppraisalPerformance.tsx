@@ -8,6 +8,7 @@ import { AppraisalPrintHeader, PrintComponent } from '../../appraisalForms/Appra
 import { AppraisalObjective } from './AppraisalObjective'
 import { ReviewDateComponent } from './AppraisalScheduleDates'
 import { EmployeeGroups } from './EmployeeGroups'
+import type { TableRowSelection } from 'antd/es/table/interface';
 import "./cusStyle.css"
 
 
@@ -55,11 +56,23 @@ const AppraisalPerformance = () => {
   const [employeeData, setEmployeeData] = useState<any>({})
   const [parametersData, setParametersData] = useState<any>([])
   const [showPritntPreview, setShowPrintPreview] = useState(false)
-
+  // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
 
   const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
   const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  const onSelectChange = (selectedRowKeys:any, selectedRows:any) => {
+    // setSelectedRowKeys(selectedRowKeys);
+    setSelectedRowKeys(selectedRowKeys);
+      console.log(`Selected Row Keys: ${selectedRowKeys}`, 'Selected Rows:', selectedRows);
+  };
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange
+  }
+
 
 
   const handleCancel = () => {
@@ -115,10 +128,7 @@ const AppraisalPerformance = () => {
     {
       title: 'First Name',
       dataIndex: 'firstName',
-      key: 'employeeId',
-      // render: (row: any) => {
-      //   return getFirstName(row)
-      // },
+      key: 'firstName',
       sorter: (a: any, b: any) => {
         if (a.employeeId > b.employeeId) {
           return 1
@@ -132,10 +142,7 @@ const AppraisalPerformance = () => {
     {
       title: 'Surname',
       dataIndex: 'surname',
-      key: "employeeId",
-      // render: (row: any) => {
-      //   return getSurname(employeeId)
-      // },
+      key: "surname",
       sorter: (a: any, b: any) => {
         if (a.surname > b.surname) {
           return 1
@@ -149,6 +156,7 @@ const AppraisalPerformance = () => {
     {
       title: 'Job Title',
       dataIndex: 'jobTitleId',
+      key:"jobTitleId",
       render: (row: any) => {
         return getFieldName(row, allJobTitles?.data)
       },
@@ -165,9 +173,7 @@ const AppraisalPerformance = () => {
     {
       title: 'Email',
       dataIndex: 'email',
-      // render: (row: any) => {
-      //   return <span className='text-primar'>{getEmail(row.employeeId)}</span>
-      // },
+      key:"email",
       sorter: (a: any, b: any) => {
         if (a.jobt > b.jobt) {
           return 1
@@ -180,7 +186,8 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Line Manager',
-      key: 'lineManagerId',
+      dataIndex:"line",
+      // key: 'lineManagerId',
       render: (row: any) => {
         return getLinemanager(row?.lineManagerId)
       },
@@ -196,7 +203,8 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Score',
-      dataIndex: 'employeeId',
+      dataIndex: 'score',
+      key:"score",
       render: (row: any) => {
         return '0'
       },
@@ -283,13 +291,13 @@ const AppraisalPerformance = () => {
     return emp?.firstName + " " + emp?.surname
 }
 
-console.log("notificationsGroupData", notificationsGroupData)
+// console.log("notificationsGroupData", notificationsGroupData)
 
   // get supervisor name from organogram table
-  const getSupervisorName = (employeeId: any) => {
-    const supervisorName = getSupervisorData({ employeeId, allEmployees, allOrganograms })
-    return supervisorName === undefined ? 'Undefined' : `${supervisorName?.firstName} ${supervisorName?.surname}`
-  }
+  // const getSupervisorName = (employeeId: any) => {
+  //   const supervisorName = getSupervisorData({ employeeId, allEmployees, allOrganograms })
+  //   return supervisorName === undefined ? 'Undefined' : `${supervisorName?.firstName} ${supervisorName?.surname}`
+  // }
 
   const parameterByAppraisal = allParameters?.data.filter((section: any) => section.appraisalId === parseInt(selectedAppraisalType))
     .map((item: any) => ({
@@ -336,6 +344,12 @@ console.log("notificationsGroupData", notificationsGroupData)
       loadData()
     }
   }
+
+  const DataWithKey = notificationsGroupData?.map((item:any) =>{
+    return {...item, key: item?.id}
+  })
+
+  // console.log("DataWithKey", DataWithKey)
 
   const globalSearch = () => {
     // @ts-ignore
@@ -431,7 +445,7 @@ console.log("notificationsGroupData", notificationsGroupData)
               < ReviewDateComponent
                 referenceId={referenceId}
                 selectedAppraisalType={selectedAppraisalType}
-                employeesInDataByID={notificationsGroupData}
+                employeesInDataByID={DataWithKey}
               />
             </div>
 
@@ -451,7 +465,11 @@ console.log("notificationsGroupData", notificationsGroupData)
             </div>
             {
               loading ? <Skeleton active /> :
-                <Table columns={columns} dataSource={notificationsGroupData} />
+                <Table 
+                  columns={columns} 
+                  rowSelection={rowSelection}
+                  dataSource={notificationsGroupData} 
+                />
             }
             <Modal
               title={`Employees in ${getFieldName(selectedPaygroup, allPaygroups?.data)}`}

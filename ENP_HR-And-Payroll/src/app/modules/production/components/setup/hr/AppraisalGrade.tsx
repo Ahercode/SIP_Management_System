@@ -184,10 +184,11 @@ const AppraisalGrade = () => {
               return error.statusText
             }
         }else{
-         message.success("Upadte trigger")
         try {
           console.log("Update Data",dataUpdate)
           const response = await axios.put(urlUpdate, dataUpdate)
+         message.success("Upadte successful")
+
           setSubmitLoading(false)
           reset()
           setIsModalOpen(false)
