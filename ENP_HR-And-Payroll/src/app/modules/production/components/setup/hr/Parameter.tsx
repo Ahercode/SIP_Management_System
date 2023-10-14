@@ -323,8 +323,6 @@ const Parameter = () => {
   const { mutate: postData } = useMutation(postItem, {
     onSuccess: (data) => {
       queryClient.invalidateQueries('parameters')
-      // queryClient.setQueryData('parameters', (old: any) => [...old, data])
-      // loadData()
       reset()
       setTempData({})
       setIsModalOpen(false)
@@ -360,7 +358,6 @@ const Parameter = () => {
               type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
             />
             <span className="fw-bold text-gray-600 d-block fs-2 mb-3 ">{appraisalName}</span>
-            {/* <> <Breadcrumb separator=">" items={breadcrumbs} className="mb-3" /> </> */}
           </Space>
           
           <div className='d-flex justify-content-between'>
@@ -442,18 +439,6 @@ const Parameter = () => {
                     min={0}
                     className="form-control form-control-solid" />
                 </div>
-                {/* <div className='mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Status</label>
-                  <select 
-                    {...register("status")} 
-                    value={isUpdateModalOpen === true ? tempData?.status?.toString() : null}
-                    onChange={handleChange}
-                    className="form-select form-select-solid" aria-label="Select example">
-                    {isUpdateModalOpen === false ? <option>Select status</option> : null}
-                    <option value='0'>Inactive</option>
-                    <option value='1'>Active</option>
-                  </select>
-                </div> */}
               </div>
             </form>
           </Modal>

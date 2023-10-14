@@ -1,19 +1,3 @@
-// import { SetupComponent } from '../CommonSetupComponent'
-
-// const Appraisals = () => {
-
-//   const data = {
-//     title: 'Appraisals',
-//     url: 'Appraisals',
-//     }
-//   return (
-//     <div>
-//       < SetupComponent data={data} />    
-//     </div>
-//   )
-// }
-
-// export { Appraisals }
 
 import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import axios from 'axios'
@@ -86,9 +70,7 @@ const Appraisals = () => {
     }
     deleteData(item)
   }
-
   const columns: any = [
-
     {
       title: 'Code',
       dataIndex: 'code',
@@ -116,12 +98,28 @@ const Appraisals = () => {
       },
     },
     {
+      title: 'Number of Review',
+      dataIndex: 'numReview',
+      sorter: (a: any, b: any) => {
+        if (a.numReview > b.numReview) {
+          return 1
+        }
+        if (b.numReview > a.numReview) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
       title: 'Action',
       fixed: 'right',
       width: 100,
       render: (record: any) => (
         <Space size='middle'>
 
+          <Link to={`/appraisalGrade/${record.id}`}>
+            <span className='btn btn-light-info btn-sm'>Grades</span>
+          </Link>
           <Link to={`/parameters/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Parameters</span>
           </Link>
@@ -148,7 +146,7 @@ const Appraisals = () => {
 
   useEffect(() => {
     loadData()
-  }, [allAppraisals?.data])
+  }, [allAppraisals?.data, submitLoading])
 
 
   const handleInputChange = (e: any) => {
@@ -183,12 +181,14 @@ const Appraisals = () => {
       tenantId: tenantId,
       code: values.code,
       name: values.name,
+      numReview: values.numReview,
     }
     const dataUpdate = {
       id: tempData.id,
       tenantId: tenantId,
       code: values.code,
       name: values.name,
+      numReview: values.numReview,
     }
     console.log(data)
 
@@ -209,7 +209,7 @@ const Appraisals = () => {
           return error.statusText
         }
       }
-      window.alert("The Code you entered already exist!");
+      message.warning("The Code you entered already exist!");
     }
 
     try {
@@ -304,6 +304,10 @@ const Appraisals = () => {
                 <div className=' mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Name </label>
                   <input type="text" {...register("name")} defaultValue={isUpdateModalOpen ? tempData?.name : ''} onChange={handleChange} className="form-control form-control-solid" />
+                </div>
+                <div className=' mb-7'>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Number of Reviews </label>
+                  <input type="text" {...register("numReview")} defaultValue={isUpdateModalOpen ? tempData?.numReview : ''} onChange={handleChange} className="form-control form-control-solid" />
                 </div>
 
               </div>

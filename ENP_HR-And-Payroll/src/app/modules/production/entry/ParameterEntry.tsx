@@ -141,8 +141,6 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   )  
 
   const getObjectiveStatus = ( )=>{
-
-   
     const allDeliverables = getOnlyparameters?.map((pare: any) => {
 
       const objData = appraisalObjectives?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
@@ -152,7 +150,7 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
       return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
     })
 
-    console.log("allObjectives",allDeliverables)
+    console.log("allObjectives", allDeliverables)
   
     setObjectiveStatus(allDeliverables)
   }
@@ -162,8 +160,6 @@ useEffect(() => {
   getDeliverableStatus()
 }
 , [allParameters?.data])
-  
-
 const OnSubmit = handleSubmit(async (values) => {
   if(objectiveStatus.every((item:any) => item === true)){
     if(deliverableStatus.every((item:any) => item === 0)){
@@ -188,9 +184,6 @@ const OnSubmit = handleSubmit(async (values) => {
   else{
     return message.error("You have some incomplete objectives")
   }
-
-
-
 })
 
   return (

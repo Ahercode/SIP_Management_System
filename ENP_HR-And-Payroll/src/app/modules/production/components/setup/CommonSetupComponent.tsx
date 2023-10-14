@@ -91,20 +91,59 @@ const SetupComponent = (props: any) => {
                 return 0
             },
         },
+        
         {
-            title: 'Bonus target',
-            dataIndex: 'bonusTarget',
+            title: 'Threshold',
+            dataIndex: 'threashold',
             sorter: (a: any, b: any) => {
-                if (a.name > b.name) {
+                if (a.threashold > b.threashold) {
                     return 1
                 }
-                if (b.name > a.name) {
+                if (b.threashold > a.threashold) {
                     return -1
                 }
                 return 0
             },
         },
-
+        {
+            title: 'Bonus target',
+            dataIndex: 'bonusTarget',
+            sorter: (a: any, b: any) => {
+                if (a.bonusTarget > b.bonusTarget) {
+                    return 1
+                }
+                if (b.bonusTarget > a.bonusTarget) {
+                    return -1
+                }
+                return 0
+            },
+        },
+        {
+            title: 'Group Weight',
+            dataIndex: 'grouopWeight',
+            sorter: (a: any, b: any) => {
+                if (a.grouopWeight > b.grouopWeight) {
+                    return 1
+                }
+                if (b.grouopWeight > a.grouopWeight) {
+                    return -1
+                }
+                return 0
+            },
+        },
+        {
+            title: 'Individual Weight',
+            dataIndex: 'individualWeight',
+            sorter: (a: any, b: any) => {
+                if (a.individualWeight > b.individualWeight) {
+                    return 1
+                }
+                if (b.individualWeight > a.individualWeight) {
+                    return -1
+                }
+                return 0
+            },
+        },
         {
             title: 'Action',
             fixed: 'right',
@@ -123,9 +162,20 @@ const SetupComponent = (props: any) => {
     ]
 
     // remove bonus target from columns if props.data.title is category
-    if (props.data.title !== 'Category') {
+    // if (props.data.title === 'Category') {
+    //     columns.splice(3, 4)
+    // }
+    if (props.data.title === 'Category') {
         columns.splice(2, 1)
     }
+    else if (props.data.title === 'Departments') {
+        columns.splice(3, 3)
+        
+    }else{
+        columns.splice(2, 4)
+    }
+
+    
 
     const loadData = async () => {
         try {
@@ -204,7 +254,9 @@ const SetupComponent = (props: any) => {
                 // medicalTypeId: parseInt(param.id),
                 tenantId: tenantId,
                 bonusTarget: values.bonusTarget,
-                weight: values.weight,
+                grouopWeight: values.grouopWeight,
+                individualWeight: values.individualWeight,
+                threashold: values.threashold,
             },
             url: props.data.url
         }
@@ -304,6 +356,15 @@ const SetupComponent = (props: any) => {
                                     <input type="text" {...register("name")} defaultValue={isUpdateModalOpen === true ? tempData.name : ''} onChange={handleChange} className="form-control form-control-solid" />
                                 </div>
                                 {
+                                    props.data.title === 'Departments' &&
+                                    <>
+                                        <div className=' mb-7'>
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Threashold</label>
+                                            <input type="number" {...register("threashold")} defaultValue={isUpdateModalOpen === true ? parseInt(tempData.threashold) : 0} onChange={handleChange} className="form-control form-control-solid" />
+                                        </div>
+                                    </>
+                                }
+                                {
                                     props.data.title === 'Category' &&
                                     <>
                                         <div className=' mb-7'>
@@ -311,8 +372,12 @@ const SetupComponent = (props: any) => {
                                             <input type="number" {...register("bonusTarget")} defaultValue={isUpdateModalOpen === true ? tempData.bonusTarget : 0} onChange={handleChange} className="form-control form-control-solid" />
                                         </div>
                                         <div className=' mb-7'>
-                                            <label htmlFor="exampleFormControlInput1" className="form-label">Weight</label>
-                                            <input type="number" {...register("weight")} defaultValue={isUpdateModalOpen === true ? tempData.bonusTarget : 0} onChange={handleChange} className="form-control form-control-solid" />
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Group Weight</label>
+                                            <input type="number" {...register("grouopWeight")} defaultValue={isUpdateModalOpen === true ? parseInt(tempData.grouopWeight) : 0} onChange={handleChange} className="form-control form-control-solid" />
+                                        </div>
+                                        <div className=' mb-7'>
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Individual Weight</label>
+                                            <input type="number" {...register("individualWeight")} defaultValue={isUpdateModalOpen === true ? parseInt(tempData.individualWeight) : 0} onChange={handleChange} className="form-control form-control-solid" />
                                         </div>
                                     </>
                                 }

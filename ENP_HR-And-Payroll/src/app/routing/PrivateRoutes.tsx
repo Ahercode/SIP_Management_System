@@ -1,7 +1,6 @@
 import { FC, Suspense, useEffect, useState } from 'react'
 import { Route, Routes, Navigate} from 'react-router-dom'
 import { MasterLayout } from '../../_metronic/layout/MasterLayout'
-import { getCSSVariableValue } from '../../_metronic/assets/ts/_utils'
 import { WithChildren } from '../../_metronic/helpers'
 import { Audit } from '../modules/production/components/setup/administration/Audit'
 import { PageLink, PageTitle } from '../../_metronic/layout/core'
@@ -46,7 +45,7 @@ import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
 import { EmployeeObjectiveEntry } from '../modules/production/entry/EmplyeeObjectiveEntry'
 import { EmployeeDeliverableEntry } from '../modules/production/entry/EmployeeDeliverableEntry'
 import { useAuth } from '../modules/auth'
-import { message } from 'antd'
+import { AppraisalGrade } from '../modules/production/components/setup/hr/AppraisalGrade'
 
 export const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -236,6 +235,13 @@ const PrivateRoutes = () => {
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Departments</PageTitle>
           <Department />
+        </SuspensedView>} />
+
+      <Route
+        path='appraisalGrade/:id'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>Appraisal Grades</PageTitle>
+          <AppraisalGrade />
         </SuspensedView>} />
 
       <Route
