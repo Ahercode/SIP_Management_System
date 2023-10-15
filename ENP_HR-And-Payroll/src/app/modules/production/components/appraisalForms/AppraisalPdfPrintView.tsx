@@ -105,7 +105,7 @@ const PrintComponent: React.FC<PrintHeaderProps> = ({employeeData}: any) => {
     }, [param, parameterData?.data, objectivesData])
 
     const empObjectives = (parameterId: number) => {
-        console.log('allAppraisalObjectives', allAppraisalObjectives?.data)
+        // console.log('allAppraisalObjectives', allAppraisalObjectives?.data)
         const data: any = allAppraisalObjectives?.data?.filter((item: any) => item.parameterId === parameterId && item.employeeId === employeeData?.employeeId)
         return data
     }

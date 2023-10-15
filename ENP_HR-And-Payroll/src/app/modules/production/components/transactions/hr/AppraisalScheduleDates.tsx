@@ -9,7 +9,8 @@ import { getTimeLeft } from "../../ComponentsFactory"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
-    const [gridData, setGridData] = useState([])
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
+    const [gridData, setGridData] = useState<any>([])
     const [loading, setLoading] = useState(false)
     const [isReviewDateModalOpen, setIsReviewDateModalOpen] = useState(false)
     const { reset, register, handleSubmit } = useForm()
@@ -19,6 +20,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
     const [sendLoading, setSendLoading] = useState(false)
     const [scheduleDateData, setScheduleDateData] = useState<any>({})
+    const [tempData, setTempData] = useState<any>()
 
 
 
@@ -29,16 +31,15 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const showNotificationModal = () => {
         setIsNotificationModalOpen(true)
     }
+    const handleChange = (event: any) => {
+        event.preventDefault()
+        setTempData({ ...tempData, [event.target.name]: event.target.value });
+      }
 
-    // const handleConfirmNotificationSend = (record: any) => {
-    //     // setIsNotificationModalOpen(false)
-    //     handleNotificationSend()
-    //     setIsEmailSent(true)
-    //     setScheduleDateData(record) 
-    // }
-
-    const showReviewDateModal = () => {
+    const showReviewDateModal = (record:any) => {
         setIsReviewDateModalOpen(true)
+        console.log('record: ', record)
+        setTempData(record);
     }
 
     const handleReviewDateCancel = () => {
@@ -93,17 +94,17 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         {
             title: 'Start Date',
             dataIndex: 'reviewDate',
-            render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
+            render: (text: any) => <>{!text ? '---' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'Check Up Date',
             dataIndex: 'checkUpDate',
-            render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
+            render: (text: any) => <>{!text ? '---' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'End Date',
             dataIndex: 'endDate',
-            render: (text: any) => <>{!text ? '' : moment(text).format('DD/MM/YYYY')}</>
+            render: (text: any) => <>{!text ? '---' : moment(text).format('DD/MM/YYYY')}</>
         },
         {
             title: 'Count down',
@@ -126,17 +127,30 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 okText="Send"
                                 cancelText="Cancel"
                             >
-                                <a className={'text-primary me-2'}>
-                                    Send Notifications
+
+                            {
+                                record?.reviewDate === null || record?.reviewDate === undefined || record?.reviewDate === ""?null:
+
+                                <a className={'btn btn-light-info btn-sm'}>
+                                    Notify
                                 </a>
+                            }
                             </Popconfirm>
-                            : <a className={'text-secondary me-2'}>
-                                Send Notifications
+                            : <a className={'btn btn-light-info btn-sm'}>
+                                Notify
                             </a>
                     }
-                    <a className='text-danger' onClick={() => handleDeleteReviewDate(record)}>
-                        Delete
-                    </a>
+
+                    {
+                        record?.reviewDate === null || record?.reviewDate === undefined || record?.reviewDate === ""?
+                        <a className='btn btn-light-warning btn-sm' onClick={()=>showReviewDateModal(record)}>
+                            Set Date
+                        </a>
+                        :<a className='btn btn-light-danger btn-sm' onClick={() => handleDeleteReviewDate(record)}>
+                            Delete
+                        </a>
+                    }
+                    
                 </Space>
             ),
         }
@@ -162,7 +176,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 reviewDate: selectedDate.toISOString(),
                 endDate: endDate.toISOString(),
                 checkUpDate: checkUpDate.toISOString(),
-                description: values.description,
+                description: tempData?.description,
                 tenantId: 'test',
                 referenceId: referenceId,
             },
@@ -226,6 +240,25 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         setIsEmailSent(true)
         postData(item)
     }
+    // find the appraisal type id
+    const findAppraisal = allAppraisals?.data?.find((item: any) => {
+        if(item.id === parseInt(selectedAppraisalType)) {
+            return item?.numReview
+        }
+    })
+
+    //   add data to gridData
+    for (let i = 0; i < findAppraisal?.numReview; i++) {
+        gridData.push({
+            description: `Review ${i+1}`,
+            reviewDate: "",
+            endDate: "",
+            checkUpDate: "",
+            startDate: "",
+        });
+    }
+
+
 
     return (
         <>
@@ -243,14 +276,14 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                         }}
                         className="border border-gray-400"
                     >
-                        <Space className="justify-content-end align-items-end d-flex mb-2" >
+                        {/* <Space className="justify-content-end align-items-end d-flex mb-2" >
                             <Button
                                 onClick={showReviewDateModal}
                                 className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
                                 type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
                                 Add Schedule Date
                             </Button>
-                        </Space>
+                        </Space> */}
                         {
                             loading ? <Skeleton active /> :
                                 <Table columns={reviewDatesColumn} dataSource={gridData} />
@@ -313,6 +346,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                         <input
                             {...register("description")}
                             onChange={(e) => setDescription(e.target.value)}
+                            defaultValue={tempData?.description}
                             type="text"
                             className="form-control form-control-solid" />
                     </div>

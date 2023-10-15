@@ -9,7 +9,7 @@ import { AppraisalObjective } from './AppraisalObjective'
 import { ReviewDateComponent } from './AppraisalScheduleDates'
 import { EmployeeGroups } from './EmployeeGroups'
 import type { TableRowSelection } from 'antd/es/table/interface';
-import "./cusStyle.css"
+// import "./cusStyle.css"
 
 
 const AppraisalPerformance = () => {
@@ -56,7 +56,6 @@ const AppraisalPerformance = () => {
   const [employeeData, setEmployeeData] = useState<any>({})
   const [parametersData, setParametersData] = useState<any>([])
   const [showPritntPreview, setShowPrintPreview] = useState(false)
-  // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
 
   const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
@@ -64,16 +63,13 @@ const AppraisalPerformance = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const onSelectChange = (selectedRowKeys:any, selectedRows:any) => {
-    // setSelectedRowKeys(selectedRowKeys);
     setSelectedRowKeys(selectedRowKeys);
       console.log(`Selected Row Keys: ${selectedRowKeys}`, 'Selected Rows:', selectedRows);
   };
-  const rowSelection = {
+  const rowSelection:TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange
   }
-
-
 
   const handleCancel = () => {
     reset()
