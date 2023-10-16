@@ -1,15 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import "./formStyle.css"
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button, Divider, Space, Tabs, TabsProps, message, } from 'antd';
-import Select from 'react-select'
-import { Api_Endpoint, fetchCategories, fetchDepartments, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
-import { set, useForm } from 'react-hook-form';
-import { ArrowLeftOutlined } from "@ant-design/icons"
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
+import { Api_Endpoint, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
 import { getFieldName } from '../ComponentsFactory';
+import "./formStyle.css";
 
 const EmployeeEditForm = () => {
   const [statusModalOpen, setIsStatusModalOpen] = useState(false)
@@ -281,7 +281,7 @@ const EmployeeEditForm = () => {
 
   const uRL = `${Api_Endpoint}/Employees/${param.id}`
   const OnSUbmitUpdate = handleSubmit(async () => {
-    setLoading(true)
+    // setLoading(true)
     
 
     let newLevel = null
@@ -636,4 +636,4 @@ const EmployeeEditForm = () => {
 
 
 
-export { EmployeeEditForm }
+export { EmployeeEditForm };
