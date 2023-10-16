@@ -119,6 +119,8 @@ const EmployeeGroups = ({ allEmployeeGroups, loading, selectedPaygroup, openModa
 
     const getSupervisorName = (employeeId: any) => {
         const supervisorName = getSupervisorData({ employeeId, allEmployees, allOrganograms })
+
+        console.log("test111",supervisorName)
         return supervisorName === undefined ? 'Undefined' : `${supervisorName?.firstName} ${supervisorName?.surname}`
     }
     
@@ -172,7 +174,7 @@ const EmployeeGroups = ({ allEmployeeGroups, loading, selectedPaygroup, openModa
     //         console.log('post error: ', error)
     //     }
     // })
-console.log("gridDataToBeSaved:", gridDataToBeSaved)
+// console.log("gridDataToBeSaved:", gridDataToBeSaved)
     // add key field to gridDataToBeSaved
     
 

@@ -34,6 +34,11 @@ export function deleteItem(item: any) {
     return axios.delete(`${Api_Endpoint}/${item.url}/${item.data.id}`)
 }
 
+
+export function deleteMultipleItem(item: any) {
+    return axios.delete(`${Api_Endpoint}/${item.url}/${item.data}`)
+}
+
 //dynamic post function
 export function postItem(item: any) {
     return axios.post(`${Api_Endpoint}/${item.url}`, item.data)

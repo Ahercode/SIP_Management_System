@@ -248,6 +248,13 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     })
 
     //   add data to gridData
+    gridData.push({
+        description: `Initial`,
+            reviewDate: "",
+            endDate: "",
+            checkUpDate: "",
+            startDate: "",
+    })
     for (let i = 0; i < findAppraisal?.numReview; i++) {
         gridData.push({
             description: `Review ${i+1}`,
@@ -257,6 +264,13 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             startDate: "",
         });
     }
+    gridData.push({
+        description: `Final`,
+            reviewDate: "",
+            endDate: "",
+            checkUpDate: "",
+            startDate: "",
+    })
 
 
 
