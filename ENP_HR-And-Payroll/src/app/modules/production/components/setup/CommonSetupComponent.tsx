@@ -23,7 +23,14 @@ const SetupComponent = (props: any) => {
     const [detailName, setDetailName] = useState('')
     const [objectivesId, setObjectivesId] = useState<any>()
 
-    const { data: componentData, isLoading: loading } = useQuery(`${props.data.url}`, () => fetchDocument(`${props.data.url}/tenant/${tenantId}`), { cacheTime: 5000 })
+    let endPoint = ""
+    if(props.data.url ==="unitofmeasures"){
+        endPoint = "UnitOfMeasures"
+    }
+    else{
+        endPoint = `${props.data.url}/tenant/${tenantId}`
+    }
+    const { data: componentData, isLoading: loading } = useQuery(`${props.data.url}`, () => fetchDocument(endPoint), { cacheTime: 5000 })
 
 
     const showModal = () => {

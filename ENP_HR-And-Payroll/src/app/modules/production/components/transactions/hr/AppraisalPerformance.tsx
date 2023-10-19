@@ -1,49 +1,45 @@
 import { Button, Input, Modal, Select, Skeleton, Space, Table, message } from 'antd'
+import type { TableRowSelection } from 'antd/es/table/interface'
+import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { Api_Endpoint, deleteItem, deleteMultipleItem, fetchDocument } from '../../../../../services/ApiCalls'
-import { getFieldName, getSupervisorData } from '../../ComponentsFactory'
+import { KTSVG } from '../../../../../../_metronic/helpers'
+import { Api_Endpoint, deleteMultipleItem, fetchDocument } from '../../../../../services/ApiCalls'
+import { getFieldName } from '../../ComponentsFactory'
 import { AppraisalPrintHeader, PrintComponent } from '../../appraisalForms/AppraisalPdfPrintView'
 import { AppraisalObjective } from './AppraisalObjective'
 import { ReviewDateComponent } from './AppraisalScheduleDates'
-import { EmployeeGroups } from './EmployeeGroups'
-import type { TableRowSelection } from 'antd/es/table/interface';
-import { KTSVG } from '../../../../../../_metronic/helpers'
-import axios from 'axios'
-// import "./cusStyle.css"
-
 
 const AppraisalPerformance = () => {
-  const [gridData, setGridData] = useState([])
+  // const [gridData, setGridData] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
-  const [submitLoading, setSubmitLoading] = useState(false)
+  // let [filteredData] = useState([])
   const { reset, register, handleSubmit } = useForm()
-
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isRefModalOpen, setIsRefModalOpen] = useState(false)
   const [isEmpAddModal, setIsEmpAddModal] = useState(false)
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false)
   const [employeeRecord, setEmployeeRecord] = useState<any>([])
-  const [employeeId, setEmployeeId] = useState<any>()
   const [selectedPaygroup, setSelectedPaygroup] = useState<any>(null);
+  const [selectedReference, setSelectedReference] = useState<any>(null);
   const [selectedAppraisalType, setSelectedAppraisaltype] = useState<any>(null);
   const [selectedStartPeriod, setSelectedStartPeriod] = useState<any>(null);
   const [selectedEndPeriod, setSelectedEndPeriod] = useState<any>(null);
+  const [reference, setReference] = useState<any>(null);
   const tenantId = localStorage.getItem('tenant')
   const [fieldInit, setFieldInit] = useState([])
-  const [isSchedulesDateModalOpen, setIsSchedulesDateModalOpen] = useState(false)
-  const [reviewDatesData, setReviewDatesData] = useState<any>([])
   const queryClient = useQueryClient()
-  const [appraisalData, setAppraisalData] = useState<any>([])
+  // const [appraisalData, setAppraisalData] = useState<any>([])
   const [referenceId, setReferenceId] = useState<any>(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
-  const [currentObjective, setCurrentObjective] = useState<any>([])
-  const [isEmailSent, setIsEmailSent] = useState<any>(false)
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
+  // const [currentObjective, setCurrentObjective] = useState<any>([])
+  // const [isEmailSent, setIsEmailSent] = useState<any>(false)
+  // const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
   const [notificationsGroupData, setNotificationsGroupData] = useState<any>([])
   const [jobTitleName, setJobTitleName] = useState<any>(null);
   const [departmentName, setDepartmentName] = useState<any>(null);
+
+  const [employeeGroupsData, setEmployeeGroupsData] = useState<any>([])
 
 
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 5000 })
@@ -54,16 +50,17 @@ const AppraisalPerformance = () => {
   const { data: allParameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 5000 })
   const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
 
   const [employeeData, setEmployeeData] = useState<any>({})
-  const [parametersData, setParametersData] = useState<any>([])
+  // const [parametersData, setParametersData] = useState<any>([])
   const [showPritntPreview, setShowPrintPreview] = useState(false)
   const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
 
-  const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
-  const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+  // const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
+  // const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const onSelectChange = (selectedRowKeys:any, selectedRows:any) => {
@@ -79,7 +76,6 @@ const AppraisalPerformance = () => {
     reset()
     setEmployeeRecord([])
     setIsModalOpen(false)
-    setDetailsModalOpen(false)
     loadData()
     setEmployeeGroupsData(dataByID)
   }
@@ -89,7 +85,15 @@ const AppraisalPerformance = () => {
     setEmployeeRecord([])
     loadData()
   }
-
+  const handleRefCancel = () => {
+    setEmployeeRecord([])
+    setSelectedPaygroup("select paygroup")
+    setSelectedAppraisaltype("select appraisal type")
+    setSelectedStartPeriod("select start period")
+    setSelectedEndPeriod("select end period")
+    setIsRefModalOpen(false)
+  
+  }
   const showPrintPreview = () => {
     setShowPrintPreview(true)
     handleCancel()
@@ -100,12 +104,11 @@ const AppraisalPerformance = () => {
   }
 
   const handlePrintPreviewModalOk = () => {
-    //todo print of the objectives 
     setShowPrintPreview(false)
   }
 
-  const handleUpdateCancel = () => {
-    setDetailsModalOpen(false)
+  const showRefModal = () => {
+    setIsRefModalOpen(true)
   }
   const showUpdateModal = (record: any) => {
     setShowPrintPreview(true)
@@ -121,19 +124,36 @@ const AppraisalPerformance = () => {
   }
 
   const dataByID: any = allAppraisalsPerfTrans?.data?.filter((refId: any) => {
-    // let Ids:any = []
-    // if (refId.referenceId === referenceId) {
-    //   return Ids.push(refId.employeeId)
-    // }
     return refId.referenceId === referenceId
+  })
+
+  const appraisalTranItem = allAppraisalsPerfTrans?.data?.find((item: any) => {
+    return item.id === parseInt(selectedReference)
+  })
+  
+  const allAppraisalTranItems = allAppraTranItems?.data?.filter((item: any) => {
+    return item.appraisalPerfTranId === parseInt(selectedReference)
+  })
+
+  // get all employees from appraisalTranItem
+  const emplyeesByPaygroup: any = allEmployees?.data?.filter((item: any) => {
+    return item.paygroupId === parseInt(appraisalTranItem?.paygroupId)
+  })
+
+  const empSelectedPaygroup: any = allEmployees?.data?.filter((item: any) => {
+    return item.paygroupId === parseInt(selectedPaygroup)
+  })
+
+  const idSet = new Set(allAppraisalTranItems?.map((item: any) => parseInt(item.employeeId)))
+
+  const employeesFromTransaction = allEmployees?.data?.filter((item: any) => {
+    return idSet.has(item.id)
   })
 
   const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteMultipleItem, {
     onSuccess: (data: any) => {
-      queryClient.setQueryData([data?.url, data], data);
-      message.success('Records deleted successfully')
       loadData()
-      queryClient.invalidateQueries('appraisalPerfTransactions')
+      queryClient.invalidateQueries('appraisalPerItems')
     },
     onError: (error) => {
       message.error('Error deleting record')
@@ -143,13 +163,13 @@ const AppraisalPerformance = () => {
   function handleDelete() {
     selectedRowKeys.map((del: any) => {
       console.log('del: ', del)
-    const recordId =  dataByID.filter((item: any) => {
-      return item.employeeId === del
+    const recordId =  allAppraisalTranItems.filter((item: any) => {
+      return parseInt(item.employeeId) === del && item.appraisalPerfTranId === parseInt(selectedReference)
     }, [])
     const id = recordId[0]?.id
     console.log('deleteId: ', id)
     const item = {
-      url: 'AppraisalPerfTransactions',
+      url: 'AppraisalPerItems',
       data: id
     }
       setLoading(true)
@@ -157,6 +177,7 @@ const AppraisalPerformance = () => {
     }
    )
    setSelectedRowKeys([])
+   message.success('Records deleted successfully')
   }
 
   const columns: any = [
@@ -268,29 +289,35 @@ const AppraisalPerformance = () => {
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
+        {
+          isRefModalOpen?""
+          //  <a onClick={() => removeEmp(record)} className='btn btn-light-danger btn-sm'>
+          //   Remove
+          // </a> :
+          :
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-info btn-sm'>
-            Details
-          </a>
-          {/* <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-            Remove
-          </a> */}
+          Details
+        </a>
+
+        }
         </Space>
       ),
 
     },
   ]
 
-  const removeEmployeeFromData = (item: any) => {
-    setNotificationsGroupData((prev: any) => {
-      return prev.filter((prevItem: any) => {
-        return prevItem !== item
-      })
-    })
+  if (isRefModalOpen) {
+    columns.splice(3, 1)
+    if (columns.length === 7) {
+      columns.splice(5, 2)
+    }
   }
 
-  const emplyeesByPaygroup: any = allEmployees?.data?.filter((item: any) => {
-    return item.paygroupId === parseInt(selectedPaygroup)
+  // get employee id from empSelectedPaygroup
+  const employeeIds = empSelectedPaygroup?.map((item: any) => {
+    return item.id
   })
+
   const onEmployeeChange = (objectId: any) => {
     const newEmplo = allEmployees?.data?.find((item: any) => {
       return item.id === parseInt(objectId)
@@ -313,53 +340,13 @@ const AppraisalPerformance = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      setReviewDatesData(allReviewdates?.data)
       setNotificationsEmployeesData()
-      const parametersResponse = allParameters?.data?.filter((item: any) => item?.appraisalId === 12)
-      setParametersData(parametersResponse)
       setLoading(false)
     } catch (error) {
       console.log(error)
       setLoading(false)
     }
   }
-
-
-
- 
-
-  // this will return all employeesid in dataByID
-  const idSet = new Set(dataByID?.map((item: any) => item.employeeId))
-
-  const employeesFromTransaction = allEmployees?.data?.filter((item: any) => {
-    return idSet.has(item.id)
-  })
-
-  // console.log('dataByID: ', dataByID)
-  // console.log('employeesFromTransaction: ', employeesFromTransaction)
-
-  // return from employees, all employees that are in dataByID using employeeId
-  const employeesInDataByID = allEmployees?.data?.filter((item: any) => {
-    return notificationsGroupData?.map((item: any) => {
-      return item.employeeId
-    })?.includes(item.id)
-  })
-
-
-// check if employeeId already exist in dataByID
-
-// const checkIfEmployeeExist = (employeeId: any) => {
-
-//   const result = dataByID?.filter((item: any) => {
-//     return item.employeeId === employeeId
-//   })
-
-//   if (result?.length > 0) {
-//     return message.error('Employee already exist')
-//   } else {
-//     return message.success('You can add employee to the list')
-//   }
-// }
 
   const parameterByAppraisal = allParameters?.data.filter((section: any) => section.appraisalId === parseInt(selectedAppraisalType))
     .map((item: any) => ({
@@ -368,13 +355,6 @@ const AppraisalPerformance = () => {
       comment: '',
     }))
 
-  const [employeeGroupsData, setEmployeeGroupsData] = useState<any>([])
-
-  const showModal = () => {
-    setIsModalOpen(true)
-    setFieldInit(parameterByAppraisal)
-    setEmployeeGroupsData(dataByID)
-  }
   const showEmpAddModal = () => {
     setIsEmpAddModal(true)
   }
@@ -383,16 +363,6 @@ const AppraisalPerformance = () => {
     setSelectedAppraisaltype(e.target.value)
     setFieldInit(parameterByAppraisal)
   }
-
-  // const handleScoreChange = (e: any, userId: any) => {
-  //   const newUsers: any = fieldInit.map((user: any) => {
-  //     if (user.id === userId) {
-  //       return { ...user, score: parseInt(e.target.value) };
-  //     }
-  //     return user;
-  //   });
-  //   setFieldInit(newUsers);
-  // };
 
   const GetJobTitle = (employeeId: any) => {
     const paygroupId = allEmployees?.data?.find((item: any) => {
@@ -414,16 +384,6 @@ const AppraisalPerformance = () => {
     return setDepartmentName( jobTitleName?.name)
   }
 
-  // const handleCommentChange = (e: any, userId: any) => {
-  //   const newUsers: any = fieldInit.map((user: any) => {
-  //     if (user.id === userId) {
-  //       return { ...user, comment: e.target.value };
-  //     }
-  //     return user;
-  //   });
-  //   setFieldInit(newUsers);
-  // };
-
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
     if (e.target.value === '') {
@@ -442,7 +402,7 @@ const AppraisalPerformance = () => {
         value.name.toLowerCase().includes(searchText.toLowerCase())
       )
     })
-    setGridData(filteredData)
+    // setGridData(filteredData)
   }
 
     useEffect(() => {
@@ -461,34 +421,55 @@ const AppraisalPerformance = () => {
      const  data = {
         paygroupId: parseInt(selectedPaygroup),
         appraisalTypeId: parseInt(selectedAppraisalType),
-        employeeId: employeeRecord.id,
         startPeriod: selectedStartPeriod,
         endPeriod: selectedEndPeriod,
-        appraTranItems: fieldInit.map((item: any) => ({
+        appraTranItems: employeeIds.map((item: any) => ({
           parameterId: item.id,
-          score: item.score.toString(),
-          comment: item.comment,
+          score: item.score?.toString(),
+          employeeId: item?.toString()
         })),
         tenantId: tenantId,
         referenceId: referenceId,
       }
+      const tranItemData = {
+        employeeId: employeeRecord?.id?.toString(),
+        appraisalPerfTranId: parseInt(selectedReference),
+      }
+    const result = allAppraisalTranItems?.filter((item: any) => {
+      return parseInt(item.employeeId) === employeeRecord.id && item.appraisalPerfTranId === parseInt(selectedReference)
+    })
 
-    console.log('data: ', data)
-    const result = dataByID?.filter((item: any) => {
-        return item.employeeId === employeeRecord.id
-      })
+      let url = ""
+      let dataToPost = null
+      let refreshKey:any = null
+
+    if(isEmpAddModal){
+      url = "AppraisalPerItems/newItem"
+      dataToPost = tranItemData
+      refreshKey = 'appraisalPerItems'
+    }
+    else{
+      url = "AppraisalPerfTransactions"
+      dataToPost = data
+      refreshKey = 'appraisalPerfTransactions'
+    }
 
     if (result?.length > 0) {
       message.error('Employee already exist in this group')
     } else {
+
+      console.log('dataToPost: ', dataToPost)
     try {
-    // checkIfEmployeeExist(employeeRecord.id)
-      axios.post(`${Api_Endpoint}/AppraisalPerfTransactions`, data)
+      axios.post(
+        `${Api_Endpoint}/${url}`, 
+        dataToPost)
       .then((res) => {
         message.success('Employees added successfully')
         loadData()
-        queryClient.invalidateQueries('appraisalPerfTransactions')
+        queryClient.invalidateQueries(`${refreshKey}`)
         setIsEmpAddModal(false)
+        setIsRefModalOpen(false)
+        queryClient.invalidateQueries(`appraisalPerItems`)
         handleEmpCancel()
         console.log(res)
       })
@@ -502,64 +483,139 @@ const AppraisalPerformance = () => {
 
   return (
     <div>
-      <form onSubmit={submitApplicant}>
-        <div style={{ padding: "20px 0px 0 0px" }} className='col-12 row mb-0'>
-          <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Groups</label>
-            <select value={selectedPaygroup} onChange={(e) => setSelectedPaygroup(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select paygroup">select employee group</option>
-              {allPaygroups?.data.map((item: any) => (
-                <option value={item.id}>{item.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Appraisal Type</label>
-            <select value={selectedAppraisalType} onChange={handleSelectedChange} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select appraisal type">select appraisal type</option>
-              {allAppraisals?.data.map((item: any) => (
-                <option value={item.id}>{item.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">Start Period</label>
-            <select value={selectedStartPeriod} onChange={(e) => setSelectedStartPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select start period">select start period</option>
-              {allPeriods?.data.map((item: any) => (
-                <option value={item.id}>{item.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className='col-3 mb-7'>
-            <label htmlFor="exampleFormControlInput1" className=" form-label">End Period</label>
-            <select value={selectedEndPeriod} onChange={(e) => setSelectedEndPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
-              <option value="select end period"> Select end period</option>
-              {allPeriods?.data.map((item: any) => (
-                <option value={item.id}>{item.name}</option>
-              ))}
-            </select>
-          </div>
+
+      <div className='row'>
+        <div className='col-3 mb-7'>
+          <label htmlFor="exampleFormControlInput1" className=" form-label">Reference </label>
+          <select value={selectedReference} onChange={(e) => setSelectedReference(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
+            <option value="select reference">select reference</option>
+            {allAppraisalsPerfTrans?.data?.map((item: any)=>(
+              <option value={item.id}>
+              {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} - {getFieldName(item?.startPeriod, allPeriods?.data)} - {getFieldName(item?.endPeriod, allPeriods?.data)}
+              </option>
+            ))}
+          </select>
         </div>
-      </form>
+        {
+          selectedReference === null || selectedReference === "select reference" ? 
+          <div className='col-3 mt-9'>
+          <a onClick={showRefModal} className='btn btn-info btn-sm'>Add New Entry</a>
+        </div> :""
+        }
+        
+      </div>
       {
-        selectedPaygroup === null
-          || selectedAppraisalType === null
-          || selectedStartPeriod === null
-          || selectedEndPeriod === null
-          || selectedPaygroup === "select paygroup"
-          || selectedAppraisalType === "select appraisal type"
-          || selectedStartPeriod === "select start period"
-          || selectedEndPeriod === "select end period" ? "" :
+        selectedReference === null || selectedReference === "select reference" ? "":
+        <>
+            <div style={{ padding: "20px 0px 0 0px" }} className='col-12 row mb-0'>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Groups</label>
+                <input readOnly value={getFieldName(appraisalTranItem?.paygroupId, allPaygroups?.data)} className="form-control form-control-solid"/>
+              </div>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Appraisal Type</label>
+                <input readOnly value={getFieldName(appraisalTranItem?.appraisalTypeId, allAppraisals?.data)} className="form-control form-control-solid"/>
+              </div>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Start Period</label>
+                <input readOnly value={getFieldName(appraisalTranItem?.startPeriod, allPeriods?.data)} className="form-control form-control-solid"/>
+              </div>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">End Period</label>
+                <input readOnly value={getFieldName(appraisalTranItem?.endPeriod, allPeriods?.data)} className="form-control form-control-solid"/>
+              </div>
+            </div>
+        </>
+      }
+      <Modal
+        title={`Add Reference`}
+        open={isRefModalOpen}
+        onCancel={handleRefCancel}
+        closable={true}
+        width="1100px"
+        footer={[
+          <Button key='back' 
+          onClick={handleRefCancel}
+          >
+            Cancel
+          </Button>,
+          <Button
+            key='submit'
+            type='primary'
+            htmlType='submit'
+            onClick={submitApplicant}
+          >
+            Submit
+          </Button>,
+          ]}>
+          <form 
+          onSubmit={submitApplicant}
+          >
+            <div style={{ padding: "20px 0px 0 0px" }} className='col-12 row mb-0'>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Groups</label>
+                <select 
+                  value={selectedPaygroup} 
+                  onChange={(e) => setSelectedPaygroup(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
+                  <option value="select paygroup">select employee group</option>
+                  {allPaygroups?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Appraisal Type</label>
+                <select 
+                  value={selectedAppraisalType} 
+                  onChange={handleSelectedChange} className="form-select form-select-solid" aria-label="Select example">
+                  <option value="select appraisal type">select appraisal type</option>
+                  {allAppraisals?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Start Period</label>
+                <select 
+                  value={selectedStartPeriod} 
+                  onChange={(e) => setSelectedStartPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
+                  <option value="select start period">select start period</option>
+                  {allPeriods?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className='col-3 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">End Period</label>
+                <select 
+                  value={selectedEndPeriod} 
+                  onChange={(e) => setSelectedEndPeriod(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
+                  <option value="select end period"> Select end period </option>
+                  {allPeriods?.data.map((item: any) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <Table 
+              columns={columns}
+              dataSource={empSelectedPaygroup}
+            />
+          </form>
+        </Modal>
+      {
+        selectedReference === null
+          || selectedReference === "select reference"
+          ? "" :
 
           <div className='table-responsive'>
             <div className='col-12 mb-7'>
-                <AppraisalObjective referenceId={referenceId} />
+                <AppraisalObjective referenceId={appraisalTranItem?.referenceId} />
               </div>
             <div className='col-12 row mb-7'>
               < ReviewDateComponent
-                referenceId={referenceId}
-                selectedAppraisalType={selectedAppraisalType}
+                referenceId={appraisalTranItem?.referenceId}
+                selectedAppraisalType={appraisalTranItem?.appraisalTypeId}
                 employeesInDataByID={DataWithKey}
               />
             </div>
@@ -619,14 +675,16 @@ const AppraisalPerformance = () => {
                     key='submit'
                     type='primary'
                     htmlType='submit'
-                    loading={submitLoading}
+                    // loading={submitLoading}
                     onClick={submitApplicant}
                   >
                     Submit
                   </Button>,
                 ]}
               >
-                <form onSubmit={submitApplicant}>
+                <form 
+                onSubmit={submitApplicant}
+                >
                   <hr></hr>
                   <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                     <div className='col-6 mb-3'>
@@ -685,28 +743,6 @@ const AppraisalPerformance = () => {
                   <hr></hr>
                 </form>
               </Modal>
-            <Modal
-              title={`Employees in ${getFieldName(selectedPaygroup, allPaygroups?.data)}`}
-              open={isModalOpen}
-              onCancel={handleCancel}
-              closable={true}
-              width="1200px"
-              footer={[
-                <Button key='back' onClick={handleCancel}>
-                  Cancel
-                </Button>,
-                <Button
-                  key='submit'
-                  type='primary'
-                  htmlType='submit'
-                  loading={submitLoading}
-                  onClick={submitApplicant}
-                >
-                  Submit
-                </Button>,
-              ]}>
-              <EmployeeGroups allEmployeeGroups={employeeGroupsData} loading={loading} />
-            </Modal>
             <Modal
               open={showPritntPreview}
               onCancel={handlePrintPreviewModalCancel}

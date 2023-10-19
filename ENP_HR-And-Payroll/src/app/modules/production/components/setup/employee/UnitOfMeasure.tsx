@@ -3,7 +3,7 @@ import { SetupComponent } from '../CommonSetupComponent'
 const UnitOfMeasure = () => {
 
   const data = {
-    title: 'Unit of measure',
+    title: "Unit of measure",
     url: 'unitofmeasures',
   }
 

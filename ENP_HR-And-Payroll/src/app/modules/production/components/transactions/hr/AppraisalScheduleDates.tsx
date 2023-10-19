@@ -86,6 +86,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
+    console.log('employeesInDataByID: ', employeesInDataByID?.length)
+
     const reviewDatesColumn = [
         {
             title: 'Description',
@@ -136,15 +138,13 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 </a>
                             }
                             </Popconfirm>
-                            : <a className={'btn btn-light-info btn-sm'}>
-                                Notify
-                            </a>
+                            :""
                     }
 
                     {
                         record?.reviewDate === null || record?.reviewDate === undefined || record?.reviewDate === ""?
                         <a className='btn btn-light-warning btn-sm' onClick={()=>showReviewDateModal(record)}>
-                            Set Date
+                            Set Details
                         </a>
                         :<a className='btn btn-light-danger btn-sm' onClick={() => handleDeleteReviewDate(record)}>
                             Delete
@@ -272,7 +272,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             startDate: "",
     })
 
-
+// 0246550762
 
     return (
         <>
