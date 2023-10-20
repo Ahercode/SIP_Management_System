@@ -10,6 +10,8 @@ import { getFieldName } from '../../ComponentsFactory'
 import { AppraisalPrintHeader, PrintComponent } from '../../appraisalForms/AppraisalPdfPrintView'
 import { AppraisalObjective } from './AppraisalObjective'
 import { ReviewDateComponent } from './AppraisalScheduleDates'
+import { AppraisalFormContent } from '../../appraisalForms/FormTemplateComponent'
+import { AppraisalObjectivesComponent } from '../../appraisalForms/AppraisalObjectivesComponent'
 
 const AppraisalPerformance = () => {
   // const [gridData, setGridData] = useState([])
@@ -53,10 +55,10 @@ const AppraisalPerformance = () => {
   const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 5000 })
   const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
-
+  const parametersData = allParameters?.data?.filter((item: any) => item?.appraisalId === 12)
   const [employeeData, setEmployeeData] = useState<any>({})
   // const [parametersData, setParametersData] = useState<any>([])
-  const [showPritntPreview, setShowPrintPreview] = useState(false)
+  const [viewDetail, setViewDetail] = useState(false)
   const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
 
   // const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
@@ -95,23 +97,23 @@ const AppraisalPerformance = () => {
   
   }
   const showPrintPreview = () => {
-    setShowPrintPreview(true)
+    setViewDetail(true)
     handleCancel()
   }
 
   const handlePrintPreviewModalCancel = () => {
-    setShowPrintPreview(false)
+    setViewDetail(false)
   }
 
   const handlePrintPreviewModalOk = () => {
-    setShowPrintPreview(false)
+    setViewDetail(false)
   }
 
   const showRefModal = () => {
     setIsRefModalOpen(true)
   }
-  const showUpdateModal = (record: any) => {
-    setShowPrintPreview(true)
+  const showDetail = (record: any) => {
+    setViewDetail(true)
     const employee = allEmployees?.data?.find((item: any) => item?.employeeId === record?.employeeId)
     setEmployeeData(employee)
   }
@@ -295,7 +297,7 @@ const AppraisalPerformance = () => {
           //   Remove
           // </a> :
           :
-          <a onClick={() => showUpdateModal(record)} className='btn btn-light-info btn-sm'>
+          <a onClick={() => showDetail(record)} className='btn btn-light-info btn-sm'>
           Details
         </a>
 
@@ -616,7 +618,8 @@ const AppraisalPerformance = () => {
               < ReviewDateComponent
                 referenceId={appraisalTranItem?.referenceId}
                 selectedAppraisalType={appraisalTranItem?.appraisalTypeId}
-                employeesInDataByID={DataWithKey}
+                employeesInDataByID={employeesFromTransaction}
+                // employeesInDataByID={DataWithKey}
               />
             </div>
             <br></br>
@@ -744,7 +747,7 @@ const AppraisalPerformance = () => {
                 </form>
               </Modal>
             <Modal
-              open={showPritntPreview}
+              open={viewDetail}
               onCancel={handlePrintPreviewModalCancel}
               closable={true}
               width={1000}
@@ -756,7 +759,12 @@ const AppraisalPerformance = () => {
                 <AppraisalPrintHeader
                   employeeData={employeeData}
                 />
-                <PrintComponent employeeData={employeeData} />
+                {/* <PrintComponent employeeData={employeeData} /> */}
+                <AppraisalFormContent 
+                // component={parametersData} 
+                component={AppraisalObjectivesComponent} 
+                
+                employeeId={employeeData?.id} parametersData={parametersData} />
               </div>
             </Modal>
           </div>

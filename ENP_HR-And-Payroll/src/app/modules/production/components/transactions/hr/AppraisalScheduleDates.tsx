@@ -22,7 +22,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [scheduleDateData, setScheduleDateData] = useState<any>({})
     const [tempData, setTempData] = useState<any>()
 
-
+console.log("referenceId: ", referenceId)
 
     const handleNotificationCancel = () => {
         setIsNotificationModalOpen(false)
@@ -306,7 +306,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 </Spin>
             </div>
             <Modal
-                title='Add a schedule date'
+                title='Add schedule date details'
                 open={isReviewDateModalOpen}
                 onCancel={handleReviewDateCancel}
                 closable={true}

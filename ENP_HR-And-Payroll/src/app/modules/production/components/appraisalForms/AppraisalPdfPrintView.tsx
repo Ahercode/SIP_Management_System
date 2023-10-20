@@ -9,6 +9,8 @@ import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 
 const PrintComponent: React.FC<PrintHeaderProps> = ({employeeData}: any) => {
 
+    console.log('employeeData', employeeData)
+
     const [gridData, setGridData] = useState([])
     const param: any = useParams();
     const tenantId = localStorage.getItem('tenant')
@@ -172,9 +174,13 @@ const AppraisalPrintHeader: React.FC<PrintHeaderProps> = ({ employeeData, printC
             <div className="d-flex row-auto align-items-center align-content-center ">
                 <div>
                     {
-                        employeeData?.imageUrl !== null ?
-                            <img style={{ borderRadius: "5%", width: "100px", height: "100px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> :
-                            <img style={{ borderRadius: "5%", width: "100px", height: "100px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>
+                        employeeData?.imageUrl === null || employeeData?.imageUrl ===""?
+                        <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+                          <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> 
+                         
+                        // employeeData?.imageUrl !== null ?
+                        //     <img style={{ borderRadius: "5%", width: "100px", height: "100px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> :
+                        //     <img style={{ borderRadius: "5%", width: "100px", height: "100px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>
                     }
                 </div>
                 <div className="column-auto align-items-center align-content-center" >

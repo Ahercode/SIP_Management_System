@@ -4,11 +4,13 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
-import { fetchDocument, updateItem } from "../../../../services/ApiCalls"
+import { Api_Endpoint, fetchDocument, updateItem } from "../../../../services/ApiCalls"
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
 import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/AppraisalPdfPrintView"
 import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
+import axios from 'axios'
+import { useAuth } from '../../../auth'
 
 const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
@@ -16,6 +18,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const queryClient = useQueryClient()
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const[approvedStatus, setApprovedStatus] = useState<any>(false)
     const [employeeData, setEmployeeData] = useState<any>({})
     const [objectivesData, setObjectivesData] = useState<any>([])
     const [componentData, setComponentData] = useState<any>()
@@ -26,11 +29,11 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
     const [parametersData, setParametersData] = useState<any>([])
     const [isObjectiveDeclined, setIsObjectiveDeclined] = useState(false)
     const [showPritntPreview, setShowPrintPreview] = useState(false)
-
+    const { currentUser } = useAuth()
 
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
-    const { data: appraisalobjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const { data: allAppraisalObjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
     const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
@@ -105,24 +108,47 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => (item.id) === record?.id)
-        const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
+        const objectiveByEMployee = allAppraisalObjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
         console.log('employee: ', employee)
         console.log('record: ', record)
-        console.log('objectiveByEMployee: ', objectiveByEMployee)
         setEmployeeData(employee)
         setObjectivesData(objectiveByEMployee)
     }
 
-    const onObjectivesApproved = () => {
-        const item = {
-            data: {
-                ...objectivesData,
-                status: 'approved'
-            },
-            url: 'appraisalobjective'
-        }
-        updateData(item)
-        setIsModalOpen(false)
+    
+
+    const getOnlyparameters = parameters?.data?.filter((item: any) => {
+        return item.appraisalId === 12
+      }
+    ) 
+
+    const OnSubmit =(statusText:any)  => {
+
+            const parameterIds = getOnlyparameters?.map((item: any) => {
+              return item.id
+            })
+          
+            
+            const data ={
+              parameterIds: parameterIds,
+              employeeId : employeeData?.id?.toString(),
+              statusText: statusText
+            }
+      
+            console.log("data",data)
+            axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, data)
+            .then(response => {
+              message.success(`You have approved ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
+              console.log(response.data);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+          
+      }
+
+      const onObjectivesApproved = () => {
+        OnSubmit("approved")
     }
 
     const loadData = () => {
@@ -141,7 +167,27 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
     }, [ parameters?.data, employeeData])
 
 
+    const getEmployeeStatus = ((employeeId:any)=> {
+           const allSubmittedObjectives = allAppraisalObjective?.data?.filter((item: any) => {
+                return parseInt(item?.employeeId) === employeeId?.id
+           })
+
+           if (allSubmittedObjectives.some((obj:any) => obj.status === "submitted")) {
+                return  <Tag color="warning">Submitted</Tag>;
+            } else if (allSubmittedObjectives.some((obj:any) => obj.status === "rejected")) {
+                return  <Tag color="error">Rejected</Tag>;
+            }
+            else if (allSubmittedObjectives.some((obj:any) => obj.status === "approved")) {
+                return <Tag color="success">Approved</Tag>;
+            }
+            else if (allSubmittedObjectives.some((obj:any) => obj.status === "drafted")) {
+                return <Tag color="warning">Drafted</Tag>;
+            }
+    })
+
+
     const onObjectivesRejected = () => {
+        OnSubmit("rejected")
         setCommentModalOpen(true)
     }
 
@@ -165,8 +211,10 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
         {
             title: 'Approval Status',
             dataIndex: 'status',
-            render: () => {
-                return <Tag color="error">Pending</Tag>
+            key:"id",
+            render: (_:any, record:any) => {
+                return getEmployeeStatus(record)
+                // return <Tag color="error">Pending</Tag>
             }
         },
         {

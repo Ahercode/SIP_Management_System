@@ -166,10 +166,17 @@ const OnSubmit = handleSubmit(async (values) => {
       const parameterIds = getOnlyparameters?.map((item: any) => {
         return item.id
       })
-      console.log("parameterIds",parameterIds)
-      const employeeId = currentUser?.id?.toString()
-      const statusText = "submitted"
-      axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, { parameterIds, employeeId, statusText})
+      // console.log("parameterIds",parameterIds)
+      // const employeeId = currentUser?.id?.toString()
+      // const statusText = "submitted"
+      const data ={
+        parameterIds: parameterIds,
+        employeeId :currentUser?.id?.toString(),
+        statusText: "submitted"
+      }
+
+      console.log("data",data)
+      axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, data)
       .then(response => {
         message.success("You have successfully submitted your appraisal")
         console.log(response.data);

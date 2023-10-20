@@ -3,9 +3,10 @@ import { Button, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { KTCardBody } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { getFieldName } from "../ComponentsFactory"
 
 
 
@@ -30,6 +31,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
     const { data: componentData, isLoading: loading } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 5000 })
     const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
     const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const { data: allUnitOfMeasure } = useQuery(`unitOfMeasures`, () => fetchDocument(`UnitOfMeasures`), { cacheTime: 5000 })
     const [objectivesData, setObjectivesData] = useState<any>()
 
     const showModal = () => {
@@ -60,7 +62,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
     })
 
     const deliverablesEntry = (objectivesData: any) => {
-        console.log('objectivesData: ', objectivesData)
         setObjectivesData(objectivesData)
         setShowDeliverablesEntry(true)
     }
@@ -114,8 +115,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
                     <a className='btn btn-light-info btn-sm' onClick={() => deliverablesEntry(record)} >
                         Deliverables
                     </a>
-                    {
-                        param?.id !== 'lineManger' ?
+                    {/* {
+                         param?.id ==='lineManager'?
                             <>
                                 <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
                                     Update
@@ -124,7 +125,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
                                     Delete
                                 </a>
                             </> : ""
-                    }
+                    } */}
                 </Space>
             ),
         },
@@ -171,7 +172,11 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
             },
             {
                 title: 'Unit of Measure',
-                dataIndex: 'unitOfMeasure',
+                dataIndex: 'unitOfMeasureId',
+                key: 'unitOfMeasureId',
+                render: (row: any) => {
+                    return getFieldName(row, allUnitOfMeasure?.data)
+                  },
                 sorter: (a: any, b: any) => {
                     if (a.status > b.status) {
                         return 1
@@ -181,6 +186,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
                     }
                     return 0
                 },
+
             },
             {
                 title: 'Target',
@@ -197,30 +203,31 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
                 // render: (text: any) => <span>{text.toLocaleString()}</span>,
             },
 
-            {
-                title: 'Action',
-                fixed: 'right',
-                width: 100,
-                render: (_: any, record: any) => (
-                    <Space size='middle'>
-                        {
-                            param?.id !== 'lineManger' ?
-                                <>
-                                    <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
-                                        Update
-                                    </a>
-                                    <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-                                        Delete
-                                    </a>
-                                </> : ""
-                        }
-                    </Space>
-                ),
-            },
+            // {
+            //     title: 'Action',
+            //     fixed: 'right',
+            //     width: 100,
+            //     render: (_: any, record: any) => (
+            //         <Space size='middle'>
+            //             {
+            //                location.pathname !== '/transaction/hr/appraisal-performance' ?
+            //                 // param?.id !== 'lineManger' ?
+            //                     <>
+            //                         <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+            //                             Update
+            //                         </a>
+            //                         <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+            //                             Delete
+            //                         </a>
+            //                     </> : ""
+            //             }
+            //         </Space>
+            //     ),
+            // },
         ]
 
 
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
+    // const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
 
     const loadData = async () => {
         try {

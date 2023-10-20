@@ -2,18 +2,20 @@ import { Button, Modal, Skeleton, Table, Tag } from "antd"
 import { useEffect, useState } from "react"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../../services/ApiCalls"
-import { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData } from "../ComponentsFactory"
+import { GetEmployeeStatus, getEmployeeProperty, getEmployeePropertyName,  getFieldName, getSupervisorData } from "../ComponentsFactory"
 import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjectivesComponent"
 import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
+import { ErrorBoundary } from "@ant-design/pro-components"
 
-const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
+const DownLines = ({ filteredByLineManger, loading}: any) => {
     // const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 5000 })
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 5000 })
-    const { data: appraisalobjective} = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const { data: allAppraisalobjective} = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
+
     // const [submittedStatus, setSubmittedStatus] = useState<any>([])
     // const [draftedStatus, setDraftedStatus] = useState<any>([])
     // const[approvedStatus, setApprovedStatus] = useState<any>([])
@@ -34,9 +36,8 @@ const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
 
-        const objectiveByEMployee = appraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
-        console.log('employee: ', employee)
-        console.log('record: ', record)
+        const objectiveByEMployee = allAppraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
+
      
         setObjectivesData(objectiveByEMployee)
         setEmployeeData(employee)
@@ -46,6 +47,28 @@ const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
     const handleCancel = () => {
         setIsModalOpen(false)
     }
+
+    const getEmployeeStatus = ((employeeId:any)=> {
+        const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
+             return parseInt(item?.employeeId) === employeeId?.id
+        })
+
+        if (allSubmittedObjectives.some((obj:any) => obj.status === "submitted")) {
+             return  <Tag color="warning">Submitted</Tag>;
+         } else if (allSubmittedObjectives.some((obj:any) => obj.status === "rejected")) {
+             return  <Tag color="error">Rejected</Tag>;
+         }
+         else if (allSubmittedObjectives.some((obj:any) => obj.status === "approved")) {
+             return <Tag color="success">Approved</Tag>;
+         }
+         else if (allSubmittedObjectives.some((obj:any) => obj.status === "drafted")) {
+             return <Tag color="warning">Drafted</Tag>;
+         }
+         else{
+            return <Tag color="pink">Not Started</Tag>;
+        }
+ })
+
 
 
     const columns: any = [
@@ -85,8 +108,8 @@ const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
         {
             title: 'Approval Status',
             dataIndex: 'status',
-            render: (text: any) => {
-                return <Tag color={text === "drafted" ? "error" : "purple"}>{text}</Tag>
+            render: (_:any, record: any) => {
+                return getEmployeeStatus(record)
             }
         },
         {
@@ -110,22 +133,10 @@ const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
         }
     })
 
-    const allApprovedObjectives = appraisalobjective?.data?.map((item: any) => {
-        if(item?.status === 'approved'){
-
-            return item?.employeeId +" "+ item?.status
-        }
-        else
-        {
-            return null
-        }
-    })
-    // console.log('allApprovedObjectives: ', allApprovedObjectives)
-
 
     useEffect(() => {
 
-    }, [objectivesData, filteredByLineManger])
+    }, [objectivesData])
 
     return (
         <>
@@ -133,9 +144,9 @@ const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
                 loading ? <Skeleton active /> :
                     <Table
                         columns={columns}
-                        dataSource={allDownlines}
+                        dataSource={filteredByLineManger}
                         expandable={{
-                            rowExpandable: (record) => record?.id===5383,
+                            rowExpandable: (record) => record?.id,
                             expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.comment}
                             </p>,
                         }}
@@ -149,13 +160,14 @@ const DownLines = ({ filteredByLineManger, loading, rejectedEmp}: any) => {
                 onOk={handleCancel}
                 closable={true}
                 footer={<>
-                <Button onClick={()=>handleCancel()}>Done</Button>
+                <Button onClick={()=>handleCancel()}>Ok</Button>
                 </>}
                 >
                 <div className="py-9 px-9">
                     <AppraisalFormHeader employeeData={employeeData} department={department} lineManager={lineManager} />
-
-                    <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
+                    <ErrorBoundary>
+                        <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
+                    </ErrorBoundary>
                 </div>
             </Modal>
         </>

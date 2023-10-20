@@ -1,3 +1,8 @@
+import { Tag } from "antd";
+import { useQuery } from "react-query";
+import { fetchDocument } from "../../../services/ApiCalls";
+
+
 
 // getTimeLeft function is used to calculate the time left for review given the review date in ISO format
 const getTimeLeft = (reviewDate: any) => {
@@ -35,19 +40,8 @@ const getSupervisorData = ({ employeeId, allEmployees, allOrganograms }: any) =>
         return item.id === employeeId || item.employeeId === employeeId
     })
 
-    // get supervisor  id from organogram table
-    const supervisorFromEmployeeInOrganogram: any = allOrganograms?.data?.find((item: any) => {
-        return item.employeeId === employeeIdFromEmployee?.employeeId
-    })
-
-    const employeeIdOfSupervisorFromOrganogram = parseInt(supervisorFromEmployeeInOrganogram?.supervisorId) === 0 ?
-        supervisorFromEmployeeInOrganogram :
-        allOrganograms?.data.find((item: any) => {
-            return item.id === parseInt(supervisorFromEmployeeInOrganogram?.supervisorId)
-        })
-
     const supervisorData = allEmployees?.data?.find((item: any) => {
-        return item.employeeId === employeeIdOfSupervisorFromOrganogram?.employeeId
+        return item.id === (employeeIdFromEmployee?.lineManagerId)
     })
 
     return supervisorData
@@ -69,6 +63,30 @@ const getEmployeeProperty = ({ employeeId, fieldName, allEmployees }: any) => {
     return employee?.[fieldName]
 }
 
+const GetEmployeeStatus = ((employeeId:any)=> {
+    const { data: allAppraisalobjective} = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
+    const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
+         return parseInt(item?.employeeId) === employeeId?.id
+    })
+
+    if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
+         return  <Tag color="warning">Submitted</Tag>;
+     } else if (allSubmittedObjectives?.some((obj:any) => obj.status === "rejected")) {
+         return  <Tag color="error">Rejected</Tag>;
+     }
+     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "approved")) {
+         return <Tag color="success">Approved</Tag>;
+     }
+     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "drafted")) {
+         return <Tag color="warning">Drafted</Tag>;
+     }
+     else{
+            return <Tag color="pink">Not Started</Tag>;
+     }
+
+ 
+})
+
 // to get the name of an employee property given the employee id, the field name which will return an Id, all employees data and the data of the field which will return a name
 const getEmployeePropertyName = ({ employeeId, employeeProperty, allEmployees, OtherData }: any) => {
     const fieldNameId = getEmployeeProperty({ employeeId: employeeId, fieldName: employeeProperty, allEmployees: allEmployees })
@@ -78,4 +96,4 @@ const getEmployeePropertyName = ({ employeeId, employeeProperty, allEmployees, O
 
 
 
-export { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft };
+export { getEmployeeProperty, getEmployeePropertyName, getFieldName, getSupervisorData, getTimeLeft, GetEmployeeStatus};

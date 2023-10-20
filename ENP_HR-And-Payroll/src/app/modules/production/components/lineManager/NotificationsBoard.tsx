@@ -5,6 +5,7 @@ import { fetchDocument } from "../../../../services/ApiCalls";
 import { useAuth } from "../../../auth";
 import { DownLines } from "./DownLines";
 import { NotificationsComponent } from "./NotificationsComponent";
+import { ErrorBoundary } from "@ant-design/pro-components";
 
 const NotificationsBoard = () => {
 
@@ -12,7 +13,7 @@ const NotificationsBoard = () => {
     const tenantId = localStorage.getItem('tenant')
     
     const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
-    const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 100000 })
+    // const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 100000 })
 
 
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
@@ -23,47 +24,17 @@ const NotificationsBoard = () => {
 
 
     // get all objectives with submitted status
-    const allSubmittedObjectives = employeeObjectives?.data?.map((item: any) => {
-        if(item?.status === 'submitted'|| item?.status === 'approved'){
-
-            return item?.employeeId
-        }
-        else
-        {
-            return null
-        }
+    const allSubmittedObjectives = employeeObjectives?.data?.filter((item: any) => {
+        return item?.status === 'submitted'
     })
 
-    const allRejectedObjectives = employeeObjectives?.data?.map((item: any) => {
-        if(item?.status === 'rejected'){
-
-            return item?.employeeId
-        }
-        else
-        {
-            return null
-        }
-    })
-    
-
-    // console.log('allRejectedObjectives: ', allRejectedObjectives)
-
-
-          
-    const loadData = async () => {
-        try {
-            const data = allTeamMembers?.filter((item: any) => allSubmittedObjectives.includes(item.id.toString()))
-            console.log('data2: ', data)
-            setEmployeeWhoSubmitted(data)
-            // setFilteredObjectives(data)
-        } catch (error) {
-            console.log('loadError: ', error)
-        }
-    }
+    const employeesWithSubmittedObjectives = allEmployees?.data.filter((employee:any) =>
+        allSubmittedObjectives?.some((obj:any) => parseInt(obj.employeeId )=== employee.id && obj.status === "submitted")
+    );
 
     useEffect(() => {
-        loadData()
-    }, [employeeObjectives?.data, allEmployees?.data])
+        // loadData()
+    }, [allEmployees?.data, employeeObjectives?.data])
 
     const onTabsChange = (key: string) => {
         console.log(key);
@@ -74,26 +45,28 @@ const NotificationsBoard = () => {
         {
             key: '1',
             label: <>
-                <Badge count={allTeamMembers?.length} showZero={true} title="Downlines" size="small">
+                <Badge count={allTeamMembers?.length} title="Downlines" size="small">
                     <span>Team</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <DownLines filteredByLineManger={allTeamMembers} loading={isLoading} rejectedEmp={allRejectedObjectives}/>
+                <ErrorBoundary>
+                    <DownLines filteredByLineManger={allTeamMembers} loading={isLoading} />
+                </ErrorBoundary>
                 </>
             ),
         },
         {
             key: '2',
             label: <>
-                <Badge count={employeeWhoSubmitted?.length} showZero={true} title="Awaiting approval" size="small">
+                <Badge count={employeesWithSubmittedObjectives?.length} showZero={true} title="Awaiting approval" size="small">
                     <span>Approvals</span>
                 </Badge>
             </>,
             children: (
                 <>
-                    <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeeWhoSubmitted} />
+                    <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeesWithSubmittedObjectives} />
                 </>
             ),
         },
@@ -145,3 +118,6 @@ const NotificationsBoard = () => {
 
 
 export { NotificationsBoard };
+
+
+
