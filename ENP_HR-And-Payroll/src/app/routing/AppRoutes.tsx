@@ -19,6 +19,9 @@ import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
 import { EmployeeObjectiveEntry } from '../modules/production/entry/EmplyeeObjectiveEntry'
 import { EmployeeDeliverableEntry } from '../modules/production/entry/EmployeeDeliverableEntry'
 import { PageTitle } from '../../_metronic/layout/core'
+import { MasterLayout } from '../../_metronic/layout/MasterLayout'
+import { ActualEntry } from '../modules/production/entry/ActualEntry'
+import { ActualPage } from '../modules/production/entry/ActualPage'
 
 /**
  * Base URL of the website.
@@ -63,17 +66,46 @@ const AppRoutes: FC = () => {
               <Route path='/*' element={<PrivateRoutes />} />
               
               <Route index element={<Navigate to='/hr-dashboard' />} />
-              
+
+              <Route element={<MasterLayout />}>
+                <Route
+                  path='objectiveEntry/:parameterId'
+                  element={<SuspensedView>
+                    <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
+                    <EmployeeObjectiveEntry />
+                  </SuspensedView>} />
+                <Route
+                  path='deliverableEntry/:objectiveId'
+                  element={<SuspensedView>
+                    <PageTitle breadcrumbs={accountBreadCrumbs}>Deliverables Entries</PageTitle>
+                    <EmployeeDeliverableEntry />
+                  </SuspensedView>} />
+                <Route
+                  path='actualpage/'
+                  element={<SuspensedView>
+                    <PageTitle breadcrumbs={accountBreadCrumbs}>Actuals Page</PageTitle>
+                    <ActualPage/>
+                  </SuspensedView>} />
+                <Route
+                  path='actualentry/:id'
+                  element={<SuspensedView>
+                    <PageTitle breadcrumbs={accountBreadCrumbs}>Actuals Entries</PageTitle>
+                    <ActualEntry/>
+                  </SuspensedView>} />
+                <Route
+                  path='parameterEntry/'
+                  element={<SuspensedView>
+                    <PageTitle breadcrumbs={accountBreadCrumbs}>Parameter Entries</PageTitle>
+                    <ParameterEntry/>
+                  </SuspensedView>} />
+              </Route>
             </>
           ) : (
             <>
-
               <Route path='auth/*' element={<AuthPage />} />
               <Route path='*' element={<Navigate to='/auth' />} />
-
             </>
           )}
-          
         </Route>
       </Routes>
     </BrowserRouter>

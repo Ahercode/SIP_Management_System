@@ -6,35 +6,56 @@ import { useAuth } from "../../../auth";
 import { DownLines } from "./DownLines";
 import { NotificationsComponent } from "./NotificationsComponent";
 import { ErrorBoundary } from "@ant-design/pro-components";
+import { set } from "react-hook-form";
 
 const NotificationsBoard = () => {
 
     const { currentUser } = useAuth()
     const tenantId = localStorage.getItem('tenant')
+    const [employeesWithSubmittedObjectives, setEmployeesWithSubmittedObjectives] = useState<any>([])
+    const [employees, setEmployees] = useState<any>([])
+    const [objectives, setObjectives] = useState<any>([])
+    const [teamMembers, setTeamMembers] = useState<any>([])
+    // const [isLoading, setIsLoading] = useState<any>(false)
+    // const [objectivesLoading, setObjectivesLoading] = useState<any>(false)
     
-    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
+    
     // const { data: downlines } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 100000 })
 
 
-    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
+    
    
     // const [filteredObjectives, setFilteredObjectives] = useState<any>([])
     const [employeeWhoSubmitted, setEmployeeWhoSubmitted] = useState<any>([])
-    const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
-
-
+    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
     // get all objectives with submitted status
-    const allSubmittedObjectives = employeeObjectives?.data?.filter((item: any) => {
-        return item?.status === 'submitted'
-    })
+    const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
+    
 
-    const employeesWithSubmittedObjectives = allEmployees?.data.filter((employee:any) =>
-        allSubmittedObjectives?.some((obj:any) => parseInt(obj.employeeId )=== employee.id && obj.status === "submitted")
-    );
+    const loadData = () => {
+        
+        const allSubmittedApprovedObjectives = employeeObjectives?.data?.filter((item: any) => {
+            return item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected"
+        }) 
+        const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
+        setTeamMembers(allTeamMembers)
+        setEmployees(allEmployees)
+        setObjectives(employeeObjectives)
+        // setIsLoading(isLoading)
+        // setObjectivesLoading(objectivesLoading)
+        const employeesWithSubmittedObjectives = allTeamMembers?.filter((employee:any) =>
+            allSubmittedApprovedObjectives?.some((obj:any) => 
+            parseInt(obj.employeeId) === employee.id && 
+            (obj.status === "submitted" || obj.status === "approved"|| obj.status === "rejected")
+            )
+        )
+        setEmployeesWithSubmittedObjectives(employeesWithSubmittedObjectives)
+        
+    }
 
     useEffect(() => {
-        // loadData()
-    }, [allEmployees?.data, employeeObjectives?.data])
+        loadData()
+    }, [employeeObjectives])
 
     const onTabsChange = (key: string) => {
         console.log(key);
@@ -45,14 +66,19 @@ const NotificationsBoard = () => {
         {
             key: '1',
             label: <>
-                <Badge count={allTeamMembers?.length} title="Downlines" size="small">
+                <Badge count={teamMembers?.length} showZero={true} title="Downlines" size="small">
                     <span>Team</span>
                 </Badge>
             </>,
             children: (
                 <>
                 <ErrorBoundary>
-                    <DownLines filteredByLineManger={allTeamMembers} loading={isLoading} />
+                    <DownLines 
+                    filteredByLineManger={teamMembers} 
+                    loading={isLoading} 
+                    allEmployees={employees}
+                    allAppraisalobjective={objectives}
+                    />
                 </ErrorBoundary>
                 </>
             ),

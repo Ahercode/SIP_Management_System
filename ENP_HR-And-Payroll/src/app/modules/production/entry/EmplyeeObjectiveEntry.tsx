@@ -329,12 +329,15 @@ const EmployeeObjectiveEntry = () => {
                   </div>
                 ))
               } */}
+              
             </Space>
             <Space style={{ marginBottom: 16 }}>
+              
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
+              
             </Space>
           </div>
           {

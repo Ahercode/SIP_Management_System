@@ -109,53 +109,6 @@ const PrivateRoutes = () => {
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Entries</PageTitle>
           <EmployeeObjectivePage />
         </SuspensedView>} />
-      {/* <Route
-        path='objectiveEntry/:parameterId'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
-          <EmployeeObjectiveEntry />
-        </SuspensedView>} />
-      <Route
-        path='deliverableEntry/:objectiveId'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Deliverables Entries</PageTitle>
-          <EmployeeDeliverableEntry />
-        </SuspensedView>} />
-      <Route
-        path='parameterEntry/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Parameter Entries</PageTitle>
-          <ParameterEntry/>
-        </SuspensedView>} /> */}
-
-{
-              test ?(
-                <>
-                  <Route
-                    path='objectiveEntry/:parameterId'
-                    element={<SuspensedView>
-                      <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Objectives</PageTitle>
-                      <EmployeeObjectiveEntry />
-                    </SuspensedView>} />
-                  <Route
-                    path='deliverableEntry/:objectiveId'
-                    element={<SuspensedView>
-                      <PageTitle breadcrumbs={accountBreadCrumbs}>Deliverables Entries</PageTitle>
-                      <EmployeeDeliverableEntry />
-                    </SuspensedView>} />
-                  <Route
-                    path='parameterEntry/'
-                    element={<SuspensedView>
-                      <PageTitle breadcrumbs={accountBreadCrumbs}>Parameter Entries</PageTitle>
-                      <ParameterEntry/>
-                    </SuspensedView>} />
-                </>
-                
-                )
-              :(
-                null
-                )
-              }
 
       <Route
         path='employee-edit-form/:id'
@@ -227,8 +180,6 @@ const PrivateRoutes = () => {
           <PageTitle breadcrumbs={accountBreadCrumbs}>User Management</PageTitle>
           <UserManagement />
         </SuspensedView>} />
-      {/* Employee Routes  */}
-
 
       <Route
         path='department/:id'

@@ -116,7 +116,7 @@ const AppraisalGrade = () => {
           },
         },
         {
-          title: 'Name',
+          title: 'Payout Ratio',
           dataIndex: 'payoutRatio',
           sorter: (a: any, b: any) => {
             if (a.payoutRatio > b.payoutRatio) {
@@ -302,7 +302,7 @@ const AppraisalGrade = () => {
                         className="form-control form-control-solid" />
                     </div>
                     <div className='mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Garde</label>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Grade</label>
                         <input
                         {...register("grade")}
                         defaultValue={isUpdateModalOpen === true ? tempData.grade : ''}

@@ -13,6 +13,7 @@ const AppraisalObjective = ({ referenceId }: any) => {
     const queryClient = useQueryClient()
     const [currentObjective, setCurrentObjective] = useState<any>([])
     const [objectiveData, setObjectiveData] = useState<any>([])
+    const tenantId = localStorage.getItem('tenant')
 
     const handleChange = (event: any) => {
         event.preventDefault()
@@ -69,7 +70,6 @@ const AppraisalObjective = ({ referenceId }: any) => {
             message.error('Please enter objective description')
             return
         }
-
         // check if current objective exist allObjectives using referenceId
         const currentObjective = allObjectives?.data.find((item: any) => item.referenceId === referenceId)
         if (currentObjective) {
@@ -84,7 +84,7 @@ const AppraisalObjective = ({ referenceId }: any) => {
             const item = {
                 data: {
                     description: values.description,
-                    tenantId: 'test',
+                    tenantId: tenantId,
                     referenceId: referenceId,
                 },
                 url: 'appraisalperfobjectives',
@@ -122,6 +122,7 @@ const AppraisalObjective = ({ referenceId }: any) => {
 
     return (
         <>
+        <div style={{padding:" 10px 20px 0 0"}}>
             <form onSubmit={handleObjectiveSave}>
                 <span className='form-label' >Objectives</span>
                 <textarea
@@ -132,8 +133,13 @@ const AppraisalObjective = ({ referenceId }: any) => {
                     onChange={handleChange}
                     style={{ height: textareaHeight }}
                 />
-                <a className='justify-content-end align-items-end d-flex btn text-primary' onClick={() => handleObjectiveSave()}>Save Objective</a>
+                <div style={{display: "flex", justifyContent:"flex-end", marginTop:"20px"}}>
+
+                    <a className='btn btn-light-primary btn-sm' onClick={() => handleObjectiveSave()}>Save Objective</a>
+                </div>
             </form>
+        </div>
+           
         </>
     )
 }

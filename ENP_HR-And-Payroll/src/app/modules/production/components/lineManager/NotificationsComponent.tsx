@@ -1,7 +1,7 @@
 import { PrinterOutlined } from '@ant-design/icons'
 import { Button, Modal, Skeleton, Space, Table, Tag, message } from "antd"
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import { Api_Endpoint, fetchDocument, updateItem } from "../../../../services/ApiCalls"
@@ -12,7 +12,7 @@ import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/For
 import axios from 'axios'
 import { useAuth } from '../../../auth'
 
-const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
+const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
@@ -88,16 +88,9 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
 
 
     const handleCommentModalOk = () => {
-        const item = {
-            data: {
-                ...objectivesData,
-                status: 'rejected',
-                comment: comment
-            },
-            url: 'appraisalobjective'
-        }
-        setIsObjectiveDeclined(true)
-        updateData(item)
+        OnSubmit("rejected")
+        reset()
+        setComment('')
     }
 
     const handlePrintPreviewModalOk = () => {
@@ -123,12 +116,9 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
     ) 
 
     const OnSubmit =(statusText:any)  => {
-
             const parameterIds = getOnlyparameters?.map((item: any) => {
               return item.id
             })
-          
-            
             const data ={
               parameterIds: parameterIds,
               employeeId : employeeData?.id?.toString(),
@@ -138,7 +128,18 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
             console.log("data",data)
             axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, data)
             .then(response => {
-              message.success(`You have approved ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
+                if(statusText === "approved"){
+                    message.success(`You have ${statusText} ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
+                }
+                else{
+                    message.error(`You have ${statusText} ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
+                }
+
+              setCommentModalOpen(false)
+              queryClient.invalidateQueries('appraisalobjective')
+              setIsModalOpen(false)
+            //   setEmployeeData({})
+            //   setObjectivesData([])
               console.log(response.data);
             })
             .catch(error => {
@@ -147,9 +148,13 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
           
       }
 
-      const onObjectivesApproved = () => {
-        OnSubmit("approved")
-    }
+        const onObjectivesApproved = () => {
+            OnSubmit("approved")
+        }
+
+        const onObjectivesRejected = () => {
+            setCommentModalOpen(true)
+        }
 
     const loadData = () => {
         const parametersResponse = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
@@ -164,7 +169,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
 
     useEffect(() => {
         loadData()
-    }, [ parameters?.data, employeeData])
+    }, [ parameters?.data, employeeData, allAppraisalObjective?.data])
 
 
     const getEmployeeStatus = ((employeeId:any)=> {
@@ -172,24 +177,27 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
                 return parseInt(item?.employeeId) === employeeId?.id
            })
 
-           if (allSubmittedObjectives.some((obj:any) => obj.status === "submitted")) {
+           if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
                 return  <Tag color="warning">Submitted</Tag>;
-            } else if (allSubmittedObjectives.some((obj:any) => obj.status === "rejected")) {
+            } else if (allSubmittedObjectives?.some((obj:any) => obj.status === "rejected")) {
                 return  <Tag color="error">Rejected</Tag>;
             }
-            else if (allSubmittedObjectives.some((obj:any) => obj.status === "approved")) {
+            else if (allSubmittedObjectives?.some((obj:any) => obj.status === "approved")) {
                 return <Tag color="success">Approved</Tag>;
             }
-            else if (allSubmittedObjectives.some((obj:any) => obj.status === "drafted")) {
+            else if (allSubmittedObjectives?.some((obj:any) => obj.status === "drafted")) {
                 return <Tag color="warning">Drafted</Tag>;
+            }
+            else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
+                return <Tag color="warning">Submitted for Amendment</Tag>;
+            }
+            else{
+                return <Tag color="pink">Not Started</Tag>;
             }
     })
 
 
-    const onObjectivesRejected = () => {
-        OnSubmit("rejected")
-        setCommentModalOpen(true)
-    }
+    
 
     const handleCancel = () => {
         setIsModalOpen(false)
@@ -229,6 +237,10 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
         },
     ]
 
+    // if(location==="View Details"){
+    //     columns.splice(3, 1)
+    // }
+
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
             queryClient.invalidateQueries('appraisalobjective')
@@ -265,6 +277,8 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted }: any) => {
                 onCancel={handleCancel}
                 closable={true}
                 footer={
+                    location === "View Details" ? 
+                    null:
                     <Space className="mt-7">
                         <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
                             Decline

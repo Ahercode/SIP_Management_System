@@ -50,11 +50,12 @@ const AppraisalPerformance = () => {
   const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allParameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/${tenantId}`), { cacheTime: 5000 })
+  // const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/${tenantId}`), { cacheTime: 5000 })
+  // const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 5000 })
   const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 5000 })
+  // const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
   const parametersData = allParameters?.data?.filter((item: any) => item?.appraisalId === 12)
   const [employeeData, setEmployeeData] = useState<any>({})
   // const [parametersData, setParametersData] = useState<any>([])
@@ -413,8 +414,8 @@ const AppraisalPerformance = () => {
     GetJobTitle(employeeRecord?.id)
     setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
 
-  }, [
-    allJobTitles?.data, allObjectives?.data, allReviewdates?.data, selectedAppraisalType,
+  },[
+    allJobTitles?.data, selectedAppraisalType,
     selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId, employeeData, employeeRecord?.id
   ])
 

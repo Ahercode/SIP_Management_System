@@ -100,7 +100,7 @@ const SetupComponent = (props: any) => {
         },
         
         {
-            title: 'Threshold',
+            title: 'Achievement Cap',
             dataIndex: 'threashold',
             sorter: (a: any, b: any) => {
                 if (a.threashold > b.threashold) {
@@ -366,7 +366,7 @@ const SetupComponent = (props: any) => {
                                     props.data.title === 'Departments' &&
                                     <>
                                         <div className=' mb-7'>
-                                            <label htmlFor="exampleFormControlInput1" className="form-label">Threashold</label>
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Achievement Cap</label>
                                             <input type="number" {...register("threashold")} defaultValue={isUpdateModalOpen === true ? parseInt(tempData.threashold) : 0} onChange={handleChange} className="form-control form-control-solid" />
                                         </div>
                                     </>

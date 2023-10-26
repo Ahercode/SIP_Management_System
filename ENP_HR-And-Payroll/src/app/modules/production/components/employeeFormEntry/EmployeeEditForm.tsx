@@ -127,7 +127,6 @@ const EmployeeEditForm = () => {
   }
   
   const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments/tenant/${tenantId}`), { cacheTime: 5000 })
-  // const { data: allDivisions } = useQuery('divisions',()=> fetchDivisions(tenantId), { cacheTime: 5000 })
   const { data: allCategories } = useQuery('categories', () => fetchDocument(`Categories/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument(`JobTitles/tenant/${tenantId}`), { cacheTime: 5000 })
@@ -301,14 +300,6 @@ const EmployeeEditForm = () => {
       }
   
     })
-    // let newLevel = null
-    // if(item.id === parseInt(defaultSelect?.value) ){
-    //   newLevel = item.currentLevel + 1
-    //   return message.success(`${newLevel}`)
-    // }
-    // else{
-    //   return ""
-    // }
     const formData: any = new FormData();
     formData.append('id', parseInt(tempData.id))
     formData.append('employeeId', tempData.employeeId == null ? "" : tempData.employeeId)
@@ -374,7 +365,7 @@ const EmployeeEditForm = () => {
             <div className=' mb-7 '>
               {
                 !previewImage && (
-                  tempData?.imageUrl !== null ?
+                  tempData?.imageUrl !== null || tempData?.imageUrl ===""?
                     <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${tempData?.imageUrl}`} width={150} height={150}></img> :
                     <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={150} height={150}></img>
                 )

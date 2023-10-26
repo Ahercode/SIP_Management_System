@@ -203,11 +203,6 @@ const Organogram = () => {
     loadData()
   }, [allEmployees?.data, allOrganograms?.data])
 
-  // const dataWithIndex = gridData.map((item: any, index) => ({
-  //   ...item,
-  //   key: index,
-  // }))
-
   const handleInputChange = (e: any) => {
     setSearchText(e.target.value)
     if (e.target.value === '') {

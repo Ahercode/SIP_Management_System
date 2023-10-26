@@ -158,7 +158,7 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen007.svg'
             title='Notifications Board'
           />
-          <AsideMenuItem to='parameterEntry' icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />
+          <AsideMenuItem to={`parameterEntry`} icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />
         
         </>
 

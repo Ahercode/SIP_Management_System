@@ -22,7 +22,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [scheduleDateData, setScheduleDateData] = useState<any>({})
     const [tempData, setTempData] = useState<any>()
 
-console.log("referenceId: ", referenceId)
 
     const handleNotificationCancel = () => {
         setIsNotificationModalOpen(false)
@@ -48,24 +47,28 @@ console.log("referenceId: ", referenceId)
     }
 
     const loadData = async () => {
-        setLoading(true)
-        try {
-            const response = allReviewdates?.data?.filter((refId: any) => {
-                return refId?.referenceId === referenceId
-            })
-            setGridData(response)
-            setLoading(false)
-        } catch (error) {
-            console.log(error)
-            setLoading(false)
-        }
+        // setLoading(true)
+        const response = allReviewdates?.data?.filter((refId: any) => {
+            return refId?.referenceId === referenceId
+        })
+
+        setGridData(response)
+        // try {
+        //     const response = allReviewdates?.data?.filter((refId: any) => {
+        //         return refId?.referenceId === referenceId
+        //     })
+        //     setGridData(response)
+        //     setLoading(false)
+        // } catch (error) {
+        //     console.log(error)
+        //     setLoading(false)
+        // }
     }
 
-    useEffect(() => {
-        loadData()
-    }, [
-        allReviewdates?.data, referenceId, scheduleDateData
-    ])
+    const reviewData = allReviewdates?.data?.filter((refId: any) => {
+        return refId?.referenceId === referenceId
+    })
+   
 
     function handleDeleteReviewDate(element: any) {
         const item = {
@@ -176,7 +179,8 @@ console.log("referenceId: ", referenceId)
                 reviewDate: selectedDate.toISOString(),
                 endDate: endDate.toISOString(),
                 checkUpDate: checkUpDate.toISOString(),
-                description: tempData?.description,
+                description: values.description,
+                oldDescription: tempData?.description,
                 tenantId: 'test',
                 referenceId: referenceId,
             },
@@ -192,7 +196,7 @@ console.log("referenceId: ", referenceId)
             setIsReviewDateModalOpen(false)
             loadData()
             setSendLoading(false)
-            message.success('Email notifications sent successfully')
+            message.success(' Completed successfully')
             setIsEmailSent(false)
         },
         onError: (error: any) => {
@@ -247,16 +251,19 @@ console.log("referenceId: ", referenceId)
         }
     })
 
-    //   add data to gridData
-    gridData.push({
+    useEffect(() => {
+        loadData() 
+    }, [referenceId])
+
+    reviewData?.push({
         description: `Initial`,
-            reviewDate: "",
-            endDate: "",
-            checkUpDate: "",
-            startDate: "",
+        reviewDate: "",
+        endDate: "",
+        checkUpDate: "",
+        startDate: "",
     })
     for (let i = 0; i < findAppraisal?.numReview; i++) {
-        gridData.push({
+        reviewData?.push({
             description: `Review ${i+1}`,
             reviewDate: "",
             endDate: "",
@@ -264,15 +271,22 @@ console.log("referenceId: ", referenceId)
             startDate: "",
         });
     }
-    gridData.push({
+    reviewData?.push({
         description: `Final`,
-            reviewDate: "",
-            endDate: "",
-            checkUpDate: "",
-            startDate: "",
+        reviewDate: "",
+        endDate: "",
+        checkUpDate: "",
+        startDate: "",
     })
+    console.log("reviewData3: ", reviewData)
 
-// 0246550762
+
+    // 
+    const filteredGridData = reviewData?.filter((review: any) => {
+        const hasMatchingOldDescription = reviewData?.some((item :any) => item.oldDescription === review.description);
+        // return item?.description == item?.oldDescription
+        return !hasMatchingOldDescription;
+    })
 
     return (
         <>
@@ -290,17 +304,9 @@ console.log("referenceId: ", referenceId)
                         }}
                         className="border border-gray-400"
                     >
-                        {/* <Space className="justify-content-end align-items-end d-flex mb-2" >
-                            <Button
-                                onClick={showReviewDateModal}
-                                className="btn btn-light-primary me-3 justify-content-center align-items-center d-flex"
-                                type="primary" icon={<PlusOutlined style={{ fontSize: '16px' }} rev={''} />} size={'large'} >
-                                Add Schedule Date
-                            </Button>
-                        </Space> */}
                         {
                             loading ? <Skeleton active /> :
-                                <Table columns={reviewDatesColumn} dataSource={gridData} />
+                                <Table columns={reviewDatesColumn} dataSource={filteredGridData} />
                         }
                     </div>
                 </Spin>
@@ -428,4 +434,5 @@ console.log("referenceId: ", referenceId)
 }
 
 export { ReviewDateComponent }
+
 

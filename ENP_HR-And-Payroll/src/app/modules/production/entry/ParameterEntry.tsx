@@ -2,7 +2,7 @@ import { Button, Skeleton, Space, Table, Tag, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { KTCardBody } from '../../../../_metronic/helpers'
 import { Api_Endpoint, fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../../auth'
@@ -11,14 +11,14 @@ import axios from 'axios'
 const ParameterEntry = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const { register, reset, handleSubmit } = useForm()
-  const param: any = useParams();
-  const tenantId = localStorage.getItem('tenant')
+  // const param: any = useParams();
+  // const tenantId = localStorage.getItem('tenant')
   const { currentUser } = useAuth()
-  let [appraisalName, setAppraisalName] = useState<any>("")
+  // let [appraisalName, setAppraisalName] = useState<any>("")
 const [objectiveStatus, setObjectiveStatus] = useState<any>("")
 
 const [deliverableStatus, setDeliverableStatus] = useState<any>("")
-  const { data: appraisalObjectives} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
+  const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
   const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
   const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
   const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
@@ -99,14 +99,14 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
 
   const weightSum = (id: any) => {
 
-    return appraisalObjectives?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
+    return allAppraisalobjective?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
       .map((item: any) => item.weight)
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
   };
 
   // get weight of deliverables from each objective
   const weightSumDeliverables = (id: any) => {
-    const allObj= appraisalObjectives?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
+    const allObj= allAppraisalobjective?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
   
     // console.log("allObjFirst",allObj)
     // get all deliverables for each objective
@@ -143,7 +143,7 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const getObjectiveStatus = ( )=>{
     const allDeliverables = getOnlyparameters?.map((pare: any) => {
 
-      const objData = appraisalObjectives?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
+      const objData = allAppraisalobjective?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
       const objStatus = objData?.map((item: any) => {
         return item.weight
       })
@@ -155,20 +155,39 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     setObjectiveStatus(allDeliverables)
   }
 
+  const getEmployeeStatus = (()=> {
+    const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
+         return parseInt(item?.employeeId) === parseInt(currentUser?.id)
+    })
+    if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
+         return  "Submitted";
+     } else if (allSubmittedObjectives?.some((obj:any) => obj.status === "rejected")) {
+         return  "Rejected";
+     }
+     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "approved")) {
+         return "Approved";
+     }
+     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
+         return "Amend";
+     }
+     else{
+        return "Not Submitted"
+     }
+  })
+
 useEffect(() => {
   getObjectiveStatus()
   getDeliverableStatus()
 }
 , [allParameters?.data])
+
+
 const OnSubmit = handleSubmit(async (values) => {
   if(objectiveStatus.every((item:any) => item === true)){
     if(deliverableStatus.every((item:any) => item === 0)){
       const parameterIds = getOnlyparameters?.map((item: any) => {
         return item.id
       })
-      // console.log("parameterIds",parameterIds)
-      // const employeeId = currentUser?.id?.toString()
-      // const statusText = "submitted"
       const data ={
         parameterIds: parameterIds,
         employeeId :currentUser?.id?.toString(),
@@ -205,10 +224,44 @@ const OnSubmit = handleSubmit(async (values) => {
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
           <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
-            <div className='text-primary fs-2 fw-bold mb-4'>{`${appraisalData?.name}`}</div>
-            <Button disabled={objectiveStatus===true && deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
-              Submit
-            </Button>
+            <div >
+              
+              <p className='text-primary fs-2 fw-bold mb-4'>
+
+                {`${appraisalData?.name}`}
+              </p>
+                  <span style={{ fontSize:"16px"}}> Your status:
+                    <span style={{ fontSize:"16px"}} className={
+                      getEmployeeStatus() === 'Amend' ?
+                      'badge badge-light-info fw-bolder' :
+                      getEmployeeStatus() === 'Submitted' ?
+                      'badge badge-light-warning fw-bolder' :
+                      getEmployeeStatus() === 'Rejected' ?
+                      'badge badge-light-danger fw-bolder' :
+                      getEmployeeStatus() === 'Approved' ?
+                      'badge badge-light-success fw-bolder' :
+                      'badge badge-light-danger fw-bolder'
+                    }>
+                       {getEmployeeStatus()}
+                    </span>
+                  </span> 
+            </div>
+            <div>
+              {/* <span className=' me-2'>The current status of your Objectives & Deliverables:</span> */}
+            </div>
+            <Space size='middle'>
+              <Button  disabled={(getEmployeeStatus() === "Approved" || getEmployeeStatus() === "Amend") && deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
+                Submit
+              </Button>
+              <Link to={`/actualpage/`}>
+                <Button size='large'>
+                  Actuals
+                </Button>
+              </Link>
+           
+                {/* <a className='btn btn-light-primary btn-sm'>Actuals</a> */}
+              
+            </Space>
           </div> 
           {
             loading ? <Skeleton active /> :
@@ -216,12 +269,10 @@ const OnSubmit = handleSubmit(async (values) => {
                 columns={columns}
                 dataSource={dataByIDWithKey}
                 expandable={{
-                  // rowExpandable: (record1) => record1,
                   expandedRowRender: (record) =>
                     <div key={record?.id}>
                       <div className='d-flex flex-direction-row align-items-center align-content-center py-4'>
                         <div style={{borderRight:"1px solid rgba(0,0,0,0.4)", paddingRight:"50px"}} className='me-4'>
-                          
                           <span >{record?.obj}</span>
                           {
                             weightSum(record.id) === record?.weight ?
