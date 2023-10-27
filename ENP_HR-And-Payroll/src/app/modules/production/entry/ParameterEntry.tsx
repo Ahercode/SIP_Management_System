@@ -227,7 +227,6 @@ const OnSubmit = handleSubmit(async (values) => {
             <div >
               
               <p className='text-primary fs-2 fw-bold mb-4'>
-
                 {`${appraisalData?.name}`}
               </p>
                   <span style={{ fontSize:"16px"}}> Your status:
@@ -250,7 +249,12 @@ const OnSubmit = handleSubmit(async (values) => {
               {/* <span className=' me-2'>The current status of your Objectives & Deliverables:</span> */}
             </div>
             <Space size='middle'>
-              <Button  disabled={(getEmployeeStatus() === "Approved" || getEmployeeStatus() === "Amend") && deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
+              <Button  disabled={
+                (getEmployeeStatus() === "Approved" || 
+                getEmployeeStatus() === "Amend"||
+                getEmployeeStatus() === "Submitted"                 
+                ) && 
+                deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
                 Submit
               </Button>
               <Link to={`/actualpage/`}>

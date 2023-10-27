@@ -2,10 +2,12 @@ import { PlusOutlined } from "@ant-design/icons"
 import { Button, Modal, Popconfirm, Skeleton, Space, Spin, Table, message } from "antd"
 import moment from "moment"
 import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { FormsBaseUrl, deleteItem, fetchDocument, postItem } from "../../../../../services/ApiCalls"
+import { Api_Endpoint, FormsBaseUrl, axioInstance, deleteItem, fetchDocument, postItem } from "../../../../../services/ApiCalls"
 import { getTimeLeft } from "../../ComponentsFactory"
+import axios from "axios"
+import { all } from "@devexpress/analytics-core/analytics-elements-metadata"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
@@ -21,6 +23,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [sendLoading, setSendLoading] = useState(false)
     const [scheduleDateData, setScheduleDateData] = useState<any>({})
     const [tempData, setTempData] = useState<any>()
+    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
 
 
     const handleNotificationCancel = () => {
@@ -39,6 +42,19 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         setIsReviewDateModalOpen(true)
         console.log('record: ', record)
         setTempData(record);
+    }
+
+
+    const handleStatus = (record:any) => {
+        setIsStatusModalOpen(true)
+        console.log('record: ', record)
+        setTempData(record);
+    }
+
+    const handleStatusCancel = () => {
+        reset()
+        setIsStatusModalOpen(false)
+        setTempData({})
     }
 
     const handleReviewDateCancel = () => {
@@ -89,7 +105,18 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
-    console.log('employeesInDataByID: ', employeesInDataByID?.length)
+    // console.log('employeesInDataByID: ', employeesInDataByID?.length)
+
+    const getReviewStatus = ((record: any)=> {
+
+        if(record?.isActive?.trim() === 'active') {
+            return "Active"
+        }
+        else {
+            return "Inactive"
+        }
+
+ })   
 
     const reviewDatesColumn = [
         {
@@ -136,9 +163,19 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                             {
                                 record?.reviewDate === null || record?.reviewDate === undefined || record?.reviewDate === ""?null:
 
-                                <a className={'btn btn-light-info btn-sm'}>
-                                    Notify
-                                </a>
+                                // <a className={'btn btn-light-info btn-sm'}>
+                                //     Notify
+                                // </a>
+                                <>
+                                        {console.log('getReviewStatus(record): ', getReviewStatus(record))}
+
+                                         <button 
+                                             className='btn btn-light-info btn-sm'
+                                             disabled={getReviewStatus(record) === "Inactive"?true:false}
+                                         >
+                                             Notify
+                                         </button>
+                                </>
                             }
                             </Popconfirm>
                             :""
@@ -149,9 +186,15 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                         <a className='btn btn-light-warning btn-sm' onClick={()=>showReviewDateModal(record)}>
                             Set Details
                         </a>
-                        :<a className='btn btn-light-danger btn-sm' onClick={() => handleDeleteReviewDate(record)}>
-                            Delete
-                        </a>
+                        :
+                        <>
+                            <a className='btn btn-light-warning btn-sm' onClick={()=>handleStatus(record)}>
+                                Status
+                            </a>
+                            <a className='btn btn-light-danger btn-sm' onClick={() => handleDeleteReviewDate(record)}>
+                                Delete
+                            </a>
+                        </>
                     }
                     
                 </Space>
@@ -187,6 +230,51 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             url: 'AppraisalReviewDates',
         }
         postData(item)
+    })
+
+    const checkActive = allReviewdates?.data?.filter((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
+
+
+    console.log('allReviewdates: ', allReviewdates?.data)
+    console.log('checkActive: ', checkActive)
+
+    const changeStatus = handleSubmit(async (values) => {
+        
+        console.log('tempData: ', tempData)
+         const  data = {
+                id: tempData?.id,
+                appraisalId: tempData?.appraisalId,
+                reviewDate: tempData?.reviewDate,
+                endDate: tempData?.endDate,
+                checkUpDate: tempData?.checkUpDate,
+                description: tempData?.description,
+                oldDescription: tempData?.oldDescription,
+                tenantId: tempData?.tenantId,
+                referenceId: tempData?.referenceId,
+                isActive: values.isActive,
+            }
+        console.log('data: ', data)
+        if(checkActive?.length > 0 && values.isActive === "active" ) {
+            message.error('Only one active status allowed')
+        }else{
+            try {
+                axios.put(`${Api_Endpoint}/AppraisalReviewDates/${tempData?.id}`,data).then((res) => {
+                    // console.log('res: ', res)
+                    message.success('Status changed successfully')
+                    setIsStatusModalOpen(false)
+                    queryClient.invalidateQueries('reviewDates')
+                    reset()
+                }
+                ).catch((err) => {
+                    message.error('Error changing status')
+                    console.log('err: ', err)
+                })
+            } catch (error) {
+                message.error('Internal server error')
+            }
+        }
     })
 
     const { mutate: postData } = useMutation(postItem, {
@@ -278,7 +366,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         checkUpDate: "",
         startDate: "",
     })
-    console.log("reviewData3: ", reviewData)
+    // console.log("reviewData3: ", reviewData)
 
 
     // 
@@ -288,6 +376,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         return !hasMatchingOldDescription;
     })
 
+// console.log("tempData: ", tempData)
     return (
         <>
             <div className='col-12'>
@@ -339,6 +428,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 {...register("reviewDate")}
                                 type='date'
                                 min={moment().format('YYYY-MM-DD')}
+                                onChange={handleChange}
                                 className='form-control form-control-solid'
                             />
                         </div>
@@ -348,6 +438,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 {...register("checkUpDate")}
                                 min={moment().format('YYYY-MM-DD')}
                                 type='date'
+                                onChange={handleChange}
                                 className='form-control form-control-solid'
                             />
                         </div>
@@ -357,6 +448,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 {...register("endDate")}
                                 min={moment().format('YYYY-MM-DD')}
                                 type='date'
+                                onChange={handleChange}
                                 className='form-control form-control-solid'
                             />
                         </div>
@@ -373,62 +465,42 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 </form>
             </Modal>
 
-            {/* confirm notification roll out modal */}
-
-            {/* <Modal
-                title='Confirm Notifications Send'
-                open={isNotificationModalOpen}
-                onCancel={handleNotificationCancel}
+            <Modal
+                title='Change Status'
+                open={isStatusModalOpen}
+                onCancel={handleStatusCancel}
                 closable={true}
-                footer={
-                    <Space>
-                        {
-                            sendLoading ? <></> :
-                                <>
-                                    <Button onClick={handleNotificationCancel}
-                                        type='primary'
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                        }}
-                                        className='btn btn-danger btn-sm w'>
-                                        Cancel
-                                    </Button>
-                                    <Popconfirm
-
-                                        title="Confirm notifcations send"
-                                        description={`This action will roll out email notifications to all employees\n in the selected employee group.`}
-                                        onConfirm={handleConfirmNotificationSend}
-                                        onCancel={handleNotificationCancel}
-                                        okText="Send"
-                                        cancelText="Cancel"
-                                    >
-                                        <Button
-                                            type='primary'
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                            className='btn btn-success btn-sm w'>
-                                            Send Notifications
-                                        </Button>
-                                    </Popconfirm>
-                                </>
-                        }
-                    </Space>
-                }
+                width={300}
+                footer={[
+                    <Button key='back' onClick={handleStatusCancel}>
+                        Cancel
+                    </Button>,
+                    <Button
+                        key='submit'
+                        type='primary'
+                        htmlType='submit'
+                        onClick={changeStatus}
+                    >
+                        Done
+                    </Button>,
+                ]}  
             >
-                <Divider />
-                <Spin spinning={sendLoading}>
-                    <div className='row'>
-                        <div className='col-12'>
-                            <p className='fw-bold text-gray-800 d-block fs-3'>{`This action will roll out email notifications to all employees\n in the selected employee group.`}</p>
-                        </div>
+                <hr></hr>
+                 <form onSubmit={changeStatus}>
+                    <div className=' mb-7'>
+                        <label className=" form-label">Status</label>
+                        <select 
+                        {...register("isActive")} name="isActive"
+                        value={tempData?.isActive?.trim()}
+                        onChange={handleChange}
+                        className="form-select form-select-solid" aria-label="Select example">
+                            <option value="select">Select status</option>
+                            <option value="active">Start</option>
+                            <option value="inactive">End</option>
+                        </select>
                     </div>
-                </Spin>
-            </Modal> */}
+                 </form>
+            </Modal>
         </>
     )
 }

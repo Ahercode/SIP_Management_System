@@ -156,6 +156,16 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
             setCommentModalOpen(true)
         }
 
+        const closeModal = () => {
+            setIsModalOpen(false)
+        }
+
+        const acceptAmendment = () => {
+            // OnSubmit("approved")
+            message.success(`You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Amendment`)
+            setIsModalOpen(false)
+        }
+
     const loadData = () => {
         const parametersResponse = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
         setParametersData(parametersResponse)
@@ -169,7 +179,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
 
     useEffect(() => {
         loadData()
-    }, [ parameters?.data, employeeData, allAppraisalObjective?.data])
+    }, [ parameters?.data, employeeData, employeeWhoSubmitted])
 
 
     const getEmployeeStatus = ((employeeId:any)=> {
@@ -194,10 +204,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
             else{
                 return <Tag color="pink">Not Started</Tag>;
             }
-    })
-
-
-    
+    })    
 
     const handleCancel = () => {
         setIsModalOpen(false)
@@ -229,9 +236,19 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
             title: 'Action',
             fixed: 'right',
             render: (_: any, record: any) => (
-                <a onClick={() => showObjectivesView(record)} className='btn btn-light-info btn-sm'>
+
+            //    console.log( getEmployeeStatus(record).props.children)
+               <button 
+                    className='btn btn-light-info btn-sm'
+                    // disabled={getEmployeeStatus(record).props.children === "Amend" || 
+                    // getEmployeeStatus(record).props.children === "Submitted for Amendment"} 
+                    onClick={() => showObjectivesView(record)}
+                >
                     View Objectives
-                </a>
+               </button>
+                // <a onClick={() => showObjectivesView(record)} className='btn btn-light-info btn-sm'>
+                //     View Objectives
+                // </a>
 
             ),
         },
@@ -279,6 +296,23 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
                 footer={
                     location === "View Details" ? 
                     null:
+                    // <Space className="mt-7">
+                    //     <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
+                    //         Decline
+                    //     </button>
+                    //     <button type='button' className='btn btn-success  btn-sm' onClick={onObjectivesApproved}>
+                    //         Approve
+                    //     </button>
+                    // </Space>
+                    location === "Requests" ?
+                    <Space className="mt-7">
+                        <button type='button' className='btn btn-danger btn-sm' onClick={closeModal}>
+                            Cancel
+                        </button>
+                        <button type='button' className='btn btn-success  btn-sm' onClick={acceptAmendment}>
+                            Accept
+                        </button>
+                    </Space>:
                     <Space className="mt-7">
                         <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
                             Decline

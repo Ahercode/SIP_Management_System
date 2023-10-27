@@ -35,7 +35,7 @@ const NotificationsBoard = () => {
     const loadData = () => {
         
         const allSubmittedApprovedObjectives = employeeObjectives?.data?.filter((item: any) => {
-            return item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected"
+            return item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected" || item?.status ==="amend"
         }) 
         const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
         setTeamMembers(allTeamMembers)
@@ -46,7 +46,7 @@ const NotificationsBoard = () => {
         const employeesWithSubmittedObjectives = allTeamMembers?.filter((employee:any) =>
             allSubmittedApprovedObjectives?.some((obj:any) => 
             parseInt(obj.employeeId) === employee.id && 
-            (obj.status === "submitted" || obj.status === "approved"|| obj.status === "rejected")
+            (obj.status === "submitted" || obj.status === "approved"|| obj.status === "rejected" || obj.status === "amend")
             )
         )
         setEmployeesWithSubmittedObjectives(employeesWithSubmittedObjectives)
