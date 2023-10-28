@@ -105,20 +105,20 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                 return getEmployeeStatus(record)
             }
         },
-        {
-            title: 'Action',
-            fixed: 'right',
-            width: 100,
-            render: (record: any) => (
-                <button disabled={
-                    getEmployeeStatus(record).props.children === "Submitted for Amendment"||
-                    getEmployeeStatus(record).props.children === "Not Started"
-                    } onClick={() => showObjectivesView(record)} 
-                    className={record?.status === "amend" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
-                    Amend
-                </button>
-            ),
-        },
+        // {
+        //     title: 'Action',
+        //     fixed: 'right',
+        //     width: 100,
+        //     render: (record: any) => (
+        //         <button disabled={
+        //             getEmployeeStatus(record).props.children === "Submitted for Amendment"||
+        //             getEmployeeStatus(record).props.children === "Not Started"
+        //             } onClick={() => showObjectivesView(record)} 
+        //             className={record?.status === "amend" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
+        //             Amend
+        //         </button>
+        //     ),
+        // },
     ]
 
     // add a key to dataByID

@@ -11,6 +11,7 @@ import { AppraisalPrintHeader, PrintComponent } from "../appraisalForms/Appraisa
 import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
 import axios from 'axios'
 import { useAuth } from '../../../auth'
+import { sendEmail } from '../../../../services/CommonService'
 
 const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
@@ -89,6 +90,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
 
     const handleCommentModalOk = () => {
         OnSubmit("rejected")
+        sendEmail(employeeData, `Your Objectives have been rejected.`)
         reset()
         setComment('')
     }
@@ -108,12 +110,11 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
         setObjectivesData(objectiveByEMployee)
     }
 
-    
-
     const getOnlyparameters = parameters?.data?.filter((item: any) => {
         return item.appraisalId === 12
       }
     ) 
+
 
     const OnSubmit =(statusText:any)  => {
             const parameterIds = getOnlyparameters?.map((item: any) => {
@@ -150,6 +151,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
 
         const onObjectivesApproved = () => {
             OnSubmit("approved")
+            sendEmail(employeeData, `Your Objectives have been approved`)
         }
 
         const onObjectivesRejected = () => {

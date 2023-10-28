@@ -10,8 +10,8 @@ import axios from "axios"
 import { all } from "@devexpress/analytics-core/analytics-elements-metadata"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
-    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 10000 })
     const [gridData, setGridData] = useState<any>([])
     const [loading, setLoading] = useState(false)
     const [isReviewDateModalOpen, setIsReviewDateModalOpen] = useState(false)

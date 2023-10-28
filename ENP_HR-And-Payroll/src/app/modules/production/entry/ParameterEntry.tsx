@@ -12,17 +12,18 @@ const ParameterEntry = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const { register, reset, handleSubmit } = useForm()
   // const param: any = useParams();
-  // const tenantId = localStorage.getItem('tenant')
+  const tenantId = localStorage.getItem('tenant')
   const { currentUser } = useAuth()
   // let [appraisalName, setAppraisalName] = useState<any>("")
 const [objectiveStatus, setObjectiveStatus] = useState<any>("")
 
 const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
+  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
   const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
   const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
   const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
-
+  const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
 
   const columns: any = [
 
@@ -86,6 +87,10 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const dataByID = allParameters?.data?.filter((section: any) => {
     return section.appraisalId?.toString() === '12'
   })
+
+  const checkActive = allReviewdates?.data?.filter((item: any) => {
+    return item?.isActive?.trim() === "active"
+})
 
   //find appraisal by id
   const appraisalData = allAppraisals?.data?.find((appraisal: any) => {
@@ -182,6 +187,14 @@ useEffect(() => {
 , [allParameters?.data])
 
 
+// get  employee whose Id is same as the 
+
+const currentEmployee = allEmployees?.data?.filter((item: any) => {
+  return item?.id === parseInt(currentUser?.id)
+})
+
+console.log("currentEmployee", currentEmployee)
+
 const OnSubmit = handleSubmit(async (values) => {
   if(objectiveStatus.every((item:any) => item === true)){
     if(deliverableStatus.every((item:any) => item === 0)){
@@ -258,13 +271,10 @@ const OnSubmit = handleSubmit(async (values) => {
                 Submit
               </Button>
               <Link to={`/actualpage/`}>
-                <Button size='large'>
+                <Button disabled={true} size='large'>
                   Actuals
                 </Button>
-              </Link>
-           
-                {/* <a className='btn btn-light-primary btn-sm'>Actuals</a> */}
-              
+              </Link>     
             </Space>
           </div> 
           {
