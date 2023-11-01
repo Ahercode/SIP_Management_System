@@ -40,14 +40,14 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
     const showReviewDateModal = (record:any) => {
         setIsReviewDateModalOpen(true)
-        console.log('record: ', record)
+        // console.log('record: ', record)
         setTempData(record);
     }
 
 
     const handleStatus = (record:any) => {
         setIsStatusModalOpen(true)
-        console.log('record: ', record)
+        // console.log('record: ', record)
         setTempData(record);
     }
 
@@ -118,7 +118,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
  })   
 
-    const reviewDatesColumn = [
+    const reviewDatesColumn:any = [
         {
             title: 'Description',
             dataIndex: 'description',
@@ -141,8 +141,15 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         {
             title: 'Count down',
             dataIndex: 'reviewDate',
-            render: (text: any) => getTimeLeft(text),
+            render: (_:any , record:any) => {
+                return <>{getTimeLeft(record)}</>
+            },
+            // render: (text: any) => getTimeLeft(text),
         },
+        // {
+        //     title:"Status",
+        //     dataIndex:"isActive",
+        // },
         {
             title: 'Action',
             render: (record: any) => (
@@ -167,7 +174,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 //     Notify
                                 // </a>
                                 <>
-                                        {console.log('getReviewStatus(record): ', getReviewStatus(record))}
+                                        {/* {console.log('getReviewStatus(record): ', getReviewStatus(record))} */}
 
                                          <button 
                                              className='btn btn-light-info btn-sm'
@@ -189,7 +196,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                         :
                         <>
                             <a className='btn btn-light-warning btn-sm' onClick={()=>handleStatus(record)}>
-                                Status
+                                Status - {record?.isActive?.trim() === "active"?"Active":"InActive"}
                             </a>
                             <a className='btn btn-light-danger btn-sm' onClick={() => handleDeleteReviewDate(record)}>
                                 Delete
@@ -224,11 +231,13 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 checkUpDate: checkUpDate.toISOString(),
                 description: values.description,
                 oldDescription: tempData?.description,
-                tenantId: 'test',
+                tag: tempData?.tag,
+                tenantId: 'omnigroup',
                 referenceId: referenceId,
             },
             url: 'AppraisalReviewDates',
         }
+        console.log('item: ', item?.data)
         postData(item)
     })
 
@@ -237,8 +246,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     })
 
 
-    console.log('allReviewdates: ', allReviewdates?.data)
-    console.log('checkActive: ', checkActive)
+    // console.log('allReviewdates: ', allReviewdates?.data)
+    // console.log('checkActive: ', checkActive)
 
     const changeStatus = handleSubmit(async (values) => {
         
@@ -253,6 +262,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 oldDescription: tempData?.oldDescription,
                 tenantId: tempData?.tenantId,
                 referenceId: tempData?.referenceId,
+                tag: tempData?.tag,
                 isActive: values.isActive,
             }
         console.log('data: ', data)
@@ -284,7 +294,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             setIsReviewDateModalOpen(false)
             loadData()
             setSendLoading(false)
-            message.success(' Completed successfully')
+            message.success(' Notifications sent successfully')
             setIsEmailSent(false)
         },
         onError: (error: any) => {
@@ -315,22 +325,24 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             url: 'appraisalperftransactions/sendMail',
         }
 
-        const employeePerformanceData = employeeMailAndName?.map((item: any) => ({
-            employeeId: item.employeeId,
-            Status: 'Pending',
-            referenceId: referenceId,
-            scheduleDateId: record.id,
-        }))
+        // const employeePerformanceData = employeeMailAndName?.map((item: any) => ({
+        //     employeeId: item.employeeId,
+        //     Status: 'Pending',
+        //     referenceId: referenceId,
+        //     scheduleDateId: record.id,
+        // }))
 
-        const item2 = {
-            data: employeePerformanceData,
-            url: 'EmployeePerfDetails',
-        }
-        console.log('EmployeePerfDetails: ', item2)
+        // const item2 = {
+        //     data: employeePerformanceData,
+        //     url: 'EmployeePerfDetails',
+        // }
+        // console.log('EmployeePerfDetails: ', item2)
      
         console.log('email sent: ', item)
-        setIsEmailSent(true)
+        // setIsEmailSent(true)
         postData(item)
+        setIsEmailSent(false)
+        
     }
     // find the appraisal type id
     const findAppraisal = allAppraisals?.data?.find((item: any) => {
@@ -340,7 +352,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     })
 
     useEffect(() => {
-        loadData() 
+        loadData()
     }, [referenceId])
 
     reviewData?.push({
@@ -349,6 +361,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         endDate: "",
         checkUpDate: "",
         startDate: "",
+        tag: "setting"
     })
     for (let i = 0; i < findAppraisal?.numReview; i++) {
         reviewData?.push({
@@ -357,6 +370,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             endDate: "",
             checkUpDate: "",
             startDate: "",
+            tag: "actual"
         });
     }
     reviewData?.push({
@@ -365,18 +379,14 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         endDate: "",
         checkUpDate: "",
         startDate: "",
+        tag: "final"
     })
-    // console.log("reviewData3: ", reviewData)
 
-
-    // 
     const filteredGridData = reviewData?.filter((review: any) => {
         const hasMatchingOldDescription = reviewData?.some((item :any) => item.oldDescription === review.description);
-        // return item?.description == item?.oldDescription
         return !hasMatchingOldDescription;
     })
 
-// console.log("tempData: ", tempData)
     return (
         <>
             <div className='col-12'>
@@ -389,7 +399,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                             backgroundColor: 'white',
                             padding: '20px',
                             borderRadius: '5px',
-                            // boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
                         }}
                         className="border border-gray-400"
                     >

@@ -30,8 +30,11 @@ const NotificationsBoard = () => {
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
     // get all objectives with submitted status
     const { data: allEmployees, isLoading } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
-    
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
 
+    const checkActive = allReviewdates?.data?.find((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
     const loadData = () => {
         
         const allSubmittedApprovedObjectives = employeeObjectives?.data?.filter((item: any) => {
@@ -47,6 +50,7 @@ const NotificationsBoard = () => {
             allSubmittedApprovedObjectives?.some((obj:any) => 
             parseInt(obj.employeeId) === employee.id && 
             (obj.status === "submitted" || obj.status === "approved"|| obj.status === "rejected" || obj.status === "amend")
+            && obj?.referenceId === checkActive?.referenceId
             )
         )
         setEmployeesWithSubmittedObjectives(employeesWithSubmittedObjectives)

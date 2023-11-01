@@ -30,7 +30,6 @@ export function AsideMenuMain() {
       setTest(true)
       
     }else{
-      // message.error(`Hi ${currentUser?.firstName}  ${currentUser?.surname}! Contact your administrator to activate your account`, 10)
       setTest(false)
     }
   } , [testValue])
@@ -127,12 +126,19 @@ export function AsideMenuMain() {
               <AsideMenuItem to='processes' hasBullet={false}
                 icon='/media/icons/duotune/general/gen022.svg' title='Processes' />
 
-              <AsideMenuItem
+          <AsideMenuItem
+            to={`notifications-board/lineManger`}
+            hasBullet={false}
+            icon='/media/icons/duotune/general/gen007.svg'
+            title='Notifications Board'
+          />
+          <AsideMenuItem to={`parameterEntry`} icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />
+              {/* <AsideMenuItem
                 to={`notifications-board/lineManger`}
                 hasBullet={false}
                 icon='/media/icons/duotune/general/gen007.svg'
                 title='Notifications Board'
-              />
+              /> */}
               <AsideMenuItem
                 to='employee-report-page/'
                 hasBullet={false}
@@ -159,9 +165,7 @@ export function AsideMenuMain() {
             title='Notifications Board'
           />
           <AsideMenuItem to={`parameterEntry`} icon='/media/icons/duotune/general/gen032.svg' hasBullet={false} title='Details' />
-        
         </>
-
       }
       {/* <AsideMenuItem to='setup/administration/audit' hasBullet={true} title='Audits' /> */}
       <div className='menu-item'>

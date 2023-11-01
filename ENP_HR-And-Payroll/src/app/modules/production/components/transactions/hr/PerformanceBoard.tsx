@@ -19,7 +19,7 @@ const PerformanceBoard = () => {
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
     // filter employeeObjectives by employees in the filteredByLineManger
     const filteredObjectives = employeeObjectives?.data?.filter((item: any) => filteredByLineManger?.map((item: any) => item.employeeId).includes(item.employeeId))
-
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
     // filter objectives by status === 'Awaiting HR Approval'
     // const filteredObjectivesByStatus = filteredObjectives?.filter((item: any) => item.status === 'Awaiting HR Approval')
 
@@ -32,8 +32,14 @@ const PerformanceBoard = () => {
         return item?.status === 'amend'
     })
 
+    const checkActive = allReviewdates?.data?.find((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
+
     const allSubmittedApprovedRejectedObjectives = employeeObjectives?.data?.filter((item: any) => {
-        return item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected"
+        return (item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected") && 
+        item?.reviewDateId === checkActive?.id?.toString()
+
     })
 
     const employeesWithAmendObjectives = allEmployees?.data?.filter((employee:any) =>
@@ -42,7 +48,6 @@ const PerformanceBoard = () => {
     (obj.status === "amend" )
     )
     );
-
     
     const employeesWithSubmittedApprovedRejectedObjectives = allEmployees?.data?.filter((employee:any) =>
     allSubmittedApprovedRejectedObjectives?.some((obj:any) => 
@@ -100,7 +105,10 @@ const PerformanceBoard = () => {
             children: (
                 <>
                     {/* <PerformanceDetails /> */}
-                    <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeesWithSubmittedApprovedRejectedObjectives} location="View Details"/>
+                    <NotificationsComponent 
+                    loading={objectivesLoading} 
+                    employeeWhoSubmitted={employeesWithSubmittedApprovedRejectedObjectives} 
+                    location="View Details"/>
                 </>
             ),
         },

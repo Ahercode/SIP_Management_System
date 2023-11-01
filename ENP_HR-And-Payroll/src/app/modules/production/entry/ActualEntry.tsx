@@ -71,12 +71,12 @@ const ActualEntry = () => {
 
     {
       title: 'Actual',
-      dataIndex: 'name',
+      dataIndex: 'actual',
       sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
+        if (a.actual > b.actual) {
           return 1
         }
-        if (b.name > a.name) {
+        if (b.actual > a.actual) {
           return -1
         }
         return 0
@@ -84,12 +84,12 @@ const ActualEntry = () => {
     },
     {
       title: 'Employee Comment',
-      dataIndex: 'description',
+      dataIndex: 'individualComment',
       sorter: (a: any, b: any) => {
-        if (a.description > b.description) {
+        if (a.individualComment > b.individualComment) {
           return 1
         }
-        if (b.description > a.description) {
+        if (b.individualComment > a.individualComment) {
           return -1
         }
         return 0
@@ -97,12 +97,12 @@ const ActualEntry = () => {
     },
     {
       title: 'Line Manager Comment',
-      dataIndex: 'subWeight',
+      dataIndex: 'lineManagerComment',
       sorter: (a: any, b: any) => {
-        if (a.subWeight > b.subWeight) {
+        if (a.lineManagerComment > b.lineManagerComment) {
           return 1
         }
-        if (b.subWeight > a.subWeight) {
+        if (b.lineManagerComment > a.lineManagerComment) {
           return -1
         }
         return 0
@@ -133,7 +133,7 @@ const ActualEntry = () => {
     try {
 
         const filteredDeliverables = allApraisalActual?.data.filter((item: any) =>
-            item.objectiveId.toString() === param?.id
+            item.deliverableId?.toString() === param?.id
         )
 
       setGridData(filteredDeliverables)
@@ -254,7 +254,7 @@ const ActualEntry = () => {
           {
             loading ? <Skeleton active /> :
               <Table columns={columns} 
-            //   dataSource={gridData} 
+              dataSource={gridData} 
               />
           }
           <Modal

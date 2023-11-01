@@ -24,12 +24,19 @@ const EmployeeObjectiveEntry = () => {
   const [pathData, setPathData] = useState<any>("")
 
 
-  const { data: appraisalobjectives, isLoading: loading } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
+  const { data: appraisalobjectives, isLoading: loading } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
+  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+
+
+
+  const checkActive = allReviewdates?.data?.find((item: any) => {
+    return item?.isActive?.trim() === "active"
+  })
+
   const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
 
-
-
   const tenantId = localStorage.getItem('tenant')
+
   const showModal = () => {
     setIsModalOpen(true)
   }
@@ -107,16 +114,23 @@ const EmployeeObjectiveEntry = () => {
       fixed: 'right',
       width: 100,
       render: (record: any) => (
+      console.log("record: ",record),
         <Space size='middle'>
           <Link to={`/deliverableEntry/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Deliverables</span>
           </Link>
-          <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
-            Update
-          </a>
-          <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
+          {
+            // record?.status === "submitted"|| record?.status === "approved" ? " ": 
+            checkActive?.tag?.trim()==="final"?"":
+            <>
+              <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+                Update
+              </a>
+              <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+                Delete
+              </a>
+            </>
+          }
         </Space>
       ),
 
@@ -125,7 +139,11 @@ const EmployeeObjectiveEntry = () => {
 
   const loadData = async () => {
     try {
-      setGridData(appraisalobjectives?.data?.filter((item: any) => item?.parameterId.toString() === param?.parameterId && item?.employeeId === currentUser?.id))
+      setGridData(appraisalobjectives?.data?.filter((item: any) => 
+        item?.parameterId.toString() === param?.parameterId && 
+        item?.employeeId === currentUser?.id &&
+        item?.referenceId === checkActive?.referenceId
+      ))
       setPathData(getItemData(param?.parameterId, parameterData?.data))
     } catch (error) {
       console.log(error)
@@ -134,7 +152,7 @@ const EmployeeObjectiveEntry = () => {
 
   useEffect(() => {
     loadData()
-  }, [appraisalobjectives?.data, currentUser?.id, parameterData?.data, param?.parameterId])
+  }, [appraisalobjectives?.data, parameterData?.data, param?.parameterId])
 
   const getItemData = (fieldProp: any, data: any) => {
     const item = data?.find((item: any) =>
@@ -143,13 +161,15 @@ const EmployeeObjectiveEntry = () => {
     return item
   }
 
-
   const weightSum = (itemToPost: any) => {
-    return appraisalobjectives?.data.filter((item: any) => item.parameterId === itemToPost.parameterId && item.employeeId === currentUser?.id)
+    return appraisalobjectives?.data.filter((item: any) => 
+      item.parameterId === itemToPost.parameterId && 
+      item.employeeId === currentUser?.id &&
+      item?.referenceId === checkActive?.referenceId
+    )
       .map((item: any) => item.weight)
       .reduce((a: any, b: any) => a + b, 0)
   };
-
 
   const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: () => {
@@ -236,14 +256,14 @@ const EmployeeObjectiveEntry = () => {
         description: "description",
         weight: parseInt(values.weight),
         tenantId: tenantId,
-        referenceId: '',
+        referenceId: checkActive?.referenceId,
+        scheduleId: checkActive?.id,
         employeeId: currentUser?.id, //use logged in employee id here
         comment: "",
-        status: "Pending",
+        status: "drafted",
       },
       url: `appraisalObjective`,
     }
-
 
     // check if item already exist
     const itemExist = gridData.find((item: any) =>
@@ -332,11 +352,13 @@ const EmployeeObjectiveEntry = () => {
               
             </Space>
             <Space style={{ marginBottom: 16 }}>
-              
+            {
+              checkActive?.tag?.trim()==="final"?"":
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
+            }
               
             </Space>
           </div>

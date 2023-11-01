@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
+import { KTCardBody, KTSVG, checkIsActive } from '../../../../_metronic/helpers'
 import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { getFieldName } from '../components/ComponentsFactory'
+import { check } from 'prettier'
 
 
 const EmployeeDeliverableEntry = () => {
@@ -26,6 +27,13 @@ const EmployeeDeliverableEntry = () => {
   const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 5000 })
   const queryClient = useQueryClient()
+  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+
+
+
+  const checkActive = allReviewdates?.data?.find((item: any) => {
+    return item?.isActive?.trim() === "active"
+  })
 
 
   const tenantId = localStorage.getItem('tenant')
@@ -140,6 +148,8 @@ const EmployeeDeliverableEntry = () => {
       fixed: 'right',
       width: 100,
       render: (record: any) => (
+        // record?.status === "submitted"|| record?.status === "approved"? "": 
+        checkActive?.tag?.trim()==="final"?"":
         <Space size='middle'>
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
@@ -219,7 +229,6 @@ const EmployeeDeliverableEntry = () => {
       return
     }
 
-
     if (tempData.name === secondTempData.name && tempData.description === secondTempData.description &&
       tempData.unitOfMeasureId === secondTempData.unitOfMeasureId && tempData.target === secondTempData.target) {
       if ((weightSum(tempData) - secondTempData.subWeight) + parseInt(tempData.subWeight) > 100) {
@@ -272,6 +281,7 @@ const EmployeeDeliverableEntry = () => {
         subWeight: parseInt(values.subWeight),
         unitOfMeasureId: parseInt(values.unitOfMeasureId),
         target: parseInt(values.target),
+        status: "drafted",
         tenantId: tenantId
       },
       url: `AppraisalDeliverable`,
@@ -353,10 +363,13 @@ const EmployeeDeliverableEntry = () => {
               </div>
             </Space>
             <Space style={{ marginBottom: 16 }}>
-              <button type='button' className='btn btn-primary me-3' onClick={showModal}>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
+              {
+                checkActive?.tag?.trim()==="final"?"":
+                <button type='button' className='btn btn-primary me-3' onClick={showModal}>
+                  <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                  Add
+                </button>
+              }
               
             </Space>
           </div>

@@ -332,10 +332,14 @@ const Employee = () => {
       </div>
 
       <KTCardBody className='py-1 '>
-        <div className='table-responsive'>
+        <div  className='table-responsive'>
           {
             loading ? <Skeleton active /> :
-              <Table columns={columns} dataSource={gridData} scroll={{ x: 1300 }} />
+              <Table columns={columns} 
+              dataSource={gridData}
+              sticky={true}
+              scroll={{ x: 1300, y: `calc(100vh - 250px)` }} 
+              />
           }
         </div>
       </KTCardBody>

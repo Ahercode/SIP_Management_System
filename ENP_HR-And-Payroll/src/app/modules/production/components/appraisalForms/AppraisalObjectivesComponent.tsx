@@ -7,6 +7,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { KTCardBody } from '../../../../../_metronic/helpers'
 import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 import { getFieldName } from "../ComponentsFactory"
+import { reference } from "@popperjs/core"
 
 
 
@@ -27,12 +28,18 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
     const [pathName, setPathName] = useState<any>("")
     const [showDeliverablesEntry, setShowDeliverablesEntry] = useState<any>(false)
     const endPoint = showDeliverablesEntry ? 'appraisaldeliverable' : 'appraisalobjective'
-    const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
-    const { data: componentData, isLoading: loading } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 5000 })
-    const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
-    const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    const { data: allUnitOfMeasure } = useQuery(`unitOfMeasures`, () => fetchDocument(`UnitOfMeasures`), { cacheTime: 5000 })
+    const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 10000 })
+    const { data: componentData, isLoading: loading } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 10000 })
+    const { data: allAppraisalDeliverables } = useQuery(`appraisaldeliverable`, () => fetchDocument(`appraisaldeliverable`), { cacheTime: 10000 })
+    const { data: allAppraisalObjectives } = useQuery(`appraisalobjective`, () => fetchDocument(`appraisalobjective`), { cacheTime: 10000 })
+    const { data: allUnitOfMeasure } = useQuery(`unitOfMeasures`, () => fetchDocument(`UnitOfMeasures`), { cacheTime: 10000 })
     const [objectivesData, setObjectivesData] = useState<any>()
+
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+
+    const checkActive = allReviewdates?.data?.find((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
 
     const showModal = () => {
         setIsModalOpen(true)
@@ -226,13 +233,11 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
             // },
         ]
 
-
-    // const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
-
     const loadData = async () => {
         try {
             const response = componentData?.data
-            setGridData(response?.data)
+            const dataForActive = response?.filter((item: any) => item?.referenceId === checkActive?.referenceId)    
+            setGridData(dataForActive)
         } catch (error) {
             console.log(error)
         }
@@ -256,7 +261,9 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
 
     const dataByID = componentData?.data.filter((section: any) => {
         return !showDeliverablesEntry ?
-            section.parameterId === parameterId && section.employeeId === employeeId :
+            section.parameterId === parameterId 
+            && section.employeeId === employeeId 
+            && section.referenceId === checkActive?.referenceId :
             section.objectiveId === objectivesData?.id
     })
 
@@ -266,7 +273,7 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
         return showDeliverablesEntry === 'Objectives' ? allAppraisalDeliverables?.data.filter((item: any) => item.parameterId === itemToPost.parameterId)
             .map((item: any) => item.weight)
             .reduce((a: any, b: any) => a + b, 0) :
-            allAppraisalDeliverables?.data.filter((item: any) => item.objectiveId === itemToPost.objectiveId)
+            allAppraisalDeliverables?.data.filter((item: any) => item.objectiveId === itemToPost.objectiveId) 
                 .map((item: any) => item.subWeight)
                 .reduce((a: any, b: any) => a + b, 0)
     };
@@ -392,7 +399,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
         setSecondTempData(values);
         showModal()
     }
-
 
     const OnSubmit = handleSubmit(async (values) => {
         // input validations

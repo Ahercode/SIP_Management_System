@@ -7,9 +7,10 @@ import { KTCardBody } from '../../../../_metronic/helpers'
 import { Api_Endpoint, fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../../auth'
 import axios from 'axios'
+import { send } from 'process'
+import { sendEmail } from '../../../services/CommonService'
 
 const ParameterEntry = () => {
-  const [submitLoading, setSubmitLoading] = useState(false)
   const { register, reset, handleSubmit } = useForm()
   // const param: any = useParams();
   const tenantId = localStorage.getItem('tenant')
@@ -84,17 +85,20 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     },
   ]
 
-  const dataByID = allParameters?.data?.filter((section: any) => {
-    return section.appraisalId?.toString() === '12'
-  })
-
-  const checkActive = allReviewdates?.data?.filter((item: any) => {
+  const checkActive = allReviewdates?.data?.find((item: any) => {
     return item?.isActive?.trim() === "active"
 })
 
+const convertToArray = checkActive?.referenceId.split("-")
+
+const appraisalId = convertToArray?.[1]
+
+const dataByID = allParameters?.data?.filter((section: any) => {
+  return section.appraisalId?.toString() === appraisalId
+})
   //find appraisal by id
   const appraisalData = allAppraisals?.data?.find((appraisal: any) => {
-    return appraisal.id === 12
+    return appraisal.id === parseInt(appraisalId)
   })
 
   // add a key to dataByID
@@ -104,28 +108,32 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
 
   const weightSum = (id: any) => {
 
-    return allAppraisalobjective?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
+    return allAppraisalobjective?.data.filter((item: any) => item.parameterId === id 
+      && item.employeeId === currentUser?.id
+      && item?.referenceId === checkActive?.referenceId)
       .map((item: any) => item.weight)
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
   };
 
   // get weight of deliverables from each objective
   const weightSumDeliverables = (id: any) => {
-    const allObj= allAppraisalobjective?.data.filter((item: any) => item.parameterId === id && item.employeeId === currentUser?.id)
+    const allObj= allAppraisalobjective?.data.filter((item: any) => 
+      item.parameterId === id && 
+      item.employeeId === currentUser?.id
+      && item?.referenceId === checkActive?.id?.toString())
   
-    // console.log("allObjFirst",allObj)
     // get all deliverables for each objective
     const allDeliverables = allObj?.map((item: any) => {
       return allObjectiveDeliverables?.data.filter((del: any) => del.objectiveId === item.id)
     })
-
-    // console.log("allDeliverables",allDeliverables)
 
     // return  deliverys whose sum of weight is !== 100
     const incompleteDeliverables = allDeliverables?.filter((item: any) => {
       return item?.map((del: any) => parseInt(del.subWeight))
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) !== 100
     })
+
+    // console.log("incompleteDeliverables", incompleteDeliverables)
 
     return incompleteDeliverables?.length
   };
@@ -148,21 +156,25 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const getObjectiveStatus = ( )=>{
     const allDeliverables = getOnlyparameters?.map((pare: any) => {
 
-      const objData = allAppraisalobjective?.data.filter((item: any) => item.parameterId === pare.id && item.employeeId === currentUser?.id)
+      const objData = allAppraisalobjective?.data.filter((item: any) => 
+      item.parameterId === pare.id && 
+      item.employeeId === currentUser?.id &&
+      item?.referenceId === checkActive?.referenceId
+      )
       const objStatus = objData?.map((item: any) => {
         return item.weight
       })
       return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
     })
 
-    console.log("allObjectives", allDeliverables)
+    // console.log("allObjectives", allDeliverables)
   
     setObjectiveStatus(allDeliverables)
   }
 
-  const getEmployeeStatus = (()=> {
+ const getEmployeeStatus = (()=> {
     const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
-         return parseInt(item?.employeeId) === parseInt(currentUser?.id)
+         return parseInt(item?.employeeId) === parseInt(currentUser?.id) && item?.referenceId === checkActive?.referenceId
     })
     if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
          return  "Submitted";
@@ -175,6 +187,9 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
      else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
          return "Amend";
      }
+     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "Drafted")) {
+      return "Drafted";
+  }
      else{
         return "Not Submitted"
      }
@@ -184,16 +199,16 @@ useEffect(() => {
   getObjectiveStatus()
   getDeliverableStatus()
 }
-, [allParameters?.data])
-
-
+, [allParameters?.data, allAppraisalobjective?.data]) 
 // get  employee whose Id is same as the 
 
-const currentEmployee = allEmployees?.data?.filter((item: any) => {
+const currentEmployee = allEmployees?.data?.find((item: any) => {
   return item?.id === parseInt(currentUser?.id)
 })
 
-console.log("currentEmployee", currentEmployee)
+const currentUserLineManager = allEmployees?.data?.find((item: any) => {
+  return item?.id === currentEmployee?.lineManagerId
+})
 
 const OnSubmit = handleSubmit(async (values) => {
   if(objectiveStatus.every((item:any) => item === true)){
@@ -211,6 +226,7 @@ const OnSubmit = handleSubmit(async (values) => {
       axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, data)
       .then(response => {
         message.success("You have successfully submitted your appraisal")
+        sendEmail(currentUserLineManager, `Your direct report ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their appraisal`)
         console.log(response.data);
       })
       .catch(error => {
@@ -240,26 +256,33 @@ const OnSubmit = handleSubmit(async (values) => {
             <div >
               
               <p className='text-primary fs-2 fw-bold mb-4'>
-                {`${appraisalData?.name}`}
+                {/* {`${appraisalData?.name}`} */}
+                {
+                  appraisalData?.name===undefined? "You will be notified when appraisal has started":`${appraisalData?.name}`
+                }
               </p>
-                  <span style={{ fontSize:"16px"}}> Your status:
-                    <span style={{ fontSize:"16px"}} className={
-                      getEmployeeStatus() === 'Amend' ?
-                      'badge badge-light-info fw-bolder' :
-                      getEmployeeStatus() === 'Submitted' ?
-                      'badge badge-light-warning fw-bolder' :
-                      getEmployeeStatus() === 'Rejected' ?
-                      'badge badge-light-danger fw-bolder' :
-                      getEmployeeStatus() === 'Approved' ?
-                      'badge badge-light-success fw-bolder' :
-                      'badge badge-light-danger fw-bolder'
-                    }>
-                       {getEmployeeStatus()}
-                    </span>
-                  </span> 
+              {
+                appraisalData?.name===undefined?""
+                : <span style={{ fontSize:"16px"}}> Your status:
+                <span style={{ fontSize:"16px"}} className={
+                  getEmployeeStatus() === 'Amend' ?
+                  'badge badge-light-info fw-bolder' :
+                  getEmployeeStatus() === 'Submitted' ?
+                  'badge badge-light-warning fw-bolder' :
+                  getEmployeeStatus() === 'Rejected' ?
+                  'badge badge-light-danger fw-bolder' :
+                  getEmployeeStatus() === 'Approved' ?
+                  'badge badge-light-success fw-bolder' :
+                  getEmployeeStatus() === 'Drafted' ?
+                  'badge badge-light-info fw-bolder':
+                  'badge badge-light-danger fw-bolder'
+                }>
+                   {getEmployeeStatus()}
+                </span>
+              </span> 
+              }    
             </div>
             <div>
-              {/* <span className=' me-2'>The current status of your Objectives & Deliverables:</span> */}
             </div>
             <Space size='middle'>
               <Button  disabled={
@@ -271,7 +294,14 @@ const OnSubmit = handleSubmit(async (values) => {
                 Submit
               </Button>
               <Link to={`/actualpage/`}>
-                <Button disabled={true} size='large'>
+                <Button 
+                // disabled={
+
+                //   checkActive?.tag?.trim()==="setting" || 
+                //   checkActive?.tag ===null|| 
+                //   checkActive?.tag ===undefined
+                // } 
+                  size='large'>
                   Actuals
                 </Button>
               </Link>     
@@ -294,9 +324,8 @@ const OnSubmit = handleSubmit(async (values) => {
                               <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
                           }
                           <br></br>
-                          
                             <p>
-                              <span >You have done <span className='fw-bold mx-2' style={{color:"Highlight"}}>{`${weightSum(record.id)==='undefined'?0:weightSum(record.id)}%`}</span> of </span>
+                              <span >You have set <span className='fw-bold mx-2' style={{color:"Highlight"}}>{`${weightSum(record.id)==='undefined'?0:weightSum(record.id)}%`}</span> of </span>
                               <span className='fw-bold mx-2'>{`${record?.weight}%`}</span>
                             </p>
                           
@@ -310,12 +339,9 @@ const OnSubmit = handleSubmit(async (values) => {
                             <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
                             <p>
                               <span >You have some incompleteed deliverables here.</span>
-                              
                             </p>
-                            
                             </>:
-                            <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag>
-                              
+                            <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete</Tag>   
                           }
                         </div>
                       </div>

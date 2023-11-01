@@ -661,8 +661,7 @@ const AppraisalPerformance = () => {
                   columns={columns}
                   rowKey={record => record.id}
                   rowSelection={rowSelection}
-                  dataSource={employeesFromTransaction} 
-                  // dataSource={notificationsGroupData} 
+                  dataSource={employeesFromTransaction}
                 />
             }
              <Modal

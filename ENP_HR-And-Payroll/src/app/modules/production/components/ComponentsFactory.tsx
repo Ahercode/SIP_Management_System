@@ -1,33 +1,35 @@
 import { Tag } from "antd";
 import { useQuery } from "react-query";
 import { fetchDocument } from "../../../services/ApiCalls";
+import { start } from "repl";
+import { end } from "@popperjs/core";
 
 
 
 // getTimeLeft function is used to calculate the time left for review given the review date in ISO format
-const getTimeLeft = (reviewDate: any) => {
+const getTimeLeft = (record: any) => {
+// console.log( "Record from date check",record)
+const currentDate = new Date();
+const startDate = new Date(record?.reviewDate);
+const endDate = new Date(record?.endDate);
 
-  
-    const currentDate = new Date();
-    const targetDate = new Date(reviewDate);
-    targetDate.setHours(0, 0, 0, 0); // Set targetDate to the start of the day
-    if(reviewDate === null || reviewDate === undefined || reviewDate === ""){
+    startDate.setHours(0, 0, 0, 0); 
+    endDate.setHours(0, 0, 0, 0); 
+    const timeDifference = endDate.getTime() - currentDate.getTime();
+    const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // 
+
+    const monthsLeft = Math.floor(daysLeft / 30);
+    if(record?.reviewDate === null || record?.reviewDate === undefined || record?.reviewDate === ""){
         return "---";
     }
-    if (currentDate > targetDate) {
-        return "Expired";
-    }
-
-    const timeDifference = targetDate.getTime() - currentDate.getTime();
-    const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Calculate days left
-
-    const monthsLeft = Math.floor(daysLeft / 30); // Calculate months left
-
-    if (monthsLeft > 0) {
+    else if (monthsLeft > 0) {
         return `${monthsLeft} ${monthsLeft === 1 ? "month" : "months"}`;
     } 
     else if(daysLeft === 0){
         return "Today";
+    }
+    else if (daysLeft < 0) {
+        return "Expired";
     }
     else {
         return `${daysLeft} ${daysLeft === 1 ? "day" : "days"}`;

@@ -26,21 +26,27 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
     const [commentModalOpen, setCommentModalOpen] = useState(false)
     const [comment, setComment] = useState('')
     const { reset, register, handleSubmit } = useForm()
-    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+    const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 10000 })
     const [parametersData, setParametersData] = useState<any>([])
     const [isObjectiveDeclined, setIsObjectiveDeclined] = useState(false)
     const [showPritntPreview, setShowPrintPreview] = useState(false)
     const { currentUser } = useAuth()
 
     const param: any = useParams();
-    const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
-    const { data: allAppraisalObjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 5000 })
-    const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 5000 })
+    const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 10000 })
+    const { data: allAppraisalObjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 10000 })
+    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 10000 })
+    const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 10000 })
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 10000 })
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
 
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
+
+
+    const checkActive = allReviewdates?.data?.find((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
 
     const handleCommentModalCancel = () => {
         setCommentModalOpen(false)
@@ -183,10 +189,10 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
         loadData()
     }, [ parameters?.data, employeeData, employeeWhoSubmitted])
 
-
     const getEmployeeStatus = ((employeeId:any)=> {
            const allSubmittedObjectives = allAppraisalObjective?.data?.filter((item: any) => {
-                return parseInt(item?.employeeId) === employeeId?.id
+                return parseInt(item?.employeeId) === employeeId?.id && 
+                item?.referenceId === checkActive?.referenceId
            })
 
            if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
@@ -200,9 +206,9 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
             else if (allSubmittedObjectives?.some((obj:any) => obj.status === "drafted")) {
                 return <Tag color="warning">Drafted</Tag>;
             }
-            else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
-                return <Tag color="warning">Submitted for Amendment</Tag>;
-            }
+            // else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
+            //     return <Tag color="warning">Submitted for Amendment</Tag>;
+            // }
             else{
                 return <Tag color="pink">Not Started</Tag>;
             }

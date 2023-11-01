@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { KTCardBody, KTSVG } from "../../../../../_metronic/helpers"
 import { deleteItem, fetchDocument, postItem, updateItem } from "../../../../services/ApiCalls"
+import "./stickyStyle.css"
 
 // common setup component
 const SetupComponent = (props: any) => {
@@ -22,6 +23,7 @@ const SetupComponent = (props: any) => {
     const navigate = useNavigate();
     const [detailName, setDetailName] = useState('')
     const [objectivesId, setObjectivesId] = useState<any>()
+    const [isSticky, setIsSticky] = useState(false);
 
     let endPoint = ""
     if(props.data.url ==="unitofmeasures"){
@@ -195,6 +197,19 @@ const SetupComponent = (props: any) => {
 
     useEffect(() => {
         loadData()
+        const handleScroll = () => {
+            if (window.scrollY > 10) { 
+              setIsSticky(true);
+            } else {
+              setIsSticky(false);
+            }
+          };
+      
+          window.addEventListener('scroll', handleScroll);
+      
+          return () => {
+            window.removeEventListener('scroll', handleScroll);
+          };
     }, [componentData?.data])
 
     const dataWithIndex = gridData?.map((item: any, index) => ({
@@ -292,9 +307,11 @@ const SetupComponent = (props: any) => {
                 padding: '20px',
                 borderRadius: '5px',
                 boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+                position: isSticky ? 'sticky' : 'static', top: 0
             }}
+            className={isSticky ? 'sticky' : ''}
         >
-            <KTCardBody className='py-4 '>
+            {/* <KTCardBody className='py-4 '> */}
                 <div className='table-responsive'>
                     <div className="mb-5">
                         <div className='d-flex justify-content-between'>
@@ -326,7 +343,11 @@ const SetupComponent = (props: any) => {
 
                     {
                         loading ? <Skeleton active /> :
-                            <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
+                            <Table columns={columns} dataSource={dataWithIndex} 
+                            loading={loading} 
+                            sticky={true}
+                            scroll={{ y: `calc(100vh - 250px)` }}
+                            />
 
                     }
                     <Modal
@@ -392,7 +413,7 @@ const SetupComponent = (props: any) => {
                         </form>
                     </Modal>
                 </div>
-            </KTCardBody>
+            {/* </KTCardBody> */}
         </div>
     )
 }

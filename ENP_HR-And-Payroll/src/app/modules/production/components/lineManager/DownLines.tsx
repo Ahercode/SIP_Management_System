@@ -7,12 +7,14 @@ import { AppraisalObjectivesComponent } from "../appraisalForms/AppraisalObjecti
 import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/FormTemplateComponent"
 import { ErrorBoundary } from "@ant-design/pro-components"
 import axios from "axios"
+import { check } from "prettier"
 
 const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalobjective}: any) => {
 
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 10000 })
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 10000 })
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 10000 })
+    const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const [employeeData, setEmployeeData] = useState<any>({})
@@ -22,7 +24,13 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const parametersData = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
 
+    const checkActive = allReviewdates?.data?.find((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
 
+    const convertToArray = checkActive?.referenceId.split("-")
+
+    const appraisalId = convertToArray?.[1]
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
@@ -38,7 +46,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
 
     const getEmployeeStatus = ((employeeId:any)=> {
         const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
-             return parseInt(item?.employeeId) === employeeId?.id
+             return parseInt(item?.employeeId) === employeeId?.id && item?.referenceId === checkActive?.referenceId
         })
         if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
             return  <Tag color="warning">Submitted</Tag>;
@@ -134,7 +142,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     }, [])
 
     const getOnlyparameters = parameters?.data?.filter((item: any) => {
-        return item.appraisalId === 12
+        return item?.appraisalId?.toString() === appraisalId
       }
     )
 
