@@ -22,6 +22,7 @@ import { PageTitle } from '../../_metronic/layout/core'
 import { MasterLayout } from '../../_metronic/layout/MasterLayout'
 import { ActualEntry } from '../modules/production/entry/ActualEntry'
 import { ActualPage } from '../modules/production/entry/ActualPage'
+import { ActualMasterPage } from '../modules/production/entry/ActualMasterPage'
 
 /**
  * Base URL of the website.
@@ -84,7 +85,7 @@ const AppRoutes: FC = () => {
                   path='actualpage/'
                   element={<SuspensedView>
                     <PageTitle breadcrumbs={accountBreadCrumbs}>Actuals Page</PageTitle>
-                    <ActualPage/>
+                    <ActualMasterPage/>
                   </SuspensedView>} />
                 <Route
                   path='actualentry/:id'

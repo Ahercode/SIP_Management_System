@@ -12,7 +12,7 @@ import { useAuth } from '../../auth'
 import { CustomForm } from './CustomForm';
 
 
-const ActualPage = () => {
+const ActualPage:React.FC = () => {
   const [gridData, setGridData] = useState([])
   const param: any = useParams();   
   const navigate = useNavigate();
@@ -207,7 +207,7 @@ const ActualPage = () => {
 
   useEffect(() => {
     // loadData()
-  }, [])
+  }, [allApraisalActual?.data])
 
   return (
     <div
@@ -253,6 +253,7 @@ const ActualPage = () => {
               <Table columns={columns} 
                 dataSource={filteredDeliverables}
               />
+              
               </>
           }
         </div>
