@@ -1,54 +1,50 @@
+import { Tabs, TabsProps } from 'antd'
 import { ReportCard } from './ReportCardItem'
+import { EmployeeDetailReport } from '../../../../pages/dashboard/charts/HRNewDashBoard'
 
 const EmployeeReportPage = () => {
 
-  const EmployeeReportData = [
+  const tabItems: TabsProps['items'] = [
     {
-      title: "List",
-      reports: [
-        { title: "Paygroup", link: "/EmployeeListReport" },
-        { title: "Division", link: "/EmployeeDivisionReport" },
-        { title: "Summary", link: "/EmployeeDivisionSummaryReport" },
-      ]
+        key: '1',
+        label: <>
+            <span>Details</span>
+        </>,
+        children: (
+            <>
+               <EmployeeDetailReport/>
+            </>
+        ),
     },
     {
-      title: "Age Profile",
-      reports: [
-        { title: "Detail", link: "/EmployeeAgeRangeReport" },
-        { title: "Summary", link: "/EmployeeAgeSummaryReport" },
-      ]
+        key: '2',
+        label: <>
+            <span>Summary</span>
+        </>,
+        children: (
+            <>
+                <EmployeeDetailReport/>
+            </>
+        ),
     },
-    {
-      title: "Family Profile",
-      reports: [
-        { title: "Employee", link: "/EmployeeFamilyReport" },
-        { title: "Summary", link: "/EmployeeFamilySummaryReport" },
-      ]
-    },
-    {
-      title: "Appraisal and Performance",
-      reports: [
-        { title: "Employee", link: "/AppraisalPerformanceByEmployeeReport" },
-        { title: "Appraisal Type", link: "/AppraisalPerformanceByAppraisalTypeReport" },
-      ]
-    },
-  ]
+]
 
   return (
-    <div>
-      <div className='row col-12 mb-10'>
-        {
-          EmployeeReportData.map((report, index) => {
-            return (
-              <div className='col-4 mt-7' key={index}>
-                <ReportCard data={report} />
-              </div>
-            )
-          })
-        }
-      </div>
+       <div 
+            style={{
+                backgroundColor: 'white',
+                padding: '20px',
+                borderRadius: '5px',
+                boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+            }}
+        >
 
-    </div>
+          <Tabs defaultActiveKey="1"
+                type="line"
+                items={tabItems}
+
+            />
+      </div>
   )
 }
 

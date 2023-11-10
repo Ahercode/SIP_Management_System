@@ -4,7 +4,7 @@ import '../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analy
 import '../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-querybuilder.css'
 import '../../../../../node_modules/devexpress-dashboard/dist/css/dx-dashboard.light.css'
 
-import { DashboardControl } from 'devexpress-dashboard-react';
+import { DashboardControl} from 'devexpress-dashboard-react';
   
 const HRNewDashBoard = () => {
 
@@ -14,10 +14,43 @@ const HRNewDashBoard = () => {
                 id='web-dashboard'
                 style={{height: '100%'}}
                 // endpoint='https://demos.devexpress.com/services/dashboard/api'
-                // endpoint='https ://208.117.44.15/dashboards/dashboardcontrol'
-                endpoint='https://app.sipconsult.net/dashboards/dashboardcontrol'
+                endpoint='http://109.169.12.107/dashboard/dashboardcontrol'
+                // endpoint='https://app.sipconsult.net/egolfdashboard/dashboardcontrol'
                 workingMode='ViewerOnly'
-                dashboardId='HRDashBoard'
+                dashboardId='appraisal'
+            ></DashboardControl>
+        </div>  
+    )
+}
+const EmployeeDetailReport = () => {
+
+    return (
+        <div style={{width: '100%', height: '80vh'}}>
+            <DashboardControl
+                id='web-dashboard'
+                style={{height: '100%'}}
+                // endpoint='https://demos.devexpress.com/services/dashboard/api'
+                endpoint='http://109.169.12.107/dashboard/dashboardcontrol'
+                // endpoint='https://app.sipconsult.net/egolfdashboard/dashboardcontrol'
+                workingMode='ViewerOnly'
+                dashboardId='employeeDetails'
+            ></DashboardControl>
+        </div>  
+    )
+}
+
+const EmployeeSummaryReport = () => {
+
+    return (
+        <div style={{width: '100%', height: '80vh'}}>
+            <DashboardControl
+                id='web-dashboard'
+                style={{height: '100%'}}
+                // endpoint='https://demos.devexpress.com/services/dashboard/api'
+                endpoint='http://109.169.12.107/dashboard/dashboardcontrol'
+                // endpoint='https://app.sipconsult.net/egolfdashboard/dashboardcontrol'
+                workingMode='ViewerOnly'
+                dashboardId='employeeDetails'
             ></DashboardControl>
         </div>  
     )
@@ -31,11 +64,11 @@ const EmpSummaryDashBoard = () => {
                 style={{height: '100%'}}
                 // endpoint='https://demos.devexpress.com/services/dashboard/api'
                 // endpoint='https ://208.117.44.15/dashboards/dashboardcontrol'
-                endpoint='https://app.sipconsult.net/dashboards/dashboardcontrol'
+                endpoint='http://109.169.12.107/dashboard/dashboardcontrol'
                 workingMode='ViewerOnly'
                 dashboardId='employee_summary'
             ></DashboardControl>
         </div>  
     )
 }
-  export {HRNewDashBoard, EmpSummaryDashBoard};
+  export {HRNewDashBoard, EmpSummaryDashBoard, EmployeeDetailReport, EmployeeSummaryReport};

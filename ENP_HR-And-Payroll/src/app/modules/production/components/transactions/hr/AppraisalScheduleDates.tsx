@@ -165,6 +165,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                                 className="w-100px"
                                 okText="Send"
                                 cancelText="Cancel"
+                                disabled={getReviewStatus(record) === "Inactive"?true:false}
                             >
 
                             {

@@ -24,15 +24,9 @@ import { EmplyeeDetails } from '../modules/production/components/employeeFormEnt
 import { EmployeeReportPage } from '../modules/production/components/report/EmployeeReportPage'
 import { PayrollReportPage } from '../modules/production/components/report/PayrollReportPage'
 import { HrReportPage } from '../modules/production/components/report/HrReportPage'
-import EmployeeAgeRangeReport from '../modules/production/components/report/EmployeeAgeRangeReport'
 import EmployeeListReport from '../modules/production/components/report/EmployeeListReport'
-import EmployeeAgeSummaryReport from '../modules/production/components/report/EmployeeAgeSummaryReport'
-import EmployeeFamilyReport from '../modules/production/components/report/EmployeeFamilyReport'
-import EmployeeFamilySummaryReport from '../modules/production/components/report/EmployeeFamilySummaryReport'
-import EmployeeDivisionReport from '../modules/production/components/report/EmployeeDivisionReport'
-import EmployeeDivisionSummaryReport from '../modules/production/components/report/EmployeeDivisionSummaryReport'
+
 import AppraisalPerformanceByAppraisalTypeReport from '../modules/production/components/report/AppraisalPerformanceByAppraisalTypeReport'
-import AppraisalPerformanceByEmployeeReport from '../modules/production/components/report/AppraisalPerformanceByEmployeeReport'
 import { Organogram } from '../modules/production/components/setup/hr/Organogram'
 import { OrgLevel } from '../modules/production/components/setup/hr/OrgLevel'
 import { AppraisalDeliverables } from '../modules/production/components/setup/hr/ObjectiveDeliverables'
@@ -41,9 +35,6 @@ import { NotificationsBoard } from '../modules/production/components/lineManager
 import { PerformanceBoard } from '../modules/production/components/transactions/hr/PerformanceBoard'
 import { Processes } from '../modules/production/components/setup/hr/Processes'
 import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjective/EmployeeObjectivePage'
-import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
-import { EmployeeObjectiveEntry } from '../modules/production/entry/EmplyeeObjectiveEntry'
-import { EmployeeDeliverableEntry } from '../modules/production/entry/EmployeeDeliverableEntry'
 import { useAuth } from '../modules/auth'
 import { AppraisalGrade } from '../modules/production/components/setup/hr/AppraisalGrade'
 
@@ -181,12 +172,12 @@ const PrivateRoutes = () => {
           <UserManagement />
         </SuspensedView>} />
 
-      <Route
-        path='department/:id'
+      {/* <Route
+        path='setupdepartment/:id'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Departments</PageTitle>
           <Department />
-        </SuspensedView>} />
+        </SuspensedView>} /> */}
 
       <Route
         path='appraisalGrade/:id'
@@ -196,20 +187,20 @@ const PrivateRoutes = () => {
         </SuspensedView>} />
 
       <Route
-        path='setup/employee/jobtitle/*'
+        path='setup/jobtitle/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Job Titles</PageTitle>
           <JobTitle />
         </SuspensedView>} />
       <Route
-        path='setup/employee/unitOfMeasure/*'
+        path='setup/unitOfMeasure/*'
         element={<SuspensedView>
           <PageTitle>Units of measure</PageTitle>
           <UnitOfMeasure />
         </SuspensedView>} />
 
       <Route
-        path='setup/employee/paygroups/*'
+        path='setup/paygroups/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Groups</PageTitle>
           <Paygroups />
@@ -225,7 +216,7 @@ const PrivateRoutes = () => {
 
       {/* HR Routes  */}
       <Route
-        path='setup/hr/appraisals/*'
+        path='setup/appraisals/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Appraisals</PageTitle>
           <Appraisals />
@@ -238,7 +229,7 @@ const PrivateRoutes = () => {
           <OrgLevel />
         </SuspensedView>} />
       <Route
-        path='setup/hr/organogram/*'
+        path='setup/organogram/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Organogram</PageTitle>
           <Organogram />
@@ -255,14 +246,14 @@ const PrivateRoutes = () => {
         </SuspensedView>} />
 
       <Route
-        path='setup/employee/categories'
+        path='setup/categories'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Categories</PageTitle>
           <Category />
         </SuspensedView>} />
 
       <Route
-        path='setup/employee/departments'
+        path='setup/departments'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Departments</PageTitle>
           <Department />
@@ -294,50 +285,14 @@ const PrivateRoutes = () => {
         </SuspensedView>} />
 
       {/* All reports routes */}
-
-      <Route
-        path='EmployeeAgeRangeReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Age Range Report</PageTitle>
-          <EmployeeAgeRangeReport />
-        </SuspensedView>} />
+      
       <Route
         path='EmployeeListReport/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>EmployeeListReport</PageTitle>
           <EmployeeListReport />
         </SuspensedView>} />
-      <Route
-        path='EmployeeAgeSummaryReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>EmployeeAgeSummaryReport</PageTitle>
-          <EmployeeAgeSummaryReport />
-        </SuspensedView>} />
 
-      <Route
-        path='EmployeeFamilyReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>EmployeeFamilyReport</PageTitle>
-          <EmployeeFamilyReport />
-        </SuspensedView>} />
-      <Route
-        path='EmployeeFamilySummaryReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Family Member Summary Report</PageTitle>
-          <EmployeeFamilySummaryReport />
-        </SuspensedView>} />
-      <Route
-        path='EmployeeDivisionReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Division Report</PageTitle>
-          <EmployeeDivisionReport />
-        </SuspensedView>} />
-      <Route
-        path='EmployeeDivisionSummaryReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Division Summary Report</PageTitle>
-          <EmployeeDivisionSummaryReport />
-        </SuspensedView>} />
 
       <Route
         path='AppraisalPerformanceByAppraisalTypeReport/*'
@@ -345,13 +300,6 @@ const PrivateRoutes = () => {
           <PageTitle breadcrumbs={accountBreadCrumbs}>AppraisalPerformanceByAppraisalTypeReport</PageTitle>
           <AppraisalPerformanceByAppraisalTypeReport />
         </SuspensedView>} />
-      <Route
-        path='AppraisalPerformanceByEmployeeReport/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>AppraisalPerformanceByEmployeeReport</PageTitle>
-          <AppraisalPerformanceByEmployeeReport />
-        </SuspensedView>} />
-
 
       <Route path='*' element={<Navigate to='/error/404' />} />
     </Route>

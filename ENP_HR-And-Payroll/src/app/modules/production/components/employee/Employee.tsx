@@ -11,12 +11,6 @@ import { EmplyeeDetails } from '../employeeFormEntry/EmployeeDetails'
 const Employee = () => {
   const [gridData, setGridData] = useState<any>([])
   const [loading, setLoading] = useState(false)
-  const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
-  const [form] = Form.useForm()
-  const [img, setImg] = useState();
-  const [imgNew, setImgNew] = useState();
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const tenantId = localStorage.getItem('tenant')
   console.log('tenantId: ', tenantId)
   const queryClient = useQueryClient()
@@ -24,7 +18,6 @@ const Employee = () => {
   const { data: allDepartments } = useQuery('department', () => fetchDocument('departments'), { cacheTime: 10000 })
   const { data: allPaygroups } = useQuery('paygroup', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument(`JobTitles/tenant/${tenantId}`), { cacheTime: 10000 })
-  // const { data: allGrades } = useQuery('grades', () => fetchDocument('grades'), { cacheTime: 5000 })
   const [employeeData, setEmployeeData] = useState<any>({})
   const [beforeSearch, setBeforeSearch] = useState([])
 
@@ -37,15 +30,6 @@ const Employee = () => {
 
   const handleDetailsModalCancel = () => {
     setDetailsModalOpen(false)
-  }
-
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
-
-  const handleCancel = () => {
-    form.resetFields()
-    setIsModalOpen(false)
   }
 
   const { mutate: deleteData } = useMutation(deleteItem, {
@@ -76,67 +60,13 @@ const Employee = () => {
       render: (row: any) => {
         return (
           <EmployeeProfile employee={row} />
-          // row.imageUrl !== null ?
-          //   <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${row.imageUrl}`} width={50} height={50}></img> :
-          //   <img style={{ borderRadius: "10px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={50} height={50}></img>
         )
       }
     },
-    // {
-    //   title: 'ID',
-    //   dataIndex: 'employeeId',
-    //   fixed: 'left',
-    //   width: 100,
-    //   render: (text: any) => {
-    //     return (<span className='badge badge-primary flex-wrap'>{text}</span>)
-    //   },
-    //   sorter: (a: any, b: any) => {
-    //     if (a.employeeId > b.employeeId) {
-    //       return 1
-    //     }
-    //     if (b.employeeId > a.employeeId) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
-    // {
-    //   title: 'First Name',
-    //   dataIndex: 'firstName',
-    //   width: 120,
-    //   sorter: (a: any, b: any) => {
-    //     if (a.firstName > b.firstName) {
-    //       return 1
-    //     }
-    //     if (b.firstName > a.firstName) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
-
-    // {
-    //   title: 'Surname',
-    //   dataIndex: 'surname',
-    //   width: 120,
-    //   sorter: (a: any, b: any) => {
-    //     if (a.surname > b.surname) {
-    //       return 1
-    //     }
-    //     if (b.surname > a.surname) {
-    //       return -1
-    //     }
-    //     return 0
-    //   },
-    // },
     {
       title: 'Email',
       dataIndex: 'email',
-      // width: 180,
       key: 'email',
-      // render: (row: any) => {
-      //   return <a href={`mailto:${row}`}>{row}</a>
-      // },
       sorter: (a: any, b: any) => {
         if (a.email > b.email) {
           return 1
@@ -150,7 +80,6 @@ const Employee = () => {
     {
       title: 'Employee Group',
       key: 'paygroupId',
-      // width: 120,
       render: (row: any) => {
         return getFieldName(row.paygroupId, allPaygroups?.data)
       },
@@ -227,9 +156,6 @@ const Employee = () => {
           <a className='btn btn-light-success btn-sm' onClick={() => showDetailsModal(record)}>
             Details
           </a>
-          {/* <Link to={`/employee-details/${record.id}`}>
-            <span className='btn btn-light-success btn-sm'>Details</span>
-          </Link> */}
           <Link to={`/employee-edit-form/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Update</span>
           </Link>
@@ -241,15 +167,7 @@ const Employee = () => {
 
     },
   ]
-  var out_data: any = {};
 
-  // gridData.forEach(function (row: any) {
-  //   if (out_data[row.departmentId]) {
-  //     out_data[row.departmentId].push(row);
-  //   } else {
-  //     out_data[row.departmentId] = [row];
-  //   }
-  // });
 
   const loadData = async () => {
     setLoading(true)
@@ -307,25 +225,17 @@ const Employee = () => {
               onChange={handleInputChange}
               type='text'
               allowClear
-              // value={searchText}
               size='large'
             />
-            {/* <Button type='primary' onClick={globalSearch} size='large'>
-              Search
-            </Button> */}
           </Space>
           <div className="card-toolbar">
             <Space style={{ marginBottom: 16 }}>
               <Link to='/employee-form'>
-                <button type='button' className='btn btn-primary me-3'>
+                <button style={{backgroundColor:"#216741", color:"#f2f2f2"}} type='button' className='btn me-3'>
                   <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                   Add
                 </button>
               </Link>
-              <button type='button' className='btn btn-light-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                Export
-              </button>
             </Space>
           </div>
         </div>
@@ -343,7 +253,6 @@ const Employee = () => {
           }
         </div>
       </KTCardBody>
-
       <Modal
         open={detailsModalOpen}
         onCancel={handleDetailsModalCancel}
@@ -364,15 +273,11 @@ const EmployeeProfile = (employee: any) => {
           {
             employee?.employee?.imageUrl === null || employee?.employee?.imageUrl ===""?
             <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
-              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> 
-             
+            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> 
           }
         </div>
         <div className='col px-4 align-items-center align-content-center'>
-          {/* <div className='row'> */}
           <div className='text-dark fw-bold fs-4'>{`${employee?.employee?.firstName} ${employee?.employee?.surname}`}</div>
-          {/* <div className='text-gray-500'>{employee?.employee?.email}</div> */}
-          {/* </div> */}
           <div className='badge badge-light-primary'>
             <span>{employee?.employee?.employeeId}</span>
           </div>

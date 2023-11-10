@@ -122,9 +122,8 @@ export function AsideMenuMain() {
               />
               <AsideMenuItem to='transaction/hr/appraisal-performance' hasBullet={false}
                 icon='/media/icons/duotune/general/gen032.svg' title='Performance' />
-
-              <AsideMenuItem to='processes' hasBullet={false}
-                icon='/media/icons/duotune/general/gen022.svg' title='Processes' />
+              {/* <AsideMenuItem to='processes' hasBullet={false}
+                icon='/media/icons/duotune/general/gen022.svg' title='Processes' /> */}
 
           <AsideMenuItem
             to={`notifications-board/lineManger`}
@@ -146,14 +145,14 @@ export function AsideMenuMain() {
                 title='Reports'
             />
             <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/general/gen019.svg' hasBullet={false}>
-              <AsideMenuItem to='setup/hr/appraisals' hasBullet={true} title='Appraisals' />
-              <AsideMenuItem to='setup/employee/paygroups' hasBullet={true} title='Employee Groups' />
-              <AsideMenuItem to='setup/employee/departments' hasBullet={true} title='Departments' />
-              <AsideMenuItem to='setup/employee/categories' hasBullet={true} title='Categories' />
-              <AsideMenuItem to='setup/employee/jobtitle' hasBullet={true} title='Job Titles' />
-              <AsideMenuItem to='setup/hr/organogram' hasBullet={true} title='Organogram' />
+              <AsideMenuItem to='setup/appraisals' hasBullet={true} title='Appraisals' />
+              <AsideMenuItem to='setup/paygroups' hasBullet={true} title='Employee Groups' />
+              <AsideMenuItem to='setup/departments' hasBullet={true} title='Departments' />
+              <AsideMenuItem to='setup/categories' hasBullet={true} title='Categories' />
+              <AsideMenuItem to='setup/jobtitle' hasBullet={true} title='Job Titles' />
+              <AsideMenuItem to='setup/organogram' hasBullet={true} title='Organogram' />
               <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
-              <AsideMenuItem to='setup/employee/unitOfMeasure' hasBullet={true} title='Units of Measure' />
+              <AsideMenuItem to='setup/unitOfMeasure' hasBullet={true} title='Units of Measure' />
             </AsideMenuItemWithSub>
         </>
         :

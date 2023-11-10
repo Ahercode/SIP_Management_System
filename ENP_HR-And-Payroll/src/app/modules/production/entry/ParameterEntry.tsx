@@ -295,12 +295,13 @@ const OnSubmit = handleSubmit(async (values) => {
               </Button>
               <Link to={`/actualpage/`}>
                 <Button 
-                // disabled={
+                disabled={
 
-                //   checkActive?.tag?.trim()==="setting" || 
-                //   checkActive?.tag ===null|| 
-                //   checkActive?.tag ===undefined
-                // } 
+                  checkActive?.tag?.trim()==="setting" || 
+                  checkActive?.tag ===null|| 
+                  checkActive?.tag ===undefined
+                } 
+
                   size='large'>
                   Actuals
                 </Button>

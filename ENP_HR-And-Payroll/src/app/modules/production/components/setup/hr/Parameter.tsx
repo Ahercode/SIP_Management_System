@@ -349,7 +349,7 @@ const Parameter = () => {
           <Space className='d-flex align-items-center align-content-center mb-3 flex-direction-row' >
             <Button
               onClick={() => navigate(-1)}
-              className="btn btn-light-primary me-4"
+              className="btn btn-light-success me-4"
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -360,7 +360,7 @@ const Parameter = () => {
             <span className="fw-bold text-gray-600 d-block fs-2 mb-3 ">{appraisalName}</span>
           </Space>
           
-          <div className='d-flex justify-content-between'>
+          <div className='d-flex justify-content-between mt-10'>
             <Space style={{ marginBottom: 16 }}>
               <Input
                 placeholder='Enter Search Text'
@@ -369,20 +369,20 @@ const Parameter = () => {
                 allowClear
                 value={searchText}
               />
-              <Button type='primary' onClick={globalSearch}>
+              {/* <Button type='primary' onClick={globalSearch}>
                 Search
-              </Button>
+              </Button> */}
             </Space>
             <Space style={{ marginBottom: 16 }}>
-              <button type='button' className='btn btn-primary me-3' onClick={showModal}>
+              <button style={{backgroundColor:"#216741", color:"#f2f2f2"}}  type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              {/* <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-              </button>
+              </button> */}
             </Space>
           </div>
           {

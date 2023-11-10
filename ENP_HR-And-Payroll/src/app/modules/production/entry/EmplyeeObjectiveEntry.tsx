@@ -114,7 +114,6 @@ const EmployeeObjectiveEntry = () => {
       fixed: 'right',
       width: 100,
       render: (record: any) => (
-      console.log("record: ",record),
         <Space size='middle'>
           <Link to={`/deliverableEntry/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Deliverables</span>

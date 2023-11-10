@@ -1,14 +1,15 @@
 import axios from 'axios'
 import {AuthModel, UserModel} from './_models'
+import { Api_Endpoint } from '../../../services/ApiCalls'
 
 // const API_URL = "https://app.sipconsult.net/hrwebapi/api/Users"
-const API_URL = "https://app.sipconsult.net/omniappraisalapi/api/Employees"
+// const API_URL = "https://app.sipconsult.net/omniappraisalapi/api/Employees"
 // const API_URL = process.env.REACT_APP_API_URL
 
-export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/verify_token`
-export const LOGIN_URL = `${API_URL}/Login`
-export const REGISTER_URL = `${API_URL}/register`
-export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`
+export const GET_USER_BY_ACCESSTOKEN_URL = `${Api_Endpoint}/verify_token`
+export const LOGIN_URL = `${Api_Endpoint}/Employees/Login`
+export const REGISTER_URL = `${Api_Endpoint}/register`
+export const REQUEST_PASSWORD_URL = `${Api_Endpoint}/forgot_password`
 
 // Server should return AuthModel
 export function login(email: string, password: string) {

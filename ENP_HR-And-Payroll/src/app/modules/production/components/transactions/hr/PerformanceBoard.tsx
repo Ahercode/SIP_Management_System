@@ -1,33 +1,34 @@
-import { Badge, Button, Tabs, TabsProps } from "antd";
-import { useState } from "react";
+import { Badge, Tabs, TabsProps } from "antd";
+// import { useState } from "react";
 import { useQuery } from "react-query";
 import { fetchDocument } from "../../../../../services/ApiCalls";
 import { NotificationsComponent } from "../../lineManager/NotificationsComponent";
 import { AppraisalPerformance } from "./AppraisalPerformance";
-import { PerformanceDetails } from "./PerfDetails";
-import { useAuth } from "../../../../auth";
+// import { PerformanceDetails } from "./PerfDetails";
+// import { useAuth } from "../../../../auth";
+import { BonusComputation } from "../../../entry/BonusComputation";
+import { useState } from "react";
 
 const PerformanceBoard = () => {
-    const [isDownlinesModalOpen, setIsDownlinesModalOpen] = useState(false)
-    const { data: downlines, isLoading } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 5000 })
-    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
-    const filteredByLineManger = downlines?.data?.filter((item: any) => item.supervisorId === '1')
 
-    const { currentUser } = useAuth()
+    
+    const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const tenantId = localStorage.getItem('tenant')
+    const reference:any = localStorage.getItem('reference')
     
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
-    // filter employeeObjectives by employees in the filteredByLineManger
-    const filteredObjectives = employeeObjectives?.data?.filter((item: any) => filteredByLineManger?.map((item: any) => item.employeeId).includes(item.employeeId))
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
-    // filter objectives by status === 'Awaiting HR Approval'
-    // const filteredObjectivesByStatus = filteredObjectives?.filter((item: any) => item.status === 'Awaiting HR Approval')
+    const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
 
-    // const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 100000 })
-   
-    // const [filteredObjectives, setFilteredObjectives] = useState<any>([])
-    // const [employeeWhoSubmitted, setEmployeeWhoSubmitted] = useState<any>([])
-    const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
+    const allAppraisalTranItems = allAppraTranItems?.data?.filter((item: any) => {
+        return item.appraisalPerfTranId === parseInt(reference)
+      })
+    const idSet = new Set(allAppraisalTranItems?.map((item: any) => parseInt(item.employeeId)))
+    
+      const employeesFromTransaction = allEmployees?.data?.filter((item: any) => {
+        return idSet.has(item.id)
+      })
+
     const allAmendObjectives = employeeObjectives?.data?.filter((item: any) => {
         return item?.status === 'amend'
     })
@@ -60,17 +61,17 @@ const PerformanceBoard = () => {
         console.log(key);
     };
 
-    const showDownlinesModal = () => {
-        setIsDownlinesModalOpen(true)
-    }
+    // const showDownlinesModal = () => {
+    //     // setIsDownlinesModalOpen(true)
+    // }
 
-    const hideDownlinesModal = () => {
-        setIsDownlinesModalOpen(false)
-    }
+    // const hideDownlinesModal = () => {
+    //     // setIsDownlinesModalOpen(false)
+    // }
 
-    const slot = {
-        right: <Button onClick={showDownlinesModal}>Show Downlines</Button>
-    }
+    // const slot = {
+    //     right: <Button onClick={showDownlinesModal}>Show Downlines</Button>
+    // }
 
     const tabItems: TabsProps['items'] = [
         {
@@ -104,7 +105,6 @@ const PerformanceBoard = () => {
             label: <span>View details</span>,
             children: (
                 <>
-                    {/* <PerformanceDetails /> */}
                     <NotificationsComponent 
                     loading={objectivesLoading} 
                     employeeWhoSubmitted={employeesWithSubmittedApprovedRejectedObjectives} 
@@ -112,10 +112,25 @@ const PerformanceBoard = () => {
                 </>
             ),
         },
+        {
+            key: '4',
+            label: <span>Bonus Check</span>,
+            children: (
+                <>
+                    <BonusComputation employeeData={employeesFromTransaction}/>
+                </>
+            ),
+        },
     ]
+
+
+    console.log("reference", reference)
+    
+    if(reference === null){ 
+        tabItems.splice(3,1)
+    }
     return (
         <div 
-        // className='card border border-gray-400 '
             style={{
                 backgroundColor: 'white',
                 padding: '20px',
@@ -127,7 +142,6 @@ const PerformanceBoard = () => {
                 type="line"
                 items={tabItems}
                 onChange={onTabsChange}
-            // tabBarExtraContent={slot}
             />
 
             {/* <Modal

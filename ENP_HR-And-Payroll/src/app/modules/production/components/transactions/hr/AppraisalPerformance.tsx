@@ -7,41 +7,40 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { KTSVG } from '../../../../../../_metronic/helpers'
 import { Api_Endpoint, deleteMultipleItem, fetchDocument } from '../../../../../services/ApiCalls'
 import { getFieldName } from '../../ComponentsFactory'
-import { AppraisalPrintHeader, PrintComponent } from '../../appraisalForms/AppraisalPdfPrintView'
+import { AppraisalPrintHeader } from '../../appraisalForms/AppraisalPdfPrintView'
 import { AppraisalObjective } from './AppraisalObjective'
 import { ReviewDateComponent } from './AppraisalScheduleDates'
 import { AppraisalFormContent } from '../../appraisalForms/FormTemplateComponent'
 import { AppraisalObjectivesComponent } from '../../appraisalForms/AppraisalObjectivesComponent'
+import { ScoreComponent } from '../../../constants/ScoreComponent'
+import { ActualMasterPage } from '../../../entry/ActualMasterPage'
+import { BonusComputation } from '../../../entry/BonusComputation'
 
 const AppraisalPerformance = () => {
-  // const [gridData, setGridData] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
-  // let [filteredData] = useState([])
   const { reset, register, handleSubmit } = useForm()
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRefModalOpen, setIsRefModalOpen] = useState(false)
   const [isEmpAddModal, setIsEmpAddModal] = useState(false)
+  const [isBonusModal, setIsBonusModal] = useState(false)
   const [employeeRecord, setEmployeeRecord] = useState<any>([])
   const [selectedPaygroup, setSelectedPaygroup] = useState<any>(null);
   const [selectedReference, setSelectedReference] = useState<any>(null);
   const [selectedAppraisalType, setSelectedAppraisaltype] = useState<any>(null);
   const [selectedStartPeriod, setSelectedStartPeriod] = useState<any>(null);
   const [selectedEndPeriod, setSelectedEndPeriod] = useState<any>(null);
-  const [reference, setReference] = useState<any>(null);
+  const [employeesToNotify, setEmployeesToNotify] = useState<any>([])
+  const [beforeSearch, setBeforeSearch] = useState([])
+ 
   const tenantId = localStorage.getItem('tenant')
-  const [fieldInit, setFieldInit] = useState([])
+  localStorage.setItem('reference', selectedReference) 
+
+  // const [fieldInit, setFieldInit] = useState([])
   const queryClient = useQueryClient()
-  // const [appraisalData, setAppraisalData] = useState<any>([])
   const [referenceId, setReferenceId] = useState<any>(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
-  // const [currentObjective, setCurrentObjective] = useState<any>([])
-  // const [isEmailSent, setIsEmailSent] = useState<any>(false)
-  // const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
-  const [notificationsGroupData, setNotificationsGroupData] = useState<any>([])
+  // const [notificationsGroupData, setNotificationsGroupData] = useState<any>([])
   const [jobTitleName, setJobTitleName] = useState<any>(null);
   const [departmentName, setDepartmentName] = useState<any>(null);
-
-  const [employeeGroupsData, setEmployeeGroupsData] = useState<any>([])
 
 
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
@@ -50,43 +49,39 @@ const AppraisalPerformance = () => {
   const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allParameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/${tenantId}`), { cacheTime: 10000 })
-  // const { data: allObjectives } = useQuery('appraisalperfobjectives', () => fetchDocument(`appraisalperfobjectives/tenant/${tenantId}`), { cacheTime: 5000 })
-  // const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates/tenant/${tenantId}`), { cacheTime: 5000 })
   const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
   const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
-  const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms/tenant/${tenantId}`), { cacheTime: 10000 })
-  // const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 5000 })
+  const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+
+    const checkActive = allReviewdates?.data?.find((item: any) => {
+        return item?.isActive?.trim() === "active"
+    })
+
   const parametersData = allParameters?.data?.filter((item: any) => item?.appraisalId === 12)
   const [employeeData, setEmployeeData] = useState<any>({})
-  // const [parametersData, setParametersData] = useState<any>([])
   const [viewDetail, setViewDetail] = useState(false)
-  const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 5000 })
-
-  // const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
-  // const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
+  const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 10000 })
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const onSelectChange = (selectedRowKeys:any, selectedRows:any) => {
     setSelectedRowKeys(selectedRowKeys);
       console.log(`Selected Row Keys: ${selectedRowKeys}`, 'Selected Rows:', selectedRows);
   };
+
   const rowSelection:TableRowSelection<any> = {
     selectedRowKeys,
     onChange: onSelectChange
-  }
-
-  const handleCancel = () => {
-    reset()
-    setEmployeeRecord([])
-    setIsModalOpen(false)
-    loadData()
-    setEmployeeGroupsData(dataByID)
   }
   const handleEmpCancel = () => {
     reset()
     setIsEmpAddModal(false)
     setEmployeeRecord([])
-    loadData()
+    // loadData()
+  }
+  const handleBonusCancel = () => {
+    setIsBonusModal(false)
+    setEmployeeRecord([])
+    // loadData()
   }
   const handleRefCancel = () => {
     setEmployeeRecord([])
@@ -96,10 +91,6 @@ const AppraisalPerformance = () => {
     setSelectedEndPeriod("select end period")
     setIsRefModalOpen(false)
   
-  }
-  const showPrintPreview = () => {
-    setViewDetail(true)
-    handleCancel()
   }
 
   const handlePrintPreviewModalCancel = () => {
@@ -126,9 +117,9 @@ const AppraisalPerformance = () => {
     return emp?.firstName + " " + emp?.surname
   }
 
-  const dataByID: any = allAppraisalsPerfTrans?.data?.filter((refId: any) => {
-    return refId.referenceId === referenceId
-  })
+  // const dataByID: any = allAppraisalsPerfTrans?.data?.filter((refId: any) => {
+  //   return refId.referenceId === referenceId
+  // })
 
   const appraisalTranItem = allAppraisalsPerfTrans?.data?.find((item: any) => {
     return item.id === parseInt(selectedReference)
@@ -152,10 +143,14 @@ const AppraisalPerformance = () => {
   const employeesFromTransaction = allEmployees?.data?.filter((item: any) => {
     return idSet.has(item.id)
   })
+  const loadEmployees =  () => {
+    setEmployeesToNotify(employeesFromTransaction)
+
+  }
 
   const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteMultipleItem, {
     onSuccess: (data: any) => {
-      loadData()
+      // loadData()
       queryClient.invalidateQueries('appraisalPerItems')
     },
     onError: (error) => {
@@ -262,7 +257,6 @@ const AppraisalPerformance = () => {
     },
     {
       title: 'Line Manager',
-      // dataIndex:"lineManagerId",
       key: 'lineManagerId',
       render: (row: any) => {
         return getLinemanager(row?.lineManagerId)
@@ -278,11 +272,11 @@ const AppraisalPerformance = () => {
       },
     },
     {
-      title: 'Score',
-      dataIndex: 'score',
-      key:"score",
+      title: 'Achievement',
+      dataIndex: 'id',
+      key:"id",
       render: (row: any) => {
-        return '0'
+        return <ScoreComponent employeeId={row} />
       },
     },
 
@@ -294,11 +288,8 @@ const AppraisalPerformance = () => {
         <Space size='middle'>
         {
           isRefModalOpen?""
-          //  <a onClick={() => removeEmp(record)} className='btn btn-light-danger btn-sm'>
-          //   Remove
-          // </a> :
           :
-          <a onClick={() => showDetail(record)} className='btn btn-light-info btn-sm'>
+          <a onClick={() => showDetail(record)} className='btn btn-light-success btn-sm'>
           Details
         </a>
 
@@ -311,12 +302,11 @@ const AppraisalPerformance = () => {
 
   if (isRefModalOpen) {
     columns.splice(3, 1)
-    if (columns.length === 7) {
+    if (columns?.length === 7) {
       columns.splice(5, 2)
     }
   }
 
-  // get employee id from empSelectedPaygroup
   const employeeIds = empSelectedPaygroup?.map((item: any) => {
     return item.id
   })
@@ -328,35 +318,25 @@ const AppraisalPerformance = () => {
     setEmployeeRecord(newEmplo)
   } 
 
-  const clearAll = () => {
-    setNotificationsGroupData([])
-  }
 
   const setNotificationsEmployeesData = () => {
-    clearAll()
+    // clearAll()
     const data = allEmployees?.data?.filter((item: any) => {
       return item.paygroupId === parseInt(selectedPaygroup)
     })
-    setNotificationsGroupData(data)
+    // setNotificationsGroupData(data)
   }
 
-  const loadData = async () => {
-    setLoading(true)
-    try {
-      setNotificationsEmployeesData()
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-      setLoading(false)
-    }
-  }
-
-  const parameterByAppraisal = allParameters?.data.filter((section: any) => section.appraisalId === parseInt(selectedAppraisalType))
-    .map((item: any) => ({
-      ...item,
-      score: '',
-      comment: '',
-    }))
+  // const loadData = async () => {
+  //   setLoading(true)
+  //   try {
+  //     setNotificationsEmployeesData()
+  //     setLoading(false)
+  //   } catch (error) {
+  //     console.log(error)
+  //     setLoading(false)
+  //   }
+  // }
 
   const showEmpAddModal = () => {
     setIsEmpAddModal(true)
@@ -364,7 +344,7 @@ const AppraisalPerformance = () => {
 
   const handleSelectedChange = (e: any) => {
     setSelectedAppraisaltype(e.target.value)
-    setFieldInit(parameterByAppraisal)
+    // setFieldInit(parameterByAppraisal)
   }
 
   const GetJobTitle = (employeeId: any) => {
@@ -387,37 +367,34 @@ const AppraisalPerformance = () => {
     return setDepartmentName( jobTitleName?.name)
   }
 
-  const handleInputChange = (e: any) => {
-    setSearchText(e.target.value)
-    if (e.target.value === '') {
-      loadData()
-    }
-  }
-
-  const DataWithKey = notificationsGroupData?.map((item:any) =>{
-    return {...item, key: item?.id}
-  })
-
-  const globalSearch = () => {
-    // @ts-ignore
-    filteredData = dataWithVehicleNum.filter((value) => {
-      return (
-        value.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    })
-    // setGridData(filteredData)
-  }
-
     useEffect(() => {
-    loadData()
-    GetDepartment(employeeRecord?.id)
-    GetJobTitle(employeeRecord?.id)
-    setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
+      // loadData()
+      GetDepartment(employeeRecord?.id)
+      GetJobTitle(employeeRecord?.id)
+      setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
+      loadEmployees()
+      setBeforeSearch(employeesFromTransaction)
 
   },[
-    allJobTitles?.data, selectedAppraisalType,
+    allJobTitles?.data, selectedAppraisalType,selectedReference,
     selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId, employeeData, employeeRecord?.id
   ])
+
+  const globalSearch = (searchValue: string) => {
+    const searchResult = employeesFromTransaction.filter((item: any) => {
+      return (
+        Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
+      )
+    })//search the grid data
+    setEmployeesToNotify(searchResult)
+  }
+
+  const handleInputChange = (e: any) => {
+    globalSearch(e.target.value)
+    if (e.target.value === '') {
+      setEmployeesToNotify(beforeSearch)
+    }
+  }
 
   const submitApplicant = handleSubmit(async (values) => {
   
@@ -468,7 +445,7 @@ const AppraisalPerformance = () => {
         dataToPost)
       .then((res) => {
         message.success('Employees added successfully')
-        loadData()
+        // loadData()
         queryClient.invalidateQueries(`${refreshKey}`)
         setIsEmpAddModal(false)
         setIsRefModalOpen(false)
@@ -494,7 +471,7 @@ const AppraisalPerformance = () => {
             <option value="select reference">select reference</option>
             {allAppraisalsPerfTrans?.data?.map((item: any)=>(
               <option value={item.id}>
-              {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} - {getFieldName(item?.startPeriod, allPeriods?.data)} - {getFieldName(item?.endPeriod, allPeriods?.data)}
+                {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} - {getFieldName(item?.startPeriod, allPeriods?.data)} - {getFieldName(item?.endPeriod, allPeriods?.data)}
               </option>
             ))}
           </select>
@@ -502,7 +479,7 @@ const AppraisalPerformance = () => {
         {
           selectedReference === null || selectedReference === "select reference" ? 
           <div className='col-3 mt-9'>
-          <a onClick={showRefModal} className='btn btn-info btn-sm'>Add New Entry</a>
+          <a onClick={showRefModal} style={{backgroundColor:"#216741", color:"#f2f2f2"}} className='btn  btn-sm'>Add New Entry</a>
         </div> :""
         }
         
@@ -620,7 +597,6 @@ const AppraisalPerformance = () => {
                 referenceId={appraisalTranItem?.referenceId}
                 selectedAppraisalType={appraisalTranItem?.appraisalTypeId}
                 employeesInDataByID={employeesFromTransaction}
-                // employeesInDataByID={DataWithKey}
               />
             </div>
             <br></br>
@@ -628,15 +604,13 @@ const AppraisalPerformance = () => {
             <div className='d-flex justify-content-between'>
               <Space style={{ marginBottom: 16 }}>
                 <Input
-                  placeholder='Enter Search Text'
+                 
+                  placeholder='Enter employee name'
                   onChange={handleInputChange}
                   type='text'
                   allowClear
-                  value={searchText}
+                  // value={searchText}
                 />
-                <Button type='primary' onClick={globalSearch}>
-                  Search
-                </Button>
                 
               </Space>
               <Space style={{ marginBottom: 16 }}>
@@ -644,13 +618,15 @@ const AppraisalPerformance = () => {
                 {
                   selectedRowKeys?.length>0?
                   <button style={{ marginBottom: 16 }} type='button' className='btn btn-danger btn-sm' onClick={handleDelete}>
-                    <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                    {/* <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' /> */}
                     Remove
                   </button>:
-                  <button style={{ marginBottom: 16 }} type='button'  className='btn btn-primary me-3' onClick={showEmpAddModal}>
-                  <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                  Add
-                </button>
+                  <>
+                    <button style={{ marginBottom: 16, backgroundColor:"#216741", color:"#f2f2f2" }} type='button'  className='btn  me-3' onClick={showEmpAddModal}>
+                      <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                      Add
+                    </button>
+                  </>
                 }
                 
               </Space>
@@ -661,7 +637,7 @@ const AppraisalPerformance = () => {
                   columns={columns}
                   rowKey={record => record.id}
                   rowSelection={rowSelection}
-                  dataSource={employeesFromTransaction}
+                  dataSource={employeesToNotify}
                 />
             }
              <Modal
@@ -750,23 +726,44 @@ const AppraisalPerformance = () => {
               open={viewDetail}
               onCancel={handlePrintPreviewModalCancel}
               closable={true}
-              width={1000}
+              width={
+                checkActive?.tag?.trim() === "actual" ||
+                checkActive?.tag?.trim() === "final" ? 1200:1000
+              }
               cancelText='Close'
               okText="Print"
               onOk={handlePrintPreviewModalOk}
             >
-              <div className="py-9 px-9"> 
+              <div > 
                 <AppraisalPrintHeader
                   employeeData={employeeData}
                 />
-                {/* <PrintComponent employeeData={employeeData} /> */}
-                <AppraisalFormContent 
-                // component={parametersData} 
-                component={AppraisalObjectivesComponent} 
-                
-                employeeId={employeeData?.id} parametersData={parametersData} />
+
+                {
+                  checkActive?.tag?.trim() === "actual" ||
+                  checkActive?.tag?.trim() === "final" ? 
+                  <ActualMasterPage title="hr" employeeId={employeeData?.id} />:
+                  <AppraisalFormContent component={AppraisalObjectivesComponent}  employeeId={employeeData?.id} parametersData={parametersData} />
+                }
               </div>
             </Modal>
+            <Modal
+              title='Bonus Computation'
+              open={isBonusModal}
+              onCancel={handleBonusCancel}
+              closable={true}
+              width={1200}
+              footer={[
+                <Button key='back' 
+                  onClick={handleBonusCancel}
+                  >
+                  Cancel
+                </Button>,
+              ]}
+            >
+                <hr />
+                <BonusComputation employeeData={employeesFromTransaction} title="button" />  
+              </Modal>
           </div>
       }
     </div >

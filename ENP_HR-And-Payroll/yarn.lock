@@ -2916,6 +2916,13 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-16.11.27.tgz"
   integrity sha512-C1pD3kgLoZ56Uuy5lhfOxie4aZlA3UMGLX9rXteq4WitEZH6Rl80mwactt9QG0w0gLFlN/kLBTFnGXtDVWvWQw==
 
+"@types/papaparse@^5.3.11":
+  version "5.3.11"
+  resolved "https://registry.yarnpkg.com/@types/papaparse/-/papaparse-5.3.11.tgz#73c0bcc884709da9d30af926e487a76ce21a05f9"
+  integrity sha512-ISil0lMkpRDrBTKRPnUgVb5IqxWwj19gWBrX/ROk3pbkkslBN3URa713r/BSfAUj+w9gTPg3S3f45aMToVfh1w==
+  dependencies:
+    "@types/node" "*"
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz"
@@ -8051,6 +8058,11 @@ pako@~1.0.2:
   version "1.0.11"
   resolved "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
   integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
+
+papaparse@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.4.1.tgz#f45c0f871853578bd3a30f92d96fdcfb6ebea127"
+  integrity sha512-HipMsgJkZu8br23pW15uvo6sib6wne/4woLZPlFf3rpDyMe9ywEXUsuD7+6K9PRkJlVT51j/sCOYDKGGS3ZJrw==
 
 param-case@^3.0.4:
   version "3.0.4"

@@ -207,7 +207,6 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
                     }
                     return 0
                 },
-                // render: (text: any) => <span>{text.toLocaleString()}</span>,
             },
 
             // {

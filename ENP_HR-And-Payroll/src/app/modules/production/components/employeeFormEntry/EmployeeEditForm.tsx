@@ -199,9 +199,9 @@ const EmployeeEditForm = () => {
     return section.employeeId.toString() === param.id
   })
 
-  const recentStatus: any = statusByEmployee?.find((item: any) => {
-    return item.index === (statusByEmployee.length - 1)
-  })
+  // const recentStatus: any = statusByEmployee?.find((item: any) => {
+  //   return item.index === (statusByEmployee.length - 1)
+  // })
 
   let highestIdItem: any = null;
   let highestId: any = -1;
@@ -247,37 +247,6 @@ const EmployeeEditForm = () => {
     }
   };
 
-  // for posting employee statuses
-  const urlSta = `${Api_Endpoint}/EmployeeStatus`
-  const OnSubmitStatus = handleSubmit(async (values: any) => {
-    setLoading(true)
-    const data = {
-      comment: values.comment,
-      status: values.status,
-      employeeId: parseInt(param.id),
-    }
-    console.log(data);
-
-    try {
-      const response = await axios.post(urlSta, data)
-      setSubmitLoading(false)
-      reset()
-      setIsStatusModalOpen(false)
-      return response.statusText
-    } catch (error: any) {
-      setSubmitLoading(false)
-      return error.statusText
-    }
-  })
-
-  // console.log('New', param.id);
-
-
-  // get the employee whoae id is equal the default select
-  
-
-  // console.log('getEmployee', getEmployee);
-
   const uRL = `${Api_Endpoint}/Employees/${param.id}`
   const OnSUbmitUpdate = handleSubmit(async () => {
     // setLoading(true)
@@ -309,8 +278,7 @@ const EmployeeEditForm = () => {
     formData.append('dob', tempData.dob == null ? "" : tempData.dob)
     formData.append('gender', tempData.gender == null ? "" : tempData.gender)
     formData.append('maritalStatus', tempData.maritalStatus == null ? "" : tempData.maritalStatus)
-    // formData.append('nationality', tempData.nationality == null ? "" : tempData.nationality)
-    // formData.append('nationalId', tempData.nationalId == null ? "" : tempData.nationalId)
+    formData.append('annualBaseSalary', tempData.annualBaseSalary == null ? "" : tempData.annualBaseSalary)
     formData.append('phone', tempData.phone == null ? "" : tempData.phone)
     formData.append('alternativePhone', tempData.alternativePhone == null ? "" : tempData.alternativePhone)
     formData.append('address', tempData.address == null ? "" : tempData.address)
@@ -327,7 +295,7 @@ const EmployeeEditForm = () => {
     formData.append('currentLevel', newLevel)
     formData.append('password', tempData.password)
     formData.append('username', tempData.username)
-    formData.append('isAdmin', "no")
+    formData.append('isAdmin', "yes")
     formData.append('imageFile', tempImage ? tempImage : "")
     formData.append('tenantId', tenantId)
 
@@ -460,10 +428,10 @@ const EmployeeEditForm = () => {
               </div>
 
               <div className='col-4 mb-7'>
-                <label htmlFor="exampleFormControlInput1" className=" form-label">Annual Salary</label>
-                <input type="number" {...register("annualSalary")}
+                <label htmlFor="exampleFormControlInput1" className=" form-label">Annual Basic Salary</label>
+                <input type="number" {...register("annualBaseSalary")}
                   onChange={handleChange}
-                  value={tempData?.annualSalary}
+                  value={tempData?.annualBaseSalary}
                   className="form-control form-control-solid" />
               </div>
             </div>
@@ -492,7 +460,7 @@ const EmployeeEditForm = () => {
 
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
-                <select  {...register("jobTitleId")} name="jobTitleId" onChange={handleChange} value={tempData?.gradeId} className="form-select form-select-solid" aria-label="Select example">
+                <select  {...register("jobTitleId")} name="jobTitleId" onChange={handleChange} value={tempData?.jobTitleId} className="form-select form-select-solid" aria-label="Select example">
                   <option>{jobTName} </option>
                   {allJobTitles?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>

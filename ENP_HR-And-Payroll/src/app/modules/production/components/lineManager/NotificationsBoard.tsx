@@ -10,6 +10,7 @@ import { set } from "react-hook-form";
 
 const NotificationsBoard = () => {
 
+    
     const { currentUser } = useAuth()
     const tenantId = localStorage.getItem('tenant')
     const [employeesWithSubmittedObjectives, setEmployeesWithSubmittedObjectives] = useState<any>([])
@@ -96,7 +97,7 @@ const NotificationsBoard = () => {
             </>,
             children: (
                 <>
-                    <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeesWithSubmittedObjectives} />
+                    <NotificationsComponent loading={objectivesLoading} tag={checkActive?.tag?.trim()} employeeWhoSubmitted={employeesWithSubmittedObjectives} />
                 </>
             ),
         },

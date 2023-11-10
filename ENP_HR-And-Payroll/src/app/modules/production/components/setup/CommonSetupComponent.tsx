@@ -11,19 +11,14 @@ import "./stickyStyle.css"
 const SetupComponent = (props: any) => {
     const [gridData, setGridData] = useState([])
     const [searchText, setSearchText] = useState('')
-    let [filteredData] = useState([])
-    const [submitLoading, setSubmitLoading] = useState(false)
     const { register, reset, handleSubmit } = useForm()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [tempData, setTempData] = useState<any>()
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
     const queryClient = useQueryClient()
     const tenantId = localStorage.getItem('tenant')
-    const param: any = useParams();
-    const navigate = useNavigate();
-    const [detailName, setDetailName] = useState('')
-    const [objectivesId, setObjectivesId] = useState<any>()
     const [isSticky, setIsSticky] = useState(false);
+    const [beforeSearch, setBeforeSearch] = useState([])
 
     let endPoint = ""
     if(props.data.url ==="unitofmeasures"){
@@ -37,10 +32,6 @@ const SetupComponent = (props: any) => {
 
     const showModal = () => {
         setIsModalOpen(true)
-    }
-
-    const handleOk = () => {
-        setIsModalOpen(false)
     }
 
     const handleCancel = () => {
@@ -102,7 +93,7 @@ const SetupComponent = (props: any) => {
         },
         
         {
-            title: 'Achievement Cap',
+            title: 'Achievement',
             dataIndex: 'threashold',
             sorter: (a: any, b: any) => {
                 if (a.threashold > b.threashold) {
@@ -170,10 +161,6 @@ const SetupComponent = (props: any) => {
         },
     ]
 
-    // remove bonus target from columns if props.data.title is category
-    // if (props.data.title === 'Category') {
-    //     columns.splice(3, 4)
-    // }
     if (props.data.title === 'Category') {
         columns.splice(2, 1)
     }
@@ -197,19 +184,20 @@ const SetupComponent = (props: any) => {
 
     useEffect(() => {
         loadData()
-        const handleScroll = () => {
-            if (window.scrollY > 10) { 
-              setIsSticky(true);
-            } else {
-              setIsSticky(false);
-            }
-          };
+        // const handleScroll = () => {
+        //     if (window.scrollY > 10) { 
+        //       setIsSticky(true);
+        //     } else {
+        //       setIsSticky(false);
+        //     }
+        //   };
       
-          window.addEventListener('scroll', handleScroll);
+        //   window.addEventListener('scroll', handleScroll);
       
-          return () => {
-            window.removeEventListener('scroll', handleScroll);
-          };
+        //   return () => {
+        //     window.removeEventListener('scroll', handleScroll);
+        //   };
+        setBeforeSearch(componentData?.data)
     }, [componentData?.data])
 
     const dataWithIndex = gridData?.map((item: any, index) => ({
@@ -217,22 +205,38 @@ const SetupComponent = (props: any) => {
         key: index,
     }))
 
-    const handleInputChange = (e: any) => {
-        setSearchText(e.target.value)
+    const globalSearch = (searchValue: string) => {
+        const searchResult = componentData?.data?.filter((item: any) => {
+          return (
+            Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
+          )
+        })//search the grid data
+        setGridData(searchResult)
+      }
+    
+      const handleInputChange = (e: any) => {
+        globalSearch(e.target.value)
         if (e.target.value === '') {
-            loadData()
+          setGridData(beforeSearch)
         }
-    }
+      }
 
-    const globalSearch = () => {
-        // @ts-ignore
-        filteredData = dataWithVehicleNum.filter((value) => {
-            return (
-                value.name.toLowerCase().includes(searchText.toLowerCase())
-            )
-        })
-        setGridData(filteredData)
-    }
+    // const handleInputChange = (e: any) => {
+    //     setSearchText(e.target.value)
+    //     if (e.target.value === '') {
+    //         loadData()
+    //     }
+    // }
+
+    // const globalSearch = () => {
+    //     // @ts-ignore
+    //     filteredData = dataWithVehicleNum.filter((value) => {
+    //         return (
+    //             value.name.toLowerCase().includes(searchText.toLowerCase())
+    //         )
+    //     })
+    //     setGridData(filteredData)
+    // }
 
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
@@ -267,13 +271,11 @@ const SetupComponent = (props: any) => {
         console.log(values)
     }
 
-
     const OnSubmit = handleSubmit(async (values) => {
         const item: any = {
             data: {
                 name: values.name,
                 code: values.code,
-                // medicalTypeId: parseInt(param.id),
                 tenantId: tenantId,
                 bonusTarget: values.bonusTarget,
                 grouopWeight: values.grouopWeight,
@@ -311,7 +313,6 @@ const SetupComponent = (props: any) => {
             }}
             className={isSticky ? 'sticky' : ''}
         >
-            {/* <KTCardBody className='py-4 '> */}
                 <div className='table-responsive'>
                     <div className="mb-5">
                         <div className='d-flex justify-content-between'>
@@ -321,21 +322,14 @@ const SetupComponent = (props: any) => {
                                     onChange={handleInputChange}
                                     type='text'
                                     allowClear
-                                    value={searchText} size='large'
+                                    // value={searchText} 
+                                    size='large'
                                 />
-                                <Button type='primary' onClick={globalSearch} size='large'>
-                                    Search
-                                </Button>
                             </Space>
                             <Space style={{ marginBottom: 16 }}>
-                                <button type='button' className='btn btn-primary me-3' onClick={showModal}>
-                                    <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                                <button style={{backgroundColor:"#216741", color:"#f2f2f2"}} type='button' className='btn  me-3' onClick={showModal}>
+                                    <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2'/>
                                     Add
-                                </button>
-
-                                <button type='button' className='btn btn-light-primary me-3'>
-                                    <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                                    Export
                                 </button>
                             </Space>
                         </div>
@@ -363,7 +357,6 @@ const SetupComponent = (props: any) => {
                                 key='submit'
                                 type='primary'
                                 htmlType='submit'
-                                loading={submitLoading}
                                 onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
                             >
                                 Submit
@@ -387,7 +380,7 @@ const SetupComponent = (props: any) => {
                                     props.data.title === 'Departments' &&
                                     <>
                                         <div className=' mb-7'>
-                                            <label htmlFor="exampleFormControlInput1" className="form-label">Achievement Cap</label>
+                                            <label htmlFor="exampleFormControlInput1" className="form-label">Achievement</label>
                                             <input type="number" {...register("threashold")} defaultValue={isUpdateModalOpen === true ? parseInt(tempData.threashold) : 0} onChange={handleChange} className="form-control form-control-solid" />
                                         </div>
                                     </>

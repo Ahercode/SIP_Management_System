@@ -250,20 +250,20 @@ const Appraisals = () => {
                 allowClear
                 value={searchText}
               />
-              <Button type='primary' onClick={globalSearch}>
+              {/* <Button type='primary' onClick={globalSearch}>
                 Search
-              </Button>
+              </Button> */}
             </Space>
             <Space style={{ marginBottom: 16 }}>
-              <button type='button' className='btn btn-primary me-3' onClick={showModal}>
+              <button style={{backgroundColor:"#216741", color:"#f2f2f2"}}  type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              {/* <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-              </button>
+              </button> */}
             </Space>
           </div>
           {

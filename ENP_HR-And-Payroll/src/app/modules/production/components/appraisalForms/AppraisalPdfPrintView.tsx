@@ -205,7 +205,7 @@ const AppraisalPrintHeader: React.FC<PrintHeaderProps> = ({ employeeData, printC
             </div>
             <Divider />
             <div>
-                <div className='d-flex row-auto mb-3'>
+                <div className='d-flex row-auto'>
                     <div className='me-9'>
                         <h5 style={{ color: "GrayText" }}>{`Department:`}
                             <span className="ms-3" style={{ color: "black" }}>{!department ? `Unknown` : `${department}`}</span>

@@ -12,8 +12,9 @@ import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/For
 import axios from 'axios'
 import { useAuth } from '../../../auth'
 import { sendEmail } from '../../../../services/CommonService'
+import { ActualMasterPage } from '../../entry/ActualMasterPage'
 
-const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any) => {
+const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees`), { cacheTime: 5000 })
@@ -69,6 +70,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
         event.preventDefault()
         setComment(event.target.value);
         const { name, value } = event.target;
+
         setEmployeeData(
             (prevState: any) => ({
                 ...prevState,
@@ -102,7 +104,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
     }
 
     const handlePrintPreviewModalOk = () => {
-        //todo print of the objectives 
         setShowPrintPreview(false)
     }
 
@@ -110,8 +111,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => (item.id) === record?.id)
         const objectiveByEMployee = allAppraisalObjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
-        console.log('employee: ', employee)
-        console.log('record: ', record)
         setEmployeeData(employee)
         setObjectivesData(objectiveByEMployee)
     }
@@ -247,7 +246,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
 
             //    console.log( getEmployeeStatus(record).props.children)
                <button 
-                    className='btn btn-light-info btn-sm'
+                    className='btn btn-light-success btn-sm'
                     // disabled={getEmployeeStatus(record).props.children === "Amend" || 
                     // getEmployeeStatus(record).props.children === "Submitted for Amendment"} 
                     onClick={() => showObjectivesView(record)}
@@ -285,6 +284,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
         }
     })
 
+    // const title = "final"
 
     return (
         <>
@@ -298,12 +298,15 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
 
             <Modal
                 open={isModalOpen}
-                width={1000}
+                width={
+                    checkActive?.tag?.trim() === "actual" ||
+                        checkActive?.tag?.trim() === "final" ? 1200:
+                    1000}
                 onCancel={handleCancel}
                 closable={true}
                 footer={
-                    location === "View Details" ? 
-                    null:
+                    // title === "View Details" ? 
+                    // null:
                     // <Space className="mt-7">
                     //     <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
                     //         Decline
@@ -312,7 +315,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
                     //         Approve
                     //     </button>
                     // </Space>
-                    location === "Requests" ?
+                    tag === "final"?
                     <Space className="mt-7">
                         <button type='button' className='btn btn-danger btn-sm' onClick={closeModal}>
                             Cancel
@@ -321,6 +324,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
                             Accept
                         </button>
                     </Space>:
+                    
                     <Space className="mt-7">
                         <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
                             Decline
@@ -339,7 +343,15 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location }: any
                             <Button type="link" className="me-3" onClick={showPrintPreview} icon={<PrinterOutlined rev={'print'} className="fs-1" />} />
                         }
                     />
-                    <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
+
+                    {
+                        checkActive?.tag?.trim() === "actual" ||
+                        checkActive?.tag?.trim() === "final" ? 
+
+                        <ActualMasterPage title="final" employeeId={employeeData?.id} />:
+
+                        <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
+                    }
                 </div>
             </Modal>
             {/* comment modal */}

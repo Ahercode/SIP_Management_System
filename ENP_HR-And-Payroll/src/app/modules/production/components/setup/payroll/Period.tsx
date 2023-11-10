@@ -23,9 +23,6 @@ const Period = () => {
     setIsModalOpen(true)
   }
 
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
 
   const handleCancel = () => {
     reset()
@@ -141,7 +138,7 @@ const Period = () => {
 
   useEffect(() => {
     loadData()
-    console.log('girdData: ', gridData)
+
   }, [periods?.data])
 
 
@@ -244,20 +241,20 @@ const Period = () => {
                 allowClear
                 value={searchText} size='large'
               />
-              <Button type='primary' onClick={globalSearch} size='large'>
+              {/* <Button type='primary' onClick={globalSearch} size='large'>
                 Search
-              </Button>
+              </Button> */}
             </Space>
             <Space style={{ marginBottom: 16 }}>
-              <button type='button' className='btn btn-primary me-3' onClick={showModal}>
+              <button style={{backgroundColor:"#216741", color:"#f2f2f2"}}  type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
 
-              <button type='button' className='btn btn-light-primary me-3'>
+              {/* <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-              </button>
+              </button> */}
             </Space>
           </div>
           {

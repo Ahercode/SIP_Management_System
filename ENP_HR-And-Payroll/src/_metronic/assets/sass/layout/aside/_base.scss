@@ -37,31 +37,37 @@
 
 	// Dark theme
 	&.aside-dark {
-		background-color: get($aside-config, bg-color-dark);
+		// background-color: #50CD89;
+		background-color: #216741;
+		// background-color: get($aside-config, bg-color-dark);
 
 		// Logo
 		.aside-logo {
-			background-color: get($aside-config, logo-bg-color);
+			background-color: #216741;
+			// background-color: get($aside-config, logo-bg-color);
 		}
 
 		// Aside toggle
 		.aside-toggle {
-			color: #494b74;
+			color: #f3f3f3;
+			// color: #494b74;
 		}
 
 		// Separator
 		.separator {
-			border-bottom-color: #282a3d;
+			// border-bottom-color: #f2f2f2;
+			// border-bottom-color: #282a3d;
+			border-bottom-color: #50CD89;
 		}
 
 		// Custom button
 		.btn-custom {
 			@include button-custom-variant(
-				$color: #B5B5C3, 
+				$color: #c2c2c2, 
 				$icon-color: null, 
 				$border-color: null, 
 				$bg-color: rgba(63, 66, 84, 0.35), 
-				$color-active: #B5B5C3, 
+				$color-active: #ffffff, 
 				$icon-color-active: null, 
 				$border-color-active: null, 
 				$bg-color-active: rgba(63, 66, 84, 0.35)
