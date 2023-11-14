@@ -50,7 +50,7 @@ const AppraisalPerformance = () => {
   const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allParameters } = useQuery('parameters', () => fetchDocument(`parameters/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
-  const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 5000 })
+  const { data: allAppraisalsPerfTrans } = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
 
     const checkActive = allReviewdates?.data?.find((item: any) => {
@@ -327,16 +327,6 @@ const AppraisalPerformance = () => {
     // setNotificationsGroupData(data)
   }
 
-  // const loadData = async () => {
-  //   setLoading(true)
-  //   try {
-  //     setNotificationsEmployeesData()
-  //     setLoading(false)
-  //   } catch (error) {
-  //     console.log(error)
-  //     setLoading(false)
-  //   }
-  // }
 
   const showEmpAddModal = () => {
     setIsEmpAddModal(true)
@@ -368,7 +358,6 @@ const AppraisalPerformance = () => {
   }
 
     useEffect(() => {
-      // loadData()
       GetDepartment(employeeRecord?.id)
       GetJobTitle(employeeRecord?.id)
       setReferenceId(`${selectedPaygroup}-${selectedAppraisalType}-${selectedStartPeriod}-${selectedEndPeriod}`)
@@ -418,6 +407,11 @@ const AppraisalPerformance = () => {
     const result = allAppraisalTranItems?.filter((item: any) => {
       return parseInt(item.employeeId) === employeeRecord.id && item.appraisalPerfTranId === parseInt(selectedReference)
     })
+
+    const reference = allAppraTranItems?.data?.filter((item: any) => {
+      return item.referenceId === referenceId
+    }
+    )
 
       let url = ""
       let dataToPost = null

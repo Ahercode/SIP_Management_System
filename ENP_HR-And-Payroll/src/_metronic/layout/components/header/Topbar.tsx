@@ -6,6 +6,7 @@ import {
   HeaderUserMenu,
 } from '../../../partials'
 import { useLayout } from '../../core'
+import { Api_Endpoint, ImageBaseUrl } from '../../../../app/services/ApiCalls'
 
 const toolbarButtonMarginClass = 'ms-1 ms-lg-3',
   toolbarButtonHeightClass = 'w-30px h-30px w-md-40px h-md-40px',
@@ -19,7 +20,7 @@ const Topbar: FC = () => {
     <div className='d-flex align-items-stretch flex-shrink-0'>
       <div style={{paddingRight: "30px"}} className='d-flex align-items-center fs-5'>
           {/* Company:  */}
-          <img style={{width: "120px"}} src={toAbsoluteUrl('/media/logos/OmniGroupLogo.png')} alt='Omni Group Logo' /> 
+          {/* <img style={{width: "120px"}} src={toAbsoluteUrl('/media/logos/OmniGroupLogo.png')} alt='Omni Group Logo' />  */}
           {/* <strong style={{borderRight:"1px solid grey", paddingLeft: "8px",paddingRight:"25px"}}>{ tenantId?.toLocaleUpperCase()}</strong> */}
       </div>
       
@@ -38,8 +39,8 @@ const Topbar: FC = () => {
         >
           {
             currentUser?.imageUrl === null || currentUser?.imageUrl ===""?
-            <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
-              <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
+            <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+              <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
           }
               {/* <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img> */}
             

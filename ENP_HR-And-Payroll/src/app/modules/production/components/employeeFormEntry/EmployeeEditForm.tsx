@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
-import { Api_Endpoint, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
+import { Api_Endpoint, ImageBaseUrl, fetchDocument, updateEmployee } from '../../../../services/ApiCalls';
 import { getFieldName } from '../ComponentsFactory';
 import "./formStyle.css";
 
@@ -249,9 +249,6 @@ const EmployeeEditForm = () => {
 
   const uRL = `${Api_Endpoint}/Employees/${param.id}`
   const OnSUbmitUpdate = handleSubmit(async () => {
-    // setLoading(true)
-    
-
     let newLevel = null
     const  lineManger = allEmployees?.data.find((item: any) => {
 
@@ -261,14 +258,14 @@ const EmployeeEditForm = () => {
         }else{
           newLevel = parseInt(item.currentLevel) + 1
         }
-        // return message.success(`${newLevel}`)
-        return newLevel
+        return newLevel = 0
       }
       else{
-        return ""
+        return  newLevel = 0
       }
   
     })
+
     const formData: any = new FormData();
     formData.append('id', parseInt(tempData.id))
     formData.append('employeeId', tempData.employeeId == null ? "" : tempData.employeeId)
@@ -292,10 +289,10 @@ const EmployeeEditForm = () => {
     formData.append('jobTitleId', tempData.jobTitleId == null ? "" : parseInt(tempData.jobTitleId))
     formData.append('employmentDate', tempData.employmentDate == null ? "" : tempData.employmentDate)
     formData.append('lineManagerId', defaultSelect== null ? "" : parseInt(defaultSelect?.value))
-    formData.append('currentLevel', newLevel)
+    formData.append('currentLevel', lineManger)
     formData.append('password', tempData.password)
     formData.append('username', tempData.username)
-    formData.append('isAdmin', "yes")
+    formData.append('isAdmin', tempData.isAdmin)
     formData.append('imageFile', tempImage ? tempImage : "")
     formData.append('tenantId', tenantId)
 
@@ -333,14 +330,12 @@ const EmployeeEditForm = () => {
             <div className=' mb-7 '>
               {
                 !previewImage && (
-                  tempData?.imageUrl !== null || tempData?.imageUrl ===""?
-                    <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${tempData?.imageUrl}`} width={150} height={150}></img> :
-                    <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={150} height={150}></img>
+                    <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={150} height={150}></img>
                 )
               }
               {
                 previewImage && (
-
+                  
                   <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={previewImage} width={150} height={150}></img>
                 )
               }
@@ -394,15 +389,26 @@ const EmployeeEditForm = () => {
                   value={tempData?.dob?.substring(0, 10)} className="form-control form-control-solid" />
               </div>
 
-              <div className='col-4 mb-7'>
+              <div className='col-2 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
                 <select
                   {...register("gender")} name="gender"
                   onChange={handleChange}
                   value={tempData?.gender?.trim()}
-                  className="form-select form-select-solid" aria-label="Select example">
+                  className="form-select form-select-solid">
                   <option value="MALE">MALE</option>
                   <option value="FEMALE">FEMALE</option>
+                </select>
+              </div>
+              <div className='col-2 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">isAdmin</label>
+                <select
+                  {...register("isAdmin")} name="isAdmin"
+                  onChange={handleChange}
+                  value={tempData?.isAdmin?.trim()}
+                  className="form-select form-select-solid">
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </div>
             </div>
@@ -421,7 +427,7 @@ const EmployeeEditForm = () => {
                   {...register("maritalStatus")} name="maritalStatus"
                   onChange={handleChange}
                   value={tempData?.maritalStatus?.trim()}
-                  className="form-select form-select-solid" aria-label="Select example">
+                  className="form-select form-select-solid">
                   <option value="SINGLE">SINGLE</option>
                   <option value="MARRIED">MARRIED</option>
                 </select>
@@ -442,7 +448,7 @@ const EmployeeEditForm = () => {
             <div className='row mt-3'>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
-                <select {...register("paygroupId")} value={tempData?.paygroupId} name='paygroupId' onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">
+                <select {...register("paygroupId")} value={tempData?.paygroupId} name='paygroupId' onChange={handleChange} className="form-select form-select-solid">
                   {allPaygroups?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
                   ))}
@@ -451,7 +457,7 @@ const EmployeeEditForm = () => {
 
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Department</label>
-                <select  {...register("departmentId")} name="departmentId" onChange={handleChange} value={tempData?.departmentId} className="form-select form-select-solid" aria-label="Select example">
+                <select  {...register("departmentId")} name="departmentId" onChange={handleChange} value={tempData?.departmentId} className="form-select form-select-solid">
                   {allDepartments?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
                   ))}
@@ -460,7 +466,7 @@ const EmployeeEditForm = () => {
 
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Job Title</label>
-                <select  {...register("jobTitleId")} name="jobTitleId" onChange={handleChange} value={tempData?.jobTitleId} className="form-select form-select-solid" aria-label="Select example">
+                <select  {...register("jobTitleId")} name="jobTitleId" onChange={handleChange} value={tempData?.jobTitleId} className="form-select form-select-solid">
                   <option>{jobTName} </option>
                   {allJobTitles?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
@@ -473,7 +479,7 @@ const EmployeeEditForm = () => {
             <div className='row mt-3'>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>
-                <select  {...register("categoryId")} name="categoryId" onChange={handleChange} value={tempData?.categoryId} className="form-select form-select-solid" aria-label="Select example">
+                <select  {...register("categoryId")} name="categoryId" onChange={handleChange} value={tempData?.categoryId} className="form-select form-select-solid">
                   <option>{catName} </option>
                   {allCategories?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>

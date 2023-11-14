@@ -5,7 +5,7 @@ import { fetchDocument, postItem, } from '../../../services/ApiCalls'
 import { getFieldName } from '../components/ComponentsFactory'
 import { useAuth } from '../../auth'
 import { CustomForm } from './CustomForm';
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 
 
 const ActualPage = ( {
@@ -37,6 +37,9 @@ const ActualPage = ( {
   })
 
   const [actualValues, setActualValues] = useState<any>();
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused1, setIsFocused1] = useState(false);
+  const [isFocused2, setIsFocused2] = useState(false);
 
   
   // const handleChange = (recordId:any, value:any, field:any) => {
@@ -71,7 +74,7 @@ const ActualPage = ( {
     return actual?.actual
   }
 
-  console.log("actualValues:",getOldActual(110))
+  // console.log("actualValues:",getOldActual(110))
 
   const OnSubmit = ()=> {
     const dataArray = Object.keys(actualValues).map((recordId: any) => ({
@@ -84,7 +87,7 @@ const ActualPage = ( {
       status: "drafted",
     }));
 
-    console.log("dataArray:",dataArray)
+    // console.log("dataArray:",dataArray)
 
     const itemToPost = {
       data: dataArray,
@@ -93,6 +96,22 @@ const ActualPage = ( {
 
     postData(itemToPost)
   }
+
+  const onFocus = () => {
+    setIsFocused(true);
+  };
+  const onFocus2 = () => {
+    setIsFocused2(true);
+  };
+  const onFocus1 = () => {
+    setIsFocused1(true);
+  };
+
+  const onBlur = () => {
+    setIsFocused(false);
+    setIsFocused1(false);
+    setIsFocused2(false);
+  };
 
   const { mutate: postData } = useMutation(postItem, {
     onSuccess: () => {
@@ -111,15 +130,14 @@ const ActualPage = ( {
       dataIndex: 'description',
       width: 300,
       render: (record: any) => {
+        const pointsArray = record.trim()?.split(/\n(?=\d+\.|\u2022)/).filter(Boolean);
         return (
           <>
-            {/* {record} */}
             <textarea
-              // disabled={true}
               readOnly={true}
               rows={3}
               cols={50}
-              defaultValue={record}
+              value={pointsArray?.join('\n')}
               className="form-control "/>
           </>
         )
@@ -181,10 +199,15 @@ const ActualPage = ( {
           <>
             <input
                 disabled={title==="final"||title==="hr"?true:false}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 type='number' min='0'
                 defaultValue={actual?.actual}
                 onChange={(e)=>handleChange(record?.id, e.target.value, "actual")}
                 className="form-control " 
+                style={{
+                  border: isFocused ? '1px solid green' : '1px solid #ccc'
+                }}
             />
           </>
         )
@@ -199,6 +222,7 @@ const ActualPage = ( {
           return item?.deliverableId === record?.id 
         })
 
+        const pointsArray = actual?.individualComment?.trim()?.split(/\n(?=\d+\.)/).filter(Boolean);
         return (
           <>
             {
@@ -206,8 +230,13 @@ const ActualPage = ( {
                 disabled={title==="final"|| title==="hr"?true:false}
                 rows={1}
                 onChange={(e)=>handleChange(record?.id, e.target.value, "individualComment")}
-                defaultValue={actual?.individualComment}
-                className="form-control" 
+                defaultValue={pointsArray?.join('\n')}
+                className="form-control"
+                onFocus={onFocus1}
+                onBlur={onBlur}
+                style={{
+                  border: isFocused1 ? '1px solid green' : '1px solid #ccc'
+                }}
               />
             }
           </>
@@ -232,7 +261,11 @@ const ActualPage = ( {
                 rows={1}
                 defaultValue={actual?.lineManagerComment}
                 onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
-
+                onFocus={onFocus2}
+                onBlur={onBlur}
+                style={{
+                  border: isFocused2 ? '1px solid green' : '1px solid #ccc'
+                }}
                 className="form-control " />
             }
           </>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchDocument } from '../../../../services/ApiCalls'
+import { ImageBaseUrl, deleteItem, fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName } from '../ComponentsFactory'
 import { EmplyeeDetails } from '../employeeFormEntry/EmployeeDetails'
 
@@ -272,8 +272,8 @@ const EmployeeProfile = (employee: any) => {
         <div>
           {
             employee?.employee?.imageUrl === null || employee?.employee?.imageUrl ===""?
-            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
-            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> 
+            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> 
           }
         </div>
         <div className='col px-4 align-items-center align-content-center'>

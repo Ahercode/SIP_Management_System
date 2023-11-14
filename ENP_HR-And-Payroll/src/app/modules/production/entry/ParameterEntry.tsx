@@ -7,11 +7,10 @@ import { KTCardBody } from '../../../../_metronic/helpers'
 import { Api_Endpoint, fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../../auth'
 import axios from 'axios'
-import { send } from 'process'
 import { sendEmail } from '../../../services/CommonService'
 
 const ParameterEntry = () => {
-  const { register, reset, handleSubmit } = useForm()
+  const { handleSubmit } = useForm()
   // const param: any = useParams();
   const tenantId = localStorage.getItem('tenant')
   const { currentUser } = useAuth()
@@ -25,7 +24,8 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
   const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
-
+  const { data: allAppraTranItems, isLoading:itemsLoading} = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
+  const { data: allAppraisalsPerfTrans, isLoading:perLoading} = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 10000 })
   const columns: any = [
 
     {
@@ -87,7 +87,22 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
     return item?.isActive?.trim() === "active"
-})
+  })
+
+const activeReferenceId = allAppraisalsPerfTrans?.data?.find((item: any) => {
+  return item?.referenceId === checkActive?.referenceId
+}
+)
+
+const employeeFromActiveReference = allAppraTranItems?.data?.filter((item: any) => {
+    return item?.appraisalPerfTranId === activeReferenceId?.id
+  }
+)
+
+const currentEmployeeFromActiveReference = employeeFromActiveReference?.find((item: any) => {
+  return item?.employeeId === currentUser?.id
+}
+)
 
 const convertToArray = checkActive?.referenceId.split("-")
 
@@ -133,8 +148,6 @@ const dataByID = allParameters?.data?.filter((section: any) => {
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) !== 100
     })
 
-    // console.log("incompleteDeliverables", incompleteDeliverables)
-
     return incompleteDeliverables?.length
   };
 
@@ -166,8 +179,6 @@ const dataByID = allParameters?.data?.filter((section: any) => {
       })
       return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
     })
-
-    // console.log("allObjectives", allDeliverables)
   
     setObjectiveStatus(allDeliverables)
   }
@@ -251,107 +262,115 @@ const OnSubmit = handleSubmit(async (values) => {
       }}
     >
       <KTCardBody className='py-4 '>
-        <div className='table-responsive'>
-          <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
-            <div >
-              
-              <p className='text-primary fs-2 fw-bold mb-4'>
-                {/* {`${appraisalData?.name}`} */}
+        {
+          itemsLoading || perLoading? <Skeleton active/>:
+          currentEmployeeFromActiveReference === undefined? 
+          <p className='text-center justify-center fs-1 fw-bold mb-4 mt-3'>
+            You've not been added to any appraisal reference yet
+          </p>:
+          <div className='table-responsive'>
+            <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
+              <div >
+                
+                <p className='text-primary fs-2 fw-bold mb-4'>
+                  {
+                    appraisalData?.name===undefined? "You will be notified when appraisal has started":`${appraisalData?.name}`
+                  }
+                </p>
                 {
-                  appraisalData?.name===undefined? "You will be notified when appraisal has started":`${appraisalData?.name}`
-                }
-              </p>
-              {
-                appraisalData?.name===undefined?""
-                : <span style={{ fontSize:"16px"}}> Your status:
-                <span style={{ fontSize:"16px"}} className={
-                  getEmployeeStatus() === 'Amend' ?
-                  'badge badge-light-info fw-bolder' :
-                  getEmployeeStatus() === 'Submitted' ?
-                  'badge badge-light-warning fw-bolder' :
-                  getEmployeeStatus() === 'Rejected' ?
-                  'badge badge-light-danger fw-bolder' :
-                  getEmployeeStatus() === 'Approved' ?
-                  'badge badge-light-success fw-bolder' :
-                  getEmployeeStatus() === 'Drafted' ?
-                  'badge badge-light-info fw-bolder':
-                  'badge badge-light-danger fw-bolder'
-                }>
-                   {getEmployeeStatus()}
-                </span>
-              </span> 
-              }    
-            </div>
-            <div>
-            </div>
-            <Space size='middle'>
-              <Button  disabled={
-                (getEmployeeStatus() === "Approved" || 
-                getEmployeeStatus() === "Amend"||
-                getEmployeeStatus() === "Submitted"                 
-                ) && 
-                deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
-                Submit
-              </Button>
-              <Link to={`/actualpage/`}>
-                <Button 
-                disabled={
-
-                  checkActive?.tag?.trim()==="setting" || 
-                  checkActive?.tag ===null|| 
-                  checkActive?.tag ===undefined
-                } 
-
-                  size='large'>
-                  Actuals
+                  appraisalData?.name===undefined?""
+                  : <span style={{ fontSize:"16px"}}> Your status:
+                  <span style={{ fontSize:"16px"}} className={
+                    getEmployeeStatus() === 'Amend' ?
+                    'badge badge-light-info fw-bolder' :
+                    getEmployeeStatus() === 'Submitted' ?
+                    'badge badge-light-warning fw-bolder' :
+                    getEmployeeStatus() === 'Rejected' ?
+                    'badge badge-light-danger fw-bolder' :
+                    getEmployeeStatus() === 'Approved' ?
+                    'badge badge-light-success fw-bolder' :
+                    getEmployeeStatus() === 'Drafted' ?
+                    'badge badge-light-info fw-bolder':
+                    'badge badge-light-danger fw-bolder'
+                  }>
+                    {getEmployeeStatus()}
+                  </span>
+                </span> 
+                }    
+              </div>
+              <div>
+              </div>
+              <Space size='middle'>
+                <Button  disabled={
+                  (getEmployeeStatus() === "Approved" || 
+                  getEmployeeStatus() === "Amend"||
+                  getEmployeeStatus() === "Submitted"                 
+                  ) && 
+                  deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
+                  Submit
                 </Button>
-              </Link>     
-            </Space>
-          </div> 
-          {
-            loading ? <Skeleton active /> :
-              <Table
-                columns={columns}
-                dataSource={dataByIDWithKey}
-                expandable={{
-                  expandedRowRender: (record) =>
-                    <div key={record?.id}>
-                      <div className='d-flex flex-direction-row align-items-center align-content-center py-4'>
-                        <div style={{borderRight:"1px solid rgba(0,0,0,0.4)", paddingRight:"50px"}} className='me-4'>
-                          <span >{record?.obj}</span>
-                          {
-                            weightSum(record.id) === record?.weight ?
-                              <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag> :
-                              <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
-                          }
-                          <br></br>
-                            <p>
-                              <span >You have set <span className='fw-bold mx-2' style={{color:"Highlight"}}>{`${weightSum(record.id)==='undefined'?0:weightSum(record.id)}%`}</span> of </span>
-                              <span className='fw-bold mx-2'>{`${record?.weight}%`}</span>
-                            </p>
-                          
-                        </div>
-                        <div style={{paddingLeft:"50px"}} >
-                          <span >{record?.del}</span>
-                          {
-                            weightSumDeliverables(record.id) !== 0 ?
-                            <>
+                <Link to={`/actualpage/`}>
+                  <Button 
+                  disabled={
+
+                    checkActive?.tag?.trim()==="setting" || 
+                    checkActive?.tag ===null|| 
+                    checkActive?.tag ===undefined
+                  } 
+
+                    size='large'>
+                    Actuals
+                  </Button>
+                </Link>     
+              </Space>
+            </div> 
+            {
+              loading ? <Skeleton active /> :
+                <Table
+                  columns={columns}
+                  dataSource={dataByIDWithKey}
+                  expandable={{
+                    expandedRowRender: (record) =>
+                      <div key={record?.id}>
+                        <div className='d-flex flex-direction-row align-items-center align-content-center py-4'>
+                          <div style={{borderRight:"1px solid rgba(0,0,0,0.4)", paddingRight:"50px"}} className='me-4'>
+                            <span >{record?.obj}</span>
+                            {
+                              weightSum(record.id) === record?.weight ?
+                                <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag> :
+                                <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
+                            }
+                            <br></br>
+                              <p>
+                                <span >You have set <span className='fw-bold mx-2' style={{color:"Highlight"}}>{`${weightSum(record.id)==='undefined'?0:weightSum(record.id)}%`}</span> of </span>
+                                <span className='fw-bold mx-2'>{`${record?.weight}%`}</span>
+                              </p>
                             
-                            <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
-                            <p>
-                              <span >You have some incompleteed deliverables here.</span>
-                            </p>
-                            </>:
-                            <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete</Tag>   
-                          }
+                          </div>
+                          <div style={{paddingLeft:"50px"}} >
+                            <span >{record?.del}</span>
+                            {
+                              weightSumDeliverables(record.id) !== 0 ?
+                              <>
+                              
+                              <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
+                              <p>
+                                <span >You have some incompleteed deliverables here.</span>
+                              </p>
+                              </>:
+                              <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete</Tag>   
+                            }
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ,
-                }}
-              />
-          }
-        </div>
+                    ,
+                  }}
+                />
+            }
+          </div>
+
+        
+        }
       </KTCardBody>
     </div>
   )
