@@ -143,7 +143,7 @@ const HRDashboardWrapper = () => {
   // const intl = useIntl()
   return (
     <>
-      <PageTitle breadcrumbs={[]}>{"Human Resource Dashboard"}</PageTitle>
+      <PageTitle breadcrumbs={[]}>{"Dashboard"}</PageTitle>
       <HRNewDashBoard/>
     </>
   )
