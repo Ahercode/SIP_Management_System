@@ -17,7 +17,7 @@ const DefaultTitle: FC = () => {
     >
       {/* begin::Title */}
       {pageTitle && (
-        <h1  className='d-flex align-items-center text-white fw-bolder my-1 fs-3'>
+        <h1  className='d-flex align-items-center fw-bolder my-1 fs-3'>
           {pageTitle}
           {pageDescription && config.pageTitle && config.pageTitle.description && (
             <>

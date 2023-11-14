@@ -14,7 +14,7 @@ export function MenuInner() {
   return (
     <>
       {/* <MenuItem title={intl.formatMessage({id: 'Human Resource'})} to='/dashboard' /> */}
-      <MenuItem title={"OMNI PMS DashBoard"} to='/hr-dashboard' />
+      <MenuItem title={"DashBoard"} to='/hr-dashboard' />
       
     </>
   )
