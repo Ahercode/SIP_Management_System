@@ -37,6 +37,7 @@ import { Processes } from '../modules/production/components/setup/hr/Processes'
 import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjective/EmployeeObjectivePage'
 import { useAuth } from '../modules/auth'
 import { AppraisalGrade } from '../modules/production/components/setup/hr/AppraisalGrade'
+import { ReferencesPage } from '../modules/production/components/admin/Reference'
 
 export const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -148,10 +149,16 @@ const PrivateRoutes = () => {
       {/* Setup > Administration Routes  */}
 
       <Route
-        path='setup/administration/audit/*'
+        path='admin/audit/*'
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Audits</PageTitle>
           <Audit />
+        </SuspensedView>} />
+      <Route
+        path='admin/references/*'
+        element={<SuspensedView>
+          <PageTitle breadcrumbs={accountBreadCrumbs}>References</PageTitle>
+          <ReferencesPage />
         </SuspensedView>} />
       <Route
         path='setup/administration/company/*'

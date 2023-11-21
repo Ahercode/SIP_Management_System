@@ -56,6 +56,10 @@ const AppraisalPerformance = () => {
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
     })
+    
+    const activeReference = allAppraisalsPerfTrans?.data?.filter((item: any) => {
+      return item.status?.trim() === "active"
+    })
 
   const parametersData = allParameters?.data?.filter((item: any) => item?.appraisalId === 12)
   const [employeeData, setEmployeeData] = useState<any>({})
@@ -102,7 +106,12 @@ const AppraisalPerformance = () => {
   }
 
   const showRefModal = () => {
+    // check if there is an active reference
+    if(activeReference?.length>0){
+      message.error('There is an active reference already, kindly deactivate it first')
+    }else{
     setIsRefModalOpen(true)
+    }
   }
   const showDetail = (record: any) => {
     setViewDetail(true)
@@ -114,6 +123,7 @@ const AppraisalPerformance = () => {
     const emp = allEmployees?.data?.find((item: any) => {
         return item.id === id
     })
+
     return emp?.firstName + " " + emp?.surname
   }
 
@@ -385,6 +395,8 @@ const AppraisalPerformance = () => {
     }
   }
 
+  
+
   const submitApplicant = handleSubmit(async (values) => {
   
      const  data = {
@@ -408,14 +420,22 @@ const AppraisalPerformance = () => {
       return parseInt(item.employeeId) === employeeRecord.id && item.appraisalPerfTranId === parseInt(selectedReference)
     })
 
-    const reference = allAppraTranItems?.data?.filter((item: any) => {
+    const reference = allAppraisalsPerfTrans?.data?.filter((item: any) => {
       return item.referenceId === referenceId
-    }
-    )
+    })
+
+    console.log('referenceId: ', referenceId)
+    console.log('allAppraTranItems: ', allAppraisalsPerfTrans?.data)
+    console.log('reference: ', reference)
 
       let url = ""
       let dataToPost = null
       let refreshKey:any = null
+
+    // check if reference exist
+    if (reference?.length>0) {
+      message.error('Reference or combination already exist')
+    } else{
 
     if(isEmpAddModal){
       url = "AppraisalPerItems/newItem"
@@ -453,7 +473,8 @@ const AppraisalPerformance = () => {
     } catch (error) {
     message.error('Failed to add employee!')
     }}
-  })
+    }}
+  )
 
   return (
     <div>
@@ -463,7 +484,7 @@ const AppraisalPerformance = () => {
           <label htmlFor="exampleFormControlInput1" className=" form-label">Reference </label>
           <select value={selectedReference} onChange={(e) => setSelectedReference(e.target.value)} className="form-select form-select-solid" aria-label="Select example">
             <option value="select reference">select reference</option>
-            {allAppraisalsPerfTrans?.data?.map((item: any)=>(
+            {activeReference?.map((item: any)=>(
               <option value={item.id}>
                 {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} - {getFieldName(item?.startPeriod, allPeriods?.data)} - {getFieldName(item?.endPeriod, allPeriods?.data)}
               </option>
@@ -741,23 +762,7 @@ const AppraisalPerformance = () => {
                 }
               </div>
             </Modal>
-            <Modal
-              title='Bonus Computation'
-              open={isBonusModal}
-              onCancel={handleBonusCancel}
-              closable={true}
-              width={1200}
-              footer={[
-                <Button key='back' 
-                  onClick={handleBonusCancel}
-                  >
-                  Cancel
-                </Button>,
-              ]}
-            >
-                <hr />
-                <BonusComputation employeeData={employeesFromTransaction} title="button" />  
-              </Modal>
+
           </div>
       }
     </div >

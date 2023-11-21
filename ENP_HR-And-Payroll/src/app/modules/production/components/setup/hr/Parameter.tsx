@@ -263,8 +263,6 @@ const Parameter = () => {
     setSecondTempData(values);
   }
 
-
-
   const OnSubmit = handleSubmit(async (values) => {
     setLoading(true)
 
@@ -369,9 +367,6 @@ const Parameter = () => {
                 allowClear
                 value={searchText}
               />
-              {/* <Button type='primary' onClick={globalSearch}>
-                Search
-              </Button> */}
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button style={{backgroundColor:"#216741", color:"#f2f2f2"}}  type='button' className='btn btn-primary me-3' onClick={showModal}>

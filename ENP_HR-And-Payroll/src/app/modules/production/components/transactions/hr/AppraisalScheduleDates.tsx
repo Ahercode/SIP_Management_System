@@ -246,10 +246,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         return item?.isActive?.trim() === "active"
     })
 
-
-    // console.log('allReviewdates: ', allReviewdates?.data)
-    // console.log('checkActive: ', checkActive)
-
     const changeStatus = handleSubmit(async (values) => {
         
         console.log('tempData: ', tempData)
@@ -272,7 +268,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }else{
             try {
                 axios.put(`${Api_Endpoint}/AppraisalReviewDates/${tempData?.id}`,data).then((res) => {
-                    // console.log('res: ', res)
                     message.success('Status changed successfully')
                     setIsStatusModalOpen(false)
                     queryClient.invalidateQueries('reviewDates')

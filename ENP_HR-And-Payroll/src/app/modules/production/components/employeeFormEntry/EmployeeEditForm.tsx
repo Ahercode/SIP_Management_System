@@ -292,6 +292,7 @@ const EmployeeEditForm = () => {
     formData.append('currentLevel', lineManger)
     formData.append('password', tempData.password)
     formData.append('username', tempData.username)
+    formData.append('status', tempData.status)
     formData.append('isAdmin', tempData.isAdmin)
     formData.append('imageFile', tempImage ? tempImage : "")
     formData.append('tenantId', tenantId)
@@ -421,7 +422,7 @@ const EmployeeEditForm = () => {
                   onChange={handleChangeId}
                   options={customOptions}/>
               </div>
-              <div className='col-4 mb-7'>
+              <div className='col-2 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
                 <select
                   {...register("maritalStatus")} name="maritalStatus"
@@ -432,7 +433,18 @@ const EmployeeEditForm = () => {
                   <option value="MARRIED">MARRIED</option>
                 </select>
               </div>
-
+              <div className='col-2 mb-7'>
+                <label className=" form-label">Employee Status</label>
+                <select 
+                {...register("status")} name="status"
+                value={tempData?.status?.trim()}
+                onChange={handleChange}
+                className="form-select form-select-solid" aria-label="Select example">
+                    <option value="select">Select status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Annual Basic Salary</label>
                 <input type="number" {...register("annualBaseSalary")}
@@ -441,10 +453,7 @@ const EmployeeEditForm = () => {
                   className="form-control form-control-solid" />
               </div>
             </div>
-
             <Divider />
-
-
             <div className='row mt-3'>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
@@ -474,8 +483,6 @@ const EmployeeEditForm = () => {
                 </select>
               </div>
             </div>
-
-
             <div className='row mt-3'>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Category</label>

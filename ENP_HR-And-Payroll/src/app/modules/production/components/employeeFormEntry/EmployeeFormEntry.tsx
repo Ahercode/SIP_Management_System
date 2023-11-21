@@ -1,6 +1,6 @@
 
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Button, Divider, Space, Tabs, TabsProps } from 'antd';
+import { Button, Divider, Space, Tabs, TabsProps, message } from 'antd';
 import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 import axios from 'axios';
 import { useState } from 'react';
@@ -100,6 +100,10 @@ const MultiTabForm = () => {
     }
 
   };
+  const handleChangeId = (selectedOption:any ) => {
+    setLineManagerId(selectedOption)
+    // setLineManagerId(selectedOption?.value)
+  };
 
   const clearImage = () => {
     setPreviewImage('');
@@ -130,7 +134,11 @@ const MultiTabForm = () => {
     formData.append('annualSalary', parseInt(values.annualSalary))
     formData.append('categoryId', parseInt(values.categoryId))
     formData.append('employmentDate', values.employmentDate)
-    formData.append('lineManagerId', lineManagerId)
+    formData.append('lineManagerId', lineManagerId?.value)
+    formData.append('password', values.firstName + "@omni")
+    formData.append('username', values.firstName)
+    formData.append('status', values.status)
+    formData.append('isAdmin', values.isAdmin)
     formData.append('jobRole', values.jobRole)
     formData.append('imageFile', tempImage)
     formData.append('tenantId', tenantId)
@@ -145,12 +153,13 @@ const MultiTabForm = () => {
     try {
       const response = await axios.post(url, formData, config)
       setSubmitLoading(false)
+      message.success('Employee created successfully')
       reset()
       navigate('/employee', { replace: true })
-
       return response.statusText
     } catch (error: any) {
       setSubmitLoading(false)
+      message.error('Error creating employee')
       return error.statusText
     }
   })
@@ -223,7 +232,7 @@ const MultiTabForm = () => {
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Date of Birth</label>
                 <input type="date" {...register("dob")} className="form-control form-control-solid" />
               </div>
-              <div className='col-4 mb-7'>
+              <div className='col-2 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
                 <select {...register("gender")} className="form-select form-select-solid" aria-label="Select example">
                   <option>select </option>
@@ -231,16 +240,27 @@ const MultiTabForm = () => {
                   <option value="FEMALE">FEMALE</option>
                 </select>
               </div>
+              <div className='col-2 mb-7'>
+                <label htmlFor="exampleFormControlInput1" className=" form-label">isAdmin</label>
+                <select
+                  {...register("isAdmin")} name="isAdmin"
+                  className="form-select form-select-solid">
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
             </div>
+            
             <div className='row mt-3'>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Line Manager</label>
                 <Select  
                   isSearchable
-                  // onChange={handleChangeId}
+                  value={lineManagerId}
+                  onChange={handleChangeId}
                   options={customOptions}/>
               </div>
-              <div className='col-4 mb-7'>
+              <div className='col-2 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
                 <select {...register("maritalStatus")} className="form-select form-select-solid" aria-label="Select example">
                   <option>select </option>
@@ -248,6 +268,14 @@ const MultiTabForm = () => {
                   <option value="MARRIED">MARRIED</option>
                 </select>
               </div>
+              <div className='col-2 mb-7'>
+                <label className=" form-label">Employee Status</label>
+                <select {...register("status")} name="status" className="form-select form-select-solid" aria-label="Select example">
+                    <option value="select">Select status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Annual Salary</label>
                 <input type="number" {...register("annualSalary")} className="form-control form-control-solid" />

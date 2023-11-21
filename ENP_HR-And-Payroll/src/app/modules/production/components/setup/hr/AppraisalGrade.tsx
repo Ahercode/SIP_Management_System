@@ -137,9 +137,9 @@ const AppraisalGrade = () => {
               <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
                 Update
               </a>
-              <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
+              {/* <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
                 Delete
-              </a>
+              </a> */}
     
             </Space>
           ),

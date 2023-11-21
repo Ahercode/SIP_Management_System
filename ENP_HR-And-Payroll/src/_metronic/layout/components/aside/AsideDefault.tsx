@@ -44,7 +44,7 @@ const AsideDefault: FC = () => {
               /> */}
               {/* <h3 style={{color: "#f2f2f2", fontWeight:"bold"}}>OMNI PMS</h3>
                */}
-               <h3 style={{color:"#f2f2f2"}}>SIP Consult</h3>
+               <h3 style={{color:"#f2f2f2"}}>OMNI PMS</h3>
           </Link>
         )}
         {aside.theme === 'light' && (

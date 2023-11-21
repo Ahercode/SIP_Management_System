@@ -154,6 +154,15 @@ export function AsideMenuMain() {
               <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
               <AsideMenuItem to='setup/unitOfMeasure' hasBullet={true} title='Units of Measure' />
             </AsideMenuItemWithSub>
+
+            <div className='menu-item'>
+              <div className='menu-content'>
+                <div className='separator  mx-1 my-4'></div>
+              </div>
+            </div>
+            <AsideMenuItemWithSub to='#' title='Admin' icon='/media/icons/duotune/art/art002.svg' hasBullet={false}>
+              <AsideMenuItem to='admin/references' hasBullet={true} title='References' />
+            </AsideMenuItemWithSub>
         </>
         :
         <>
@@ -167,11 +176,11 @@ export function AsideMenuMain() {
         </>
       }
       {/* <AsideMenuItem to='setup/administration/audit' hasBullet={true} title='Audits' /> */}
-      <div className='menu-item'>
+      {/* <div className='menu-item'>
         <div className='menu-content'>
           <div className='separator  mx-1 my-4'></div>
         </div>
-      </div>
+      </div> */}
 
       {/* Administration authorizations */}
       {

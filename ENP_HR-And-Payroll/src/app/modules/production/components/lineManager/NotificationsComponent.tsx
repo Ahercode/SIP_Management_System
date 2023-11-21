@@ -35,11 +35,12 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
 
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 10000 })
-    const { data: allAppraisalObjective } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 10000 })
-    const { data: appraisaldeliverable } = useQuery('appraisaldeliverable', () => fetchDocument(`appraisaldeliverable`), { cacheTime: 10000 })
     const { data: allOrganograms } = useQuery('organograms', () => fetchDocument(`organograms`), { cacheTime: 10000 })
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument(`Appraisals`), { cacheTime: 10000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+    const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
+    const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
+    const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
+    const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
 
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
@@ -48,6 +49,12 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
     })
+    const convertToArray = checkActive?.referenceId.split("-")
+    
+    const appraisalId = convertToArray?.[1]
+
+    const activeParameterName = allParameters?.data?.filter((section: any) => 
+         section.appraisalId?.toString() === appraisalId)
 
     const handleCommentModalCancel = () => {
         setCommentModalOpen(false)
@@ -95,6 +102,34 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         setTextareaHeight(`${textarea.style.height}`);
     };
 
+    const getOverallAchievement = (employeeId:any) => {
+        const overAllWeight = activeParameterName?.map((param: any) => {
+            const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
+            param?.id ===obj?.parameterId && 
+            obj?.employeeId === employeeId?.toString() && 
+            obj?.referenceId === checkActive?.referenceId)
+    
+            const objectiveWeights = objectivesInParameter?.map((objective:any) => {
+                const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
+                    (deliverable:any) => deliverable?.objectiveId === objective?.id
+                );
+    
+                const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
+                    const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
+    
+                    const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
+                            Math.round((actual?.actual/deliverable?.target)*100)
+                        return actualValue * (deliverable?.subWeight/100)
+    
+                }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
+                    const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
+                return  finalWeight * (objective?.weight/100)
+            })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
+            return parseFloat(objectiveWeights)
+        })
+        const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
+        return totalAchievement
+    }
 
     const handleCommentModalOk = () => {
         OnSubmit("rejected")
@@ -110,7 +145,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => (item.id) === record?.id)
-        const objectiveByEMployee = allAppraisalObjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
+        const objectiveByEMployee = allAppraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
         setEmployeeData(employee)
         setObjectivesData(objectiveByEMployee)
     }
@@ -189,7 +224,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     }, [ parameters?.data, employeeData, employeeWhoSubmitted])
 
     const getEmployeeStatus = ((employeeId:any)=> {
-           const allSubmittedObjectives = allAppraisalObjective?.data?.filter((item: any) => {
+           const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
                 return parseInt(item?.employeeId) === employeeId?.id && 
                 item?.referenceId === checkActive?.referenceId
            })
@@ -216,6 +251,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     const handleCancel = () => {
         setIsModalOpen(false)
     }
+    
 
     const columns: any = [
         {
@@ -225,10 +261,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         {
             title: 'Name',
             dataIndex: 'firstName',
-            // render: (record: any) => {
-                
-            //     return getEmployeeDetails(record?.id)
-            // }
         },
         {
             title: 'Approval Status',
@@ -238,6 +270,53 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                 return getEmployeeStatus(record)
                 // return <Tag color="error">Pending</Tag>
             }
+        },
+        {
+            title: 'Overall Achievement',
+            dataIndex: 'overallAchievement',
+            render: (_:any, record:any) => {
+                return getOverallAchievement(record?.id)
+            }
+        },
+        {
+            title:"Performance Rating",
+            render: (_:any, record:any) => {
+                const overallAchievement = getOverallAchievement(record?.id)
+                if(overallAchievement >= 90){
+                    return <Tag color="success">Excellent</Tag>
+                }
+                else if(overallAchievement >= 80 && overallAchievement < 90){
+                    return <Tag color="purple">Very Good</Tag>
+                }
+                else if(overallAchievement >= 70 && overallAchievement < 80){
+                    return <Tag color="purple">Good</Tag>
+                }
+                else if(overallAchievement >= 60 && overallAchievement < 70){
+                    return <Tag color="warning">Satisfactory</Tag>
+                }
+                else if(overallAchievement >= 50 && overallAchievement < 60){
+                    return <Tag color="warning">Unsatisfactory</Tag>
+                }
+                else if(overallAchievement < 50){
+                    return <Tag color="error">Poor</Tag>
+                }
+                else{
+                    return <Tag color="pink">Very Poor</Tag>
+                }
+            }
+            // const performanceRating = overallAchievement < 50 ? 
+            // <span className='badge fs-4 badge-light-danger fw-bolder'>Poor</span> :
+            // overallAchievement >= 50 && overallAchievement < 60 ? 
+            // <span className='badge fs-4 badge-light-warning fw-bolder'>Unsatisfactory</span> :
+            // overallAchievement >= 60 && overallAchievement < 70? 
+            // <span className='badge fs-4 badge-light-warning fw-bolder'>Satisfactory</span>:
+            // overallAchievement >= 70 && overallAchievement < 80 ? 
+            // <span className='badge fs-4 badge-light-info fw-bolder'>Good</span>:
+            // overallAchievement >= 80 && overallAchievement < 90 ?
+            // <span className='badge fs-4 badge-light-info fw-bolder'>Very Good</span>:
+            // overallAchievement >= 90 ?
+            // <span className='badge fs-4 badge-light-success fw-bolder'>Excellent</span>: 
+            //  "N/A"
         },
         {
             title: 'Action',
@@ -251,7 +330,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                     // getEmployeeStatus(record).props.children === "Submitted for Amendment"} 
                     onClick={() => showObjectivesView(record)}
                 >
-                    View Objectives
+                    View Detail
                </button>
                 // <a onClick={() => showObjectivesView(record)} className='btn btn-light-info btn-sm'>
                 //     View Objectives
@@ -324,6 +403,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                             Accept
                         </button>
                     </Space>:
+                    location==="View Details"? null:
                     
                     <Space className="mt-7">
                         <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>

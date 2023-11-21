@@ -40,6 +40,7 @@ const ActualPage = ( {
   const [isFocused, setIsFocused] = useState(false);
   const [isFocused1, setIsFocused1] = useState(false);
   const [isFocused2, setIsFocused2] = useState(false);
+  const currentLocation = window.location.pathname.split('/')[4]
 
   
   // const handleChange = (recordId:any, value:any, field:any) => {
@@ -51,6 +52,7 @@ const ActualPage = ( {
   //     }
   //   }));
   // }
+
   const handleChange = (deliverableId:any,  value:any, field:any) => {
 
     setActualValues((prevState:any) => {
@@ -78,22 +80,21 @@ const ActualPage = ( {
 
   const OnSubmit = ()=> {
     const dataArray = Object.keys(actualValues).map((recordId: any) => ({
-      test:recordId,
       actual: actualValues[recordId].actual===undefined? getOldActual(recordId): actualValues[recordId].actual,
       deliverableId: recordId,
       scheduleId: checkActive?.id,
+      employeeId: parseInt(currentUser?.id),
       individualComment: actualValues[recordId]?.individualComment===undefined? "": actualValues[recordId]?.individualComment,
       lineManagerComment: actualValues[recordId]?.lineManagerComment===undefined? "": actualValues[recordId]?.lineManagerComment,
       status: "drafted",
     }));
-
-    // console.log("dataArray:",dataArray)
 
     const itemToPost = {
       data: dataArray,
       url: `ApraisalActuals`,
     }
 
+    console.log("itemToPost:",itemToPost?.data)
     postData(itemToPost)
   }
 
@@ -128,7 +129,7 @@ const ActualPage = ( {
     {
       title: 'Deliverable',
       dataIndex: 'description',
-      width: 300,
+      // width: 300,
       render: (record: any) => {
         const pointsArray = record.trim()?.split(/\n(?=\d+\.|\u2022)/).filter(Boolean);
         return (
@@ -160,6 +161,7 @@ const ActualPage = ( {
     {
       title: 'Unit Of Measure',
       key: 'unitOfMeasureId',
+      width: 130,
       sorter: (a: any, b: any) => {
         if (a.unitOfMeasureId > b.unitOfMeasureId) {
           return 1
@@ -193,7 +195,7 @@ const ActualPage = ( {
       width: 160,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id 
+          return item?.deliverableId === record?.id && item?.employeeId === currentUser?.id
         })
         return (
           <>
@@ -219,7 +221,7 @@ const ActualPage = ( {
       width: 180,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id 
+          return item?.deliverableId === record?.id && item?.employeeId === currentUser?.id
         })
 
         const pointsArray = actual?.individualComment?.trim()?.split(/\n(?=\d+\.)/).filter(Boolean);
@@ -251,18 +253,17 @@ const ActualPage = ( {
         const actual = allApraisalActual?.data?.find((item: any) => {
           return item?.deliverableId === record?.id 
         })
-
         return (
           <>
-          
             {
               <textarea
-                disabled={title!=="final"? true : false}
+                disabled={title!=="final" && currentLocation==="appraisal-performance"? true : false}
                 rows={1}
                 defaultValue={actual?.lineManagerComment}
                 onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
                 onFocus={onFocus2}
                 onBlur={onBlur}
+                key={record?.id}
                 style={{
                   border: isFocused2 ? '1px solid green' : '1px solid #ccc'
                 }}

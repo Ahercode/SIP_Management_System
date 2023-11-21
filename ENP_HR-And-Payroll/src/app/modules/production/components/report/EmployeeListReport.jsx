@@ -10,10 +10,10 @@ import "../../../../../../node_modules/devextreme/dist/css/dx.light.css";
 
 
 const ReportViewer = () => {
-    const reportUrl = ko.observable(`EmployeeListReport`);
+    const reportUrl = ko.observable(`EmployeeDetailsReport`);
     const viewerRef = useRef();
     const requestOptions = {
-      host: "http://208.117.44.15/serverside/",
+      host: "http://109.169.12.107/reportsApp/",
       invokeAction: "DXXRDV"
     };
 

@@ -26,6 +26,7 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allAppraTranItems, isLoading:itemsLoading} = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
   const { data: allAppraisalsPerfTrans, isLoading:perLoading} = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 10000 })
+  
   const columns: any = [
 
     {
@@ -69,6 +70,19 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
         }
         return 0
       },
+    },
+    {
+      // title: 'Weight per parameter (%)',
+      dataIndex: 'weight',
+      key:"weight",
+      render: (text: any, record: any) => (
+        <>
+           <span style={{ fontSize:"16px"}} className={ 'badge badge-light-warning fw-bolder' }>
+            {record?.tag?.trim()?.toLocaleUpperCase()}
+          </span>
+        </>
+        
+        )
     },
     {
       title: 'Action',
@@ -270,8 +284,7 @@ const OnSubmit = handleSubmit(async (values) => {
           </p>:
           <div className='table-responsive'>
             <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
-              <div >
-                
+              <div >                
                 <p className='text-primary fs-2 fw-bold mb-4'>
                   {
                     appraisalData?.name===undefined? "You will be notified when appraisal has started":`${appraisalData?.name}`

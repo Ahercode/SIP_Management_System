@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Skeleton, Space, Table, message } from 'antd'
+import { Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
@@ -6,7 +6,6 @@ import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
 import { ImageBaseUrl, deleteItem, fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName } from '../ComponentsFactory'
 import { EmplyeeDetails } from '../employeeFormEntry/EmployeeDetails'
-
 
 const Employee = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -20,6 +19,8 @@ const Employee = () => {
   const { data: allJobTitles } = useQuery('jobtitles', () => fetchDocument(`JobTitles/tenant/${tenantId}`), { cacheTime: 10000 })
   const [employeeData, setEmployeeData] = useState<any>({})
   const [beforeSearch, setBeforeSearch] = useState([])
+  const [departmentSelected, setDepartmentSelected] = useState<any>("all") 
+  const [statusSelected, setStatusSelected] = useState<any>("active") 
 
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)
 
@@ -32,31 +33,48 @@ const Employee = () => {
     setDetailsModalOpen(false)
   }
 
-  const { mutate: deleteData } = useMutation(deleteItem, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('employees')
-    },
-    onError: (error) => {
-      console.log('delete error: ', error)
-      message.error('Error deleting employee')
-    }
+  const empByDepartment = allEmployee?.data?.filter((item: any) => {
+    return item.departmentId === parseInt(departmentSelected)
   })
 
-  function handleDelete(element: any) {
-    const item = {
-      url: 'employees',
-      data: element
-    }
-    deleteData(item)
-  }
+  const empByDepartmentAndStatus = allEmployee?.data?.filter((item: any) => {
+    return item.departmentId === parseInt(departmentSelected) && item.status === statusSelected
+  })
 
+  const empByStatus = allEmployee?.data?.filter((item: any) => {
+    return item.status === statusSelected
+  })
+
+  console.log("allEmployee?.data: ", allEmployee?.data)
+
+  // const empByDepartment = allEmployee?.data?.filter((item: any) => {
+  //   return item.departmentId === parseInt(departmentSelected) && item.status === statusSelected
+  // })
+
+  // const { mutate: deleteData } = useMutation(deleteItem, {
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries('employees')
+  //   },
+  //   onError: (error) => {
+  //     console.log('delete error: ', error)
+  //     message.error('Error deleting employee')
+  //   }
+  // })
+
+  // function handleDelete(element: any) {
+  //   const item = {
+  //     url: 'employees',
+  //     data: element
+  //   }
+  //   deleteData(item)
+  // }
 
   const columns: any = [
     {
       title: 'Profile',
       key: 'imageUrl',
       fixed: 'left',
-      width: 270,
+      width: 260,
       render: (row: any) => {
         return (
           <EmployeeProfile employee={row} />
@@ -146,11 +164,31 @@ const Employee = () => {
         return 0
       },
     },
-
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (row: any) => {
+        return (
+              row === 'active' ?
+              <span className='badge badge-light-success text-capitalize'>{row}</span> :
+              <span className='badge badge-light-danger text-capitalize'>{row}</span>
+        )
+      },
+      sorter: (a: any, b: any) => {
+        if (a.status > b.status) {
+          return 1
+        }
+        if (b.status > a.status) {
+          return -1
+        }
+        return 0
+      },
+    },
     {
       title: 'Action',
       fixed: 'right',
-      width: 270,
+      width: 180,
       render: (_: any, record: any) => (
         <Space size='middle'>
           <a className='btn btn-light-success btn-sm' onClick={() => showDetailsModal(record)}>
@@ -159,20 +197,20 @@ const Employee = () => {
           <Link to={`/employee-edit-form/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Update</span>
           </Link>
-          <a className='btn btn-light-danger btn-sm' onClick={() => handleDelete(record)}>
-            Delete
-          </a>
         </Space>
       ),
 
     },
   ]
 
-
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = allEmployee?.data
+      const response = departmentSelected === "all" && statusSelected==="all" ? 
+      allEmployee?.data : 
+      statusSelected==="all" ? empByDepartment : departmentSelected==="all" ? empByStatus :
+      empByDepartmentAndStatus 
+      
       setGridData(response)
       setLoading(false)
     } catch (error) {
@@ -185,15 +223,18 @@ const Employee = () => {
     key: index,
   }))
 
-
-
   useEffect(() => {
     loadData()
-    setBeforeSearch(allEmployee?.data)
-  }, [allEmployee?.data])
+    setBeforeSearch(
+      departmentSelected === "all" && statusSelected==="all" ? 
+      allEmployee?.data : 
+      statusSelected==="all" ? empByDepartment : departmentSelected==="all" ? empByStatus :
+      empByDepartmentAndStatus 
+     )
+  }, [allEmployee?.data, departmentSelected, statusSelected])
 
   const globalSearch = (searchValue: string) => {
-    const searchResult = allEmployee?.data?.filter((item: any) => {
+    const searchResult = gridData?.filter((item: any) => {
       return (
         Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
       )
@@ -227,6 +268,23 @@ const Employee = () => {
               allowClear
               size='large'
             />
+            <div className='mb-7'>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Department</label>
+              <select value={departmentSelected} onChange={(e:any)=>setDepartmentSelected(e.target.value)} className="form-select form-select-solid">
+                <option value="all">All</option>
+                {allDepartments?.data.map((item: any) => (
+                  <option value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className='mb-7'>
+              <label htmlFor="exampleFormControlInput1" className=" form-label">Status</label>
+              <select value={statusSelected} onChange={(e:any)=>setStatusSelected(e.target.value)} className="form-select form-select-solid">
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
           </Space>
           <div className="card-toolbar">
             <Space style={{ marginBottom: 16 }}>
@@ -241,17 +299,15 @@ const Employee = () => {
         </div>
       </div>
 
-      <KTCardBody className='py-1 '>
-        <div  className='table-responsive'>
+      <KTCardBody className='py-1'>
+
           {
             loading ? <Skeleton active /> :
               <Table columns={columns} 
               dataSource={gridData}
-              sticky={true}
-              scroll={{ x: 1300, y: `calc(100vh - 250px)` }} 
-              />
+              scroll={{ y: `calc(100vh - 250px)` }}
+            />
           }
-        </div>
       </KTCardBody>
       <Modal
         open={detailsModalOpen}
@@ -279,8 +335,18 @@ const EmployeeProfile = (employee: any) => {
         <div className='col px-4 align-items-center align-content-center'>
           <div className='text-dark fw-bold fs-4'>{`${employee?.employee?.firstName} ${employee?.employee?.surname}`}</div>
           <div className='badge badge-light-primary'>
-            <span>{employee?.employee?.employeeId}</span>
+            <span>{employee?.employee?.employeeId} </span>
           </div>
+          {/* <div style={{margin: "0 5px"}} className="bullet"></div>
+          {
+            employee?.employee?.status === 'active' ?
+            <div className='badge badge-light-success text-capitalize'>
+              <span>{employee?.employee?.status}</span>
+            </div> :
+            <div className='badge badge-light-danger text-capitalize'>
+              <span>{employee?.employee?.status}</span>
+            </div>
+          } */}
         </div>
       </div>
     </>

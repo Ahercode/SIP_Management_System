@@ -6,20 +6,21 @@ import { ArrowLeftOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom";
 import { ErrorBoundary } from "@ant-design/pro-components"
 import { Button, message } from "antd"
-import { useEffect, useState } from "react"
-import { data } from "jquery"
+import { useEffect } from "react"
 import axios from "axios"
 
 
 const ActualMasterPage = ({title, employeeId}:any) => {
     const { currentUser } = useAuth()
     const navigate = useNavigate();
-    // const [paramTotal, setParamTotal] = useState<any>(0)
     const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
     const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
     const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+
+    // const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
+    const sameParameter = allParameters?.data?.find((item: any) => item?.tag?.trim() === "same")
 
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
@@ -43,11 +44,11 @@ const ActualMasterPage = ({title, employeeId}:any) => {
 
     const parameterIdSet = new Set(activeParameters);
 
-    const objectivesData = allAppraisalobjective?.data.filter((deliverable:any) =>
-        parameterIdSet.has(deliverable.parameterId) && 
-        deliverable?.employeeId === employeeId?.toString() && 
-        deliverable?.referenceId === checkActive?.referenceId
-  );
+    const objectivesData = allAppraisalobjective?.data.filter((obj:any) =>
+        (parameterIdSet.has(obj.parameterId) && 
+        obj?.employeeId === employeeId?.toString() && 
+        obj?.referenceId === checkActive?.referenceId) || sameParameter?.id === obj?.parameterId
+    );
 
   const objectiveWeights = objectivesData?.map((objective:any) => {
 

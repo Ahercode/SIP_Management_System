@@ -20,7 +20,7 @@ const Topbar: FC = () => {
     <div className='d-flex align-items-stretch flex-shrink-0'>
       <div style={{paddingRight: "30px"}} className='d-flex align-items-center fs-5'>
           {/* Company:  */}
-          {/* <img style={{width: "120px"}} src={toAbsoluteUrl('/media/logos/OmniGroupLogo.png')} alt='Omni Group Logo' />  */}
+          <img style={{width: "120px"}} src={toAbsoluteUrl('/media/logos/OmniGroupLogo.png')} alt='Omni Group Logo' /> 
           {/* <strong style={{borderRight:"1px solid grey", paddingLeft: "8px",paddingRight:"25px"}}>{ tenantId?.toLocaleUpperCase()}</strong> */}
       </div>
       

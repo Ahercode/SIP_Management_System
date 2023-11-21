@@ -39,7 +39,7 @@ const PerformanceBoard = () => {
 
     const allSubmittedApprovedRejectedObjectives = employeeObjectives?.data?.filter((item: any) => {
         return (item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected") && 
-        item?.reviewDateId === checkActive?.id?.toString()
+        item?.referenceId === checkActive?.referenceId?.toString()
 
     })
 
@@ -106,9 +106,10 @@ const PerformanceBoard = () => {
             children: (
                 <>
                     <NotificationsComponent 
-                    loading={objectivesLoading} 
-                    employeeWhoSubmitted={employeesWithSubmittedApprovedRejectedObjectives} 
-                    location="View Details"/>
+                        loading={objectivesLoading} 
+                        employeeWhoSubmitted={employeesWithSubmittedApprovedRejectedObjectives} 
+                        location="View Details"
+                    />
                 </>
             ),
         },
@@ -122,9 +123,6 @@ const PerformanceBoard = () => {
             ),
         },
     ]
-
-
-    console.log("reference", reference)
     
     if(reference === null){ 
         tabItems.splice(3,1)

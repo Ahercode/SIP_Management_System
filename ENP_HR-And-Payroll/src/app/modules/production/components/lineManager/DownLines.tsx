@@ -15,6 +15,9 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 10000 })
     const { data: parameters } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 10000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+    const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
+    const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
+    const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const [employeeData, setEmployeeData] = useState<any>({})
@@ -31,6 +34,11 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     const convertToArray = checkActive?.referenceId.split("-")
 
     const appraisalId = convertToArray?.[1]
+    const activeParameterName = parameters?.data?.filter((item: any) => {
+        return item?.appraisalId?.toString() === appraisalId
+      }
+    )
+
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
@@ -65,7 +73,36 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         else{
             return <Tag color="pink">Not Started</Tag>;
         }
- })
+    })
+
+ const getOverallAchievement = (employeeId:any) => {
+    const overAllWeight = activeParameterName?.map((param: any) => {
+        const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
+        param?.id ===obj?.parameterId && 
+        obj?.employeeId === employeeId?.toString() && 
+        obj?.referenceId === checkActive?.referenceId)
+
+        const objectiveWeights = objectivesInParameter?.map((objective:any) => {
+            const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
+                (deliverable:any) => deliverable?.objectiveId === objective?.id
+            );
+
+            const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
+                const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
+
+                const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
+                        Math.round((actual?.actual/deliverable?.target)*100)
+                    return actualValue * (deliverable?.subWeight/100)
+
+            }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
+                const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
+            return  finalWeight * (objective?.weight/100)
+        })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
+        return parseFloat(objectiveWeights)
+    })
+    const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
+    return totalAchievement
+}
 
 
 
@@ -113,6 +150,38 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                 return getEmployeeStatus(record)
             }
         },
+        {
+            title: 'Overall Achievement',
+            dataIndex: 'employeeId',
+            render: (_:any, record:any) => {
+                return getOverallAchievement(record?.id)
+            }
+        },
+        {
+            title: "Performance Rating",
+            render: (_:any, record:any) => {
+                const overallAchievement = getOverallAchievement(record?.id)
+                if(overallAchievement >= 90){
+                    return <Tag color="success">Excellent</Tag>
+                }
+                else if(overallAchievement >= 70 && overallAchievement < 90){
+                    return <Tag color="warning">Good</Tag>
+                }
+                else if(overallAchievement >= 50 && overallAchievement < 70){
+                    return <Tag color="warning">Fair</Tag>
+                }
+                else if(overallAchievement >= 30 && overallAchievement < 50){
+                    return <Tag color="error">Poor</Tag>
+                }
+                else if(overallAchievement >= 0 && overallAchievement < 30){
+                    return <Tag color="error">Very Poor</Tag>
+                }
+                else{
+                    return <Tag color="pink">Not Started</Tag>
+                }
+            }
+        }
+
         // {
         //     title: 'Action',
         //     fixed: 'right',
@@ -141,13 +210,10 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
 
     }, [])
 
-    const getOnlyparameters = parameters?.data?.filter((item: any) => {
-        return item?.appraisalId?.toString() === appraisalId
-      }
-    )
+   
 
     const OnSubmit =(statusText:any)  => {
-        const parameterIds = getOnlyparameters?.map((item: any) => {
+        const parameterIds = activeParameterName?.map((item: any) => {
           return item.id
         })
         const data ={

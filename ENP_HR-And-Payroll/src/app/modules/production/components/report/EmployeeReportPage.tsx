@@ -1,6 +1,8 @@
 import { Tabs, TabsProps } from 'antd'
 import { ReportCard } from './ReportCardItem'
 import { EmployeeDetailReport } from '../../../../pages/dashboard/charts/HRNewDashBoard'
+import { SharedReportViewer } from './common/SharedReportViewer'
+import EmployeeListReport from './EmployeeListReport'
 
 const EmployeeReportPage = () => {
 
@@ -12,7 +14,7 @@ const EmployeeReportPage = () => {
         </>,
         children: (
             <>
-               <EmployeeDetailReport/>
+               <EmployeeListReport/>
             </>
         ),
     },
@@ -23,7 +25,8 @@ const EmployeeReportPage = () => {
         </>,
         children: (
             <>
-                <EmployeeDetailReport/>
+
+                <EmployeeListReport/>
             </>
         ),
     },

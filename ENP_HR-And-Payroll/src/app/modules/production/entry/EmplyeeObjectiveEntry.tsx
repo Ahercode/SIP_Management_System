@@ -26,6 +26,7 @@ const EmployeeObjectiveEntry = () => {
 
   const { data: appraisalobjectives, isLoading: loading } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+  const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
 
 
 
@@ -33,7 +34,7 @@ const EmployeeObjectiveEntry = () => {
     return item?.isActive?.trim() === "active"
   })
 
-  const { data: parameterData } = useQuery('parameters', () => fetchDocument(`parameters`), { cacheTime: 5000 })
+  const sameParameter = allParameters?.data?.find((item: any) => item?.tag?.trim() === "same")
 
   const tenantId = localStorage.getItem('tenant')
 
@@ -120,7 +121,7 @@ const EmployeeObjectiveEntry = () => {
           </Link>
           {
             // record?.status === "submitted"|| record?.status === "approved" ? " ": 
-            checkActive?.tag?.trim()==="final"?"":
+            checkActive?.tag?.trim()==="final" || param?.parameterId === sameParameter?.id?.toString() ?"":
             <>
               <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
                 Update
@@ -136,14 +137,28 @@ const EmployeeObjectiveEntry = () => {
     },
   ]
 
+  // remove a column if param is equall to sameParameter
+  // if (param?.parameterId === sameParameter?.id?.toString()) {
+  //   columns.splice(2, 1)
+  // }
+
   const loadData = async () => {
-    try {
-      setGridData(appraisalobjectives?.data?.filter((item: any) => 
-        item?.parameterId.toString() === param?.parameterId && 
+
+
+   const perEmployee = appraisalobjectives?.data?.filter((item: any) => 
+        (item?.parameterId.toString() === param?.parameterId && 
         item?.employeeId === currentUser?.id &&
-        item?.referenceId === checkActive?.referenceId
-      ))
-      setPathData(getItemData(param?.parameterId, parameterData?.data))
+        item?.referenceId === checkActive?.referenceId)
+      )
+
+      const sameForAll = appraisalobjectives?.data?.filter((item: any) => 
+        item?.parameterId?.toString() === param?.parameterId
+    )
+
+    try {
+
+      setGridData(param?.parameterId === sameParameter?.id?.toString() ? sameForAll : perEmployee)
+      setPathData(getItemData(param?.parameterId, allParameters?.data))
     } catch (error) {
       console.log(error)
     }
@@ -151,7 +166,7 @@ const EmployeeObjectiveEntry = () => {
 
   useEffect(() => {
     loadData()
-  }, [appraisalobjectives?.data, parameterData?.data, param?.parameterId])
+  }, [appraisalobjectives?.data, allParameters?.data, param?.parameterId])
 
   const getItemData = (fieldProp: any, data: any) => {
     const item = data?.find((item: any) =>
@@ -338,21 +353,11 @@ const EmployeeObjectiveEntry = () => {
                 <span className="fw-bold d-block fs-2">{`${pathData?.name}`}</span>
                   <div className="bullet bg-danger ms-4"></div>
                 <span className=' fs-2 ms-4 fw-bold'>{`${pathData?.weight}%`}</span>
-              </div>
-              {/* {
-                parameterData?.data?.map((item: any) => (
-                  <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
-                    <span className="fw-bold d-block fs-2">{`${item?.name}`}</span>
-                    <div className="bullet bg-danger ms-4"></div>
-                    <span className=' fs-2 ms-4 fw-bold'>{`${item?.weight}%`}</span>
-                  </div>
-                ))
-              } */}
-              
+              </div>              
             </Space>
             <Space style={{ marginBottom: 16 }}>
             {
-              checkActive?.tag?.trim()==="final"?"":
+              checkActive?.tag?.trim()==="final"|| param?.parameterId === sameParameter?.id?.toString()?"":
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add

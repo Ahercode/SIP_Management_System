@@ -39,7 +39,7 @@ export function HeaderWrapper() {
         {!aside.display && (
           <div className='d-flex align-items-center flex-grow-1 flex-lg-grow-0'>
             <Link to='/dashboard' className='d-lg-none'>
-              <h3 style={{color:"#009EF7"}}>SIP Consult</h3>
+              <h3 style={{color:"#009EF7"}}>OMNI PMS</h3>
               {/* <h3 style={{color:"#009EF7"}}>OMNI PMS</h3> */}
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}
@@ -54,7 +54,7 @@ export function HeaderWrapper() {
             <Link to='/' className='d-lg-none'>
 
             {/* <h3 style={{color:"#009EF7"}}>OMNI PMS</h3> */}
-            <h3 style={{color:"#009EF7"}}>SIP Consult</h3>
+            <h3 style={{color:"#009EF7"}}>OMNI PMS</h3>
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}
 
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}

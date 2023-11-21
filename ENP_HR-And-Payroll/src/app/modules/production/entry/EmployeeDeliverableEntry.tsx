@@ -28,19 +28,22 @@ const EmployeeDeliverableEntry = () => {
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 5000 })
   const queryClient = useQueryClient()
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
-
+  const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
 
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
     return item?.isActive?.trim() === "active"
   })
 
+  const sameObjective = appraisalobjectives?.data?.filter((item: any) => item?.tag?.trim() === "same" && item?.id.toString() === param.objectiveId)
 
+  console.log('sameObjective: ', sameObjective)
   const tenantId = localStorage.getItem('tenant')
   const showModal = () => {
     setIsModalOpen(true)
   }
 
+ 
 
   const handleCancel = () => {
     reset()
@@ -78,6 +81,15 @@ const EmployeeDeliverableEntry = () => {
     {
       title: 'Objective',
       dataIndex: 'name',
+      render: (record: any) => {
+        return (
+          <>
+            <span className=''>
+              {record}
+            </span>
+          </>
+        )
+      },
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
           return 1
@@ -91,6 +103,16 @@ const EmployeeDeliverableEntry = () => {
     {
       title: 'Deliverable',
       dataIndex: 'description',
+      render: (record: any) => {
+        const pointsArray = record.split(/\n• /)
+        return (
+          <ul>
+            {pointsArray.map((point: any) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        )
+        },
       sorter: (a: any, b: any) => {
         if (a.description > b.description) {
           return 1
@@ -148,7 +170,6 @@ const EmployeeDeliverableEntry = () => {
       fixed: 'right',
       width: 100,
       render: (record: any) => (
-        // record?.status === "submitted"|| record?.status === "approved"? "": 
         checkActive?.tag?.trim()==="final"?"":
         <Space size='middle'>
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
@@ -160,7 +181,11 @@ const EmployeeDeliverableEntry = () => {
         </Space>
       ),
     },
-  ]
+  ] 
+
+  if (sameObjective?.length>0) {
+    columns.splice(5, 1)
+  }
 
   const showUpdateModal = (values: any) => {
     setIsUpdateModalOpen(true)
@@ -182,8 +207,6 @@ const EmployeeDeliverableEntry = () => {
   useEffect(() => {
     loadData()
   }, [allObjectiveDeliverables?.data])
-  // }, [allObjectiveDeliverables?.data])
-
 
   const getItemData = (fieldProp: any, data: any) => {
     const item = data?.find((item: any) =>
@@ -364,7 +387,7 @@ const EmployeeDeliverableEntry = () => {
             </Space>
             <Space style={{ marginBottom: 16 }}>
               {
-                checkActive?.tag?.trim()==="final"?"":
+                checkActive?.tag?.trim()==="final"||sameObjective?.length>0?"":
                 <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                   <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                   Add
@@ -413,9 +436,9 @@ const EmployeeDeliverableEntry = () => {
                 </div>
                 <div className='col-8 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Deliverable</label>
-                  <input
+                  <textarea
                     {...register("description")}
-                    type='text'
+                    // type='text'
                     defaultValue={isUpdateModalOpen === true ? tempData.description : null}
                     onChange={handleChange}
                     className="form-control form-control-solid" />

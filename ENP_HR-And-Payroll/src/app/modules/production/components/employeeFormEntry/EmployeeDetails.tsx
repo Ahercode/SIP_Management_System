@@ -7,39 +7,16 @@ import { useQuery } from 'react-query';
 import { getFieldName } from '../ComponentsFactory';
 
 const EmplyeeDetails = ({employeeData}: any) => {
-  // const param: any = useParams();
-  // const [tempData, setTempData] = useState<any>()
-  // const [graName, setGraName] = useState<any>()
-  // const [depName, setDepName] = useState<any>()
-  // const [divName, setDivName] = useState<any>()
-  // const [jobTName, setJobTName] = useState<any>()
-  // const [uniName, setUniName] = useState<any>()
-  // const [paygName, setPaygName] = useState<any>()
-  // const [catName, setCatName] = useState<any>()
-  // const [notchName, setNotchName] = useState<any>()
-  // const [nation, setNation] = useState<any>()
-  // const tenantId = localStorage.getItem('tenant')
-  // const [tempImage, setTempImage] = useState<any>();
-
-  // const onFileChange = (e: any) => {
-  //   // Update the state
-  //   setTempImage(e.target.files[0]);
-
-  // };
-
 
   const { data: allEmployees } = useQuery('employees', () => fetchDocument('employees'), { cacheTime: 5000 })
   const { data: allDepartments } = useQuery('departments', () => fetchDocument('departments'), { cacheTime: 5000 })
-  // const { data: allDivisions } = useQuery('divisions', () => fetchDocument('divisions'), { cacheTime: 5000 })
   const { data: allCategories } = useQuery('categories', () => fetchDocument('categories'), { cacheTime: 5000 })
   const { data: alPaygroups } = useQuery('paygroups', () => fetchDocument('paygroups'), { cacheTime: 5000 })
   const { data: allJobTitles } = useQuery('jobtitle', () => fetchDocument('jobtitles'), { cacheTime: 5000 })
   const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
   const category = getFieldName(employeeData?.categoryId, allCategories?.data)
   const jobTitle = getFieldName(employeeData?.jobTitleId, allJobTitles?.data)
-  // const division = getFieldName(employeeData?.divisionId, allDivisions?.data)
   const employeeGroup = getFieldName(employeeData?.paygroupId, alPaygroups?.data)
-  // const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
 
   const tabItems: TabsProps['items'] = [
     {
