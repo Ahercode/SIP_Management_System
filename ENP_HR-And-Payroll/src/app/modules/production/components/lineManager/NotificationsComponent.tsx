@@ -428,7 +428,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                         checkActive?.tag?.trim() === "actual" ||
                         checkActive?.tag?.trim() === "final" ? 
 
-                        <ActualMasterPage title="final" employeeId={employeeData?.id} />:
+                        <ActualMasterPage title="hr" employeeId={employeeData?.id} />:
 
                         <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
                     }

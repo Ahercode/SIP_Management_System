@@ -164,20 +164,23 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                 if(overallAchievement >= 90){
                     return <Tag color="success">Excellent</Tag>
                 }
-                else if(overallAchievement >= 70 && overallAchievement < 90){
-                    return <Tag color="warning">Good</Tag>
+                else if(overallAchievement >= 80 && overallAchievement < 90){
+                    return <Tag color="purple">Very Good</Tag>
                 }
-                else if(overallAchievement >= 50 && overallAchievement < 70){
-                    return <Tag color="warning">Fair</Tag>
+                else if(overallAchievement >= 70 && overallAchievement < 80){
+                    return <Tag color="purple">Good</Tag>
                 }
-                else if(overallAchievement >= 30 && overallAchievement < 50){
+                else if(overallAchievement >= 60 && overallAchievement < 70){
+                    return <Tag color="warning">Satisfactory</Tag>
+                }
+                else if(overallAchievement >= 50 && overallAchievement < 60){
+                    return <Tag color="warning">Unsatisfactory</Tag>
+                }
+                else if(overallAchievement < 50){
                     return <Tag color="error">Poor</Tag>
                 }
-                else if(overallAchievement >= 0 && overallAchievement < 30){
-                    return <Tag color="error">Very Poor</Tag>
-                }
                 else{
-                    return <Tag color="pink">Not Started</Tag>
+                    return <Tag color="pink">Very Poor</Tag>
                 }
             }
         }

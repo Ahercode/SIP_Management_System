@@ -1,5 +1,5 @@
 import { Modal, Skeleton, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { fetchDocument, postItem, } from '../../../services/ApiCalls'
 import { getFieldName } from '../components/ComponentsFactory'
@@ -15,6 +15,7 @@ const ActualPage = ( {
   objectiveName, 
   objectiveWeight, 
   objectiveId,
+  employeeId,
   // getParamTotal,
   title
 }:any) => {
@@ -36,6 +37,14 @@ const ActualPage = ( {
   const checkActive = allReviewdates?.data?.find((item: any) => {
       return item?.isActive?.trim() === "active"
   })
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setSelectedFile(file);
+    }
+  };
 
   const [actualValues, setActualValues] = useState<any>();
   const [isFocused, setIsFocused] = useState(false);
@@ -43,7 +52,8 @@ const ActualPage = ( {
   const [isFocused2, setIsFocused2] = useState(false);
   const currentLocation = window.location.pathname.split('/')[4]
 
-  const handleFianlComment = () => {
+  const handleFianlComment = (record:any) => {
+    console.log("record:",record)
     setFinalCommentModal(true)
   }
 
@@ -119,6 +129,27 @@ const ActualPage = ( {
     }
   })
 
+  const handleUpload = () => {
+    // Handle file upload logic here (e.g., send file to a server)
+    if (selectedFile) {
+      // Example: You can use fetch or any library to handle file upload
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      // Example: Replace with your API endpoint
+      fetch('your-upload-endpoint', {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => {
+          // Handle response
+        })
+        .catch((error) => {
+          // Handle error
+        });
+    }
+  };
+
   const columns: any = [
     {
       title: 'Deliverable',
@@ -189,7 +220,7 @@ const ActualPage = ( {
       width: 160,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id && item?.employeeId?.toString() === currentUser?.id
+          return item?.deliverableId === record?.id && item?.employeeId?.toString() === employeeId
         })
         return (
           <>
@@ -215,7 +246,7 @@ const ActualPage = ( {
       width: 180,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id && item?.employeeId?.toString() === currentUser?.id
+          return item?.deliverableId === record?.id && item?.employeeId?.toString() === employeeId
         })
 
         const pointsArray = actual?.individualComment?.trim()?.split(/\n(?=\d+\.)/).filter(Boolean);
@@ -240,7 +271,7 @@ const ActualPage = ( {
       }
     },
     {
-      title:"LineManager Comment",
+      title:"LineManager Comments",
       fixed: 'right',
       width: 180,
       render: (record: any) => {
@@ -265,11 +296,36 @@ const ActualPage = ( {
             } */}
 
             <button
-                  onClick={handleFianlComment}
+                  onClick={()=>handleFianlComment(record)}
                   className='btn btn-light-info me-8'
                 >
                   comments
                 </button>
+          </>
+        )
+      }
+    },
+    {
+      title:"Supporting File",
+      width: 180,
+      fixed: 'right',
+      render: (record: any) => {
+        return (
+
+          <>
+          {/* <input type="file" onChange={handleFileChange} />
+          <button onClick={handleUpload}>Upload</button> */}
+
+            <label htmlFor="fileInput" className="btn btn-light-info btn-sm">
+              Choose File
+            </label>
+            <input
+              type="file"
+              id="fileInput"
+              className="visually-hidden"
+              onChange={handleFileChange}
+            />
+            {/* <input className='btn btn-light-info me-8' type="file" /> */}
           </>
         )
       }
@@ -281,7 +337,7 @@ const ActualPage = ( {
       width: 100,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id && item?.employeeId?.toString() === currentUser?.id
+          return item?.deliverableId === record?.id && item?.employeeId?.toString() === employeeId
         })
         return (
           <>
@@ -299,12 +355,6 @@ const ActualPage = ( {
   if(checkActive?.tag?.trim() !== "final"){
     columns.splice(5, 2)
   }
-
-  const employObj = appraisalobjectives?.data?.filter((item: any) => 
-    item?.employeeId?.toString() === currentUser?.id && item?.referenceId === checkActive?.referenceId
-    ).map((item: any) => item?.id)
-
-  const objectiveIdSet = new Set(employObj);
 
   const filteredDeliverables = allObjectiveDeliverables?.data.filter((deliverable:any) =>
       parseInt(deliverable.objectiveId) === objectiveId
@@ -336,7 +386,7 @@ const ActualPage = ( {
                   (() => {
                     const total = filteredDeliverables?.map((deliverableId: any) => {
                       const actual = allApraisalActual?.data?.find((item: any) => {
-                        return item?.deliverableId === deliverableId?.id && item?.employeeId?.toString() === currentUser?.id
+                        return item?.deliverableId === deliverableId?.id && item?.employeeId?.toString() === employeeId
                       })
                       const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                         Math.round((actual?.actual/deliverableId?.target)*100)
@@ -399,14 +449,6 @@ const ActualPage = ( {
                         <textarea
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
-                          // defaultValue={actual?.lineManagerComment}
-                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
-                          onFocus={onFocus2}
-                          onBlur={onBlur}
-                          // key={record?.id}
-                          style={{
-                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
-                          }}
                           className="form-control " />
                     </div>
                     <div className='mb-7'>
@@ -414,14 +456,6 @@ const ActualPage = ( {
                         <textarea
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
-                          // defaultValue={actual?.lineManagerComment}
-                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
-                          onFocus={onFocus2}
-                          onBlur={onBlur}
-                          // key={record?.id}
-                          style={{
-                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
-                          }}
                           className="form-control " />
                     </div>
                     <div className='mb-7'>
@@ -429,14 +463,7 @@ const ActualPage = ( {
                         <textarea
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
-                          // defaultValue={actual?.lineManagerComment}
-                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
-                          onFocus={onFocus2}
-                          onBlur={onBlur}
-                          // key={record?.id}
-                          style={{
-                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
-                          }}
+                          
                           className="form-control " />
                     </div>
                     <div className='mb-7'>
@@ -444,14 +471,6 @@ const ActualPage = ( {
                         <textarea
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
-                          // defaultValue={actual?.lineManagerComment}
-                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
-                          onFocus={onFocus2}
-                          onBlur={onBlur}
-                          // key={record?.id}
-                          style={{
-                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
-                          }}
                           className="form-control " />
                     </div>
                     <div className='mb-7'>
@@ -459,14 +478,6 @@ const ActualPage = ( {
                         <textarea
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
-                          // defaultValue={actual?.lineManagerComment}
-                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
-                          onFocus={onFocus2}
-                          onBlur={onBlur}
-                          // key={record?.id}
-                          style={{
-                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
-                          }}
                           className="form-control " />
                     </div>
                  </form>

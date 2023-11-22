@@ -26,12 +26,16 @@ const ActualMasterPage = ({title, employeeId}:any) => {
         return item?.isActive?.trim() === "active"
     })
 
-    if(title === "final"|| title === "hr"){
+    console.log("title", title)
+    
+    if(title === "hr"){
         employeeId = employeeId
     }else{
-        employeeId = currentUser?.id
+        employeeId = (currentUser?.id)
     }
-    
+
+    console.log("employeeId", employeeId)
+
     const convertToArray = checkActive?.referenceId.split("-")
     
     const appraisalId = convertToArray?.[1]
@@ -81,7 +85,7 @@ const actualIds = objectiveWeights?.flat();
     
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
                     const actual = allApraisalActual?.data?.find((actual:any) => 
-                    actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId)
+                    actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString())
     
                     const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                             Math.round((actual?.actual/deliverable?.target)*100)
@@ -101,9 +105,7 @@ const actualIds = objectiveWeights?.flat();
             const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
             parameterId ===obj?.parameterId && 
             obj?.employeeId === employeeId?.toString() && 
-            obj?.referenceId === checkActive?.referenceId)
-            // console.log("objectivesInParameter", objectivesInParameter)
-    
+            obj?.referenceId === checkActive?.referenceId)    
             const objectiveWeights = objectivesInParameter?.map((objective:any) => {
                 const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
                   (deliverable:any) => deliverable?.objectiveId === objective?.id
@@ -111,7 +113,7 @@ const actualIds = objectiveWeights?.flat();
     
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
                     const actual = allApraisalActual?.data?.find((actual:any) => 
-                        actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId)
+                        actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString())
     
                     const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                             Math.round((actual?.actual/deliverable?.target)*100)
@@ -125,7 +127,6 @@ const actualIds = objectiveWeights?.flat();
         }
 
   const OnSubmit = () => {
-    // message.loading("Submitting...")
    const data = {
         employeeId: employeeId,
         actualIds: actualIds,
@@ -243,8 +244,8 @@ const actualIds = objectiveWeights?.flat();
                         <span className='fs-3 fw-bold '>{param?.name}: {`${param?.weight}%`}</span>                        
                     </div>
                     <p className="badge badge-light-info fw-bold fs-3 mt-2">Achievement: <span 
-                    style={{color:"ActiveCaption", paddingLeft:"10px"}}> {
-                        getParameterAchievement(param?.id)
+                        style={{color:"ActiveCaption", paddingLeft:"10px"}}> {
+                            getParameterAchievement(param?.id)
                     }</span>
                 </p>
                     {
@@ -258,8 +259,8 @@ const actualIds = objectiveWeights?.flat();
                                         parameterId={param?.id} 
                                         objectiveName={item?.name} 
                                         objectiveWeight={item?.weight} 
-                                        objectiveId={item?.id} 
-                                        // getParamTotal={getParamTotal}
+                                        objectiveId={item?.id}
+                                        employeeId={employeeId?.toString()}
                                         title={title}
                                         />
                                 </ErrorBoundary>
