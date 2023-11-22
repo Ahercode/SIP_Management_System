@@ -1,4 +1,4 @@
-import { Skeleton, Table, message } from 'antd'
+import { Modal, Skeleton, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { fetchDocument, postItem, } from '../../../services/ApiCalls'
@@ -26,6 +26,7 @@ const ActualPage = ( {
   const { register, reset, handleSubmit } = useForm()
   const [individualComment, setIndividualComment] = useState<any>(null)
   const [lineManagerComment, setLineManagerComment] = useState<any>(null)
+  const [finalCommentModal, setFinalCommentModal] = useState<any>(false)
   const { data: allObjectiveDeliverables, isLoading: loading } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
   const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 10000 })
@@ -42,16 +43,9 @@ const ActualPage = ( {
   const [isFocused2, setIsFocused2] = useState(false);
   const currentLocation = window.location.pathname.split('/')[4]
 
-  
-  // const handleChange = (recordId:any, value:any, field:any) => {
-  //   setActualValues((prevValues:any) => ({
-  //     ...prevValues,
-  //     [recordId]: {
-  //       ...prevValues[recordId],
-  //       [field]: value
-  //     }
-  //   }));
-  // }
+  const handleFianlComment = () => {
+    setFinalCommentModal(true)
+  }
 
   const handleChange = (deliverableId:any,  value:any, field:any) => {
 
@@ -195,7 +189,7 @@ const ActualPage = ( {
       width: 160,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id && item?.employeeId === currentUser?.id
+          return item?.deliverableId === record?.id && item?.employeeId?.toString() === currentUser?.id
         })
         return (
           <>
@@ -221,7 +215,7 @@ const ActualPage = ( {
       width: 180,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id && item?.employeeId === currentUser?.id
+          return item?.deliverableId === record?.id && item?.employeeId?.toString() === currentUser?.id
         })
 
         const pointsArray = actual?.individualComment?.trim()?.split(/\n(?=\d+\.)/).filter(Boolean);
@@ -255,9 +249,9 @@ const ActualPage = ( {
         })
         return (
           <>
-            {
+            {/* {
               <textarea
-                disabled={title!=="final" && currentLocation==="appraisal-performance"? true : false}
+                disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                 rows={1}
                 defaultValue={actual?.lineManagerComment}
                 onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
@@ -268,7 +262,14 @@ const ActualPage = ( {
                   border: isFocused2 ? '1px solid green' : '1px solid #ccc'
                 }}
                 className="form-control " />
-            }
+            } */}
+
+            <button
+                  onClick={handleFianlComment}
+                  className='btn btn-light-info me-8'
+                >
+                  comments
+                </button>
           </>
         )
       }
@@ -280,7 +281,7 @@ const ActualPage = ( {
       width: 100,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
-          return item?.deliverableId === record?.id 
+          return item?.deliverableId === record?.id && item?.employeeId?.toString() === currentUser?.id
         })
         return (
           <>
@@ -335,7 +336,7 @@ const ActualPage = ( {
                   (() => {
                     const total = filteredDeliverables?.map((deliverableId: any) => {
                       const actual = allApraisalActual?.data?.find((item: any) => {
-                        return item?.deliverableId === deliverableId?.id 
+                        return item?.deliverableId === deliverableId?.id && item?.employeeId?.toString() === currentUser?.id
                       })
                       const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                         Math.round((actual?.actual/deliverableId?.target)*100)
@@ -357,13 +358,12 @@ const ActualPage = ( {
             {
               title==="hr"? "":
               <div>
-                <button
+                
+                <button 
                   onClick={
-                    // checkActive?.tag?.trim()==="final"?
-                    // OnFinalSubmit:
                     OnSubmit
                   }
-                  className='btn btn-light-success'
+                  className='btn btn-light-success me-3'
                   // style={{backgroundColor:"#216741", color:"#f2f2f2"}} 
                 >
                   Save
@@ -384,6 +384,94 @@ const ActualPage = ( {
               </>
           }
         </div>
+
+        <Modal
+          title='Final Comments'
+          open={finalCommentModal}
+          onCancel={() => setFinalCommentModal(false)}
+        >
+          <hr></hr>
+                 <form 
+                    // onSubmit={changeStatus}
+                 >
+                    <div className='mb-7'>
+                        <label className=" form-label">Major Achievements</label>
+                        <textarea
+                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          rows={1}
+                          // defaultValue={actual?.lineManagerComment}
+                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
+                          onFocus={onFocus2}
+                          onBlur={onBlur}
+                          // key={record?.id}
+                          style={{
+                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
+                          }}
+                          className="form-control " />
+                    </div>
+                    <div className='mb-7'>
+                        <label className=" form-label">What activities does this Appraisee do especially well (Major Strengths)</label>
+                        <textarea
+                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          rows={1}
+                          // defaultValue={actual?.lineManagerComment}
+                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
+                          onFocus={onFocus2}
+                          onBlur={onBlur}
+                          // key={record?.id}
+                          style={{
+                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
+                          }}
+                          className="form-control " />
+                    </div>
+                    <div className='mb-7'>
+                        <label className=" form-label">In what aspects does this Appraisee need to improve (Weakness)</label>
+                        <textarea
+                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          rows={1}
+                          // defaultValue={actual?.lineManagerComment}
+                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
+                          onFocus={onFocus2}
+                          onBlur={onBlur}
+                          // key={record?.id}
+                          style={{
+                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
+                          }}
+                          className="form-control " />
+                    </div>
+                    <div className='mb-7'>
+                        <label className=" form-label">Areas for Improvement / Development – Based on current job performance and the requirement of the Appraisee’s job position, in order of priority, list areas of training need/recommended.</label>
+                        <textarea
+                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          rows={1}
+                          // defaultValue={actual?.lineManagerComment}
+                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
+                          onFocus={onFocus2}
+                          onBlur={onBlur}
+                          // key={record?.id}
+                          style={{
+                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
+                          }}
+                          className="form-control " />
+                    </div>
+                    <div className='mb-7'>
+                        <label className=" form-label">HODs / Supervisor’s Final Comments</label>
+                        <textarea
+                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          rows={1}
+                          // defaultValue={actual?.lineManagerComment}
+                          // onChange={(e) => handleChange(record?.id, e.target.value, "lineManagerComment")}
+                          onFocus={onFocus2}
+                          onBlur={onBlur}
+                          // key={record?.id}
+                          style={{
+                            border: isFocused2 ? '1px solid green' : '1px solid #ccc'
+                          }}
+                          className="form-control " />
+                    </div>
+                 </form>
+          
+        </Modal>
       </>
 
   )

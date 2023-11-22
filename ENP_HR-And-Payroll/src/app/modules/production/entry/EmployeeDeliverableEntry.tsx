@@ -439,6 +439,7 @@ const EmployeeDeliverableEntry = () => {
                   <textarea
                     {...register("description")}
                     // type='text'
+                    rows={1}
                     defaultValue={isUpdateModalOpen === true ? tempData.description : null}
                     onChange={handleChange}
                     className="form-control form-control-solid" />
