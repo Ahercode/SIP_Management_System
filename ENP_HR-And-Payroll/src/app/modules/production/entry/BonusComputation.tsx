@@ -23,7 +23,9 @@ const BonusComputation = ({employeeData, title}:any) => {
     const convertToArray = checkActive?.referenceId.split("-")
     const appraisalId = convertToArray?.[1]
 
-    const activeParameterName = allParameters?.data?.filter((section: any) => section.appraisalId?.toString() === appraisalId)
+    const activeParameterName = allParameters?.data?.filter((item: any) => 
+        item.appraisalId?.toString() === appraisalId || item?.tag?.trim() === "same"
+    )
 
     const getOverallAchievement = (employeeId:any) => {
         const overAllWeight = activeParameterName?.map((param: any) => {

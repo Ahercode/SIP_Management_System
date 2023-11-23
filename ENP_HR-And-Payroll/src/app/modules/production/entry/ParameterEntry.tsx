@@ -122,8 +122,8 @@ const convertToArray = checkActive?.referenceId.split("-")
 
 const appraisalId = convertToArray?.[1]
 
-const dataByID = allParameters?.data?.filter((section: any) => {
-  return section.appraisalId?.toString() === appraisalId
+const dataByID = allParameters?.data?.filter((item: any) => {
+  return item.appraisalId?.toString() === appraisalId || item?.tag?.trim()==="same"
 })
   //find appraisal by id
   const appraisalData = allAppraisals?.data?.find((appraisal: any) => {
@@ -137,24 +137,34 @@ const dataByID = allParameters?.data?.filter((section: any) => {
 
   const weightSum = (id: any) => {
 
-    return allAppraisalobjective?.data.filter((item: any) => item.parameterId === id 
-      && item.employeeId === currentUser?.id
-      && item?.referenceId === checkActive?.referenceId)
-      .map((item: any) => item.weight)
+    return allAppraisalobjective?.data.filter((item: any) => 
+        (item.parameterId === id 
+        && item.employeeId === currentUser?.id 
+        && item?.referenceId === checkActive?.referenceId)
+      ).map((item: any) => item.weight)
+      .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
+  };
+  const sameWeightSum = (id: any) => {
+    return allAppraisalobjective?.data.filter((item: any) => 
+        item?.tag?.trim()==="same"
+      ).map((item: any) => item.weight)
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
   };
 
   // get weight of deliverables from each objective
   const weightSumDeliverables = (id: any) => {
-    const allObj= allAppraisalobjective?.data.filter((item: any) => 
+    const allObj = allAppraisalobjective?.data.filter((item: any) => 
       item.parameterId === id && 
       item.employeeId === currentUser?.id
-      && item?.referenceId === checkActive?.id?.toString())
+      && item?.referenceId === checkActive?.referenceId)
   
+      // console.log("allObj", allObj)
     // get all deliverables for each objective
     const allDeliverables = allObj?.map((item: any) => {
       return allObjectiveDeliverables?.data.filter((del: any) => del.objectiveId === item.id)
     })
+
+    // console.log("allDeliverables", allDeliverables)
 
     // return  deliverys whose sum of weight is !== 100
     const incompleteDeliverables = allDeliverables?.filter((item: any) => {
@@ -162,40 +172,54 @@ const dataByID = allParameters?.data?.filter((section: any) => {
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) !== 100
     })
 
-    return incompleteDeliverables?.length
+    return incompleteDeliverables?.flat()
   };
 
   const getDeliverableStatus = (  )=>{
-    const getOnlyparameters = allParameters?.data?.filter((item: any) => {
-      return item.appraisalId === 12
-    }
-    )
-    const statusAll = getOnlyparameters?.map((item: any) => {
+
+    const statusAll = dataByID?.map((item: any) => {
       return weightSumDeliverables(item.id)
     })
     setDeliverableStatus(statusAll)
   }
-  const getOnlyparameters = allParameters?.data?.filter((item: any) => {
-      return item.appraisalId === 12
-    }
-  )  
+  // const getOnlyparameters = allParameters?.data?.filter((item: any) => {
+  //     return item.appraisalId === 12
+  //   }
+  // )
 
   const getObjectiveStatus = ( )=>{
-    const allDeliverables = getOnlyparameters?.map((pare: any) => {
-
-      const objData = allAppraisalobjective?.data.filter((item: any) => 
-      item.parameterId === pare.id && 
-      item.employeeId === currentUser?.id &&
-      item?.referenceId === checkActive?.referenceId
-      )
-      const objStatus = objData?.map((item: any) => {
-        return item.weight
-      })
-      return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
+    const obejectiveTotal = dataByID?.map((pare: any) => {
+      if(pare?.tag?.trim()==="same"){
+          const objData = allAppraisalobjective?.data.filter((item: any) => 
+          item?.tag?.trim()==="same"
+        )
+        const objStatus = objData?.map((item: any) => {
+          return item.weight
+        })
+        return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
+      }
+      else{
+        const objData = allAppraisalobjective?.data.filter((item: any) => 
+        (item.parameterId === pare.id && 
+        item.employeeId === currentUser?.id &&
+        item?.referenceId === checkActive?.referenceId) 
+        )
+        const objStatus = objData?.map((item: any) => {
+          return item.weight
+        })
+        return objStatus?.reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0) === pare.weight 
+      }
     })
   
-    setObjectiveStatus(allDeliverables)
+    setObjectiveStatus(obejectiveTotal)
   }
+
+  const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
+    return parseInt(item?.employeeId) === parseInt(currentUser?.id) && item?.referenceId === checkActive?.referenceId
+})
+
+// console.log("allSubmittedObjectives", allSubmittedObjectives)
+
 
  const getEmployeeStatus = (()=> {
     const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
@@ -238,7 +262,7 @@ const currentUserLineManager = allEmployees?.data?.find((item: any) => {
 const OnSubmit = handleSubmit(async (values) => {
   if(objectiveStatus.every((item:any) => item === true)){
     if(deliverableStatus.every((item:any) => item === 0)){
-      const parameterIds = getOnlyparameters?.map((item: any) => {
+      const parameterIds = dataByID?.map((item: any) => {
         return item.id
       })
       const data ={
@@ -250,8 +274,8 @@ const OnSubmit = handleSubmit(async (values) => {
       console.log("data",data)
       axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, data)
       .then(response => {
-        message.success("You have successfully submitted your appraisal")
-        sendEmail(currentUserLineManager, `Your direct report ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their appraisal`)
+        message.success("You have successfully submitted your objectives")
+        sendEmail(currentUserLineManager, `Your direct report ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their objectives`)
         console.log(response.data);
       })
       .catch(error => {
@@ -349,26 +373,48 @@ const OnSubmit = handleSubmit(async (values) => {
                           <div style={{borderRight:"1px solid rgba(0,0,0,0.4)", paddingRight:"50px"}} className='me-4'>
                             <span >{record?.obj}</span>
                             {
-                              weightSum(record.id) === record?.weight ?
-                                <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag> :
-                                <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
+                                record?.tag?.trim()==="same"? sameWeightSum(record.id)===record?.weight  :
+                                  weightSum(record.id) === record?.weight ?
+                                  <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag> :
+                                  <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
                             }
                             <br></br>
                               <p>
-                                <span >You have set <span className='fw-bold mx-2' style={{color:"Highlight"}}>{`${weightSum(record.id)==='undefined'?0:weightSum(record.id)}%`}</span> of </span>
-                                <span className='fw-bold mx-2'>{`${record?.weight}%`}</span>
+                                <span >You have set
+                                  <span className='fw-bold mx-2' 
+                                    style={{color:"Highlight"}}>
+                                      {`${weightSum(record.id)==='undefined'? 0 :
+                                        record?.tag?.trim()==="same"? sameWeightSum(record.id) :
+                                        weightSum(record.id)}%`}</span> of </span>
+                                      <span className='fw-bold mx-2'>{`${record?.weight}%`}</span>
                               </p>
                             
                           </div>
                           <div style={{paddingLeft:"50px"}} >
                             <span >{record?.del}</span>
+                            
                             {
-                              weightSumDeliverables(record.id) !== 0 ?
+                              weightSumDeliverables(record.id)?.length !== 0 ?
                               <>
                               
                               <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
                               <p>
-                                <span >You have some incompleteed deliverables here.</span>
+                                You have this deliverable(s) incomplete
+                                {
+                                  weightSumDeliverables(record.id)?.map((item: any) => {
+                                    return(
+                                      <>
+                                      <li style={{listStyleType:"initial"}}>
+                                        {/* <span className='fw-bold mx-2' 
+                                        style={{color:"Highlight"}}>
+                                          {`${item?.subWeight}%`}</span> of 100% */}
+                                          <span className='fw-bold mx-2'>{item?.name}</span>
+                                      </li>
+                                      </>
+                                      
+                                    )
+                                  })
+                                }
                               </p>
                               </>:
                               <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete</Tag>   
@@ -390,3 +436,5 @@ const OnSubmit = handleSubmit(async (values) => {
 }
 
 export { ParameterEntry }
+
+

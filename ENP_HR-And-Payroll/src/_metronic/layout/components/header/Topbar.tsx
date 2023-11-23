@@ -38,7 +38,7 @@ const Topbar: FC = () => {
           data-kt-menu-flip='bottom'
         >
           {
-            currentUser?.imageUrl === null || currentUser?.imageUrl ===""?
+            currentUser?.imageUrl === null || currentUser?.imageUrl ===""|| currentUser?.imageUrl ==="No file was selected"?
             <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
               <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
           }

@@ -327,7 +327,7 @@ const EmployeeProfile = (employee: any) => {
       <div className='d-flex display-direction-row align-items-center align-content-center'>
         <div>
           {
-            employee?.employee?.imageUrl === null || employee?.employee?.imageUrl ===""?
+            employee?.employee?.imageUrl === null || employee?.employee?.imageUrl ==="" || employee?.employee?.imageUrl ==="No file was selected"?
             <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
             <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/${employee?.employee?.imageUrl}`}></img> 
           }

@@ -2,20 +2,20 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { fetchEmployees } from '../../../../app/services/ApiCalls'
 import { MenuItem } from './MenuItem'
+import { useAuth } from '../../../../app/modules/auth'
 
 const tenantId = localStorage.getItem('tenant')
 
 
 export function MenuInner() {
 
-  const { data: allEmployees } = useQuery('employees',()=> fetchEmployees(tenantId), { cacheTime: 5000 })
+ const{currentUser} = useAuth()
   
   const intl = useIntl()
   return (
     <>
-      {/* <MenuItem title={intl.formatMessage({id: 'Human Resource'})} to='/dashboard' /> */}
-      <MenuItem title={"OMNI PMS DashBoard"} to='/hr-dashboard' />
-      
+      <MenuItem title={currentUser?.isAdmin?.trim() === "yes"?"OMNI PMS DashBoard":"Notifications"} 
+            to={currentUser?.isAdmin?.trim() === "yes"? '/hr-dashboard':'notifications-board/lineManger' }/>
     </>
   )
 }

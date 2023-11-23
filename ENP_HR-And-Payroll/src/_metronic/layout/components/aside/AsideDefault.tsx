@@ -6,11 +6,13 @@ import { Link } from 'react-router-dom'
 import { KTSVG, toAbsoluteUrl } from '../../../helpers'
 import { useLayout } from '../../core'
 import { AsideMenu } from './AsideMenu'
+import { useAuth } from '../../../../app/modules/auth'
 
 const AsideDefault: FC = () => {
   const {config, classes} = useLayout()
   const asideRef = useRef<HTMLDivElement | null>(null)
   const {aside} = config
+  const {currentUser} = useAuth()
 
   const minimize = () => {
     asideRef.current?.classList.add('animating')
@@ -36,19 +38,12 @@ const AsideDefault: FC = () => {
       <div className='aside-logo flex-column-auto' id='kt_aside_logo'>
         {/* begin::Logo */}
         {aside.theme === 'dark' && (
-          <Link to='/hr-dashboard'>
-            {/* <img
-                alt='ENP Production Logo'
-                className='h-55px logo'
-                src={toAbsoluteUrl('/media/logos/hr-payroll-Logo.png')}
-              /> */}
-              {/* <h3 style={{color: "#f2f2f2", fontWeight:"bold"}}>OMNI PMS</h3>
-               */}
+          <Link to={currentUser?.isAdmin?.trim() === "yes"?'/hr-dashboard':'parameterEntry'}>
                <h3 style={{color:"#f2f2f2"}}>OMNI PMS</h3>
           </Link>
         )}
         {aside.theme === 'light' && (
-          <Link to='/hr-dashboard'>
+          <Link to={currentUser?.isAdmin?.trim() === "yes"?'/hr-dashboard':'parameterEntry'}>
             <img
               alt='Logo'
               className='h-55px logo'

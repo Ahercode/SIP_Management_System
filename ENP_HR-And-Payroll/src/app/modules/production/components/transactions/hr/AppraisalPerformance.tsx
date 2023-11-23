@@ -170,7 +170,6 @@ const AppraisalPerformance = () => {
 
   function handleDelete() {
     selectedRowKeys.map((del: any) => {
-      console.log('del: ', del)
     const recordId =  allAppraisalTranItems.filter((item: any) => {
       return parseInt(item.employeeId) === del && item.appraisalPerfTranId === parseInt(selectedReference)
     }, [])
@@ -180,12 +179,11 @@ const AppraisalPerformance = () => {
       url: 'AppraisalPerItems',
       data: id
     }
-      setLoading(true)
       deleteData(item)
     }
    )
    setSelectedRowKeys([])
-   message.success('Records deleted successfully')
+   message.success('Deletion successful!')
   }
 
   const columns: any = [
@@ -375,8 +373,8 @@ const AppraisalPerformance = () => {
       setBeforeSearch(employeesFromTransaction)
 
   },[
-    allJobTitles?.data, selectedAppraisalType,selectedReference,
-    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId, employeeData, employeeRecord?.id
+    allJobTitles?.data, selectedAppraisalType, selectedReference,
+    selectedPaygroup, selectedStartPeriod, selectedEndPeriod, referenceId, employeeData, employeeRecord?.id, allAppraTranItems?.data
   ])
 
   const globalSearch = (searchValue: string) => {
@@ -423,10 +421,6 @@ const AppraisalPerformance = () => {
     const reference = allAppraisalsPerfTrans?.data?.filter((item: any) => {
       return item.referenceId === referenceId
     })
-
-    console.log('referenceId: ', referenceId)
-    console.log('allAppraTranItems: ', allAppraisalsPerfTrans?.data)
-    console.log('reference: ', reference)
 
       let url = ""
       let dataToPost = null

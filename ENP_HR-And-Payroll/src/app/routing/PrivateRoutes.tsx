@@ -38,6 +38,7 @@ import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjecti
 import { useAuth } from '../modules/auth'
 import { AppraisalGrade } from '../modules/production/components/setup/hr/AppraisalGrade'
 import { ReferencesPage } from '../modules/production/components/admin/Reference'
+import { ParameterEntry } from '../modules/production/entry/ParameterEntry'
 
 export const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -66,10 +67,11 @@ const PrivateRoutes = () => {
   
   <Routes>
     <Route element={<MasterLayout />}>
-      {/* Redirect to Dashboard after success login/registartion */}
-      <Route path='auth/*' element={<Navigate to='/hr-dashboard' />} />
+      {/* Redirect to Dashboard or Parameter after successful login entry based on role */ }
+      <Route path='auth/*' element={<Navigate to={ currentUser?.isAdmin?.trim() === "yes"? '/hr-dashboard': '/parameterEntry'} />} />
       {/* Pages */}
-      <Route path='hr-dashboard' element={<HRDashboardWrapper />} />
+      <Route path={currentUser?.isAdmin?.trim() === "yes"? 'hr-dashboard': 'parameterEntry'} 
+          element={currentUser?.isAdmin?.trim() === "yes"? <HRDashboardWrapper />:<ParameterEntry/>} />
 
 
       {/* Employee  */}

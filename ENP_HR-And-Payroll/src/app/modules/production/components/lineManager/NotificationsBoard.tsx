@@ -41,7 +41,9 @@ const NotificationsBoard = () => {
         const allSubmittedApprovedObjectives = employeeObjectives?.data?.filter((item: any) => {
             return item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected" || item?.status ==="amend"
         }) 
-        const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === (currentUser?.id)?.toString())
+        const allTeamMembers = allEmployees?.data?.filter((item: any) => (item.lineManagerId)?.toString() === currentUser?.id)
+
+        console.log('allTeamMembers: ', allTeamMembers)
         setTeamMembers(allTeamMembers)
         setEmployees(allEmployees)
         setObjectives(employeeObjectives)

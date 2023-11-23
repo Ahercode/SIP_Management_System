@@ -66,7 +66,7 @@ const AppRoutes: FC = () => {
             <>
               <Route path='/*' element={<PrivateRoutes />} />
               
-              <Route index element={<Navigate to='/hr-dashboard' />} />
+              <Route index element={<Navigate to={currentUser?.isAdmin?.trim() === "yes"? '/hr-dashboard':'parameterEntry'} />} />
 
               <Route element={<MasterLayout />}>
                 <Route

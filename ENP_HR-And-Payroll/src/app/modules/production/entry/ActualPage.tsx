@@ -447,6 +447,7 @@ const ActualPage = ( {
                     <div className='mb-7'>
                         <label className=" form-label">Major Achievements</label>
                         <textarea
+                          {...register("description")}
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
@@ -454,6 +455,7 @@ const ActualPage = ( {
                     <div className='mb-7'>
                         <label className=" form-label">What activities does this Appraisee do especially well (Major Strengths)</label>
                         <textarea
+                          {...register("description")}
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
@@ -461,6 +463,7 @@ const ActualPage = ( {
                     <div className='mb-7'>
                         <label className=" form-label">In what aspects does this Appraisee need to improve (Weakness)</label>
                         <textarea
+                          {...register("description")}
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           
@@ -469,6 +472,7 @@ const ActualPage = ( {
                     <div className='mb-7'>
                         <label className=" form-label">Areas for Improvement / Development – Based on current job performance and the requirement of the Appraisee’s job position, in order of priority, list areas of training need/recommended.</label>
                         <textarea
+                          {...register("description")}
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
@@ -476,6 +480,7 @@ const ActualPage = ( {
                     <div className='mb-7'>
                         <label className=" form-label">HODs / Supervisor’s Final Comments</label>
                         <textarea
+                          {...register("description")}
                           disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />

@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 import { Api_Endpoint, FormsBaseUrl, axioInstance, deleteItem, fetchDocument, postItem } from "../../../../../services/ApiCalls"
 import { getTimeLeft } from "../../ComponentsFactory"
 import axios from "axios"
-import { all } from "@devexpress/analytics-core/analytics-elements-metadata"
 
 const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDataByID }: any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
@@ -24,7 +23,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const [scheduleDateData, setScheduleDateData] = useState<any>({})
     const [tempData, setTempData] = useState<any>()
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
-
 
     const handleNotificationCancel = () => {
         setIsNotificationModalOpen(false)
@@ -63,22 +61,11 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     }
 
     const loadData = async () => {
-        // setLoading(true)
         const response = allReviewdates?.data?.filter((refId: any) => {
             return refId?.referenceId === referenceId
         })
 
         setGridData(response)
-        // try {
-        //     const response = allReviewdates?.data?.filter((refId: any) => {
-        //         return refId?.referenceId === referenceId
-        //     })
-        //     setGridData(response)
-        //     setLoading(false)
-        // } catch (error) {
-        //     console.log(error)
-        //     setLoading(false)
-        // }
     }
 
     const reviewData = allReviewdates?.data?.filter((refId: any) => {
@@ -105,8 +92,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
-    // console.log('employeesInDataByID: ', employeesInDataByID?.length)
-
     const getReviewStatus = ((record: any)=> {
 
         if(record?.isActive?.trim() === 'active') {
@@ -116,7 +101,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
             return "Inactive"
         }
 
- })   
+    })   
 
     const reviewDatesColumn:any = [
         {
@@ -301,6 +286,8 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
+    console.log("checkActive", checkActive[0]?.description)
+
     const handleNotificationSend = (record: any) => {
 
         setIsEmailSent(true)
@@ -314,28 +301,14 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
         const item = {
             data: {
-                subject: 'Appraisal Review Date',
-                formLink: `${FormsBaseUrl}/parameterEntry`,
+                subject: `${checkActive[0]?.description}`,
+                formLink: `${FormsBaseUrl}`,
                 recipients: employeeMailAndName
             },
             url: 'appraisalperftransactions/sendMail',
         }
-
-        // const employeePerformanceData = employeeMailAndName?.map((item: any) => ({
-        //     employeeId: item.employeeId,
-        //     Status: 'Pending',
-        //     referenceId: referenceId,
-        //     scheduleDateId: record.id,
-        // }))
-
-        // const item2 = {
-        //     data: employeePerformanceData,
-        //     url: 'EmployeePerfDetails',
-        // }
-        // console.log('EmployeePerfDetails: ', item2)
      
         console.log('email sent: ', item)
-        // setIsEmailSent(true)
         postData(item)
         setIsEmailSent(false)
         

@@ -14,7 +14,7 @@ const HeaderUserMenu: FC = () => {
           <div className='symbol symbol-50px me-5'>
             {/* <img alt='Logo' src={toAbsoluteUrl('/media/avatars/user.png')} /> */}
             {
-            currentUser?.imageUrl === null || currentUser?.imageUrl ===""?
+            currentUser?.imageUrl === null || currentUser?.imageUrl ===""|| currentUser?.imageUrl ==="No file was selected"?
             <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
               <img style={{ borderRadius: "50%", width: "40px", height: "40px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${currentUser?.imageUrl}`}></img>
           }

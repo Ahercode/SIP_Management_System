@@ -20,6 +20,8 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const [isModalOpen, setIsModalOpen] = useState(false)
 
+    console.log('filteredByLineManger: ', filteredByLineManger)
+
     const [employeeData, setEmployeeData] = useState<any>({})
     const [objectivesData, setObjectivesData] = useState<any>([])
     const queryClient = useQueryClient()
@@ -118,6 +120,8 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
             key: "employeeId",
             render: (record: any) => {
                 const employee = allEmployees?.data?.find((item: any) => item.employeeId === record)
+
+                
                 return employee?.firstName + ' ' + employee?.surname
             }
         },
@@ -208,6 +212,8 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
             key: item?.employeeId,
         }
     })
+
+    console.log('allDownlines: ', allDownlines)
 
     useEffect(() => {
 

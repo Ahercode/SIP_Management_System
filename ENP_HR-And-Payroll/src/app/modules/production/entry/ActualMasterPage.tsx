@@ -34,17 +34,16 @@ const ActualMasterPage = ({title, employeeId}:any) => {
         employeeId = (currentUser?.id)
     }
 
-    console.log("employeeId", employeeId)
-
     const convertToArray = checkActive?.referenceId.split("-")
     
     const appraisalId = convertToArray?.[1]
 
-    const activeParameterName = allParameters?.data?.filter((section: any) => 
-         section.appraisalId?.toString() === appraisalId)
+    const activeParameterName = allParameters?.data?.filter((item: any) => 
+         item.appraisalId?.toString() === appraisalId || item?.tag?.trim() === "same"
+    )
 
-    const activeParameters = allParameters?.data?.filter((section: any) => 
-         section.appraisalId?.toString() === appraisalId).map((param: any) => param?.id)
+    const activeParameters = allParameters?.data?.filter((item: any) => 
+         item.appraisalId?.toString() === appraisalId || item?.tag?.trim() === "same").map((param: any) => param?.id)
 
     const parameterIdSet = new Set(activeParameters);
 
@@ -53,6 +52,8 @@ const ActualMasterPage = ({title, employeeId}:any) => {
         obj?.employeeId === employeeId?.toString() && 
         obj?.referenceId === checkActive?.referenceId) || sameParameter?.id === obj?.parameterId
     );
+
+    console.log("objectivesData", objectivesData)
 
   const objectiveWeights = objectivesData?.map((objective:any) => {
 
@@ -68,7 +69,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     return deliverableWeight
 })
 
-const actualIds = objectiveWeights?.flat();
+    const actualIds = objectiveWeights?.flat();
 
 
     const getOverallAchievement = () => {
@@ -102,11 +103,16 @@ const actualIds = objectiveWeights?.flat();
     }
 
         const getParameterAchievement = (parameterId:any) => {
+            
             const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
-            parameterId ===obj?.parameterId && 
-            obj?.employeeId === employeeId?.toString() && 
-            obj?.referenceId === checkActive?.referenceId)    
-            const objectiveWeights = objectivesInParameter?.map((objective:any) => {
+                (parameterId ===obj?.parameterId && 
+                obj?.employeeId === employeeId?.toString() && 
+                obj?.referenceId === checkActive?.referenceId)
+            ) 
+            const objectivesInSameParameter = allAppraisalobjective?.data.filter((obj:any) =>
+                sameParameter?.id ===obj?.parameterId 
+            )   
+            const objectiveWeights = (sameParameter?.id===parameterId? objectivesInSameParameter :objectivesInParameter)?.map((objective:any) => {
                 const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
                   (deliverable:any) => deliverable?.objectiveId === objective?.id
                 );

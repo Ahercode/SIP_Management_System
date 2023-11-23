@@ -8,7 +8,8 @@ export const Api_Endpoint = "http://109.169.12.107/omniAppraisalApi/api";
 export const ImageBaseUrl = "http://109.169.12.107"
 // export const Api_Endpoint = "https://localhost:5001/api";
 export const UsersEndpoint = "https://app.sipconsult.net/userapi/api";
-export const FormsBaseUrl = "https://app.sipconsult.net/apms";
+export const FormsBaseUrl = "http://109.169.12.107/apms";
+// export const FormsBaseUrl = "https://app.sipconsult.net/apms";
 // export const UsersEndpoint = "http://208.117.44.15/userapi/api";
 
 
