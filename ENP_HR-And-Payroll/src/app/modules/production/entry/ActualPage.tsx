@@ -52,8 +52,8 @@ const ActualPage = ( {
   const [isFocused2, setIsFocused2] = useState(false);
   const currentLocation = window.location.pathname.split('/')[4]
 
-  const handleFianlComment = (record:any) => {
-    console.log("record:",record)
+  const handleFinalComment = (record:any) => {
+    // console.log("record:",record)
     setFinalCommentModal(true)
   }
 
@@ -101,6 +101,26 @@ const ActualPage = ( {
     console.log("itemToPost:",itemToPost?.data)
     postData(itemToPost)
   }
+
+
+  const SubmitFinalComment =handleSubmit(async (values) =>{
+    const itemToPost = {
+      data: {
+        majorAchievements: values?.majorAchievements,
+        majorStrengths: values?.majorStrengths,
+        weaknesses: values?.weaknesses,
+        areasForImprovement: values?.areasForImprovement,
+        hodFinalComment: values?.hodFinalComment,
+        scheduleId: checkActive?.id,
+        employeeId: parseInt(currentUser?.id),
+        status: "drafted",
+      },
+      url: `ApraisalFinalComments11`,
+    }
+
+    console.log("itemToPost:",itemToPost?.data)
+    postData(itemToPost)
+  })
 
   const onFocus = () => {
     setIsFocused(true);
@@ -296,7 +316,7 @@ const ActualPage = ( {
             } */}
 
             <button
-                  onClick={()=>handleFianlComment(record)}
+                  onClick={()=>handleFinalComment(record)}
                   className='btn btn-light-info me-8'
                 >
                   comments
@@ -311,11 +331,7 @@ const ActualPage = ( {
       fixed: 'right',
       render: (record: any) => {
         return (
-
           <>
-          {/* <input type="file" onChange={handleFileChange} />
-          <button onClick={handleUpload}>Upload</button> */}
-
             <label htmlFor="fileInput" className="btn btn-light-info btn-sm">
               Choose File
             </label>
@@ -325,7 +341,6 @@ const ActualPage = ( {
               className="visually-hidden"
               onChange={handleFileChange}
             />
-            {/* <input className='btn btn-light-info me-8' type="file" /> */}
           </>
         )
       }
@@ -414,7 +429,6 @@ const ActualPage = ( {
                     OnSubmit
                   }
                   className='btn btn-light-success me-3'
-                  // style={{backgroundColor:"#216741", color:"#f2f2f2"}} 
                 >
                   Save
                 </button>
@@ -439,16 +453,22 @@ const ActualPage = ( {
           title='Final Comments'
           open={finalCommentModal}
           onCancel={() => setFinalCommentModal(false)}
+          // width={1000}
+          footer={[
+            <button onClick={() => setFinalCommentModal(false)} className='btn btn-light-danger btn-sm me-6'>Close</button>,
+            <button onClick={() => setFinalCommentModal(false)} className='btn btn-light-success btn-sm'>Submit</button>
+          ]}
         >
           <hr></hr>
                  <form 
                     // onSubmit={changeStatus}
+                    onSubmit={SubmitFinalComment}
                  >
                     <div className='mb-7'>
                         <label className=" form-label">Major Achievements</label>
                         <textarea
                           {...register("description")}
-                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
                     </div>
@@ -456,7 +476,7 @@ const ActualPage = ( {
                         <label className=" form-label">What activities does this Appraisee do especially well (Major Strengths)</label>
                         <textarea
                           {...register("description")}
-                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
                     </div>
@@ -464,7 +484,7 @@ const ActualPage = ( {
                         <label className=" form-label">In what aspects does this Appraisee need to improve (Weakness)</label>
                         <textarea
                           {...register("description")}
-                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           
                           className="form-control " />
@@ -473,7 +493,7 @@ const ActualPage = ( {
                         <label className=" form-label">Areas for Improvement / Development – Based on current job performance and the requirement of the Appraisee’s job position, in order of priority, list areas of training need/recommended.</label>
                         <textarea
                           {...register("description")}
-                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
                     </div>
@@ -481,7 +501,7 @@ const ActualPage = ( {
                         <label className=" form-label">HODs / Supervisor’s Final Comments</label>
                         <textarea
                           {...register("description")}
-                          disabled={title!=="final" || currentLocation==="appraisal-performance"? true : false}
+                          disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
                           rows={1}
                           className="form-control " />
                     </div>

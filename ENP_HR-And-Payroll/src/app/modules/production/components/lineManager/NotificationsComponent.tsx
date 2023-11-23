@@ -150,14 +150,13 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         setObjectivesData(objectiveByEMployee)
     }
 
-    const getOnlyparameters = parameters?.data?.filter((item: any) => {
-        return item.appraisalId === 12
-      }
-    ) 
+    const parametersToChangeStatus = allParameters?.data?.filter((item: any) => {
+        return item.appraisalId?.toString() === appraisalId
+      })
 
 
     const OnSubmit =(statusText:any)  => {
-            const parameterIds = getOnlyparameters?.map((item: any) => {
+            const parameterIds = parametersToChangeStatus?.map((item: any) => {
               return item.id
             })
             const data ={
@@ -173,14 +172,12 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                     message.success(`You have ${statusText} ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
                 }
                 else{
-                    message.error(`You have ${statusText} ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
+                    message.error(`Failed to approved ${employeeData?.firstName} ${employeeData?.surname}'s Objectives`)
                 }
 
               setCommentModalOpen(false)
               queryClient.invalidateQueries('appraisalobjective')
               setIsModalOpen(false)
-            //   setEmployeeData({})
-            //   setObjectivesData([])
               console.log(response.data);
             })
             .catch(error => {
@@ -203,7 +200,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         }
 
         const acceptAmendment = () => {
-            // OnSubmit("approved")
             message.success(`You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Amendment`)
             setIsModalOpen(false)
         }
@@ -240,9 +236,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
             else if (allSubmittedObjectives?.some((obj:any) => obj.status === "drafted")) {
                 return <Tag color="warning">Drafted</Tag>;
             }
-            // else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
-            //     return <Tag color="warning">Submitted for Amendment</Tag>;
-            // }
             else{
                 return <Tag color="pink">Not Started</Tag>;
             }
@@ -268,7 +261,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
             key:"id",
             render: (_:any, record:any) => {
                 return getEmployeeStatus(record)
-                // return <Tag color="error">Pending</Tag>
             }
         },
         {
@@ -304,45 +296,20 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                     return <Tag color="pink">Very Poor</Tag>
                 }
             }
-            // const performanceRating = overallAchievement < 50 ? 
-            // <span className='badge fs-4 badge-light-danger fw-bolder'>Poor</span> :
-            // overallAchievement >= 50 && overallAchievement < 60 ? 
-            // <span className='badge fs-4 badge-light-warning fw-bolder'>Unsatisfactory</span> :
-            // overallAchievement >= 60 && overallAchievement < 70? 
-            // <span className='badge fs-4 badge-light-warning fw-bolder'>Satisfactory</span>:
-            // overallAchievement >= 70 && overallAchievement < 80 ? 
-            // <span className='badge fs-4 badge-light-info fw-bolder'>Good</span>:
-            // overallAchievement >= 80 && overallAchievement < 90 ?
-            // <span className='badge fs-4 badge-light-info fw-bolder'>Very Good</span>:
-            // overallAchievement >= 90 ?
-            // <span className='badge fs-4 badge-light-success fw-bolder'>Excellent</span>: 
-            //  "N/A"
         },
         {
             title: 'Action',
             fixed: 'right',
             render: (_: any, record: any) => (
-
-            //    console.log( getEmployeeStatus(record).props.children)
                <button 
                     className='btn btn-light-success btn-sm'
-                    // disabled={getEmployeeStatus(record).props.children === "Amend" || 
-                    // getEmployeeStatus(record).props.children === "Submitted for Amendment"} 
                     onClick={() => showObjectivesView(record)}
                 >
                     View Detail
                </button>
-                // <a onClick={() => showObjectivesView(record)} className='btn btn-light-info btn-sm'>
-                //     View Objectives
-                // </a>
-
             ),
         },
     ]
-
-    // if(location==="View Details"){
-    //     columns.splice(3, 1)
-    // }
 
     const { mutate: updateData } = useMutation(updateItem, {
         onSuccess: () => {
@@ -363,8 +330,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         }
     })
 
-    // const title = "final"
-
     return (
         <>
             {
@@ -384,16 +349,6 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                 onCancel={handleCancel}
                 closable={true}
                 footer={
-                    // title === "View Details" ? 
-                    // null:
-                    // <Space className="mt-7">
-                    //     <button type='button' className='btn btn-danger btn-sm' onClick={onObjectivesRejected}>
-                    //         Decline
-                    //     </button>
-                    //     <button type='button' className='btn btn-success  btn-sm' onClick={onObjectivesApproved}>
-                    //         Approve
-                    //     </button>
-                    // </Space>
                     tag === "final"?
                     <Space className="mt-7">
                         <button type='button' className='btn btn-danger btn-sm' onClick={closeModal}>

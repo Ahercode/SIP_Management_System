@@ -393,8 +393,6 @@ const AppraisalPerformance = () => {
     }
   }
 
-  
-
   const submitApplicant = handleSubmit(async (values) => {
   
      const  data = {

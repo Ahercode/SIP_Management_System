@@ -18,15 +18,11 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
-
-    // const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
     const sameParameter = allParameters?.data?.find((item: any) => item?.tag?.trim() === "same")
 
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
     })
-
-    console.log("title", title)
     
     if(title === "hr"){
         employeeId = employeeId
@@ -53,7 +49,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
         obj?.referenceId === checkActive?.referenceId) || sameParameter?.id === obj?.parameterId
     );
 
-    console.log("objectivesData", objectivesData)
+    // console.log("objectivesData", objectivesData)
 
   const objectiveWeights = objectivesData?.map((objective:any) => {
 

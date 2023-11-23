@@ -20,10 +20,8 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    console.log('filteredByLineManger: ', filteredByLineManger)
-
     const [employeeData, setEmployeeData] = useState<any>({})
-    const [objectivesData, setObjectivesData] = useState<any>([])
+    // const [objectivesData, setObjectivesData] = useState<any>([])
     const queryClient = useQueryClient()
 
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
@@ -45,7 +43,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
         const objectiveByEMployee = allAppraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
-        setObjectivesData(objectiveByEMployee)
+        // setObjectivesData(objectiveByEMployee)
         setEmployeeData(employee)
    
     }
@@ -213,13 +211,9 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         }
     })
 
-    console.log('allDownlines: ', allDownlines)
-
     useEffect(() => {
 
     }, [])
-
-   
 
     const OnSubmit =(statusText:any)  => {
         const parameterIds = activeParameterName?.map((item: any) => {

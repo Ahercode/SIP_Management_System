@@ -122,9 +122,12 @@ const convertToArray = checkActive?.referenceId.split("-")
 
 const appraisalId = convertToArray?.[1]
 
-const dataByID = allParameters?.data?.filter((item: any) => {
-  return item.appraisalId?.toString() === appraisalId || item?.tag?.trim()==="same"
-})
+  const dataByID = allParameters?.data?.filter((item: any) => {
+    return item.appraisalId?.toString() === appraisalId || item?.tag?.trim()==="same"
+  })
+  const parametersBeforeSubmit = allParameters?.data?.filter((item: any) => {
+    return item.appraisalId?.toString() === appraisalId
+  })
   //find appraisal by id
   const appraisalData = allAppraisals?.data?.find((appraisal: any) => {
     return appraisal.id === parseInt(appraisalId)
@@ -144,7 +147,7 @@ const dataByID = allParameters?.data?.filter((item: any) => {
       ).map((item: any) => item.weight)
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
   };
-  const sameWeightSum = (id: any) => {
+  const sameWeightSum = () => {
     return allAppraisalobjective?.data.filter((item: any) => 
         item?.tag?.trim()==="same"
       ).map((item: any) => item.weight)
@@ -177,9 +180,11 @@ const dataByID = allParameters?.data?.filter((item: any) => {
 
   const getDeliverableStatus = (  )=>{
 
-    const statusAll = dataByID?.map((item: any) => {
+    const statusAll = parametersBeforeSubmit?.map((item: any) => {
       return weightSumDeliverables(item.id)
     })
+
+    console.log("statusAll", statusAll)
     setDeliverableStatus(statusAll)
   }
   // const getOnlyparameters = allParameters?.data?.filter((item: any) => {
@@ -217,9 +222,6 @@ const dataByID = allParameters?.data?.filter((item: any) => {
   const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
     return parseInt(item?.employeeId) === parseInt(currentUser?.id) && item?.referenceId === checkActive?.referenceId
 })
-
-// console.log("allSubmittedObjectives", allSubmittedObjectives)
-
 
  const getEmployeeStatus = (()=> {
     const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
@@ -261,7 +263,7 @@ const currentUserLineManager = allEmployees?.data?.find((item: any) => {
 
 const OnSubmit = handleSubmit(async (values) => {
   if(objectiveStatus.every((item:any) => item === true)){
-    if(deliverableStatus.every((item:any) => item === 0)){
+    if(deliverableStatus[0]?.length===0){
       const parameterIds = dataByID?.map((item: any) => {
         return item.id
       })
@@ -282,7 +284,7 @@ const OnSubmit = handleSubmit(async (values) => {
         console.error('Error:', error);
       });
     }else{
-      return message.error("You have some incomplete deliverables. Make sure all deliverables are 100%")
+      return message.error("You have some incomplete deliverables. Make sure all deliverables are 100% set")
     }
   }
   else{
@@ -373,7 +375,7 @@ const OnSubmit = handleSubmit(async (values) => {
                           <div style={{borderRight:"1px solid rgba(0,0,0,0.4)", paddingRight:"50px"}} className='me-4'>
                             <span >{record?.obj}</span>
                             {
-                                record?.tag?.trim()==="same"? sameWeightSum(record.id)===record?.weight  :
+                                record?.tag?.trim()==="same"? <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag> :
                                   weightSum(record.id) === record?.weight ?
                                   <Tag color='green' className='mx-2' style={{marginBottom:"10px"}}>Complete </Tag> :
                                   <Tag color='red' className='mx-2' style={{marginBottom:"10px"}}>Incomplete </Tag>
@@ -384,7 +386,7 @@ const OnSubmit = handleSubmit(async (values) => {
                                   <span className='fw-bold mx-2' 
                                     style={{color:"Highlight"}}>
                                       {`${weightSum(record.id)==='undefined'? 0 :
-                                        record?.tag?.trim()==="same"? sameWeightSum(record.id) :
+                                        record?.tag?.trim()==="same"? sameWeightSum() :
                                         weightSum(record.id)}%`}</span> of </span>
                                       <span className='fw-bold mx-2'>{`${record?.weight}%`}</span>
                               </p>
