@@ -26,6 +26,11 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
     const sameParameter = allParameters?.data?.find((item: any) => item?.tag?.trim() === "same")
 
+    const [selectedOption, setSelectedOption] = useState('');
+
+    const handleChange = (event:any) => {
+        setSelectedOption(event.target.value);
+    };
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
     })
@@ -101,7 +106,9 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
                     const actual = allApraisalActual?.data?.find((actual:any) => 
-                    actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString())
+                    actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString()
+                    && actual?.referenceId === checkActive?.referenceId
+                    )
     
                     const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                             Math.round((actual?.actual/deliverable?.target)*100)
@@ -134,7 +141,9 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
                     const actual = allApraisalActual?.data?.find((actual:any) => 
-                        actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString())
+                        actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString()
+                        && actual?.referenceId === checkActive?.referenceId
+                        )
     
                     const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                             Math.round((actual?.actual/deliverable?.target)*100)
@@ -317,7 +326,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
                 </button> */}
             </div>
             <div>
-            <p className="fs-3 mt-10 fw-bold form-label">Linemamager's comments</p>
+            <p className="fs-3 mt-10 fw-bold form-label">Line Manager's comments</p>
                 <button onClick={handleFinalComment} className=" btn btn-light-info btn-sm">
                     {title==="final"|| title==="hr"?"Your final comments":"View comments"}
                 </button>
@@ -382,17 +391,44 @@ const ActualMasterPage = ({title, employeeId}:any) => {
             </div>
             {
                 title!=="hr" || currentLocation==="appraisal-performance"? "":
-                <div className='mb-7'>
-                    <label className=" form-label">HODs / Supervisor’s Final Comments</label>
-                    <textarea
-                    {...register("hodcomment")}
-                    value={actualToUpdate?.hodcomment}
-                    onChange={handleFinalChange}
-                    disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
-                    rows={1}
-                    className="form-control " />
-                </div>
+                <>
+                    <div className='mb-7'>
+                        <label className=" form-label">HODs / Supervisor’s Final Comments</label>
+                        <textarea
+                        {...register("hodcomment")}
+                        value={actualToUpdate?.hodcomment}
+                        onChange={handleFinalChange}
+                        disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
+                        rows={1}
+                        className="form-control " />
+                    </div>
+                    {/* <div className=" row col-12">
+                        <div className="col-4 mb-3">
+                            
+                            <input type="radio" value="permanency" checked={selectedOption === 'permanency'} onChange={handleChange} /> Permanency
+                        </div>
+                        <div className="col-4 mb-3">
+
+                            <input type="radio" value="extendProbation" checked={selectedOption === 'extendProbation'} onChange={handleChange} /> Extend Probation
+                        </div>
+                        <div className="col-4 mb-3">
+
+                            <input type="radio" value="completeContract" checked={selectedOption === 'completeContract'} onChange={handleChange} /> Complete contract
+                        </div>
+                        <div className="col-4 mb-3">
+                            <input type="radio" value="renewContract" checked={selectedOption === 'renewContract'} onChange={handleChange} /> Renew Contract
+
+                        </div>
+                        <div className="col-4 mb-3">
+                            <input type="radio" value="terminate" checked={selectedOption === 'terminate'} onChange={handleChange} /> Terminate
+
+                        </div>
+                    </div> */}
+                </>
+                
+                
             }
+            <hr />
           </form>
           
         </Modal>

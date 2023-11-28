@@ -230,6 +230,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
     const checkActive = allReviewdates?.data?.filter((item: any) => {
         return item?.isActive?.trim() === "active"
     })
+    const checkActiveDate = allReviewdates?.data?.filter((item: any) => {
+        return item?.isActive?.trim() === "active" && item?.referenceId === referenceId
+    })
 
     const changeStatus = handleSubmit(async (values) => {
         
@@ -248,7 +251,7 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
                 isActive: values.isActive,
             }
         console.log('data: ', data)
-        if(checkActive?.length > 0 && values.isActive === "active" ) {
+        if(checkActiveDate?.length > 0 && values.isActive === "active" ) {
             message.error('Only one active status allowed')
         }else{
             try {

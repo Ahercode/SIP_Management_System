@@ -209,11 +209,6 @@ const ActualPage = ( {
         return (
           <>
             <div className='d-flex'>
-              <span style={{ fontSize:"16px"}} 
-                className={ `badge ${record?.goodBad?.trim() === "good"? 'badge-light-success' : 
-                "badge-light-danger"}  fw-bolder` }>
-                {record?.goodBad?.trim() === "good"? "Good":record?.goodBad?.trim() === "bad"?"Bad":""}
-              </span>
               <textarea
                 readOnly={true}
                 rows={3}
@@ -373,17 +368,7 @@ const ActualPage = ( {
       render: (record: any) => {
         return (
           <>
-
           <SupportFile title={title} deliverableId={record} />
-            {/* <label htmlFor="fileInput" className="btn btn-light-info btn-sm">
-              {title==="final"|| title==="hr"?"View":"Choose File"}
-            </label>
-            <input
-              type="file"
-              id="fileInput"
-              className="visually-hidden"
-              onChange={handleFileChange}
-            /> */}
           </>
         )
       }
@@ -446,7 +431,9 @@ const ActualPage = ( {
                   (() => {
                     const total = filteredDeliverables?.map((deliverableId: any) => {
                       const actual = allApraisalActual?.data?.find((item: any) => {
-                        return item?.deliverableId === deliverableId?.id && item?.employeeId?.toString() === employeeId
+                        return item?.deliverableId === deliverableId?.id && 
+                        item?.employeeId?.toString() === 
+                        employeeId && item?.referenceId === checkActive?.referenceId
                       })
                       const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                         Math.round((actual?.actual/deliverableId?.target)*100)

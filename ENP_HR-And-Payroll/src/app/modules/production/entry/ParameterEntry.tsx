@@ -103,6 +103,12 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     return item?.isActive?.trim() === "active"
   })
 
+  const checkAllActive = allReviewdates?.data?.filter((item: any) => {
+    return item?.isActive?.trim() === "active"
+  })
+
+  console.log("checkAllActive",checkAllActive)
+
 const activeReferenceId = allAppraisalsPerfTrans?.data?.find((item: any) => {
   return item?.referenceId === checkActive?.referenceId
 }
@@ -310,15 +316,25 @@ const OnSubmit = handleSubmit(async (values) => {
           </p>:
           <div className='table-responsive'>
             <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
-              <div >                
-                <p className='text-primary fs-2 fw-bold mb-4'>
+              <div className='mb-5'>   
+                <select  className="form-select form-select-solid" >
+                  <option value="">Select Reference</option>
+                  {
+                    allAppraisals?.data?.map((item: any) => {
+                      return(
+                        <option value={item.id}>{item.name}</option>
+                      )
+                    })
+                  }
+                </select>             
+                {/* <p className='text-primary fs-2 fw-bold mb-4'>
                   {
                     appraisalData?.name===undefined? "You will be notified when appraisal has started":`${appraisalData?.name}`
                   }
-                </p>
+                </p> */}
                 {
                   appraisalData?.name===undefined?""
-                  : <span style={{ fontSize:"16px"}}> Your status:
+                  : <span className="mt-10" style={{ fontSize:"16px"}}> Your status:
                   <span style={{ fontSize:"16px"}} className={
                     getEmployeeStatus() === 'Amend' ?
                     'badge badge-light-info fw-bolder' :

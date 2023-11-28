@@ -39,7 +39,9 @@ const BonusComputation = ({employeeData, title}:any) => {
                     (deliverable:any) => deliverable?.objectiveId === objective?.id
                 );
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
-                    const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
+                    const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id
+                        && actual?.employeeId === employeeId && actual?.referenceId === checkActive?.referenceId
+                    )
                     const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
                             Math.round((actual?.actual/deliverable?.target)*100)
                         return actualValue * (deliverable?.subWeight/100)
