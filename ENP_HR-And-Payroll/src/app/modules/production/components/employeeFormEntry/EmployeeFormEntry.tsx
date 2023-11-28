@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-import { Api_Endpoint, fetchDocument } from '../../../../services/ApiCalls';
+import { Api_Endpoint, ImageBaseUrl, fetchDocument } from '../../../../services/ApiCalls';
 import { useAuth } from '../../../auth';
 import "./formStyle.css";
 
@@ -197,7 +197,7 @@ const MultiTabForm = () => {
               }{
                 !previewImage && (
 
-                  <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`http://208.117.44.15/hrwebapi/uploads/employee/ahercode1.jpg`} width={120} height={120}></img>
+                  <img style={{ borderRadius: "10px", marginBottom: "20px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`} width={120} height={120}></img>
                 )
               }
               <br></br>
@@ -235,7 +235,7 @@ const MultiTabForm = () => {
               <div className='col-2 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Gender</label>
                 <select {...register("gender")} className="form-select form-select-solid" aria-label="Select example">
-                  <option>select </option>
+                  <option>Select </option>
                   <option value="MALE">MALE</option>
                   <option value="FEMALE">FEMALE</option>
                 </select>
@@ -245,6 +245,7 @@ const MultiTabForm = () => {
                 <select
                   {...register("isAdmin")} name="isAdmin"
                   className="form-select form-select-solid">
+                  <option value="no">Select</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
@@ -263,7 +264,7 @@ const MultiTabForm = () => {
               <div className='col-2 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Marital Status</label>
                 <select {...register("maritalStatus")} className="form-select form-select-solid" aria-label="Select example">
-                  <option>select </option>
+                  <option>Select </option>
                   <option value="SINGLE">SINGLE</option>
                   <option value="MARRIED">MARRIED</option>
                 </select>
@@ -289,7 +290,7 @@ const MultiTabForm = () => {
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Employee Group</label>
                 <select {...register("paygroupId")} className="form-select form-select-solid" aria-label="Select example">
-                  <option>select </option>
+                  <option>Select </option>
                   {allPaygroups?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
                   ))}
@@ -298,7 +299,7 @@ const MultiTabForm = () => {
               <div className='col-4 mb-7'>
                 <label htmlFor="exampleFormControlInput1" className=" form-label">Department</label>
                 <select {...register("departmentId")} className="form-select form-select-solid" aria-label="Select example">
-                  <option>select </option>
+                  <option>Select </option>
                   {allDepartments?.data.map((item: any) => (
                     <option value={item.id}>{item.name}</option>
                   ))}

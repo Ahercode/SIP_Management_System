@@ -45,8 +45,6 @@ const Employee = () => {
     return item.status === statusSelected
   })
 
-  console.log("allEmployee?.data: ", allEmployee?.data)
-
   // const empByDepartment = allEmployee?.data?.filter((item: any) => {
   //   return item.departmentId === parseInt(departmentSelected) && item.status === statusSelected
   // })

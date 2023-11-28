@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { fetchDocument } from '../../../../services/ApiCalls';
+import { ImageBaseUrl, fetchDocument } from '../../../../services/ApiCalls';
 import "./formStyle.css";
 
 import { Tabs, TabsProps } from 'antd';
@@ -34,14 +34,16 @@ const EmplyeeDetails = ({employeeData}: any) => {
     console.log(key);
   };
 
+  console.log(employeeData?.imageUrl)
+
   return (
     <div className='py-7'>
       <div className="d-flex row-auto align-items-center align-content-center ">
         <div>
           {
             employeeData?.imageUrl === null || employeeData?.imageUrl ===""?
-            <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
-              <img style={{ borderRadius: "50%", width: "70px", height: "60px" }} src={`https://app.sipconsult.net/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> 
+            <img style={{ borderRadius: "10%", width: "140px", height: "150px"  }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/ahercode1.jpg`}></img>:
+              <img style={{ borderRadius: "10%", width: "140px", height: "150px" }} src={`${ImageBaseUrl}/omniAppraisalApi/uploads/employee/${employeeData?.imageUrl}`}></img> 
           }
         </div>
         <div className="column-auto align-items-center align-content-center" >

@@ -109,13 +109,13 @@ const ReferencesPage = () => {
             referenceId: tempData?.referenceId,
         }
         console.log('data: ', data)
-        if(checkActive?.length > 0 && values?.status === "active" ) {
-            message.error('You already have an active reference, kindly deactivate it first!')
-        }
-        else if(activeSchedule?.length > 0){
-            message.error('You have an active schedule, kindly deactivate it first!')
-        }
-        else{
+        // if(checkActive?.length > 0 && values?.status === "active" ) {
+        //     message.error('You already have an active reference, kindly deactivate it first!')
+        // }
+        // else if(activeSchedule?.length > 0){
+        //     message.error('You have an active schedule, kindly deactivate it first!')
+        // }
+        // else{
             try {
                 axios.put(`${Api_Endpoint}/AppraisalPerfTransactions/${tempData?.id}`,data).then((res) => {
                     message.success('Status changed successfully')
@@ -130,7 +130,7 @@ const ReferencesPage = () => {
             } catch (error) {
                 message.error('Internal server error')
             }
-        }
+        // }
     })
 
     return (

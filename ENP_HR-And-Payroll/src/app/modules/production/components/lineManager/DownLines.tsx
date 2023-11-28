@@ -246,6 +246,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                     <Table
                         columns={columns}
                         dataSource={allDownlines}
+                        scroll={{ y: `calc(100vh - 250px)` }}
                         expandable={{
                             // rowExpandable: (record) => record?.id,
                             expandedRowRender: (record) => <p key={record?.id} style={{ margin: 0 }}>{record.comment}

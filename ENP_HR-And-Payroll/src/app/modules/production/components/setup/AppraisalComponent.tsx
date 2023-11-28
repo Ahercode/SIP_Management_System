@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
+import { ArrowLeftOutlined } from "@ant-design/icons"
 import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { getFieldName } from '../ComponentsFactory'
 
 const AppraisalComponent = ({ title, endPoint }: any) => {
 
@@ -27,7 +29,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
   const prevPath = title === 'Objectives' ? 'parameters' : 'appraisalobjective'
   const { data: prevPathData } = useQuery('pathData', () => fetchDocument(`${prevPath}`), { cacheTime: 5000 })
   const { data: pathData } = useQuery(`${endPoint}`, () => fetchDocument(`${endPoint}`), { cacheTime: 5000 })
-  const { data: allUnitsOfMeasure } = useQuery(`unitsofmeasure`, () => fetchDocument(`unitsofmeasure`), { cacheTime: 5000 })
+  const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 5000 })
 
 
   const showModal = () => {
@@ -71,7 +73,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
 
   const columns: any = title === 'Objectives' ? [
     {
-      title: 'Name',
+      title: 'Objective',
       dataIndex: 'name',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
@@ -83,19 +85,19 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
         return 0
       },
     },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
-    },
+    // {
+    //   title: 'Description',
+    //   dataIndex: 'description',
+    //   sorter: (a: any, b: any) => {
+    //     if (a.name > b.name) {
+    //       return 1
+    //     }
+    //     if (b.name > a.name) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
     {
       title: 'Weight(%)',
       dataIndex: 'weight',
@@ -122,30 +124,43 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
-          {/* <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-            Delete
-          </a> */}
         </Space>
       ),
     },
   ] :
     [
       {
-        title: 'Name',
-        dataIndex: 'name',
-        sorter: (a: any, b: any) => {
-          if (a.name > b.name) {
-            return 1
-          }
-          if (b.name > a.name) {
-            return -1
-          }
-          return 0
-        },
+        render:(record:any)=>{
+          return (
+            <>
+              <span style={{ fontSize:"16px"}} 
+                className={ `badge ${record?.goodBad?.trim() === "good"? 'badge-light-success' : 
+                "badge-light-danger"}  fw-bolder` }>
+                {record?.goodBad?.trim() === "good"? "Good": record?.goodBad?.trim() === "bad"?"Bad":""}
+              </span>
+            </>
+          )
+        }
       },
       {
-        title: 'Description',
+        title: 'Deliverable',
         dataIndex: 'description',
+        render: (record: any) => {
+          // const pointsArray = record.split(/\n• /)
+          const pointsArray = record?.trim()?.split(/\n(?=\d+\.|\u2022)/).filter(Boolean)
+          return (
+            <>
+              <span style={{ fontSize:"16px"}} className={ 'badge badge-light-warning fw-bolder' }>
+                {record?.tag?.trim() === "same"? "Pre-defined":""}
+              </span>
+              <ul>
+                {pointsArray?.map((point: any) => (
+                  <p>{point}</p>
+                ))}
+              </ul>
+            </>
+          )
+          },
         sorter: (a: any, b: any) => {
           if (a.name > b.name) {
             return 1
@@ -171,7 +186,10 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
       },
       {
         title: 'Unit of Measure',
-        dataIndex: 'unitOfMeasure',
+        key: 'unitOfMeasureId',
+        render: (record: any) => {
+          return getFieldName(record?.unitOfMeasureId, allUnitsOfMeasure?.data)
+        },
         sorter: (a: any, b: any) => {
           if (a.status > b.status) {
             return 1
@@ -238,10 +256,10 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
   useEffect(() => {
     (async () => {
       let res = await getItemData(param.id)
-      setPathName(res?.name)
+      setPathName(res)
     })();
     loadData()
-  }, [param, prevPathData?.data])
+  }, [param?.id, prevPathData?.data])
 
   const dataWithIndex = gridData.map((item: any, index) => ({
     ...item,
@@ -541,6 +559,7 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     }
   })
 
+
   return (
     <div
       style={{
@@ -552,32 +571,29 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-          <h3 style={{ fontWeight: "bolder" }}>{pathName}</h3>
-          <br></br>
-          <button className='mb-3 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary' onClick={() => navigate(-1)}>Go Back</button>
-          <br></br>
-          <div className='d-flex justify-content-between'>
-            <Space style={{ marginBottom: 16 }}>
-              <Input
-                placeholder='Enter Search Text'
-                onChange={handleInputChange}
-                type='text'
-                allowClear
-                value={searchText} size='large'
+          <div className='d-flex mb-7 justify-content-between'>
+           
+          <Space className=''>
+              <Button
+                onClick={() => navigate(-1)}
+                className="btn btn-light-primary me-4"
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  display: 'flex',
+                }}
+                type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
               />
-              <Button type='primary' onClick={globalSearch} size='large'>
-                Search
-              </Button>
+              <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
+                <span className="fw-bold d-block fs-2">{`${pathName?.name}`}</span>
+                <div className="bullet bg-danger ms-4"></div>
+                <span className=' fs-2 ms-4 fw-bold'>{`${pathName?.weight}%`}</span>
+              </div>              
             </Space>
             <Space style={{ marginBottom: 16 }}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
-              </button>
-
-              <button type='button' className='btn btn-light-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                Export
               </button>
             </Space>
           </div>
@@ -613,18 +629,10 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
                 title === 'Objectives' ?
                   <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
                     <div className='mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label">Objective</label>
                       <input
                         {...register("name")}
                         defaultValue={isUpdateModalOpen === true ? tempData.name : null}
-                        onChange={handleChange}
-                        className="form-control form-control-solid" />
-                    </div>
-                    <div className='mb-7'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
-                      <input
-                        {...register("description")}
-                        defaultValue={isUpdateModalOpen === true ? tempData.description : null}
                         onChange={handleChange}
                         className="form-control form-control-solid" />
                     </div>
@@ -641,17 +649,9 @@ const AppraisalComponent = ({ title, endPoint }: any) => {
                   :
                   <>
                     <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                      <div className='col-4 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                        <input
-                          {...register("name")}
-                          defaultValue={isUpdateModalOpen === true ? tempData.name : null}
-                          onChange={handleChange}
-                          className="form-control form-control-solid" />
-                      </div>
-                      <div className='col-8 mb-7'>
-                        <label htmlFor="exampleFormControlInput1" className="form-label">Description</label>
-                        <input
+                      <div className=' mb-7'>
+                        <label htmlFor="exampleFormControlInput1" className="form-label">Deliverable</label>
+                        <textarea
                           {...register("description")}
                           defaultValue={isUpdateModalOpen === true ? tempData.description : null}
                           onChange={handleChange}

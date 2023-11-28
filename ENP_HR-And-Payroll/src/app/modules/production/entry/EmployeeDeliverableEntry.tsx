@@ -77,40 +77,32 @@ const EmployeeDeliverableEntry = () => {
   }
 
   const columns: any = [
-
     {
-      title: 'Objective',
-      dataIndex: 'name',
-      render: (record: any) => {
+      render:(record:any)=>{
         return (
           <>
-            <span className=''>
-              {record}
+            <span style={{ fontSize:"16px"}} 
+              className={ `badge ${record?.goodBad?.trim() === "good"? 'badge-light-success' : 
+              "badge-light-danger"}  fw-bolder` }>
+              {record?.goodBad?.trim() === "good"? "Good": record?.goodBad?.trim() === "bad"?"Bad":""}
             </span>
           </>
         )
-      },
-      sorter: (a: any, b: any) => {
-        if (a.name > b.name) {
-          return 1
-        }
-        if (b.name > a.name) {
-          return -1
-        }
-        return 0
-      },
+      }
     },
     {
       title: 'Deliverable',
       dataIndex: 'description',
       render: (record: any) => {
-        const pointsArray = record.split(/\n• /)
+        const pointsArray = record?.trim()?.split(/\n(?=\d+\.|\u2022)/).filter(Boolean)
         return (
-          <ul>
-            {pointsArray.map((point: any) => (
-              <li>{point}</li>
-            ))}
-          </ul>
+          <>
+            <ul>
+              {pointsArray?.map((point: any) => (
+                <p>{point}</p>
+              ))}
+            </ul>
+          </>
         )
         },
       sorter: (a: any, b: any) => {
@@ -123,6 +115,7 @@ const EmployeeDeliverableEntry = () => {
         return 0
       },
     },
+    
     {
       title: 'Sub Weight',
       dataIndex: 'subWeight',
@@ -149,7 +142,7 @@ const EmployeeDeliverableEntry = () => {
         return 0
       },
       render: (record: any) => {
-        return getFieldName(record.unitOfMeasureId, allUnitsOfMeasure?.data)
+        return getFieldName(record?.unitOfMeasureId, allUnitsOfMeasure?.data)
       },
     },
     {
@@ -221,7 +214,6 @@ const EmployeeDeliverableEntry = () => {
       .reduce((a: any, b: any) => a + b, 0)
   };
 
-
   const { mutate: updateData } = useMutation(updateItem, {
     onSuccess: async(newData: any) => {
       queryClient.invalidateQueries(`appraisalDeliverables`)
@@ -267,7 +259,6 @@ const EmployeeDeliverableEntry = () => {
     } else {
       //cheeck if new name already exists
       const itemExists = gridData?.find((item: any) =>
-        item.name === tempData.name &&
         item.description === tempData.description &&
         item.unitOfMeasureId === tempData.unitOfMeasureId &&
         item.target === tempData.target
@@ -298,7 +289,6 @@ const EmployeeDeliverableEntry = () => {
 
     const itemToPost = {
       data: {
-        name: values.name,
         objectiveId: parseInt(param.objectiveId),
         description: values.description,
         subWeight: parseInt(values.subWeight),
@@ -314,7 +304,6 @@ const EmployeeDeliverableEntry = () => {
 
     // check if item already exist
     const itemExist = gridData?.find((item: any) =>
-      item.name === itemToPost.data.name &&
       item.objectiveId === itemToPost.data.objectiveId &&
       item.description === itemToPost.data.description &&
       item.subWeight === itemToPost.data.subWeight &&
@@ -425,7 +414,7 @@ const EmployeeDeliverableEntry = () => {
               onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
             >
               <div style={{ padding: "20px 20px 20px 20px" }} className='row mb-0 '>
-                <div className='col-4 mb-7'>
+                {/* <div className='col-4 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Objective</label>
                   <input
                     {...register("name")}
@@ -433,8 +422,8 @@ const EmployeeDeliverableEntry = () => {
                     defaultValue={isUpdateModalOpen === true ? tempData.name : null}
                     onChange={handleChange}
                     className="form-control form-control-solid" />
-                </div>
-                <div className='col-8 mb-7'>
+                </div> */}
+                <div className='mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Deliverable</label>
                   <textarea
                     {...register("description")}

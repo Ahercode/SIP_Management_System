@@ -5,14 +5,20 @@ import { useAuth } from "../../auth"
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom";
 import { ErrorBoundary } from "@ant-design/pro-components"
-import { Button, message } from "antd"
-import { useEffect } from "react"
+import { Button, Modal, message } from "antd"
+import { useEffect, useState } from "react"
 import axios from "axios"
+import { useForm } from "react-hook-form"
 
 
 const ActualMasterPage = ({title, employeeId}:any) => {
     const { currentUser } = useAuth()
     const navigate = useNavigate();
+    const { register, reset, handleSubmit } = useForm()
+    // const [textareaHeight, setTextareaHeight] = useState('auto');
+    const currentLocation = window.location.pathname.split('/')[4]
+    const [actualToUpdate, setActualToUpdate] = useState<any>(null)
+    const [finalCommentModal, setFinalCommentModal] = useState<any>(false)
     const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
     const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
     const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
@@ -29,6 +35,21 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     }else{
         employeeId = (currentUser?.id)
     }
+
+    const handleFinalModalClose = () => {
+        setFinalCommentModal(false)
+        setActualToUpdate(null)
+        reset()
+      }
+
+      const handleFinalComment = () => {
+        setFinalCommentModal(true)
+      }
+
+      const handleFinalChange = (event: any) => {
+        event.preventDefault()
+        setActualToUpdate({ ...actualToUpdate, [event.target.name]: event.target.value });
+      }
 
     const convertToArray = checkActive?.referenceId.split("-")
     
@@ -48,8 +69,6 @@ const ActualMasterPage = ({title, employeeId}:any) => {
         obj?.employeeId === employeeId?.toString() && 
         obj?.referenceId === checkActive?.referenceId) || sameParameter?.id === obj?.parameterId
     );
-
-    // console.log("objectivesData", objectivesData)
 
   const objectiveWeights = objectivesData?.map((objective:any) => {
 
@@ -149,7 +168,6 @@ const ActualMasterPage = ({title, employeeId}:any) => {
             console.log("err", err)
         }
         )
-
   }
 }
 
@@ -273,6 +291,112 @@ const ActualMasterPage = ({title, employeeId}:any) => {
 
             ))
         }
+        <br />
+        <hr />
+
+        <div className="mb-10 mt-10">
+            <div>
+                <label className="fs-3 fw-bold form-label">Employee's comments</label>
+                <textarea
+                    disabled={title==="final"|| title==="hr"?true:false}
+                    rows={1}
+                    // onChange={(e)=>handleChange(record?.id, e.target.value, "individualComment")}
+                    // defaultValue={pointsArray?.join('\n')}
+                    className="form-control"
+
+                />
+                {
+                    title === "final" || title === "hr" ? "":
+                    
+                    <button className="mt-3 btn btn-light-success btn-sm">
+                        Submit
+                    </button>
+                }
+                {/* <button className="d-flex justify-content-between btn btn-light-success btn-sm">
+                    Save
+                </button> */}
+            </div>
+            <div>
+            <p className="fs-3 mt-10 fw-bold form-label">Linemamager's comments</p>
+                <button onClick={handleFinalComment} className=" btn btn-light-info btn-sm">
+                    {title==="final"|| title==="hr"?"Your final comments":"View comments"}
+                </button>
+            </div>
+        <Modal
+          title='Final Comments'
+          open={finalCommentModal}
+          onCancel={handleFinalModalClose}
+          // width={1000}
+          footer={[
+            <button onClick={handleFinalModalClose} className='btn btn-light-danger btn-sm me-6'>Close</button>,
+            <button 
+                // onClick={SubmitFinalComment} 
+                className='btn btn-light-success btn-sm'>Submit</button>
+          ]}
+        >
+          <hr></hr>
+          <form 
+            // onSubmit={changeStatus}
+            // onSubmit={SubmitFinalComment}
+          >
+          
+            <div className='mb-7'>
+                <label className=" form-label">Major Achievements</label>
+                <textarea
+                  {...register("achievements")}
+                  value={actualToUpdate?.achievements}
+                  onChange={handleFinalChange}
+                  disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
+                  rows={1}
+                  className="form-control " />
+            </div>
+            <div className='mb-7'>
+                <label className=" form-label">What activities does this Appraisee do especially well (Major Strengths)</label>
+                <textarea
+                  {...register("strength")}
+                  value={actualToUpdate?.strength}
+                  onChange={handleFinalChange}
+                  disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
+                  rows={1}
+                  className="form-control " />
+            </div>
+            <div className='mb-7'>
+                <label className=" form-label">In what aspects does this Appraisee need to improve (Weakness)</label>
+                <textarea
+                  {...register("weakness")}
+                  value={actualToUpdate?.weakness}
+                  onChange={handleFinalChange}
+                  disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
+                  rows={1}
+                  className="form-control " />
+            </div>
+            <div className='mb-7'>
+                <label className=" form-label">Areas for Improvement / Development – Based on current job performance and the requirement of the Appraisee’s job position, in order of priority, list areas of training need/recommended.</label>
+                <textarea
+                  {...register("improvement")}
+                  value={actualToUpdate?.improvement}
+                  onChange={handleFinalChange}
+                  disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
+                  rows={1}
+                  className="form-control " />
+            </div>
+            {
+                title!=="hr" || currentLocation==="appraisal-performance"? "":
+                <div className='mb-7'>
+                    <label className=" form-label">HODs / Supervisor’s Final Comments</label>
+                    <textarea
+                    {...register("hodcomment")}
+                    value={actualToUpdate?.hodcomment}
+                    onChange={handleFinalChange}
+                    disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
+                    rows={1}
+                    className="form-control " />
+                </div>
+            }
+          </form>
+          
+        </Modal>
+        </div>
     </div>
     )
 }

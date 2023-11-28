@@ -17,6 +17,7 @@
         "@mui/material": "^5.10.11",
         "@mui/x-date-pickers": "^5.0.6",
         "@popperjs/core": "2.11.5",
+        "@react-pdf/renderer": "^3.1.14",
         "animate.css": "4.1.1",
         "antd": "5.6.0",
         "axios": "0.26.1",

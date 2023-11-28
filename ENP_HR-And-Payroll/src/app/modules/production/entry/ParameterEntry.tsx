@@ -78,7 +78,7 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
       render: (text: any, record: any) => (
         <>
            <span style={{ fontSize:"16px"}} className={ 'badge badge-light-warning fw-bolder' }>
-            {record?.tag?.trim()?.toLocaleUpperCase()}
+            {record?.tag?.trim() === "same"? "Pre-defined":""}
           </span>
         </>
         

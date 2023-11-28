@@ -3,7 +3,7 @@ import { Button, Input, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../../_metronic/helpers'
 import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../../services/ApiCalls'
 
@@ -107,6 +107,28 @@ const Parameter = () => {
       },
     },
     {
+      title: 'Tag',
+      dataIndex: 'tag',
+      render: (tag:any )=>{
+        return (
+          <>
+            <span style={{ fontSize:"16px"}} className={ 'badge badge-light-warning fw-bolder' }>
+              {tag?.trim()=== "same" ? "Pre-defined" : ""}
+            </span>
+          </>
+        )
+      },
+      sorter: (a: any, b: any) => {
+        if (a.tag > b.tag) {
+          return 1
+        }
+        if (b.tag > a.tag) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
       title: 'Weight per parameter (%)',
       dataIndex: 'weight',
       sorter: (a: any, b: any) => {
@@ -122,13 +144,16 @@ const Parameter = () => {
 
     {
       title: 'Action',
-      fixed: 'right',
+      align: 'right',
       width: 100,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          {/* <Link to={`/objectives/${record.id}`}>
-            <span className='btn btn-light-info btn-sm'>Objectives</span>
-          </Link> */}
+          {
+            record.tag?.trim() === "same" ? 
+              <Link to={`/objectives/${record.id}`}>
+                <span className='btn btn-light-info btn-sm'>Objectives</span>
+              </Link>: null
+          }
           <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
             Update
           </a>
@@ -285,6 +310,7 @@ const Parameter = () => {
         appraisalId: parseInt(param.id),
         name: values.name,
         code: values.code,
+        tag: values.tag,
         tenantId: tenantId,
         status: 1, //parseInt(values.status),
         weight: parseInt(values.weight)
@@ -373,11 +399,6 @@ const Parameter = () => {
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
-
-              {/* <button type='button' className='btn btn-light-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
-                Export
-              </button> */}
             </Space>
           </div>
           {
@@ -433,6 +454,20 @@ const Parameter = () => {
                     max={100}
                     min={0}
                     className="form-control form-control-solid" />
+                </div>
+                <div className='mb-7'>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Tag</label>
+                  <select {...register("tag")}
+                    value={isUpdateModalOpen === true ? tempData?.tag : null}
+                    onChange={handleChange} className="form-select form-select-solid" aria-label="Select example">
+                    {isUpdateModalOpen === false ? <option value="Select">Select</option> : null}
+                    {<>
+                        <option >Select</option>
+                        <option value="same">Predefined</option>
+                        <option value="notsame">Not Defined</option>
+                    </>
+                    }
+                  </select>
                 </div>
               </div>
             </form>

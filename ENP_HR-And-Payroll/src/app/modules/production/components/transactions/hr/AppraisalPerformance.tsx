@@ -107,11 +107,11 @@ const AppraisalPerformance = () => {
 
   const showRefModal = () => {
     // check if there is an active reference
-    if(activeReference?.length>0){
-      message.error('There is an active reference already, kindly deactivate it first')
-    }else{
+    // if(activeReference?.length>0){
+    //   message.error('There is an active reference already, kindly deactivate it first')
+    // }else{
+    // }
     setIsRefModalOpen(true)
-    }
   }
   const showDetail = (record: any) => {
     setViewDetail(true)
@@ -489,7 +489,6 @@ const AppraisalPerformance = () => {
           <a onClick={showRefModal} style={{backgroundColor:"#216741", color:"#f2f2f2"}} className='btn  btn-sm'>Add New Entry</a>
         </div> :""
         }
-        
       </div>
       {
         selectedReference === null || selectedReference === "select reference" ? "":
@@ -594,11 +593,11 @@ const AppraisalPerformance = () => {
         selectedReference === null
           || selectedReference === "select reference"
           ? "" :
-
           <div className='table-responsive'>
-            <div className='col-12 mb-7'>
+            {/* <div className='col-12 mb-7'>
                 <AppraisalObjective referenceId={appraisalTranItem?.referenceId} />
-              </div>
+              </div> */}
+              <br />
             <div className='col-12 row mb-7'>
               < ReviewDateComponent
                 referenceId={appraisalTranItem?.referenceId}
@@ -607,25 +606,19 @@ const AppraisalPerformance = () => {
               />
             </div>
             <br></br>
-
             <div className='d-flex justify-content-between'>
               <Space style={{ marginBottom: 16 }}>
                 <Input
-                 
                   placeholder='Enter employee name'
                   onChange={handleInputChange}
                   type='text'
                   allowClear
-                  // value={searchText}
                 />
-                
               </Space>
               <Space style={{ marginBottom: 16 }}>
-                
                 {
                   selectedRowKeys?.length>0?
                   <button style={{ marginBottom: 16 }} type='button' className='btn btn-danger btn-sm' onClick={handleDelete}>
-                    {/* <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' /> */}
                     Remove
                   </button>:
                   <>
@@ -635,7 +628,6 @@ const AppraisalPerformance = () => {
                     </button>
                   </>
                 }
-                
               </Space>
             </div>
             {
@@ -745,7 +737,6 @@ const AppraisalPerformance = () => {
                 <AppraisalPrintHeader
                   employeeData={employeeData}
                 />
-
                 {
                   checkActive?.tag?.trim() === "actual" ||
                   checkActive?.tag?.trim() === "final" ? 
@@ -754,7 +745,6 @@ const AppraisalPerformance = () => {
                 }
               </div>
             </Modal>
-
           </div>
       }
     </div >

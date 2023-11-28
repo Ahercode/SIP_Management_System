@@ -91,8 +91,7 @@ const AppraisalFormHeader: React.FC<AppraisalFormHeaderProps> = ({ employeeData,
                     {!employeeData ? 'Unknown Employee' : `${employeeData?.firstName} ${employeeData?.surname}`}
                 </div>
                 <div>{print}</div>
-                {PrintComponent && <PrintComponent />} 
-                {/* <Button type="link" className="me-3" onClick={() => { }} icon={<PrinterOutlined rev={'print'} className="fs-1" />} /> */}
+                {PrintComponent && <PrintComponent />}
             </div>
             <Divider className="mb-3 mt-0" />
             <div className='d-flex row-auto mb-3'>
