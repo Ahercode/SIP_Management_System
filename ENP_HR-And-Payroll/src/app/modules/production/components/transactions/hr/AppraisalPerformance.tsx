@@ -441,7 +441,8 @@ const AppraisalPerformance = () => {
     }
 
     if (result?.length > 0) {
-      message.error('Employee already exist in this group')
+      message.error('Employee already exist in this group')   
+
     } else {
 
       console.log('dataToPost: ', dataToPost)
@@ -666,7 +667,7 @@ const AppraisalPerformance = () => {
                   <hr></hr>
                   <div style={{ padding: "20px 20px 0 20px" }} className='row mb-0 '>
                     <div className='col-6 mb-3'>
-                      <label htmlFor="exampleFormControlInput1" className="form-label ">Employee ID</label>
+                      <label htmlFor="exampleFormControlInput1" className="form-label ">Employee</label>
 
                       <br></br>
                       <Select
@@ -738,10 +739,11 @@ const AppraisalPerformance = () => {
                   employeeData={employeeData}
                 />
                 {
-                  checkActive?.tag?.trim() === "actual" ||
-                  checkActive?.tag?.trim() === "final" ? 
-                  <ActualMasterPage title="hr" employeeId={employeeData?.id} />:
-                  <AppraisalFormContent component={AppraisalObjectivesComponent}  employeeId={employeeData?.id} parametersData={parametersData} />
+                  // checkActive?.tag?.trim() === "actual" ||
+                  // checkActive?.tag?.trim() === "final" ? 
+                  <ActualMasterPage title="hr" employeeId={employeeData?.id} />
+                  // :
+                  // <AppraisalFormContent component={AppraisalObjectivesComponent}  employeeId={employeeData?.id} parametersData={parametersData} />
                 }
               </div>
             </Modal>

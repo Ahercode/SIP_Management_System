@@ -109,7 +109,6 @@ const ActualPage = ( {
     const dataArray = Object.keys(actualValues).map((recordId: any) => ({
       actual: actualValues[recordId].actual===undefined? getOldActual(recordId): actualValues[recordId].actual,
       deliverableId: recordId,
-      // scheduleId: checkActive?.id,
       referenceId: checkActive?.referenceId,
       employeeId: parseInt(currentUser?.id),
       individualComment: actualValues[recordId]?.individualComment===undefined? "": actualValues[recordId]?.individualComment,
@@ -143,6 +142,7 @@ const ActualPage = ( {
         improvement: values?.improvement,
         finalComment: values?.finalComment,
         hodcomment: values?.hodcomment,
+        referenceId: checkActive?.referenceId,
       }],
       url: `ApraisalActuals`,
     }
@@ -283,7 +283,7 @@ const ActualPage = ( {
                 onFocus={onFocus}
                 onBlur={onBlur}
                 type='number' min='0'
-                defaultValue={actual?.actual}
+                value={actual?.actual}
                 onChange={(e)=>handleChange(record?.id, e.target.value, "actual")}
                 className="form-control " 
                 style={{
@@ -395,10 +395,9 @@ const ActualPage = ( {
 
     }
   ]
-
  
-  if(checkActive?.tag?.trim() !== "final"){
-    columns.splice(5, 2)
+  if(checkActive?.tag?.trim() !== "final" || checkActive?.tag?.trim() !== "hr"){
+    columns.splice(5, 1)
   }
 
   const filteredDeliverables = allObjectiveDeliverables?.data.filter((deliverable:any) =>

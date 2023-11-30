@@ -7,14 +7,14 @@ import { KTCardBody } from '../../../../_metronic/helpers'
 import { Api_Endpoint, fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../../auth'
 import axios from 'axios'
-import { sendEmail } from '../../../services/CommonService'
+import { getFieldName, sendEmail } from '../../../services/CommonService'
+import { selected } from '@devexpress/analytics-core/queryBuilder-metadata'
 
 const ParameterEntry = () => {
   const { handleSubmit } = useForm()
   // const param: any = useParams();
   const tenantId = localStorage.getItem('tenant')
   const { currentUser } = useAuth()
-  // let [appraisalName, setAppraisalName] = useState<any>("")
 const [objectiveStatus, setObjectiveStatus] = useState<any>("")
 
 const [deliverableStatus, setDeliverableStatus] = useState<any>("")
@@ -22,6 +22,7 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
   const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
   const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
+  const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
   const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
   const { data: allAppraTranItems, isLoading:itemsLoading} = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
@@ -102,41 +103,54 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
   const checkActive = allReviewdates?.data?.find((item: any) => {
     return item?.isActive?.trim() === "active"
   })
+  
 
-  const checkAllActive = allReviewdates?.data?.filter((item: any) => {
-    return item?.isActive?.trim() === "active"
-  })
 
-  console.log("checkAllActive",checkAllActive)
+  // const activeReferenceId = allAppraisalsPerfTrans?.data?.find((item: any) => {
+  //     return item?.referenceId === checkActive?.referenceId
+  //   }
+  // )
 
-const activeReferenceId = allAppraisalsPerfTrans?.data?.find((item: any) => {
-  return item?.referenceId === checkActive?.referenceId
-}
+const employeeReferenceIds = allAppraTranItems?.data?.filter((item: any) => 
+    (item?.employeeId === currentUser?.id) 
+)?.map((item: any) => item?.appraisalPerfTranId)
+
+
+console.log("forCurrentEmployee", employeeReferenceIds)
+
+
+const employeesReference = allAppraisalsPerfTrans?.data.filter((item: any) => 
+    employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active" 
+  )
 )
 
-const employeeFromActiveReference = allAppraTranItems?.data?.filter((item: any) => {
-    return item?.appraisalPerfTranId === activeReferenceId?.id
-  }
-)
+console.log("employeesReference", employeesReference)
 
-const currentEmployeeFromActiveReference = employeeFromActiveReference?.find((item: any) => {
-  return item?.employeeId === currentUser?.id
-}
-)
+const [selectedReference, setSelectedReference] = useState<any>(employeesReference?.[0]?.appraisalTypeId);
+
+// const employeeFromActiveReference = allAppraTranItems?.data?.filter((item: any) => {
+//     return item?.appraisalPerfTranId === activeReferenceId?.id
+//   }
+// )
+
+// const currentEmployeeFromActiveReference = employeeFromActiveReference?.find((item: any) => {
+//   return item?.employeeId === currentUser?.id
+// }
+// )
 
 const convertToArray = checkActive?.referenceId.split("-")
 
 const appraisalId = convertToArray?.[1]
 
   const dataByID = allParameters?.data?.filter((item: any) => {
-    return item.appraisalId?.toString() === appraisalId || item?.tag?.trim()==="same"
+    return item.appraisalId === parseInt(selectedReference) || item?.tag?.trim()==="same"
   })
   const parametersBeforeSubmit = allParameters?.data?.filter((item: any) => {
-    return item.appraisalId?.toString() === appraisalId
+    return item.appraisalId === parseInt(selectedReference)
   })
   //find appraisal by id
   const appraisalData = allAppraisals?.data?.find((appraisal: any) => {
-    return appraisal.id === parseInt(appraisalId)
+    return appraisal.id === parseInt(selectedReference)
   })
 
   // add a key to dataByID
@@ -189,14 +203,9 @@ const appraisalId = convertToArray?.[1]
     const statusAll = parametersBeforeSubmit?.map((item: any) => {
       return weightSumDeliverables(item.id)
     })
-
-    console.log("statusAll", statusAll)
+    
     setDeliverableStatus(statusAll)
   }
-  // const getOnlyparameters = allParameters?.data?.filter((item: any) => {
-  //     return item.appraisalId === 12
-  //   }
-  // )
 
   const getObjectiveStatus = ( )=>{
     const obejectiveTotal = dataByID?.map((pare: any) => {
@@ -225,10 +234,6 @@ const appraisalId = convertToArray?.[1]
     setObjectiveStatus(obejectiveTotal)
   }
 
-  const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
-    return parseInt(item?.employeeId) === parseInt(currentUser?.id) && item?.referenceId === checkActive?.referenceId
-})
-
  const getEmployeeStatus = (()=> {
     const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
          return parseInt(item?.employeeId) === parseInt(currentUser?.id) && item?.referenceId === checkActive?.referenceId
@@ -256,7 +261,7 @@ useEffect(() => {
   getObjectiveStatus()
   getDeliverableStatus()
 }
-, [allParameters?.data, allAppraisalobjective?.data]) 
+, [allParameters?.data, allAppraisalobjective?.data, selectedReference])
 // get  employee whose Id is same as the 
 
 const currentEmployee = allEmployees?.data?.find((item: any) => {
@@ -310,21 +315,22 @@ const OnSubmit = handleSubmit(async (values) => {
       <KTCardBody className='py-4 '>
         {
           itemsLoading || perLoading? <Skeleton active/>:
-          currentEmployeeFromActiveReference === undefined? 
+          // currentEmployeeFromActiveReference === undefined? 
+          employeesReference?.length === 0?
           <p className='text-center justify-center fs-1 fw-bold mb-4 mt-3'>
             You've not been added to any appraisal reference yet
           </p>:
           <div className='table-responsive'>
             <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
-              <div className='mb-5'>   
-                <select  className="form-select form-select-solid" >
+              <div>   
+                <select value={selectedReference} onChange={(e) => setSelectedReference(e.target.value)} className="form-select mb-5 form-select-solid" >
                   <option value="">Select Reference</option>
                   {
-                    allAppraisals?.data?.map((item: any) => {
-                      return(
-                        <option value={item.id}>{item.name}</option>
-                      )
-                    })
+                    employeesReference?.map((item: any) => (
+                      <option value={item.appraisalTypeId}>
+                        {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} 
+                      </option>
+                    ))
                   }
                 </select>             
                 {/* <p className='text-primary fs-2 fw-bold mb-4'>

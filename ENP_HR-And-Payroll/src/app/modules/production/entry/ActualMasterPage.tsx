@@ -11,11 +11,10 @@ import axios from "axios"
 import { useForm } from "react-hook-form"
 
 
-const ActualMasterPage = ({title, employeeId}:any) => {
+const ActualMasterPage = ({employeeId,title}:any) => {
     const { currentUser } = useAuth()
     const navigate = useNavigate();
     const { register, reset, handleSubmit } = useForm()
-    // const [textareaHeight, setTextareaHeight] = useState('auto');
     const currentLocation = window.location.pathname.split('/')[4]
     const [actualToUpdate, setActualToUpdate] = useState<any>(null)
     const [finalCommentModal, setFinalCommentModal] = useState<any>(false)
@@ -34,6 +33,8 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
     })
+
+    console.log("employeeId", employeeId)
     
     if(title === "hr"){
         employeeId = employeeId
@@ -61,7 +62,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
     const appraisalId = convertToArray?.[1]
 
     const activeParameterName = allParameters?.data?.filter((item: any) => 
-         item.appraisalId?.toString() === appraisalId || item?.tag?.trim() === "same"
+         item.appraisalId?.toString() === appraisalId
     )
 
     const activeParameters = allParameters?.data?.filter((item: any) => 
@@ -107,7 +108,38 @@ const ActualMasterPage = ({title, employeeId}:any) => {
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
                     const actual = allApraisalActual?.data?.find((actual:any) => 
                     actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString()
-                    && actual?.referenceId === checkActive?.referenceId
+                        && actual?.referenceId === checkActive?.referenceId
+                    )
+    
+                    const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
+                            Math.round((actual?.actual/deliverable?.target)*100)
+                        return actualValue * (deliverable?.subWeight/100)
+    
+                }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
+                    const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
+                return  finalWeight * (objective?.weight/100)
+            })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
+            return parseFloat(objectiveWeights)
+        })
+        const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
+        return totalAchievement
+    }
+    const getOverallAchievementForSame = () => {
+        const overAllWeight = activeParameterName?.map((param: any) => {
+            const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
+            param?.id ===obj?.parameterId && 
+            obj?.employeeId === employeeId?.toString() && 
+            obj?.referenceId === checkActive?.referenceId)
+    
+            const objectiveWeights = objectivesInParameter?.map((objective:any) => {
+                const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
+                    (deliverable:any) => deliverable?.objectiveId === objective?.id
+                );
+    
+                const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
+                    const actual = allApraisalActual?.data?.find((actual:any) => 
+                    actual?.deliverableId === deliverable?.id && actual?.employeeId?.toString() === employeeId?.toString()
+                        && actual?.referenceId === checkActive?.referenceId
                     )
     
                     const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
@@ -231,12 +263,6 @@ const ActualMasterPage = ({title, employeeId}:any) => {
                         <span className=" text-gray-600 fw-bold d-block fs-2">Go back</span>
                 </div>
             }
-            {
-                title === "final"|| title === "hr"?"":
-                <div>
-                    {/* <p className="badge badge-light-primary fw-bold fs-4">{checkActive?.description}</p> */}
-                </div>
-            }
             <div>{
                 
                 title === "final" ||
@@ -252,7 +278,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
         </div>
         <div 
         className={
-            title === "hr"|| title==="final"? "":
+            title === "hr"|| title==="final" ? "":
             `mt-8`}>
             <span className="text-gray-600 fw-bold fs-2" >Overall Achievement: <span className="badge fs-4 badge-light-primary">
                 {getOverallAchievement()}
@@ -318,7 +344,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
                     title === "final" || title === "hr" ? "":
                     
                     <button className="mt-3 btn btn-light-success btn-sm">
-                        Submit
+                        Save
                     </button>
                 }
                 {/* <button className="d-flex justify-content-between btn btn-light-success btn-sm">
@@ -328,7 +354,7 @@ const ActualMasterPage = ({title, employeeId}:any) => {
             <div>
             <p className="fs-3 mt-10 fw-bold form-label">Line Manager's comments</p>
                 <button onClick={handleFinalComment} className=" btn btn-light-info btn-sm">
-                    {title==="final"|| title==="hr"?"Your final comments":"View comments"}
+                    {title==="final"|| title==="hr" ? "Your final comments" : "View comments"}
                 </button>
             </div>
         <Modal

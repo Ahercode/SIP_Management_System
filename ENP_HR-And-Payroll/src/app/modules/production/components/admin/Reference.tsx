@@ -26,8 +26,13 @@ const ReferencesPage = () => {
     const checkActive = allAppraisalsPerfTrans?.data?.filter((item: any) => {
         return item?.status?.trim() === "active"
     })
+
+    // check if tempData has any active activeSchedule
+    const checkActiveSchedule = activeSchedule?.filter((item: any) => {
+        return item?.referenceId === tempData?.referenceId
+    })
+
     const handleModalOpen = (record: any) => {
-        console.log('record: ', record) 
         setTempData(record)
         setIsModalVisible(true);
     }
@@ -109,13 +114,13 @@ const ReferencesPage = () => {
             referenceId: tempData?.referenceId,
         }
         console.log('data: ', data)
-        // if(checkActive?.length > 0 && values?.status === "active" ) {
-        //     message.error('You already have an active reference, kindly deactivate it first!')
-        // }
-        // else if(activeSchedule?.length > 0){
-        //     message.error('You have an active schedule, kindly deactivate it first!')
-        // }
-        // else{
+        if(checkActiveSchedule?.length > 0 && values?.status === "active" ) {
+            message.error('You already have an active reference, kindly deactivate it first!')
+        }
+        else if(checkActiveSchedule?.length > 0){
+            message.error('You have an active schedule, kindly deactivate it first!')
+        }
+        else{
             try {
                 axios.put(`${Api_Endpoint}/AppraisalPerfTransactions/${tempData?.id}`,data).then((res) => {
                     message.success('Status changed successfully')
@@ -130,7 +135,7 @@ const ReferencesPage = () => {
             } catch (error) {
                 message.error('Internal server error')
             }
-        // }
+        }
     })
 
     return (
