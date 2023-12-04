@@ -1,6 +1,4 @@
 import { useIntl } from 'react-intl'
-import { useQuery } from 'react-query'
-import { fetchEmployees } from '../../../../app/services/ApiCalls'
 import { MenuItem } from './MenuItem'
 import { useAuth } from '../../../../app/modules/auth'
 

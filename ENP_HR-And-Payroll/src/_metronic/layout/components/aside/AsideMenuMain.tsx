@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useAuth } from '../../../../app/modules/auth'
-import { fetchUserRoles } from '../../../../app/services/ApiCalls'
 import { AsideMenuItem } from './AsideMenuItem'
 import { AsideMenuItemWithSub } from './AsideMenuItemWithSub'
+import { fetchDocument } from '../../../../app/services/ApiCalls'
 
 export function AsideMenuMain() {
   const intl = useIntl()
@@ -16,7 +16,7 @@ export function AsideMenuMain() {
   // })
 
   const [isPayrollHR, setIsPayrollHR] = useState(true)
-  const { data: allUserRoles } = useQuery('user-roles', fetchUserRoles, { cacheTime: 5000 })
+  const { data: allUserRoles } = useQuery('user-roles', ()=> fetchDocument("userRoles"), { cacheTime: 5000 })
 
   const currentUserRoles = allUserRoles?.data.filter((item: any) => item.userId === parseInt(currentUser?.id)).map((filteredItem: any) => {
     return filteredItem?.roleId?.toString()

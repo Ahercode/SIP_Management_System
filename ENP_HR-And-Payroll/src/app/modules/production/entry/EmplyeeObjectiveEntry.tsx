@@ -8,6 +8,7 @@ import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
 import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
 import { ArrowLeftOutlined } from "@ant-design/icons"
 import { useAuth } from '../../auth'
+import { reference } from '@popperjs/core'
 
 
 const EmployeeObjectiveEntry = () => {
@@ -23,7 +24,7 @@ const EmployeeObjectiveEntry = () => {
   const queryClient = useQueryClient()
   const [pathData, setPathData] = useState<any>("")
 
-
+  const actualReferenceId  = localStorage.getItem("actualReferenceId")
   const { data: appraisalobjectives, isLoading: loading } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
   const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
@@ -31,8 +32,10 @@ const EmployeeObjectiveEntry = () => {
 
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
-    return item?.isActive?.trim() === "active"
+    return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
   })
+
+  console.log("checkActive", checkActive)
 
   const sameParameter = allParameters?.data?.find((item: any) => item?.tag?.trim() === "same")
 

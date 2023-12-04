@@ -14,14 +14,18 @@ const PerformanceBoard = () => {
     
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const tenantId = localStorage.getItem('tenant')
-    const reference:any = localStorage.getItem('reference')
+    const appraisalReferenceId:any = localStorage.getItem('appraisalReferenceId')
+
+    // console.log("reference", reference)
     
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
     const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
+    const { data: allAppraisalsPerfTrans, isLoading:perLoading} = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 10000 })
+  
 
     const allAppraisalTranItems = allAppraTranItems?.data?.filter((item: any) => {
-        return item.appraisalPerfTranId === parseInt(reference)
+        return item.appraisalPerfTranId === parseInt(appraisalReferenceId)
       })
     const idSet = new Set(allAppraisalTranItems?.map((item: any) => parseInt(item.employeeId)))
     
@@ -33,28 +37,29 @@ const PerformanceBoard = () => {
         return item?.status === 'amend'
     })
 
-    const checkActive = allReviewdates?.data?.find((item: any) => {
-        return item?.isActive?.trim() === "active"
-    })
+    const reference = allAppraisalsPerfTrans?.data?.find((item: any) => {
+        return item?.id === parseInt(appraisalReferenceId)
+        }
+    )
 
     const allSubmittedApprovedRejectedObjectives = employeeObjectives?.data?.filter((item: any) => {
         return (item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected") && 
-        item?.referenceId === checkActive?.referenceId?.toString()
-
+        item?.referenceId === reference?.referenceId
     })
 
-    const employeesWithAmendObjectives = allEmployees?.data?.filter((employee:any) =>
-    allAmendObjectives?.some((obj:any) => 
-    parseInt(obj.employeeId) === employee.id && 
-    (obj.status === "amend" )
-    )
-    );
+
+    // const employeesWithAmendObjectives = allEmployees?.data?.filter((employee:any) =>
+    //     allAmendObjectives?.some((obj:any) => 
+    //     parseInt(obj.employeeId) === employee.id && 
+    //     (obj.status === "amend" )
+    //     )
+    // );
     
     const employeesWithSubmittedApprovedRejectedObjectives = allEmployees?.data?.filter((employee:any) =>
-    allSubmittedApprovedRejectedObjectives?.some((obj:any) => 
-    parseInt(obj.employeeId) === employee.id && 
-    (obj?.status === 'submitted' || obj?.status ==="approved" || obj?.status ==="rejected")
-    )
+        allSubmittedApprovedRejectedObjectives?.some((obj:any) => 
+        parseInt(obj.employeeId) === employee.id && 
+        (obj?.status === 'submitted' || obj?.status ==="approved" || obj?.status ==="rejected")
+        )
     );
 
     const onTabsChange = (key: string) => {
@@ -87,19 +92,19 @@ const PerformanceBoard = () => {
                 </>
             ),
         },
-        {
-            key: '2',
-            label: <>
-                <Badge count={employeesWithAmendObjectives?.length} showZero={true} title="Requests" size="small">
-                    <span>Requests</span>
-                </Badge>
-            </>,
-            children: (
-                <>
-                    <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeesWithAmendObjectives} location="Requests"/>
-                </>
-            ),
-        },
+        // {
+        //     key: '2',
+        //     label: <>
+        //         <Badge count={employeesWithAmendObjectives?.length} showZero={true} title="Requests" size="small">
+        //             <span>Requests</span>
+        //         </Badge>
+        //     </>,
+        //     children: (
+        //         <>
+        //             <NotificationsComponent loading={objectivesLoading} employeeWhoSubmitted={employeesWithAmendObjectives} location="Requests"/>
+        //         </>
+        //     ),
+        // },
         {
             key: '3',
             label: <span>View details</span>,
@@ -124,9 +129,9 @@ const PerformanceBoard = () => {
         },
     ]
     
-    if(reference === null){ 
-        tabItems.splice(3,1)
-    }
+    // if(reference === null){ 
+    //     tabItems.splice(3,1)
+    // }
     return (
         <div 
             style={{

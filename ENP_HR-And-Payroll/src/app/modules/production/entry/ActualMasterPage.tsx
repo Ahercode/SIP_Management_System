@@ -9,11 +9,14 @@ import { Button, Modal, message } from "antd"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useForm } from "react-hook-form"
+import { send } from "process"
+import { sendEmail } from "../../../services/CommonService"
 
 
 const ActualMasterPage = ({employeeId,title}:any) => {
     const { currentUser } = useAuth()
     const navigate = useNavigate();
+    const tenantId = localStorage.getItem('tenant')
     const { register, reset, handleSubmit } = useForm()
     const currentLocation = window.location.pathname.split('/')[4]
     const [actualToUpdate, setActualToUpdate] = useState<any>(null)
@@ -23,6 +26,8 @@ const ActualMasterPage = ({employeeId,title}:any) => {
     const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+    const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
+
     const sameParameter = allParameters?.data?.find((item: any) => item?.tag?.trim() === "same")
 
     const [selectedOption, setSelectedOption] = useState('');
@@ -30,12 +35,22 @@ const ActualMasterPage = ({employeeId,title}:any) => {
     const handleChange = (event:any) => {
         setSelectedOption(event.target.value);
     };
+
+    const actualReferenceId  = localStorage.getItem("actualReferenceId")
+
     const checkActive = allReviewdates?.data?.find((item: any) => {
-        return item?.isActive?.trim() === "active"
+        return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
     })
 
-    console.log("employeeId", employeeId)
+    const currentEmployee = allEmployees?.data?.find((item: any) => {
+        return item?.id === parseInt(currentUser?.id)
+      })
+      
+      const currentUserLineManager = allEmployees?.data?.find((item: any) => {
+        return item?.id === currentEmployee?.lineManagerId
+      })
     
+      console.log("currentUserLineManager", currentUserLineManager)
     if(title === "hr"){
         employeeId = employeeId
     }else{
@@ -57,12 +72,16 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         setActualToUpdate({ ...actualToUpdate, [event.target.name]: event.target.value });
       }
 
-    const convertToArray = checkActive?.referenceId.split("-")
+    const convertToArray = actualReferenceId?.split("-")
     
+
     const appraisalId = convertToArray?.[1]
 
     const activeParameterName = allParameters?.data?.filter((item: any) => 
          item.appraisalId?.toString() === appraisalId
+    )
+    const sameParatmeter = allParameters?.data?.filter((item: any) => 
+         item?.tag?.trim() === "same"
     )
 
     const activeParameters = allParameters?.data?.filter((item: any) => 
@@ -125,7 +144,7 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         return totalAchievement
     }
     const getOverallAchievementForSame = () => {
-        const overAllWeight = activeParameterName?.map((param: any) => {
+        const overAllWeight = sameParatmeter?.map((param: any) => {
             const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
             param?.id ===obj?.parameterId && 
             obj?.employeeId === employeeId?.toString() && 
@@ -195,7 +214,7 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         statusText: "submitted",
     }
 
-    console.log("data", data)
+    
     
     if(actualIds?.length === 0){
         message.error("You can't at this time, please contact your supervisor")
@@ -205,6 +224,7 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         axios.post(`${Api_Endpoint}/ApraisalActuals/UpdateStatus`, data).then((res) => {
             // console.log("res", res)
             message.success("Successfully Submitted")
+            sendEmail(currentUserLineManager, `your direct report ${currentUser?.firstName} ${currentUser?.surname} has submitted their self evaluation`)
         }).catch((err) => {
             console.log("err", err)
         }
@@ -245,11 +265,24 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         >
         <div 
             className="d-flex flex-direction-row align-items-center justify-content-between align-content-center"
-        >   {
+        > 
+        {/* <div>
+        <select value={selectedReference} onChange={(e) => setSelectedReference(e.target.value)} className="form-select mb-5 form-select-solid" >
+                <option value="">Select Reference</option>
+                {
+                employeesReference?.map((item: any) => (
+                    <option value={item.appraisalTypeId}>
+                    {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} 
+                    </option>
+                ))
+                }
+            </select>  
+        </div> */}
+        
+          {
                 title === "final" ||
                 title === "hr"?"":
                 <div className="d-flex flex-direction-row align-items-center justify-content-between align-content-center">
-
                     <Button
                         onClick={() => navigate(-1)}
                         className="btn btn-light-success me-4"

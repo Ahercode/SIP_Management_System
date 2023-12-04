@@ -100,10 +100,7 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     },
   ]
 
-  const checkActive = allReviewdates?.data?.find((item: any) => {
-    return item?.isActive?.trim() === "active"
-  })
-  
+ 
 
 
   // const activeReferenceId = allAppraisalsPerfTrans?.data?.find((item: any) => {
@@ -116,18 +113,18 @@ const employeeReferenceIds = allAppraTranItems?.data?.filter((item: any) =>
 )?.map((item: any) => item?.appraisalPerfTranId)
 
 
-console.log("forCurrentEmployee", employeeReferenceIds)
-
-
 const employeesReference = allAppraisalsPerfTrans?.data.filter((item: any) => 
     employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active" 
   )
 )
 
-console.log("employeesReference", employeesReference)
+const [selectedReference, setSelectedReference] = useState<any>(employeesReference?.[0]?.referenceId);
 
-const [selectedReference, setSelectedReference] = useState<any>(employeesReference?.[0]?.appraisalTypeId);
+localStorage.setItem("actualReferenceId", selectedReference)
 
+const checkActive = allReviewdates?.data?.find((item: any) => {
+  return item?.isActive?.trim() === "active" && item?.referenceId === selectedReference
+})
 // const employeeFromActiveReference = allAppraTranItems?.data?.filter((item: any) => {
 //     return item?.appraisalPerfTranId === activeReferenceId?.id
 //   }
@@ -138,19 +135,20 @@ const [selectedReference, setSelectedReference] = useState<any>(employeesReferen
 // }
 // )
 
-const convertToArray = checkActive?.referenceId.split("-")
+const convertToArray = selectedReference?.split("-")
 
 const appraisalId = convertToArray?.[1]
 
   const dataByID = allParameters?.data?.filter((item: any) => {
-    return item.appraisalId === parseInt(selectedReference) || item?.tag?.trim()==="same"
+    return item.appraisalId === parseInt(appraisalId) || item?.tag?.trim()==="same"
   })
   const parametersBeforeSubmit = allParameters?.data?.filter((item: any) => {
-    return item.appraisalId === parseInt(selectedReference)
+    return item.appraisalId === parseInt(appraisalId)
   })
+
   //find appraisal by id
   const appraisalData = allAppraisals?.data?.find((appraisal: any) => {
-    return appraisal.id === parseInt(selectedReference)
+    return appraisal.id === parseInt(appraisalId)
   })
 
   // add a key to dataByID
@@ -327,7 +325,7 @@ const OnSubmit = handleSubmit(async (values) => {
                   <option value="">Select Reference</option>
                   {
                     employeesReference?.map((item: any) => (
-                      <option value={item.appraisalTypeId}>
+                      <option value={item.referenceId}>
                         {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} 
                       </option>
                     ))

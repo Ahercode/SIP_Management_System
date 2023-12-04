@@ -179,7 +179,7 @@ const Parameter = () => {
 
 
   const dataByID = tableData?.data?.filter((section: any) => {
-    return section.appraisalId?.toString() === param.id
+    return section.appraisalId?.toString() === param.id || section?.tag?.trim() === 'same'
   })
 
   useEffect(() => {

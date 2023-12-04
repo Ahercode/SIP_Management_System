@@ -34,7 +34,6 @@ import { AppraisalObjectives } from '../modules/production/components/setup/hr/P
 import { NotificationsBoard } from '../modules/production/components/lineManager/NotificationsBoard'
 import { PerformanceBoard } from '../modules/production/components/transactions/hr/PerformanceBoard'
 import { Processes } from '../modules/production/components/setup/hr/Processes'
-import {EmployeeObjectivePage} from '../modules/production/Pages/employeeObjective/EmployeeObjectivePage'
 import { useAuth } from '../modules/auth'
 import { AppraisalGrade } from '../modules/production/components/setup/hr/AppraisalGrade'
 import { ReferencesPage } from '../modules/production/components/admin/Reference'
@@ -95,13 +94,6 @@ const PrivateRoutes = () => {
         element={<SuspensedView>
           <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Entries</PageTitle>
           <MultiTabForm />
-        </SuspensedView>} />
-
-      <Route
-        path='employee-objective/*'
-        element={<SuspensedView>
-          <PageTitle breadcrumbs={accountBreadCrumbs}>Employee Entries</PageTitle>
-          <EmployeeObjectivePage />
         </SuspensedView>} />
 
       <Route

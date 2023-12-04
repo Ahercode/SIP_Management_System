@@ -3,13 +3,10 @@ import { Button, Modal, Skeleton, Space, Table, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { KTCardBody } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchAppraisals, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
 import { getFieldName } from "../ComponentsFactory"
-import { reference } from "@popperjs/core"
-
-
 
 const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any) => {
 
@@ -40,6 +37,8 @@ const AppraisalObjectivesComponent: React.FC = ({ parameterId, employeeId}: any)
     const checkActive = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active"
     })
+
+    console.log("parameterId", parameterId)
 
     const showModal = () => {
         setIsModalOpen(true)

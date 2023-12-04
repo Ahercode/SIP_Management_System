@@ -33,7 +33,6 @@ const AppraisalPerformance = () => {
   const [beforeSearch, setBeforeSearch] = useState([])
  
   const tenantId = localStorage.getItem('tenant')
-  localStorage.setItem('reference', selectedReference) 
 
   // const [fieldInit, setFieldInit] = useState([])
   const queryClient = useQueryClient()
@@ -71,6 +70,8 @@ const AppraisalPerformance = () => {
     setSelectedRowKeys(selectedRowKeys);
       console.log(`Selected Row Keys: ${selectedRowKeys}`, 'Selected Rows:', selectedRows);
   };
+
+  localStorage.setItem('appraisalReferenceId', selectedReference)
 
   const rowSelection:TableRowSelection<any> = {
     selectedRowKeys,

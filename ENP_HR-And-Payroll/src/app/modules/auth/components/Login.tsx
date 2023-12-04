@@ -3,8 +3,6 @@ import clsx from 'clsx'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-
-import {  fetchUsers } from '../../../services/ApiCalls'
 import { Button, Modal, message } from 'antd'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'

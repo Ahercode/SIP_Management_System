@@ -13,6 +13,7 @@ import axios from 'axios'
 import { useAuth } from '../../../auth'
 import { sendEmail } from '../../../../services/CommonService'
 import { ActualMasterPage } from '../../entry/ActualMasterPage'
+import Papa from 'papaparse'
 
 const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }: any) => {
 // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
@@ -45,16 +46,19 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
 
+    const actualReferenceId  = localStorage.getItem("actualReferenceId")
 
     const checkActive = allReviewdates?.data?.find((item: any) => {
-        return item?.isActive?.trim() === "active"
+        return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
     })
+
     const convertToArray = checkActive?.referenceId.split("-")
     
     const appraisalId = convertToArray?.[1]
 
-    const activeParameterName = allParameters?.data?.filter((section: any) => 
-         section.appraisalId?.toString() === appraisalId)
+    const activeParameterName = allParameters?.data?.filter((item: any) => 
+         item.appraisalId?.toString() === appraisalId
+         )
 
     const handleCommentModalCancel = () => {
         setCommentModalOpen(false)
@@ -131,9 +135,9 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         return totalAchievement
     }
 
-    const handleCommentModalOk = () => {
-        OnSubmit("rejected")
-        sendEmail(employeeData, `Your Objectives have been rejected.`)
+    const submitRejection = () => {
+        OnSubmit("rejected") 
+        sendEmail(employeeData, `Your Objectives have been rejected. with the following comments: \n ${comment}`)
         reset()
         setComment('')
     }
@@ -200,12 +204,13 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         }
 
         const acceptAmendment = () => {
-            message.success(`You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Amendment`)
+            // message.success(`You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Amendment`)
+            message.success(`You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Self Evaluation`)
             setIsModalOpen(false)
         }
 
     const loadData = () => {
-        const parametersResponse = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
+        const parametersResponse = parameters?.data?.filter((item: any) => item?.appraisalId === 12 || item?.tag?.trim() === "same")
         setParametersData(parametersResponse)
         const dataWithFullName = employeeWhoSubmitted?.map((item: any) => ({
             ...item,
@@ -330,8 +335,76 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
         }
     })
 
+    const newData =  componentData?.map((item:any)=> ({
+        ...item,
+        firstName: item?.firstName,
+        surname: item?.surname,
+        ApprovalStatus : getEmployeeStatus(item)?.props?.children,
+        OverallAchievement : getOverallAchievement(item?.id),
+        PerformanceRating : getOverallAchievement(item?.id) >= 90 ? "Excellent" : 
+                     getOverallAchievement(item?.id) >= 80 && getOverallAchievement(item?.id) < 90 ? "Very Good":
+                     getOverallAchievement(item?.id) >= 70 && getOverallAchievement(item?.id) < 80 ?"Good":
+                     getOverallAchievement(item?.id) >= 60 && getOverallAchievement(item?.id) < 70? "Satisfactory":
+                     getOverallAchievement(item?.id) >= 50 && getOverallAchievement(item?.id) < 60? "Unsatisfactory":
+                     getOverallAchievement(item?.id) < 50? "Poor":" Very Poor"
+        ,
+
+    }))
+
+    const convertToCSSV = (data:any) => {
+        const csv =  Papa.unparse(data, {
+            delimiter: ",",
+            newline: "\n",
+            quoteChar: '"',
+            escapeChar: '"',
+            header: true,
+            skipEmptyLines: false,
+        })
+
+        return csv
+    }
+
+    function exportToCSV(data:any) {
+        const csvData = convertToCSSV(data);
+    
+        const blob = new Blob([csvData], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'appraisalResults.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    const columnsToKeep = [ 
+        'firstName', 
+        'surname', 
+        'ApprovalStatus',
+        'OverallAchievement',
+        'PerformanceRating',
+    ];
+    const filteredData = newData?.map((item:any) => {
+        const filteredItem:any = {};
+        columnsToKeep?.forEach((column:any) => {
+            filteredItem[column] = item[column];
+        });
+        return filteredItem;
+    });
+
+    const handlePrint = () => {
+        exportToCSV(filteredData)
+    }
+
     return (
         <>
+            <div className="d-flex justify-content-end mb-4">
+                <button className="btn btn-light-info" 
+                onClick={handlePrint}
+                >
+                    Export
+                </button>
+            </div>
             {
             loading ? <Skeleton active /> :
                 <Table
@@ -402,10 +475,10 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                             key='submit'
                             type='primary'
                             htmlType='submit'
-                            onClick={handleCommentModalOk}
+                            onClick={submitRejection}
                             disabled={comment === '' || comment.length < 15}
                         >
-                            Save & Decline
+                            Decline 
                         </Button>,
                     </>
                 }>

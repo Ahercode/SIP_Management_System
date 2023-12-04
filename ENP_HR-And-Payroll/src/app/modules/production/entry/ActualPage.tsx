@@ -36,9 +36,10 @@ const ActualPage = ( {
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 10000 })
   const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
+  const actualReferenceId  = localStorage.getItem("actualReferenceId")
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
-      return item?.isActive?.trim() === "active"
+      return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
   })
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -54,12 +55,10 @@ const ActualPage = ( {
     setActualToUpdate({ ...actualToUpdate, [event.target.name]: event.target.value });
   }
 
-  // console.log("selectedFile:", selectedFile)
-
   const [actualValues, setActualValues] = useState<any>();
   const [isFocused, setIsFocused] = useState(false);
-  const [isFocused1, setIsFocused1] = useState(false);
-  const [isFocused2, setIsFocused2] = useState(false);
+  // const [isFocused1, setIsFocused1] = useState(false);
+  // const [isFocused2, setIsFocused2] = useState(false);
   const currentLocation = window.location.pathname.split('/')[4]
 
   const handleFinalComment = (record:any) => {
@@ -68,12 +67,9 @@ const ActualPage = ( {
       return item?.deliverableId === record?.id
     })
 
-    console.log("actual:", actual)
     setActualToUpdate(actual)
     setFinalCommentModal(true)
   }
-
-  console.log("actualToUpdate:", actualToUpdate)
 
   const handleFinalModalClose = () => {
     setFinalCommentModal(false)
@@ -155,17 +151,17 @@ const ActualPage = ( {
   const onFocus = () => {
     setIsFocused(true);
   };
-  const onFocus2 = () => {
-    setIsFocused2(true);
-  };
-  const onFocus1 = () => {
-    setIsFocused1(true);
-  };
+  // const onFocus2 = () => {
+  //   setIsFocused2(true);
+  // };
+  // const onFocus1 = () => {
+  //   setIsFocused1(true);
+  // };
 
   const onBlur = () => {
     setIsFocused(false);
-    setIsFocused1(false);
-    setIsFocused2(false);
+    // setIsFocused1(false);
+    // setIsFocused2(false);
   };
 
   const { mutate: postData } = useMutation(postItem, {
@@ -395,8 +391,10 @@ const ActualPage = ( {
 
     }
   ]
+
+const location = window.location.pathname.split('/')[2]
  
-  if(checkActive?.tag?.trim() !== "final" || checkActive?.tag?.trim() !== "hr"){
+  if(checkActive?.tag?.trim() !== "final" || location!=="actualpage"){
     columns.splice(5, 1)
   }
 

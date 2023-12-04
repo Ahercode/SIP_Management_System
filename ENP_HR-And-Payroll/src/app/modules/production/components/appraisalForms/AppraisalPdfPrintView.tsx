@@ -2,7 +2,7 @@ import { Divider, Empty, Skeleton, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
-import { fetchAppraisals, fetchDocument } from '../../../../services/ApiCalls'
+import {  fetchDocument } from '../../../../services/ApiCalls'
 import { getFieldName, getSupervisorData } from "../ComponentsFactory"
 
 
@@ -90,7 +90,6 @@ const PrintComponent: React.FC<PrintHeaderProps> = ({employeeData}: any) => {
         },
     ]
 
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchAppraisals(tenantId), { cacheTime: 5000 })
 
     const loadData = async () => {
         try {

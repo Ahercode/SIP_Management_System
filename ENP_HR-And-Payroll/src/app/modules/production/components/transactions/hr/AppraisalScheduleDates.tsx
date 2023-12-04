@@ -289,8 +289,6 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         }
     })
 
-    console.log("checkActive", checkActive[0]?.description)
-
     const handleNotificationSend = (record: any) => {
 
         setIsEmailSent(true)
