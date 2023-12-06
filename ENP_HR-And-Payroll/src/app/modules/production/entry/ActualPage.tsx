@@ -1,4 +1,4 @@
-import { Modal, Skeleton, Table, message } from 'antd'
+import { Button, Empty, Modal, Skeleton, Table, message } from 'antd'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { fetchDocument, postItem, } from '../../../services/ApiCalls'
@@ -6,7 +6,7 @@ import { getFieldName } from '../components/ComponentsFactory'
 import { useAuth } from '../../auth'
 import { CustomForm } from './CustomForm';
 import { set, useForm } from 'react-hook-form'
-import { SupportFile } from './SupportFile'
+// import { SupportFile } from './SupportFile'
 
 
 const ActualPage = ( {
@@ -18,7 +18,8 @@ const ActualPage = ( {
   objectiveId,
   employeeId,
   // getParamTotal,
-  title
+  title,
+  referenceId
 }:any) => {
 
   
@@ -26,27 +27,30 @@ const ActualPage = ( {
   const { currentUser } = useAuth()
   const queryClient = useQueryClient()
   const { register, reset, handleSubmit } = useForm()
-  const [individualComment, setIndividualComment] = useState<any>(null)
-  const [lineManagerComment, setLineManagerComment] = useState<any>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [file, setFile] = useState<any>(null);
+  // const [individualComment, setIndividualComment] = useState<any>(null)
+  // const [lineManagerComment, setLineManagerComment] = useState<any>(null)
   const [finalCommentModal, setFinalCommentModal] = useState<any>(false)
   // const [tempDeliverableId, setTempDeliverableId] = useState<any>(null)
   const [actualToUpdate, setActualToUpdate] = useState<any>(null)
   const { data: allObjectiveDeliverables, isLoading: loading } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
-  const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
+  // const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
   const { data: allUnitsOfMeasure } = useQuery('unitofmeasures', () => fetchDocument('unitofmeasures'), { cacheTime: 10000 })
   const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
   const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
-  const actualReferenceId  = localStorage.getItem("actualReferenceId")
+  // const actualReferenceId  = localStorage.getItem("actualReferenceId")
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
-      return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
+      return item?.isActive?.trim() === "active" && item?.referenceId === referenceId
   })
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setSelectedFile(file);
+      const fileNew = event.target.files[0];
+      setFile(fileNew);
+      setSelectedFile(fileNew);
     }
   };
 
@@ -62,7 +66,6 @@ const ActualPage = ( {
   const currentLocation = window.location.pathname.split('/')[4]
 
   const handleFinalComment = (record:any) => {
-    console.log("record:", record)
     const actual = allApraisalActual?.data?.find((item: any) => {
       return item?.deliverableId === record?.id
     })
@@ -76,6 +79,16 @@ const ActualPage = ( {
     setActualToUpdate(null)
     reset()
   }
+
+      const showModal = () => {
+        setIsModalOpen(true)
+      }
+
+      
+      const handleCancel = ()=>{
+        setIsModalOpen(false)
+        setFile(null)
+      }
 
 
   const handleChange = (deliverableId:any,  value:any, field:any) => {
@@ -132,12 +145,6 @@ const ActualPage = ( {
         status: actualToUpdate?.status,
         individualComment: actualToUpdate?.individualComment,
         lineManagerComment: actualToUpdate?.lineManagerComment,
-        achievements: values?.achievements,
-        strength: values?.strength,
-        weakness: values?.weakness,
-        improvement: values?.improvement,
-        finalComment: values?.finalComment,
-        hodcomment: values?.hodcomment,
         referenceId: checkActive?.referenceId,
       }],
       url: `ApraisalActuals`,
@@ -151,12 +158,6 @@ const ActualPage = ( {
   const onFocus = () => {
     setIsFocused(true);
   };
-  // const onFocus2 = () => {
-  //   setIsFocused2(true);
-  // };
-  // const onFocus1 = () => {
-  //   setIsFocused1(true);
-  // };
 
   const onBlur = () => {
     setIsFocused(false);
@@ -221,6 +222,7 @@ const ActualPage = ( {
       title: 'Sub Weight',
       dataIndex: 'subWeight',
       width: 100,
+      fixed: checkActive?.tag?.trim() === "setting" ? 'right' : false,
       sorter: (a: any, b: any) => {
         if (a.subWeight > b.subWeight) {
           return 1
@@ -235,6 +237,7 @@ const ActualPage = ( {
       title: 'Unit Of Measure',
       key: 'unitOfMeasureId',
       width: 130,
+      fixed: checkActive?.tag?.trim() === "setting" ? 'right' : false,
       sorter: (a: any, b: any) => {
         if (a.unitOfMeasureId > b.unitOfMeasureId) {
           return 1
@@ -252,6 +255,7 @@ const ActualPage = ( {
       title: 'Target',
       dataIndex: 'target',
       width: 80,
+      fixed: checkActive?.tag?.trim() === "setting" ? 'right' : false,
       sorter: (a: any, b: any) => {
         if (a.target > b.target) {
           return 1
@@ -270,7 +274,7 @@ const ActualPage = ( {
         const actual = allApraisalActual?.data?.find((item: any) => {
           return item?.deliverableId === record?.id && 
             item?.employeeId?.toString() === employeeId && 
-            item?.referenceId === checkActive?.referenceId
+            item?.referenceId === referenceId
         })
         return (
           <>
@@ -364,7 +368,10 @@ const ActualPage = ( {
       render: (record: any) => {
         return (
           <>
-          <SupportFile title={title} deliverableId={record} />
+          {/* <SupportFile title={title} deliverableId={record} /> */}
+          <button onClick={showModal} className="btn btn-light-info btn-sm" >
+            {title==="final"|| title==="hr"?"View":"Upload a File"}
+          </button>
           </>
         )
       }
@@ -378,7 +385,7 @@ const ActualPage = ( {
         const actual = allApraisalActual?.data?.find((item: any) => {
           return item?.deliverableId === record?.id 
           && item?.employeeId?.toString() === employeeId 
-          && item?.referenceId === checkActive?.referenceId
+          && item?.referenceId === referenceId
         })
         return (
           <>
@@ -392,9 +399,10 @@ const ActualPage = ( {
     }
   ]
 
-const location = window.location.pathname.split('/')[2]
- 
-  if(checkActive?.tag?.trim() !== "final" || location!=="actualpage"){
+
+  if(checkActive?.tag?.trim() === "setting"){
+    columns.splice(4, 3)
+  } else if(checkActive?.tag?.trim() === "actual"){
     columns.splice(5, 1)
   }
 
@@ -417,34 +425,37 @@ const location = window.location.pathname.split('/')[2]
         className="border border-gray-400 mt-4"
         >
           <div className="mb-5 d-flex justify-content-between align-items-center align-content-center">
-            <div>
-              <span>
-                <span className='text-gray-600 fw-bold fs-3' style={{color:"ActiveCaption"}}>{objectiveName}: <span style={{color:"ActiveCaption"}}>
-                  {`${objectiveWeight}`}</span></span>
-              </span>
-              <br />
-              <p style={{margin:"3px 0  0 0px"}} className='badge badge-light-info fw-bold fs-3'>Achievement:  <span style={{color:"ActiveCaption", paddingLeft:"10px"}}>
-                {
-                  (() => {
-                    const total = filteredDeliverables?.map((deliverableId: any) => {
-                      const actual = allApraisalActual?.data?.find((item: any) => {
-                        return item?.deliverableId === deliverableId?.id && 
-                        item?.employeeId?.toString() === 
-                        employeeId && item?.referenceId === checkActive?.referenceId
-                      })
-                      const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
-                        Math.round((actual?.actual/deliverableId?.target)*100)
-                        return actualValue * (deliverableId?.subWeight/100)
-                      }
-                    ).reduce((a: any, b: any) => a + b, 0)
-                    const finalTotal = total > 120 ? 120 : total;
-                    return finalTotal?.toFixed(2);
-                  })()
-                }
+            {
+              checkActive?.tag?.trim() === "setting" ? null:
+              <div>
+                <span>
+                  <span className='text-gray-600 fw-bold fs-3' style={{color:"ActiveCaption"}}>{objectiveName}: <span style={{color:"ActiveCaption"}}>
+                    {`${objectiveWeight}`}</span></span>
                 </span>
-              </p>
-             
-            </div>
+                <br />
+                <p style={{margin:"3px 0  0 0px"}} className='badge badge-light-info fw-bold fs-3'>Achievement:  <span style={{color:"ActiveCaption", paddingLeft:"10px"}}>
+                  {
+                    (() => {
+                      const total = filteredDeliverables?.map((deliverableId: any) => {
+                        const actual = allApraisalActual?.data?.find((item: any) => {
+                          return item?.deliverableId === deliverableId?.id && 
+                          item?.employeeId?.toString() === 
+                          employeeId && item?.referenceId === referenceId
+                        })
+                        const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
+                          Math.round((actual?.actual/deliverableId?.target)*100)
+                          return actualValue * (deliverableId?.subWeight/100)
+                        }
+                      ).reduce((a: any, b: any) => a + b, 0)
+                      const finalTotal = total > 120 ? 120 : total;
+                      return finalTotal?.toFixed(2);
+                    })()
+                  }
+                  </span>
+                </p>
+              
+              </div>
+            }
             {
               title==="hr"? "":
               <div>
@@ -453,7 +464,7 @@ const location = window.location.pathname.split('/')[2]
                   onClick={
                     OnSubmit
                   }
-                  className='btn btn-light-success me-3'
+                  className='btn btn-light-success me-3 btn-sm'
                 >
                   Save
                 </button>
@@ -472,6 +483,66 @@ const location = window.location.pathname.split('/')[2]
               </>
           }
         </div>
+
+        <Modal
+            title={"Supporting Files"}
+            open={isModalOpen}
+            onCancel={handleCancel}
+            closable={true}
+            width={800}
+            footer={[
+              <Button key='back' 
+              onClick={handleCancel}
+              >
+                Cancel
+              </Button>,
+              <Button
+                key='submit'
+                type='primary'
+                htmlType='submit'
+                disabled={!file}
+              >
+                Submit
+              </Button>,
+            ]}
+          >
+            <form
+            >
+              <hr></hr>
+                  {file === null?
+                  <Empty
+                      description={<span className='text-gray-600'>Empty </span>}
+                      className="mt-4" />:
+                  (
+                    <div>
+                      <iframe
+                        title="pdfViewer"
+                        src={URL.createObjectURL(file)}
+                        width="100%"
+                        height="600px"
+                      ></iframe>
+                    </div>
+                  )} 
+              <div className="d-flex mt-10 justify-content-center items-center">
+                {
+                  title==="final"|| title==="hr"?"":
+                  <>
+                    <label htmlFor="fileInput" className="btn btn-light-info btn-sm">
+                      Choose File
+                    </label>
+                    <input
+                      type="file"
+                      id="fileInput"
+                      accept='application/pdf'
+                      className="visually-hidden"
+                      onChange={handleFileChange}
+                    />
+                  </>
+              }
+              </div>
+              {/* <hr /> */}
+            </form>
+          </Modal>
 
         <Modal
           title='Final Comments'

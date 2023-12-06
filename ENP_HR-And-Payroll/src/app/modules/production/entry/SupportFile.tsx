@@ -1,7 +1,7 @@
 import { Button, Empty, Modal } from "antd";
 import { type } from "os";
-import { ChangeEvent, useState } from "react";
-// import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+import { useEffect, useState } from "react";
+// import { Document, Page, pdfjs } from "react-pdf/dist/esm/entry.webpack";
 
 
 type SupportFileProps = {
@@ -10,48 +10,17 @@ type SupportFileProps = {
 }
 
 const SupportFile = ({title, deliverableId }:SupportFileProps) => {
-
-
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [file, setFile] = useState<any>(null);
 
-    const [pdfFile, setPdfFile] = useState(null);
-  const [numPages, setNumPages] = useState(null);
+      const handleFileChange = (event: any) => {
 
-  const onFileChange = (event:any) => {
-    const file = event.target.files[0];
-    setPdfFile(file);
-  };
-
-  const onDocumentLoadSuccess = ({ numPages }:any) => {
-    setNumPages(numPages);
-  };
-    const handleUpload = () => {
-        // Handle file upload logic here (e.g., send file to a server)
-        if (selectedFile) {
-          // Example: You can use fetch or any library to handle file upload
-          const formData = new FormData();
-          formData.append('file', selectedFile);
-          
-          // Example: Replace with your API endpoint
-          fetch('your-upload-endpoint', {
-            method: 'POST',
-            body: formData,
-          })
-            .then((response) => {
-              // Handle response
-            })
-            .catch((error) => {
-              // Handle error
-            });
-        }
-      };
-      const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
           const file = event.target.files[0];
-          setSelectedFile(file);
-        }
+          // setSelectedFile(file);
+          setFile(file);
       };
+
+      console.log("file", file);
 
       const showModal = () => {
         setIsModalOpen(true)
@@ -60,7 +29,7 @@ const SupportFile = ({title, deliverableId }:SupportFileProps) => {
       
       const handleCancel = ()=>{
         setIsModalOpen(false)
-        setSelectedFile(null)
+        setFile(null)
       }
 
 
@@ -68,14 +37,14 @@ const SupportFile = ({title, deliverableId }:SupportFileProps) => {
         <>
 
           <button onClick={showModal} className="btn btn-light-info btn-sm" >
-            {title==="final"|| title==="hr"?"View":"Choose File"}
+            {title==="final"|| title==="hr"?"View":"Upload a File"}
           </button>
-
         <Modal
             title={"Supporting Files"}
             open={isModalOpen}
             onCancel={handleCancel}
             closable={true}
+            width={800}
             footer={[
               <Button key='back' 
               onClick={handleCancel}
@@ -86,20 +55,29 @@ const SupportFile = ({title, deliverableId }:SupportFileProps) => {
                 key='submit'
                 type='primary'
                 htmlType='submit'
-                disabled={!selectedFile}
-                // onClick={isUpdateModalOpen ? handleUpdate : OnSubmit}
+                disabled={!file}
               >
                 Submit
               </Button>,
             ]}
           >
             <form
-              // onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
             >
               <hr></hr>
-              <Empty
-                  description={<span className='text-gray-600'>Empty </span>}
-                  className="mt-4" /> 
+                  {file === null?
+                  <Empty
+                      description={<span className='text-gray-600'>Empty </span>}
+                      className="mt-4" />:
+                  (
+                    <div>
+                      <iframe
+                        title="pdfViewer"
+                        src={URL.createObjectURL(file)}
+                        width="100%"
+                        height="600px"
+                      ></iframe>
+                    </div>
+                  )} 
               <div className="d-flex mt-10 justify-content-center items-center">
                 {
                   title==="final"|| title==="hr"?"":
@@ -115,16 +93,6 @@ const SupportFile = ({title, deliverableId }:SupportFileProps) => {
                     />
                   </>
               }
-
-                {/* {pdfFile && (
-                  <div>
-                    <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
-                      {Array.from(new Array(numPages), (el, index) => (
-                        <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-                      ))}
-                    </Document>
-                  </div>
-                  )} */}
               </div>
               <hr />
             </form>

@@ -33,6 +33,7 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     const [isObjectiveDeclined, setIsObjectiveDeclined] = useState(false)
     const [showPritntPreview, setShowPrintPreview] = useState(false)
     const { currentUser } = useAuth()
+    const tenantId = localStorage.getItem('tenant')
 
     const param: any = useParams();
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`Departments`), { cacheTime: 10000 })
@@ -40,16 +41,33 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
     const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
     const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
+  const { data: allPaygroups } = useQuery('paygroups', () => fetchDocument(`Paygroups/tenant/${tenantId}`), { cacheTime: 10000 })
     const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
+    const { data: allAppraTranItems, isLoading:itemsLoading} = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
+    const { data: allAppraisalsPerfTrans, isLoading:perLoading} = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 10000 })
+  
 
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
     const lineManager = getSupervisorData({ employeeId: employeeData?.id, allEmployees, allOrganograms })
 
-    const actualReferenceId  = localStorage.getItem("actualReferenceId")
+    // const actualReferenceId  = localStorage.getItem("actualReferenceId")
+
+    const employeeReferenceIds = allAppraTranItems?.data?.filter((item: any) => 
+        (item?.employeeId === currentUser?.id) 
+    )?.map((item: any) => item?.appraisalPerfTranId)
+
+
+    const employeesReference = allAppraisalsPerfTrans?.data.filter((item: any) => 
+        item?.status?.trim() === "active" 
+        // employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active")
+    )
+
+const [selectedReference, setSelectedReference] = useState<any>(employeesReference?.[0]?.referenceId);
 
     const checkActive = allReviewdates?.data?.find((item: any) => {
-        return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
+        return item?.isActive?.trim() === "active" && item?.referenceId === selectedReference
     })
 
     const convertToArray = checkActive?.referenceId.split("-")
@@ -398,8 +416,20 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
 
     return (
         <>
-            <div className="d-flex justify-content-end mb-4">
-                <button className="btn btn-light-info" 
+            <div className="d-flex justify-content-between mb-4">
+                <div>
+                <select value={selectedReference} onChange={(e) => setSelectedReference(e.target.value)} className="form-select mb-5 form-select-solid" >
+                  <option value="">Select Reference</option>
+                  {
+                    employeesReference?.map((item: any) => (
+                      <option value={item.referenceId}>
+                        {getFieldName(item?.paygroupId, allPaygroups?.data)} - {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} 
+                      </option>
+                    ))
+                  }
+                </select>   
+                </div>
+                <button className="btn btn-light-info btn-sm" 
                 onClick={handlePrint}
                 >
                     Export
@@ -453,12 +483,12 @@ const NotificationsComponent = ({ loading, employeeWhoSubmitted, location, tag }
                     />
 
                     {
-                        checkActive?.tag?.trim() === "actual" ||
-                        checkActive?.tag?.trim() === "final" ? 
+                        // checkActive?.tag?.trim() === "actual" ||
+                        // checkActive?.tag?.trim() === "final" ? 
 
-                        <ActualMasterPage title="hr" employeeId={employeeData?.id} />:
-
-                        <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
+                        <ActualMasterPage title="hr" employeeId={employeeData?.id} referenceId={selectedReference} />
+                        
+                        // : <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />
                     }
                 </div>
             </Modal>

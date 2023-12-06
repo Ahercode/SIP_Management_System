@@ -38,7 +38,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         return item?.appraisalId?.toString() === appraisalId
       }
     )
-
+    
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
         const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)

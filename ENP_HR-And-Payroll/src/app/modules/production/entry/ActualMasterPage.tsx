@@ -13,7 +13,7 @@ import { send } from "process"
 import { sendEmail } from "../../../services/CommonService"
 
 
-const ActualMasterPage = ({employeeId,title}:any) => {
+const ActualMasterPage = ({employeeId, title, referenceId }:any) => {
     const { currentUser } = useAuth()
     const navigate = useNavigate();
     const tenantId = localStorage.getItem('tenant')
@@ -36,10 +36,17 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         setSelectedOption(event.target.value);
     };
 
-    const actualReferenceId  = localStorage.getItem("actualReferenceId")
+    if(title === "hr"){
+        referenceId = referenceId
+        employeeId = employeeId
+    }
+    else{
+        referenceId = localStorage.getItem("actualReferenceId")
+        employeeId = (currentUser?.id)
+    }
 
     const checkActive = allReviewdates?.data?.find((item: any) => {
-        return item?.isActive?.trim() === "active" && item?.referenceId === actualReferenceId
+        return item?.isActive?.trim() === "active" && item?.referenceId === referenceId
     })
 
     const currentEmployee = allEmployees?.data?.find((item: any) => {
@@ -49,13 +56,8 @@ const ActualMasterPage = ({employeeId,title}:any) => {
       const currentUserLineManager = allEmployees?.data?.find((item: any) => {
         return item?.id === currentEmployee?.lineManagerId
       })
+
     
-      console.log("currentUserLineManager", currentUserLineManager)
-    if(title === "hr"){
-        employeeId = employeeId
-    }else{
-        employeeId = (currentUser?.id)
-    }
 
     const handleFinalModalClose = () => {
         setFinalCommentModal(false)
@@ -72,7 +74,7 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         setActualToUpdate({ ...actualToUpdate, [event.target.name]: event.target.value });
       }
 
-    const convertToArray = actualReferenceId?.split("-")
+    const convertToArray = referenceId?.split("-")
     
 
     const appraisalId = convertToArray?.[1]
@@ -230,7 +232,32 @@ const ActualMasterPage = ({employeeId,title}:any) => {
         }
         )
   }
-}
+    }
+
+ const saveEmployeeComment = handleSubmit( async (values)=> {
+    const data = [{
+        employeeId: employeeId,
+        finalComment1: values?.finalComment1===undefined? "": values?.finalComment1,
+        achievement: values?.achievement===undefined? "": values?.achievement,
+        strength: values?.strength===undefined? "": values?.strength,
+        weakness: values?.weakness===undefined? "": values?.weakness,
+        improvement: values?.improvement===undefined? "": values?.improvement,
+        hodcomment: values?.hodcomment===undefined? "": values?.hodcomment,
+        referenceId: referenceId,
+    }]
+
+    console.log("data", data)
+
+    axios.post(`${Api_Endpoint}/FinalComment/`, data).then((res) => {
+        // console.log("res", res)
+        message.success("Comment Saved Successfully!")
+
+        
+    }).catch((err) => {
+        console.log("err", err)
+    }
+    )
+})
 
   useEffect(() => {
     }, [employeeId, title])
@@ -310,7 +337,7 @@ const ActualMasterPage = ({employeeId,title}:any) => {
             </div>
         </div>
         <div 
-        className={
+            className={
             title === "hr"|| title==="final" ? "":
             `mt-8`}>
             <span className="text-gray-600 fw-bold fs-2" >Overall Achievement: <span className="badge fs-4 badge-light-primary">
@@ -331,11 +358,15 @@ const ActualMasterPage = ({employeeId,title}:any) => {
                     <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center">
                         <span className='fs-3 fw-bold '>{param?.name}: {`${param?.weight}%`}</span>                        
                     </div>
-                    <p className="badge badge-light-info fw-bold fs-3 mt-2">Achievement: <span 
-                        style={{color:"ActiveCaption", paddingLeft:"10px"}}> {
-                            getParameterAchievement(param?.id)
-                    }</span>
-                </p>
+
+                    {
+                        checkActive?.tag?.trim() === "settings" ?null:
+                        <p className="badge badge-light-info fw-bold fs-3 mt-2">Achievement: <span 
+                            style={{color:"ActiveCaption", paddingLeft:"10px"}}> {
+                                getParameterAchievement(param?.id)
+                        }</span>
+                        </p>
+                    }
                     {
                         objectivesData?.map((item: any) => (
                             item?.parameterId===param?.id ?
@@ -350,6 +381,7 @@ const ActualMasterPage = ({employeeId,title}:any) => {
                                         objectiveId={item?.id}
                                         employeeId={employeeId?.toString()}
                                         title={title}
+                                        referenceId={referenceId}
                                         />
                                 </ErrorBoundary>
                             </div> : null
@@ -368,21 +400,19 @@ const ActualMasterPage = ({employeeId,title}:any) => {
                 <textarea
                     disabled={title==="final"|| title==="hr"?true:false}
                     rows={1}
-                    // onChange={(e)=>handleChange(record?.id, e.target.value, "individualComment")}
-                    // defaultValue={pointsArray?.join('\n')}
+                    {...register("finalComment1")}
                     className="form-control"
 
                 />
                 {
                     title === "final" || title === "hr" ? "":
                     
-                    <button className="mt-3 btn btn-light-success btn-sm">
+                    <button 
+                        onClick={saveEmployeeComment}
+                        className="mt-3 btn btn-light-success btn-sm">
                         Save
                     </button>
                 }
-                {/* <button className="d-flex justify-content-between btn btn-light-success btn-sm">
-                    Save
-                </button> */}
             </div>
             <div>
             <p className="fs-3 mt-10 fw-bold form-label">Line Manager's comments</p>
@@ -398,21 +428,21 @@ const ActualMasterPage = ({employeeId,title}:any) => {
           footer={[
             <button onClick={handleFinalModalClose} className='btn btn-light-danger btn-sm me-6'>Close</button>,
             <button 
-                // onClick={SubmitFinalComment} 
+                onClick={saveEmployeeComment} 
                 className='btn btn-light-success btn-sm'>Submit</button>
           ]}
         >
           <hr></hr>
           <form 
             // onSubmit={changeStatus}
-            // onSubmit={SubmitFinalComment}
+            onSubmit={saveEmployeeComment}
           >
           
             <div className='mb-7'>
                 <label className=" form-label">Major Achievements</label>
                 <textarea
-                  {...register("achievements")}
-                  value={actualToUpdate?.achievements}
+                  {...register("achievement")}
+                  value={actualToUpdate?.achievement}
                   onChange={handleFinalChange}
                   disabled={title!=="hr" || currentLocation==="appraisal-performance"? true : false}
                   rows={1}
