@@ -1,40 +1,54 @@
-import { Button, Modal, Skeleton, Space, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useNavigate, useParams } from 'react-router-dom'
-import { KTCardBody, KTSVG } from '../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../services/ApiCalls'
-import { ArrowLeftOutlined } from "@ant-design/icons"
-import { useAuth } from '../../auth'
-
+import {Button, Modal, Skeleton, Space, Table, message} from 'antd'
+import {useEffect, useState} from 'react'
+import {useForm} from 'react-hook-form'
+import {useMutation, useQuery, useQueryClient} from 'react-query'
+import {useNavigate, useParams} from 'react-router-dom'
+import {KTCardBody, KTSVG} from '../../../../_metronic/helpers'
+import {
+  Api_Endpoint,
+  deleteItem,
+  fetchDocument,
+  postItem,
+  updateItem,
+} from '../../../services/ApiCalls'
+import {ArrowLeftOutlined} from '@ant-design/icons'
+import {useAuth} from '../../auth'
 
 const ActualEntry = () => {
   const [gridData, setGridData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
-  const { register, reset, handleSubmit } = useForm()
-  const param: any = useParams();   
-  const navigate = useNavigate();
+  const {register, reset, handleSubmit} = useForm()
+  const param: any = useParams()
+  const navigate = useNavigate()
   const [tempData, setTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [secondTempData, setSecondTempData] = useState<any>()
-  const [pathData, setPathData] = useState<any>("")
-  const { currentUser } = useAuth()
-  const { data: allObjectiveDeliverables, isLoading: loading } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 5000 })
-  const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 5000 })
-  const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 5000 })
+  const [pathData, setPathData] = useState<any>('')
+  const {currentUser} = useAuth()
+  const {data: allObjectiveDeliverables, isLoading: loading} = useQuery(
+    'appraisalDeliverables',
+    () => fetchDocument('AppraisalDeliverable'),
+    {cacheTime: 5000}
+  )
+  const {data: appraisalobjectives} = useQuery(
+    'appraisalObjectives',
+    () => fetchDocument('AppraisalObjective'),
+    {cacheTime: 5000}
+  )
+  const {data: allApraisalActual} = useQuery(
+    'apraisalActuals',
+    () => fetchDocument('ApraisalActuals'),
+    {cacheTime: 5000}
+  )
   const queryClient = useQueryClient()
-
 
   const tenantId = localStorage.getItem('tenant')
   const showModal = () => {
     setIsModalOpen(true)
   }
 
-//   get all objvetives from appraisalobjectives where employeeId = current employeeId
-
-
+  //   get all objvetives from appraisalobjectives where employeeId = current employeeId
 
   const handleCancel = () => {
     reset()
@@ -45,10 +59,10 @@ const ActualEntry = () => {
 
   const handleChange = (event: any) => {
     event.preventDefault()
-    setTempData({ ...tempData, [event.target.name]: event.target.value });
+    setTempData({...tempData, [event.target.name]: event.target.value})
   }
 
-  const { mutate: deleteData } = useMutation(deleteItem, {
+  const {mutate: deleteData} = useMutation(deleteItem, {
     onSuccess: () => {
       queryClient.invalidateQueries('appraisalDeliverables')
       message.warning('Deliverable deleted successfully')
@@ -56,19 +70,18 @@ const ActualEntry = () => {
     },
     onError: (error) => {
       console.log('delete error: ', error)
-    }
+    },
   })
 
   function handleDelete(element: any) {
     const item = {
       url: 'AppraisalDeliverable',
-      data: element
+      data: element,
     }
     deleteData(item)
   }
 
   const columns: any = [
-
     {
       title: 'Actual',
       dataIndex: 'actual',
@@ -124,17 +137,16 @@ const ActualEntry = () => {
 
   const showUpdateModal = (values: any) => {
     setIsUpdateModalOpen(true)
-    setTempData(values);
-    setSecondTempData(values);
+    setTempData(values)
+    setSecondTempData(values)
     showModal()
   }
 
   const loadData = async () => {
     try {
-
-        const filteredDeliverables = allApraisalActual?.data.filter((item: any) =>
-            item.deliverableId?.toString() === param?.id
-        )
+      const filteredDeliverables = allApraisalActual?.data.filter(
+        (item: any) => item.deliverableId?.toString() === param?.id
+      )
 
       setGridData(filteredDeliverables)
       setPathData(getItemData(param?.objectiveId, appraisalobjectives?.data))
@@ -148,14 +160,12 @@ const ActualEntry = () => {
   }, [allApraisalActual?.data])
 
   const getItemData = (fieldProp: any, data: any) => {
-    const item = data?.find((item: any) =>
-      item?.id.toString() === fieldProp
-    )
+    const item = data?.find((item: any) => item?.id.toString() === fieldProp)
     return item
   }
 
-  const { mutate: updateData } = useMutation(updateItem, {
-    onSuccess: async(newData: any) => {
+  const {mutate: updateData} = useMutation(updateItem, {
+    onSuccess: async (newData: any) => {
       queryClient.invalidateQueries(`apraisalActuals`)
       reset()
       setTempData({})
@@ -167,38 +177,34 @@ const ActualEntry = () => {
     onError: (error) => {
       console.log('error: ', error)
       message.error('Error updating item')
-    }
+    },
   })
 
   const handleUpdate = async (e: any) => {
     e.preventDefault()
-        const item: any = {
-          url: 'ApraisalActuals',
-          data: tempData
-        }
-        updateData(item)
-     
-    
+    const item: any = {
+      url: 'ApraisalActuals',
+      data: tempData,
+    }
+    updateData(item)
   }
-  
+
   const OnSubmit = handleSubmit(async (values) => {
-      const itemToPost = {
-          data: {
-              deliverableId: parseInt(param.id),
-              individualComment: values.individualComment,
-              lineManagerComment: '',
-              actual: parseFloat(values.actual).toFixed(2),
-            //   tenantId: tenantId
-            },
-            url: `ApraisalActuals`,
-        }
+    const itemToPost = {
+      data: {
+        deliverableId: parseInt(param.id),
+        individualComment: values.individualComment,
+        lineManagerComment: '',
+        actual: parseFloat(values.actual).toFixed(2),
+        //   tenantId: tenantId
+      },
+      url: `ApraisalActuals`,
+    }
     console.log('itemToPost: ', itemToPost.data)
-        postData(itemToPost)
-   
-    
+    postData(itemToPost)
   })
 
-  const { mutate: postData } = useMutation(postItem, {
+  const {mutate: postData} = useMutation(postItem, {
     onSuccess: () => {
       queryClient.invalidateQueries(`apraisalActuals`)
       reset()
@@ -210,7 +216,7 @@ const ActualEntry = () => {
     onError: (error: any) => {
       console.log('post error: ', error)
       message.error('Error adding item')
-    }
+    },
   })
 
   return (
@@ -224,41 +230,38 @@ const ActualEntry = () => {
     >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
-          <div className="mb-5 d-flex justify-content-between align-items-center align-content-center">
+          <div className='mb-5 d-flex justify-content-between align-items-center align-content-center'>
             <Space className=''>
               <Button
                 onClick={() => navigate(-1)}
-                className="btn btn-light-primary me-4"
+                className='btn btn-light-primary me-4'
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
                   display: 'flex',
                 }}
-                type="primary" shape="circle" icon={<ArrowLeftOutlined rev={''} />} size={'large'}
+                type='primary'
+                shape='circle'
+                icon={<ArrowLeftOutlined rev={''} />}
+                size={'large'}
               />
-              <div className="d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600">
-                <span className="fw-bold d-block fs-2">Go back</span>
+              <div className='d-flex flex-direction-row align-items-center justify-content-start align-content-center text-gray-600'>
+                <span className='fw-bold d-block fs-2'>Go back</span>
                 {/* <span className="fw-bold d-block fs-2">{`${pathData?.name}`}</span> */}
                 {/* <div className="bullet bg-danger ms-4"></div>
                 <span className=' fs-2 ms-4 fw-bold'>{`100%`}</span> */}
               </div>
             </Space>
-            <Space style={{ marginBottom: 16 }}>
+            <Space style={{marginBottom: 16}}>
               <button type='button' className='btn btn-primary me-3' onClick={showModal}>
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
               </button>
-              
             </Space>
           </div>
-          {
-            loading ? <Skeleton active /> :
-              <Table columns={columns} 
-              dataSource={gridData} 
-              />
-          }
+          {loading ? <Skeleton active /> : <Table columns={columns} dataSource={gridData} />}
           <Modal
-            title={isUpdateModalOpen ? "Update Actual" : 'Add Actual'}
+            title={isUpdateModalOpen ? 'Update Actual' : 'Add Actual'}
             open={isModalOpen}
             onCancel={handleCancel}
             width={600}
@@ -278,11 +281,9 @@ const ActualEntry = () => {
               </Button>,
             ]}
           >
-            <form
-              onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}
-            >
-                <hr></hr>
-              <div style={{ padding: "0px 20px 20px 20px" }} className='mb-0 '>
+            <form onSubmit={isUpdateModalOpen ? handleUpdate : OnSubmit}>
+              <hr></hr>
+              <div style={{padding: '0px 20px 20px 20px'}} className='mb-0 '>
                 {/* <div className='col-4 mb-7'>
                   <label htmlFor="exampleFormControlInput1" className="form-label">Unit of measure</label>
                   <select {...register("unitOfMeasureId")}
@@ -297,21 +298,29 @@ const ActualEntry = () => {
                   </select>
                 </div> */}
                 <div className=' mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Actual</label>
+                  <label htmlFor='exampleFormControlInput1' className='form-label'>
+                    Actual
+                  </label>
                   <input
-                    {...register("actual")} type='number' min='0'
+                    {...register('actual')}
+                    type='number'
+                    min='0'
                     defaultValue={isUpdateModalOpen === true ? tempData.actual : 0}
                     onChange={handleChange}
-                    className="form-control form-control-solid" />
+                    className='form-control form-control-solid'
+                  />
                 </div>
                 <div className='mb-7'>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Employee's Comment</label>
+                  <label htmlFor='exampleFormControlInput1' className='form-label'>
+                    Employee's Comment
+                  </label>
                   <textarea
-                    {...register("individualComment")}
+                    {...register('individualComment')}
                     // type='text'
                     defaultValue={isUpdateModalOpen === true ? tempData.individualComment : null}
                     onChange={handleChange}
-                    className="form-control form-control-solid" />
+                    className='form-control form-control-solid'
+                  />
                 </div>
               </div>
             </form>
@@ -322,8 +331,4 @@ const ActualEntry = () => {
   )
 }
 
-export { ActualEntry }
-
-
-
-
+export {ActualEntry}

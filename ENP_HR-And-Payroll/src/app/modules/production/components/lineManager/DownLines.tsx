@@ -8,6 +8,7 @@ import { AppraisalFormContent, AppraisalFormHeader } from "../appraisalForms/For
 import { ErrorBoundary } from "@ant-design/pro-components"
 import axios from "axios"
 import { check } from "prettier"
+import { getOverallAchievement, getOverallAchievementForSame } from "../../../../services/CommonService"
 
 const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalobjective}: any) => {
 
@@ -38,6 +39,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         return item?.appraisalId?.toString() === appraisalId
       }
     )
+    const sameParameter = allParameters?.data?.filter((item: any) => item?.tag?.trim() === 'same')
     
     const showObjectivesView = (record: any) => {
         setIsModalOpen(true)
@@ -75,34 +77,34 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         }
     })
 
- const getOverallAchievement = (employeeId:any) => {
-    const overAllWeight = activeParameterName?.map((param: any) => {
-        const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
-        param?.id ===obj?.parameterId && 
-        obj?.employeeId === employeeId?.toString() && 
-        obj?.referenceId === checkActive?.referenceId)
+//  const getOverallAchievement = (employeeId:any) => {
+//     const overAllWeight = activeParameterName?.map((param: any) => {
+//         const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
+//         param?.id ===obj?.parameterId && 
+//         obj?.employeeId === employeeId?.toString() && 
+//         obj?.referenceId === checkActive?.referenceId)
 
-        const objectiveWeights = objectivesInParameter?.map((objective:any) => {
-            const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
-                (deliverable:any) => deliverable?.objectiveId === objective?.id
-            );
+//         const objectiveWeights = objectivesInParameter?.map((objective:any) => {
+//             const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
+//                 (deliverable:any) => deliverable?.objectiveId === objective?.id
+//             );
 
-            const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
-                const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
+//             const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
+//                 const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
 
-                const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
-                        Math.round((actual?.actual/deliverable?.target)*100)
-                    return actualValue * (deliverable?.subWeight/100)
+//                 const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
+//                         Math.round((actual?.actual/deliverable?.target)*100)
+//                     return actualValue * (deliverable?.subWeight/100)
 
-            }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
-                const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
-            return  finalWeight * (objective?.weight/100)
-        })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
-        return parseFloat(objectiveWeights)
-    })
-    const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
-    return totalAchievement
-}
+//             }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
+//                 const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
+//             return  finalWeight * (objective?.weight/100)
+//         })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
+//         return parseFloat(objectiveWeights)
+//     })
+//     const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
+//     return totalAchievement
+// }
 
 
 
@@ -156,13 +158,50 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
             title: 'Overall Achievement',
             dataIndex: 'employeeId',
             render: (_:any, record:any) => {
-                return getOverallAchievement(record?.id)
+                return (
+                    <>
+                    <p>
+
+                    
+                        {
+                            parseFloat(getOverallAchievement(
+                                {
+                                    parameterData: activeParameterName,
+                                    objectiveData: allAppraisalobjective?.data,
+                                    deliverableData: allObjectiveDeliverables?.data,
+                                    actualData: allApraisalActual?.data,
+                                    employeeId: record?.id,
+                                    referenceId: checkActive?.referenceId
+                                })) + parseFloat(getOverallAchievementForSame(
+                                    {
+                                        parameterData: sameParameter,
+                                        objectiveData: allAppraisalobjective?.data,
+                                        deliverableData: allObjectiveDeliverables?.data,
+                                        actualData: allApraisalActual?.data,
+                                        employeeId: record?.id,
+                                        referenceId: checkActive?.referenceId
+                                    }
+                                )
+                            )
+                        }
+                        </p>
+                    </>
+                )
             }
         },
         {
             title: "Performance Rating",
             render: (_:any, record:any) => {
-                const overallAchievement = getOverallAchievement(record?.id)
+                const overallAchievement = getOverallAchievement(
+                    {
+                        parameterData: activeParameterName,
+                        objectiveData: allAppraisalobjective?.data,
+                        deliverableData: allObjectiveDeliverables?.data,
+                        actualData: allApraisalActual?.data,
+                        employeeId: record?.id,
+                        referenceId: checkActive?.referenceId
+                    }
+                )
                 if(overallAchievement >= 90){
                     return <Tag color="success">Excellent</Tag>
                 }
