@@ -4,6 +4,7 @@ import { set, useForm } from "react-hook-form"
 import { Api_Endpoint, fetchDocument } from "../../../services/ApiCalls"
 import axios from "axios"
 import { useQuery } from "react-query"
+import OtpInputWithValidation from "./ValidateOTP"
 
 const ForgotPasswordModal = () => {
     const [loading, setLoading] = useState(false)
@@ -29,10 +30,9 @@ const ForgotPasswordModal = () => {
     const OnSUbmit = handleSubmit(async (values) => {
         setLoading(true)
         // find the user with the email
-        const user = allEmployees?.data?.find((user:any) => user.email?.trim() === values.email?.trim() 
-          && user.username?.trim() === values.username?.trim())
-        console.log('allEmployees', allEmployees);
-        console.log('user', user);
+        const user = allEmployees?.data?.find((user:any) => user.email?.toLowerCase()?.trim() === values.email?.toLowerCase()?.trim() 
+          && user.username?.toLowerCase()?.trim() === values.username?.toLowerCase()?.trim())
+
         setEmployee(user)
         if(values.email===""||values.email===undefined){
             message.warning("Enter a email")
@@ -134,25 +134,56 @@ const ForgotPasswordModal = () => {
         }
     
         console.log(Object.fromEntries(formData))
-    
-        try {
-          const response = await axios.put(uRL, formData, config).then((res:any) => {
-            console.log('res', res);
-            message.success("Password changed successfully")
-            setLoading(false)
-            setIsPassModalOpen(false)
-            setIsModalOpen(false)
-            reset()
 
-          }).catch((err:any) => {
-            console.log('err', err);
-            message.error("Error changing password")
-            setLoading(false)
-          }
-          )
-        } catch (error: any) {
-          return error.statusText
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(values.password);
+        const hasUpperCase = /[A-Z]/.test(values.password);
+        const hasNumber = /\d/.test(values.password);
+    
+        if(values.password !== values.confirmPass){
+          message.error("Passwords do not match")
+          return
+        }else if(values.password === "" || values.confirmPass === ""){
+          message.error("Enter a password")
+          return
         }
+        else if(values.password.length < 8 || values.confirmPass.length < 8){
+          message.error("Password must be at least 8 characters")
+          return
+        }
+        else if(!hasSpecialChar){
+          message.error("Password must contain at least one special character")
+          return
+        }
+        else if(!hasUpperCase){
+          message.error("Password must contain at least one uppercase letter")
+          return
+        }
+        else if(!hasNumber){
+          message.error("Password must contain at least one number")
+          return
+        }
+
+        else {
+            try {
+            const response = await axios.put(uRL, formData, config).then((res:any) => {
+              console.log('res', res);
+              message.success("Password changed successfully")
+              setLoading(false)
+              setIsPassModalOpen(false)
+              setIsModalOpen(false)
+              reset()
+
+            }).catch((err:any) => {
+              console.log('err', err);
+              message.error("Error changing password")
+              setLoading(false)
+            }
+            )
+          } catch (error: any) {
+            return error.statusText
+          }
+        }
+        
       })
       
     return (
@@ -162,7 +193,7 @@ const ForgotPasswordModal = () => {
                 Forgot Password?
             </a>
         <Modal
-            title={isOTPModalOpen? 'Verify your eamil': isPassModalOpen? " New Password" : "Request password reset"}
+            title={isOTPModalOpen? 'Verify your eamil': isPassModalOpen? "Create New Password" : "Request password reset"}
             open={isModalOpen}
             onCancel={handleCancel}
             closable={true}
@@ -193,27 +224,34 @@ const ForgotPasswordModal = () => {
                       <input type="text" {...register("otpValue")} 
                       className="form-control form-control-solid" />
                     </div>
+                    
                   </div>
                 </>:
                 isPassModalOpen === true?
                 <>
-                   <p>Enter your new password</p>
+                   {/* <p>Enter your new password</p> */}
                   <hr></hr>
+                  <ul>
+                    <li>must be 8 characters long</li>
+                    <li>must contain at least one upper case letter</li>
+                    <li>must contain at least one special character </li>
+                    <li>must contain at least one number</li>
+                  </ul>
                   <div style={{ padding: "20px 20px 20px 20px" }} >
                     <div className=' mb-7'>
                       <label htmlFor="password" className="form-label">New Password</label>
-                      <input type="text" {...register("password")} 
+                      <input type="password" {...register("password")} 
                       className="form-control form-control-solid" />
                     </div>
                     <div className=' mb-7'>
                       <label htmlFor="confirmPass" className="form-label">Confirm Password</label>
-                      <input type="text" {...register("confirmPass")} 
+                      <input type="password" {...register("confirmPass")} 
                       className="form-control form-control-solid" />
                     </div>
                   </div>
                 </>:
                 <>
-                   <p>Enter your email to reset your password</p>
+                   {/* <p>Enter your email to reset your password</p> */}
                   <hr></hr>
                   <div style={{ padding: "20px 20px 20px 20px" }} >
                     <div className=' mb-7'>
@@ -225,6 +263,7 @@ const ForgotPasswordModal = () => {
                       <label htmlFor="email" className="form-label">Email</label>
                       <input type="email" {...register("email")} className="form-control form-control-solid" />
                     </div>
+                    
                   </div>
                 </>
               }
