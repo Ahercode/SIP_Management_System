@@ -150,7 +150,7 @@ export function AsideMenuMain() {
               <AsideMenuItem to='setup/departments' hasBullet={true} title='Departments' />
               <AsideMenuItem to='setup/categories' hasBullet={true} title='Categories' />
               <AsideMenuItem to='setup/jobtitle' hasBullet={true} title='Job Titles' />
-              <AsideMenuItem to='setup/organogram' hasBullet={true} title='Organogram' />
+              {/* <AsideMenuItem to='setup/organogram' hasBullet={true} title='Organogram' /> */}
               <AsideMenuItem to='setup/payroll/period' hasBullet={true} title='Periods' />
               <AsideMenuItem to='setup/unitOfMeasure' hasBullet={true} title='Units of Measure' />
             </AsideMenuItemWithSub>

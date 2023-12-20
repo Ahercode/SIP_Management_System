@@ -2,15 +2,17 @@ import axios from 'axios';
 
 // const tenantId = localStorage.getItem('tenant')
 
-// export const Api_Endpoint = "http://208.117.44.15/omniAppraisalApi/api";
 // export const Api_Endpoint = "https://app.sipconsult.net/omniAppraisalApi/api";
-export const Api_Endpoint = "http://109.169.12.107/omniAppraisalApi/api";
-export const ImageBaseUrl = "http://109.169.12.107"
-// export const Api_Endpoint = "https://localhost:5001/api";
-export const UsersEndpoint = "https://app.sipconsult.net/userapi/api";
-export const FormsBaseUrl = "http://109.169.12.107/apms";
+export const Api_Endpoint = "http://apms.omnigroupapps.com/omniAppraisalApi/api";
+// export const ImageBaseUrl = "https://app.sipconsult.net"
+export const ImageBaseUrl = "http://apms.omnigroupapps.com"
+export const DashBoardUrl = "http://apms.omnigroupapps.com/dashboard"
+
+export const FormsBaseUrl = "http://apms.omnigroupapps.com/apms";
 // export const FormsBaseUrl = "https://app.sipconsult.net/apms";
-// export const UsersEndpoint = "http://208.117.44.15/userapi/api";
+// export const companyNasme = 'OMNI APMS'
+export let hasLogo = false
+export const companyNasme = 'OMNI APMS'
 
 
 export let axioInstance = axios.create({

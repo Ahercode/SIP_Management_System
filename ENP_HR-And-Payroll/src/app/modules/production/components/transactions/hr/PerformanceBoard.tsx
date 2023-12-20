@@ -7,23 +7,25 @@ import { AppraisalPerformance } from "./AppraisalPerformance";
 // import { PerformanceDetails } from "./PerfDetails";
 // import { useAuth } from "../../../../auth";
 import { BonusComputation } from "../../../entry/BonusComputation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PerformanceBoard = () => {
-
     
     const { data: employeeObjectives, isLoading: objectivesLoading } = useQuery('appraisalobjective', () => fetchDocument(`appraisalobjective`), { cacheTime: 5000 })
     const tenantId = localStorage.getItem('tenant')
-    const appraisalReferenceId:any = localStorage.getItem('appraisalReferenceId')
-
-    // console.log("reference", reference)
-    
+    const [referenceId, setReferenceId] = useState<any>(null)
+    const appraisalReferenceId:any= localStorage.getItem('appraisalReferenceId')
+ 
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 100000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
     const { data: allAppraTranItems } = useQuery('appraisalPerItems', () => fetchDocument(`AppraisalPerItems`), { cacheTime: 10000 })
     const { data: allAppraisalsPerfTrans, isLoading:perLoading} = useQuery('appraisalPerfTransactions', () => fetchDocument(`AppraisalPerfTransactions/tenant/${tenantId}`), { cacheTime: 10000 })
   
 
+    const receiveBonusData = (reference:any) => {
+        console.log('Received reference:', reference);
+        setReferenceId(reference); 
+      };
     const allAppraisalTranItems = allAppraTranItems?.data?.filter((item: any) => {
         return item.appraisalPerfTranId === parseInt(appraisalReferenceId)
       })
@@ -33,15 +35,15 @@ const PerformanceBoard = () => {
         return idSet.has(item.id)
       })
 
-    const allAmendObjectives = employeeObjectives?.data?.filter((item: any) => {
-        return item?.status === 'amend'
-    })
+    // const allAmendObjectives = employeeObjectives?.data?.filter((item: any) => {
+    //     return item?.status === 'amend'
+    // })
 
     const reference = allAppraisalsPerfTrans?.data?.find((item: any) => {
         return item?.id === parseInt(appraisalReferenceId)
         }
     )
-
+    
     const allSubmittedApprovedRejectedObjectives = employeeObjectives?.data?.filter((item: any) => {
         return (item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected") && 
         item?.referenceId === reference?.referenceId
@@ -77,6 +79,11 @@ const PerformanceBoard = () => {
     // const slot = {
     //     right: <Button onClick={showDownlinesModal}>Show Downlines</Button>
     // }
+
+    useEffect(() => {
+        // loadData()
+    }
+    , [appraisalReferenceId])
 
     const tabItems: TabsProps['items'] = [
         {
@@ -132,6 +139,7 @@ const PerformanceBoard = () => {
     // if(reference === null){ 
     //     tabItems.splice(3,1)
     // }
+
     return (
         <div 
             style={{

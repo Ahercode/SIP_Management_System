@@ -3,10 +3,11 @@ import { EmployeeProfile } from "../components/employee/Employee"
 import { useQuery } from "react-query"
 import { fetchDocument } from "../../../services/ApiCalls"
 import * as Papa from "papaparse"
+import { getOverallAchievement, getOverallAchievementForSame } from "../../../services/CommonService"
+import { useEffect } from "react"
 
 const BonusComputation = ({employeeData, title}:any) => {
     const tenantId = localStorage.getItem('tenant')
-
     const { data: allCategories } = useQuery('categories', () => fetchDocument('Categories'), { cacheTime: 10000 })
     const { data: allDepartments} = useQuery('departments', () => fetchDocument('Departments'), { cacheTime: 10000 })
     const { data: allEmployees } = useQuery('employees', () => fetchDocument(`employees/tenant/${tenantId}`), { cacheTime: 10000 })
@@ -24,40 +25,35 @@ const BonusComputation = ({employeeData, title}:any) => {
     const appraisalId = convertToArray?.[1]
 
     const activeParameterName = allParameters?.data?.filter((item: any) => 
-        item.appraisalId?.toString() === appraisalId || item?.tag?.trim() === "same"
+        item.appraisalId?.toString() === appraisalId
     )
 
-    const getOverallAchievement = (employeeId:any) => {
-        const overAllWeight = activeParameterName?.map((param: any) => {
-            const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
-            param?.id ===obj?.parameterId && 
-            obj?.employeeId === employeeId?.toString() && 
-            obj?.referenceId === checkActive?.referenceId)
-    
-            const objectiveWeights = objectivesInParameter?.map((objective:any) => {
-                const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
-                    (deliverable:any) => deliverable?.objectiveId === objective?.id
-                );
-                const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
-                    const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id
-                        && actual?.employeeId === employeeId && actual?.referenceId === checkActive?.referenceId
-                    )
-                    const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
-                            Math.round((actual?.actual/deliverable?.target)*100)
-                        return actualValue * (deliverable?.subWeight/100)
-                }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
-                    const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
-                return  finalWeight * (objective?.weight/100)
-            })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
-            return parseFloat(objectiveWeights)
-        })
-        const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
-        return totalAchievement
-    }
+    const sameParatmeter = allParameters?.data?.filter((item: any) => item?.tag?.trim() === 'same')
 
+    const overAllScore = (employeeId:any) => {  
+        return (parseFloat(getOverallAchievement(
+             {
+                 parameterData: activeParameterName,
+                 objectiveData: allAppraisalobjective?.data,
+                 deliverableData: allObjectiveDeliverables?.data,
+                 actualData: allApraisalActual?.data,
+                 referenceId: checkActive?.referenceId,
+                 employeeId: employeeId,
+             }
+         )) + parseFloat(getOverallAchievementForSame(
+             {
+                 parameterData: sameParatmeter,
+                 objectiveData: allAppraisalobjective?.data,
+                 deliverableData: allObjectiveDeliverables?.data,
+                 actualData: allApraisalActual?.data,
+                 referenceId: checkActive?.referenceId,
+                 employeeId: employeeId,
+             }
+         ))).toFixed(2)
+     }
 
     const getPayoutRatio = (employeeId:any) => {
-        const achievement = getOverallAchievement(employeeId)
+        const achievement = parseFloat(overAllScore(employeeId))
 
         const performanceRating = achievement < 50 ? 
         0 :
@@ -92,7 +88,7 @@ const BonusComputation = ({employeeData, title}:any) => {
     }
 
     const calculateBonus = (employeeId:any) => {
-        const achievement = getOverallAchievement(employeeId)
+        const achievement = overAllScore(employeeId)
         const performanceRating = getPayoutRatio(employeeId)
         const emp = allEmployees?.data?.find((item:any)=> item?.id === employeeId)
         const empCat = allCategories?.data?.find((item:any)=> item?.id === emp?.categoryId)
@@ -110,7 +106,7 @@ const BonusComputation = ({employeeData, title}:any) => {
          return bonus   
     }
 
-    const columns = [
+    const columns:any = [
 
         {
             title:"Employee Details",
@@ -154,12 +150,31 @@ const BonusComputation = ({employeeData, title}:any) => {
             dataIndex: 'id',
             key:"id",
             render: (row: any) => {
-                return getOverallAchievement(row)
+                return (parseFloat(getOverallAchievement(
+                    {
+                        parameterData: activeParameterName,
+                        objectiveData: allAppraisalobjective?.data,
+                        deliverableData: allObjectiveDeliverables?.data,
+                        actualData: allApraisalActual?.data,
+                        referenceId: checkActive?.referenceId,
+                        employeeId: row,
+                    }
+                )) + parseFloat(getOverallAchievementForSame(
+                    {
+                        parameterData: sameParatmeter,
+                        objectiveData: allAppraisalobjective?.data,
+                        deliverableData: allObjectiveDeliverables?.data,
+                        actualData: allApraisalActual?.data,
+                        referenceId: checkActive?.referenceId,
+                        employeeId: row,
+                    }
+                ))).toFixed(2)
             },
         },
         {
             title:"Individual Weight",
             dataIndex: 'categoryId',
+            fixed:"right",
             render:(record:any)=>{
                 return getWeights(record, "individual")?.toFixed(2)
             }
@@ -167,6 +182,7 @@ const BonusComputation = ({employeeData, title}:any) => {
         {
             title:"Ann. Base Salary",
             dataIndex:"annualBaseSalary",
+            fixed:"right",
             sorter:(a:any,b:any)=>{
                 if(a.bonusYear > b.bonusYear){
                     return 1
@@ -185,7 +201,7 @@ const BonusComputation = ({employeeData, title}:any) => {
             title:"Payout Ratio",
             dataIndex: 'id',
             key:"id",
-
+            fixed:"right",
             render:(record:any)=>{
             return getPayoutRatio(record)
             }
@@ -194,6 +210,7 @@ const BonusComputation = ({employeeData, title}:any) => {
             title:"Bonus",
             dataIndex: 'id',
             key:"id",
+            fixed:"right",
             render:(record:any)=>{
                 return Number.isNaN(calculateBonus(record))? "0.00" : calculateBonus(record)?.toFixed(2)
             }
@@ -210,7 +227,7 @@ const BonusComputation = ({employeeData, title}:any) => {
         groupAchievement : Number.isNaN(getGroupAchievement(item?.departmentId, "group"))?0 : getGroupAchievement(item?.departmentId, "group"),
         department:getGroupAchievement(item?.departmentId, "name"),
         groupWeight : getWeights(item?.categoryId, "group")?.toFixed(2),
-        individualAchievement : getOverallAchievement(item?.id),
+        individualAchievement : overAllScore(item?.id),
         individualWeight : getWeights(item?.categoryId, "individual")?.toFixed(2),
         annualBaseSalary: item?.annualBaseSalary === null ? '0.00' : item?.annualBaseSalary?.toFixed(2),
         payoutRatio : parseFloat(getPayoutRatio(item?.id))?.toFixed(2),
@@ -235,13 +252,13 @@ const BonusComputation = ({employeeData, title}:any) => {
         const csvData = convertToCSSV(data);
     
         const blob = new Blob([csvData], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const url = window.URL?.createObjectURL(blob);
+        const a = document?.createElement('a');
         a.href = url;
         a.download = 'BonusCalculation.csv';
-        document.body.appendChild(a);
+        document.body?.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        document.body?.removeChild(a);
     }
 
     const columnsToKeep = [ 
@@ -259,9 +276,9 @@ const BonusComputation = ({employeeData, title}:any) => {
         'bonus'
     ];
 
-    const filteredData = newData.map((item:any) => {
+    const filteredData = newData?.map((item:any) => {
         const filteredItem:any = {};
-        columnsToKeep.forEach((column:any) => {
+        columnsToKeep?.forEach((column:any) => {
             filteredItem[column] = item[column];
         });
         return filteredItem;
@@ -270,13 +287,23 @@ const BonusComputation = ({employeeData, title}:any) => {
     const handlePrint = () => {
         exportToCSV(filteredData)
     }
+
+    useEffect(() => {
+    }
+    , [employeeData])
     
     return (
         <>
-            <div className="d-flex justify-content-end mb-4">
-                <button className="btn btn-light-info" onClick={handlePrint}>
-                    Export
-                </button>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3>
+                    Bonus Formula: <br></br> <span className="text-gray-600">Bonus Target * ((Group Achievement * Group Weight + Individual Achievement * Individual Weight)) *Annual Salary * Payout Ratio</span>
+                    <br></br><span className="pt-6 fs-4 fw-bold text-danger">Note: no bonus for employees with achievement below 59</span>
+                </h3>
+                <div>
+                    <button className="btn btn-light-info" onClick={handlePrint}>
+                        Export
+                    </button>
+                </div>
             </div>
             <Table 
                 columns={columns} 
@@ -289,5 +316,3 @@ const BonusComputation = ({employeeData, title}:any) => {
 }
 
 export {BonusComputation}
-
-

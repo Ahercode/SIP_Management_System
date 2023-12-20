@@ -100,14 +100,6 @@ const [deliverableStatus, setDeliverableStatus] = useState<any>("")
     },
   ]
 
- 
-
-
-  // const activeReferenceId = allAppraisalsPerfTrans?.data?.find((item: any) => {
-  //     return item?.referenceId === checkActive?.referenceId
-  //   }
-  // )
-
 const employeeReferenceIds = allAppraTranItems?.data?.filter((item: any) => 
     (item?.employeeId === currentUser?.id) 
 )?.map((item: any) => item?.appraisalPerfTranId)
@@ -118,22 +110,14 @@ const employeesReference = allAppraisalsPerfTrans?.data.filter((item: any) =>
   )
 )
 
-const [selectedReference, setSelectedReference] = useState<any>(employeesReference?.[0]?.referenceId);
-
+const refId = localStorage.getItem("actualReferenceId")
+const [selectedReference, setSelectedReference] = useState<any>(refId);
 localStorage.setItem("actualReferenceId", selectedReference)
 
 const checkActive = allReviewdates?.data?.find((item: any) => {
   return item?.isActive?.trim() === "active" && item?.referenceId === selectedReference
 })
-// const employeeFromActiveReference = allAppraTranItems?.data?.filter((item: any) => {
-//     return item?.appraisalPerfTranId === activeReferenceId?.id
-//   }
-// )
 
-// const currentEmployeeFromActiveReference = employeeFromActiveReference?.find((item: any) => {
-//   return item?.employeeId === currentUser?.id
-// }
-// )
 
 const convertToArray = selectedReference?.split("-")
 
@@ -142,6 +126,7 @@ const appraisalId = convertToArray?.[1]
   const dataByID = allParameters?.data?.filter((item: any) => {
     return item.appraisalId === parseInt(appraisalId) || item?.tag?.trim()==="same"
   })
+
   const parametersBeforeSubmit = allParameters?.data?.filter((item: any) => {
     return item.appraisalId === parseInt(appraisalId)
   })
@@ -164,13 +149,14 @@ const appraisalId = convertToArray?.[1]
         && item?.referenceId === checkActive?.referenceId)
       ).map((item: any) => item.weight)
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
-  };
+  }
+
   const sameWeightSum = () => {
     return allAppraisalobjective?.data.filter((item: any) => 
         item?.tag?.trim()==="same"
       ).map((item: any) => item.weight)
       .reduce((a: any, b: any) => parseInt(a) + parseInt(b), 0)
-  };
+  }
 
   // get weight of deliverables from each objective
   const weightSumDeliverables = (id: any) => {
@@ -237,23 +223,25 @@ const appraisalId = convertToArray?.[1]
          return parseInt(item?.employeeId) === parseInt(currentUser?.id) && item?.referenceId === checkActive?.referenceId
     })
     if (allSubmittedObjectives?.some((obj:any) => obj.status === "submitted")) {
-         return  "Submitted";
-     } else if (allSubmittedObjectives?.some((obj:any) => obj.status === "rejected")) {
-         return  "Rejected";
-     }
-     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "approved")) {
-         return "Approved";
-     }
-     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
-         return "Amend";
-     }
-     else if (allSubmittedObjectives?.some((obj:any) => obj.status === "Drafted")) {
-      return "Drafted";
-  }
-     else{
+        return  "Submitted";
+    } else if (allSubmittedObjectives?.some((obj:any) => obj.status === "rejected")) {
+        return  "Rejected";
+    }
+    else if (allSubmittedObjectives?.some((obj:any) => obj.status === "approved")) {
+        return "Approved";
+    }
+    else if (allSubmittedObjectives?.some((obj:any) => obj.status === "amend")) {
+        return "Amend";
+    }
+    else if (allSubmittedObjectives?.some((obj:any) => obj.status === "Drafted")) {
+    return "Drafted";
+    }
+    else{
         return "Not Submitted"
-     }
+    }
   })
+
+  console.log("objectiveStatus", getEmployeeStatus())
 
 useEffect(() => {
   getObjectiveStatus()
@@ -281,12 +269,19 @@ const OnSubmit = handleSubmit(async (values) => {
         employeeId :currentUser?.id?.toString(),
         statusText: "submitted"
       }
+      //  currentUserLineManager, `Your direct report ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their objectives`
 
       console.log("data",data)
       axios.post(`${Api_Endpoint}/Parameters/UpdateStatus`, data)
       .then(response => {
         message.success("You have successfully submitted your objectives")
-        sendEmail(currentUserLineManager, `Your direct report ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their objectives`)
+        sendEmail(
+          {
+            record: currentUserLineManager,
+            body: `Your direct report ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their objectives`,
+            subject: "Objectives Submission"
+          }
+         )
         console.log(response.data);
       })
       .catch(error => {
@@ -316,11 +311,10 @@ const OnSubmit = handleSubmit(async (values) => {
           // currentEmployeeFromActiveReference === undefined? 
           employeesReference?.length === 0?
           <p className='text-center justify-center fs-1 fw-bold mb-4 mt-3'>
-            You've not been added to any appraisal reference yet
+            Appraisal has not started yet
           </p>:
           <div className='table-responsive'>
-            <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
-              <div>   
+              <div className='col-4'>   
                 <select value={selectedReference} onChange={(e) => setSelectedReference(e.target.value)} className="form-select mb-5 form-select-solid" >
                   <option value="">Select Reference</option>
                   {
@@ -331,14 +325,17 @@ const OnSubmit = handleSubmit(async (values) => {
                     ))
                   }
                 </select>             
-                {/* <p className='text-primary fs-2 fw-bold mb-4'>
-                  {
-                    appraisalData?.name===undefined? "You will be notified when appraisal has started":`${appraisalData?.name}`
-                  }
-                </p> */}
+              </div>
+            <div className='d-flex flex-direction-row justify-content-between align-items-center align-content-center py-4'>
+              <div>
+                <span className='fs-3 fw-bold text-gray-600'>
+                  Working on: <span className='fs-3 fw-bold text-black'>{checkActive?.description}</span>
+                </span>
+              </div>
+              <div>
                 {
                   appraisalData?.name===undefined?""
-                  : <span className="mt-10" style={{ fontSize:"16px"}}> Your status:
+                  : <span className='fs-3 fw-bold text-gray-600'> Your status:
                   <span style={{ fontSize:"16px"}} className={
                     getEmployeeStatus() === 'Amend' ?
                     'badge badge-light-info fw-bolder' :
@@ -357,24 +354,26 @@ const OnSubmit = handleSubmit(async (values) => {
                 </span> 
                 }    
               </div>
-              <div>
-              </div>
+              
               <Space size='middle'>
                 <Button  disabled={
                   (getEmployeeStatus() === "Approved" || 
                   getEmployeeStatus() === "Amend"||
-                  getEmployeeStatus() === "Submitted"                 
+                  getEmployeeStatus() === "Submitted" ||
+                  getEmployeeStatus() === "Rejected" ||
+                  selectedReference === "" ||
+                  selectedReference === undefined          
                   ) && 
                   deliverableStatus} onClick={OnSubmit} type='primary' size='large'>
                   Submit
                 </Button>
                 <Link to={`/actualpage/`}>
                   <Button 
-                  disabled={
-
+                    disabled={
                     checkActive?.tag?.trim()==="setting" || 
-                    checkActive?.tag ===null|| 
-                    checkActive?.tag ===undefined
+                    checkActive?.tag ===null || 
+                    checkActive?.tag ===undefined ||
+                    getEmployeeStatus() === "Not Submitted" 
                   } 
 
                     size='large'>

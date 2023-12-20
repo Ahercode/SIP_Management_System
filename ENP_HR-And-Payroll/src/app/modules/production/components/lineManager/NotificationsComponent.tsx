@@ -11,11 +11,12 @@ import {AppraisalPrintHeader, PrintComponent} from '../appraisalForms/AppraisalP
 import {AppraisalFormContent, AppraisalFormHeader} from '../appraisalForms/FormTemplateComponent'
 import axios from 'axios'
 import {useAuth} from '../../../auth'
-import {getOverallAchievement, sendEmail} from '../../../../services/CommonService'
+import {getOverallAchievement, getOverallAchievementForSame, sendEmail} from '../../../../services/CommonService'
 import {ActualMasterPage} from '../../entry/ActualMasterPage'
 import Papa from 'papaparse'
+import { parse } from 'path'
 
-const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: any) => {
+const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, location, tag}: any) => {
   // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
   const {data: allEmployees} = useQuery('employees', () => fetchDocument(`employees`), {
@@ -97,21 +98,17 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
 
   // const actualReferenceId  = localStorage.getItem("actualReferenceId")
 
-  const employeeReferenceIds = allAppraTranItems?.data
-    ?.filter((item: any) => item?.employeeId === currentUser?.id)
-    ?.map((item: any) => item?.appraisalPerfTranId)
+  // const employeeReferenceIds = allAppraTranItems?.data
+  //   ?.filter((item: any) => item?.employeeId === currentUser?.id)
+  //   ?.map((item: any) => item?.appraisalPerfTranId)
 
-  const employeesReference = allAppraisalsPerfTrans?.data.filter(
-    (item: any) => item?.status?.trim() === 'active'
-    // employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active")
-  )
-
-  const [selectedReference, setSelectedReference] = useState<any>(
-    employeesReference?.[0]?.referenceId
-  )
+  // const employeesReference = allAppraisalsPerfTrans?.data.filter(
+  //   (item: any) => item?.status?.trim() === 'active'
+  //   // employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active")
+  // )
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
-    return item?.isActive?.trim() === 'active' && item?.referenceId === selectedReference
+    return item?.isActive?.trim() === 'active' && item?.referenceId === referenceId
   })
 
   const convertToArray = checkActive?.referenceId.split('-')
@@ -121,6 +118,7 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
   const activeParameterName = allParameters?.data?.filter(
     (item: any) => item.appraisalId?.toString() === appraisalId
   )
+  const sameParameter = allParameters?.data?.filter((item: any) => item?.tag?.trim() === 'same')
 
   const handleCommentModalCancel = () => {
     setCommentModalOpen(false)
@@ -167,40 +165,15 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
     setTextareaHeight(`${textarea.style.height}`)
   }
 
-  // const getOverallAchievement = (employeeId:any) => {
-  //     const overAllWeight = activeParameterName?.map((param: any) => {
-  //         const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
-  //         param?.id ===obj?.parameterId &&
-  //         obj?.employeeId === employeeId?.toString() &&
-  //         obj?.referenceId === checkActive?.referenceId)
-
-  //         const objectiveWeights = objectivesInParameter?.map((objective:any) => {
-  //             const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
-  //                 (deliverable:any) => deliverable?.objectiveId === objective?.id
-  //             );
-
-  //             const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
-  //                 const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
-
-  //                 const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 :
-  //                         Math.round((actual?.actual/deliverable?.target)*100)
-  //                     return actualValue * (deliverable?.subWeight/100)
-
-  //             }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
-  //                 const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
-  //             return  finalWeight * (objective?.weight/100)
-  //         })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
-  //         return parseFloat(objectiveWeights)
-  //     })
-  //     const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
-  //     return totalAchievement
-  // }
-
+  
   const submitRejection = () => {
     OnSubmit('rejected')
     sendEmail(
-      employeeData,
-      `Your Objectives have been rejected. with the following comments: \n ${comment}`
+      {
+        record: employeeData,
+        body: `Your Objectives have been rejected. with the following comments: \n ${comment}`,
+        subject: `Your Objectives have been rejected`,
+      }
     )
     reset()
     setComment('')
@@ -260,7 +233,11 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
 
   const onObjectivesApproved = () => {
     OnSubmit('approved')
-    sendEmail(employeeData, `Your Objectives have been approved`)
+    sendEmail({
+      record: employeeData, 
+      body:`Your Objectives have been approved`,
+      subject: `Your Objectives have been approved`,
+    })
   }
 
   const onObjectivesRejected = () => {
@@ -272,7 +249,6 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
   }
 
   const acceptAmendment = () => {
-    // message.success(`You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Amendment`)
     message.success(
       `You have accepted ${employeeData?.firstName} ${employeeData?.surname}'s Self Evaluation`
     )
@@ -281,7 +257,7 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
 
   const loadData = () => {
     const parametersResponse = parameters?.data?.filter(
-      (item: any) => item?.appraisalId === 12 || item?.tag?.trim() === 'same'
+      (item: any) => item?.appraisalId === appraisalId || item?.tag?.trim() === 'same'
     )
     setParametersData(parametersResponse)
     const dataWithFullName = employeeWhoSubmitted?.map((item: any) => ({
@@ -341,27 +317,48 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
       title: 'Overall Achievement',
       dataIndex: 'overallAchievement',
       render: (_: any, record: any) => {
-        return getOverallAchievement({
-          parameterData: activeParameterName,
-          objectiveData: allAppraisalobjective?.data,
-          deliverableData: allObjectiveDeliverables?.data,
-          actualData: allApraisalActual?.data,
-          employeeId: record?.id,
-          referenceId: selectedReference,
-        })
+        return (parseFloat(
+          getOverallAchievement({
+            parameterData: activeParameterName,
+            objectiveData: allAppraisalobjective?.data,
+            deliverableData: allObjectiveDeliverables?.data,
+            actualData: allApraisalActual?.data,
+            employeeId: record?.id,
+            referenceId: checkActive?.referenceId,
+          })
+        ) + parseFloat(
+          getOverallAchievementForSame({
+            parameterData: sameParameter,
+            objectiveData: allAppraisalobjective?.data,
+            deliverableData: allObjectiveDeliverables?.data,
+            actualData: allApraisalActual?.data,
+            employeeId: record?.id,
+            referenceId: checkActive?.referenceId,
+          })
+        ))?.toFixed(2)
       },
     },
     {
       title: 'Performance Rating',
       render: (_: any, record: any) => {
-        const overallAchievement = getOverallAchievement({
-          parameterData: activeParameterName,
-          objectiveData: allAppraisalobjective?.data,
-          deliverableData: allObjectiveDeliverables?.data,
-          actualData: allApraisalActual?.data,
-          employeeId: record?.id,
-          referenceId: selectedReference,
-        })
+        const overallAchievement = parseFloat(
+          getOverallAchievement({
+            parameterData: activeParameterName,
+            objectiveData: allAppraisalobjective?.data,
+            deliverableData: allObjectiveDeliverables?.data,
+            actualData: allApraisalActual?.data,
+            employeeId: record?.id,
+            referenceId: referenceId,
+          })) + parseFloat(
+            getOverallAchievementForSame({
+              parameterData: sameParameter,
+              objectiveData: allAppraisalobjective?.data,
+              deliverableData: allObjectiveDeliverables?.data,
+              actualData: allApraisalActual?.data,
+              employeeId: record?.id,
+              referenceId: referenceId,
+            })
+          )
         if (overallAchievement >= 90) {
           return <Tag color='success'>Excellent</Tag>
         } else if (overallAchievement >= 80 && overallAchievement < 90) {
@@ -478,24 +475,11 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
 
   return (
     <>
-      <div className='d-flex justify-content-between mb-4'>
-        <div>
-          <select
-            value={selectedReference}
-            onChange={(e) => setSelectedReference(e.target.value)}
-            className='form-select mb-5 form-select-solid'
-          >
-            <option value=''>Select Reference</option>
-            {employeesReference?.map((item: any) => (
-              <option value={item.referenceId}>
-                {getFieldName(item?.paygroupId, allPaygroups?.data)} -{' '}
-                {getFieldName(item?.appraisalTypeId, allAppraisals?.data)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button className='btn btn-light-info btn-sm' onClick={handlePrint}>
-          Export
+      <div className='d-flex justify-content-end mb-4'>
+        <button 
+          disabled={componentData?.length === 0}
+          className='btn btn-light-info btn-sm' onClick={handlePrint}>
+            Export
         </button>
       </div>
       {loading ? <Skeleton active /> : <Table columns={columns} dataSource={componentData} />}
@@ -504,19 +488,19 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
         open={isModalOpen}
         width={
           checkActive?.tag?.trim() === 'actual' || checkActive?.tag?.trim() === 'final'
-            ? 1200
-            : 1000
+            ? 1400
+            : 1200
         }
         onCancel={handleCancel}
         closable={true}
         footer={
-          tag === 'final' ? (
+          tag === 'actual' || tag === 'final' ? (
             <Space className='mt-7'>
               <button type='button' className='btn btn-danger btn-sm' onClick={closeModal}>
                 Cancel
               </button>
               <button type='button' className='btn btn-success  btn-sm' onClick={acceptAmendment}>
-                Accept
+                Submit
               </button>
             </Space>
           ) : location === 'View Details' ? null : (
@@ -544,14 +528,14 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
             employeeData={employeeData}
             department={department}
             lineManager={lineManager}
-            print={
-              <Button
-                type='link'
-                className='me-3'
-                onClick={showPrintPreview}
-                icon={<PrinterOutlined rev={'print'} className='fs-1' />}
-              />
-            }
+            // print={
+            //   <Button
+            //     type='link'
+            //     className='me-3'
+            //     onClick={showPrintPreview}
+            //     icon={<PrinterOutlined rev={'print'} className='fs-1' />}
+            //   />
+            // }
           />
 
           {
@@ -559,9 +543,9 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, location, tag}: 
             // checkActive?.tag?.trim() === "final" ?
 
             <ActualMasterPage
-              title='hr'
-              employeeId={employeeData?.id}
-              referenceId={selectedReference}
+              title='linemanager'
+              employeeId={employeeData?.id?.toString()}
+              referenceId={checkActive?.referenceId}
             />
 
             // : <AppraisalFormContent component={AppraisalObjectivesComponent} employeeId={employeeData?.id} parametersData={parametersData} />

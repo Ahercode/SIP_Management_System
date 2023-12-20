@@ -12,7 +12,7 @@ export function MenuInner() {
   const intl = useIntl()
   return (
     <>
-      <MenuItem title={currentUser?.isAdmin?.trim() === "yes"?"OMNI PMS DashBoard":"Notifications"} 
+      <MenuItem title={currentUser?.isAdmin?.trim() === "yes"?"DashBoard":"Notifications"} 
             to={currentUser?.isAdmin?.trim() === "yes"? '/hr-dashboard':'notifications-board/lineManger' }/>
     </>
   )

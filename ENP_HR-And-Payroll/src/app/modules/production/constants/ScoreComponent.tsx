@@ -2,10 +2,10 @@ import { useQuery } from "react-query"
 import { fetchDocument } from "../../../services/ApiCalls"
 import { useEffect } from "react"
 
-const ScoreComponent = ({employeeId, sendAchievement}: any) => {
+const ScoreComponent = ({employeeId, referenceId}: any) => {
 
     const { data: allObjectiveDeliverables } = useQuery('appraisalDeliverables', () => fetchDocument('AppraisalDeliverable'), { cacheTime: 10000 })
-    const { data: allParameters, isLoading: loading } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
+    const { data: allParameters } = useQuery('parameters', () => fetchDocument(`Parameters`), { cacheTime: 10000 })
     const { data: allAppraisalobjective} = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
     const { data: allApraisalActual } = useQuery('apraisalActuals', () => fetchDocument('ApraisalActuals'), { cacheTime: 10000 })
     const { data: allReviewdates } = useQuery('reviewDates', () => fetchDocument(`AppraisalReviewDates`), { cacheTime: 10000 })
@@ -41,7 +41,6 @@ const ScoreComponent = ({employeeId, sendAchievement}: any) => {
                 const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
                     (deliverable:any) => deliverable?.objectiveId === objective?.id
                 );
-    
                 const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
                     const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
     

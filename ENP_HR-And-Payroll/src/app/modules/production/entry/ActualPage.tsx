@@ -1,11 +1,12 @@
 import {Button, Empty, Modal, Skeleton, Table, message} from 'antd'
 import {ChangeEvent, useEffect, useState} from 'react'
 import {useMutation, useQuery, useQueryClient} from 'react-query'
-import {fetchDocument, postItem} from '../../../services/ApiCalls'
+import {Api_Endpoint, ImageBaseUrl, fetchDocument, postItem} from '../../../services/ApiCalls'
 import {getFieldName} from '../components/ComponentsFactory'
 import {useAuth} from '../../auth'
 import {CustomForm} from './CustomForm'
 import {set, useForm} from 'react-hook-form'
+import axios from 'axios'
 // import { SupportFile } from './SupportFile'
 
 const ActualPage = ({
@@ -16,17 +17,25 @@ const ActualPage = ({
   objectiveWeight,
   objectiveId,
   employeeId,
-  // getParamTotal,
   title,
   referenceId,
 }: any) => {
   const {currentUser} = useAuth()
   const queryClient = useQueryClient()
   const {register, reset, handleSubmit} = useForm()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFileModalOpen, setIsFileModalOpen] = useState(false)
+  const [deliverableId, setDeliverableId] = useState<any>(null)
+
+  const {data: allSupportFiles} = useQuery('supportFiles', () => fetchDocument(`SupportFiles`), {
+    cacheTime: 10000,
+  })
+
   const [file, setFile] = useState<any>(null)
   // const [individualComment, setIndividualComment] = useState<any>(null)
   // const [lineManagerComment, setLineManagerComment] = useState<any>(null)
+
+  // console.log('file:', file)
+
   const [finalCommentModal, setFinalCommentModal] = useState<any>(false)
   // const [tempDeliverableId, setTempDeliverableId] = useState<any>(null)
   const [actualToUpdate, setActualToUpdate] = useState<any>(null)
@@ -35,7 +44,6 @@ const ActualPage = ({
     () => fetchDocument('AppraisalDeliverable'),
     {cacheTime: 10000}
   )
-  // const { data: appraisalobjectives } = useQuery('appraisalObjectives', () => fetchDocument('AppraisalObjective'), { cacheTime: 10000 })
   const {data: allUnitsOfMeasure} = useQuery(
     'unitofmeasures',
     () => fetchDocument('unitofmeasures'),
@@ -51,11 +59,11 @@ const ActualPage = ({
     () => fetchDocument(`AppraisalReviewDates`),
     {cacheTime: 10000}
   )
-  // const actualReferenceId  = localStorage.getItem("actualReferenceId")
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
     return item?.isActive?.trim() === 'active' && item?.referenceId === referenceId
   })
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -92,13 +100,29 @@ const ActualPage = ({
     reset()
   }
 
-  const showModal = () => {
-    setIsModalOpen(true)
+  const showFileModal = (record: any) => {
+    setDeliverableId(record?.id)
+    setIsFileModalOpen(true)
+    const tempFiles = allSupportFiles?.data?.find((item: any) => {
+      return (
+        item?.employeeId?.toString() === employeeId &&
+        item?.referenceId === referenceId &&
+        item?.deliverableId === record?.id
+      )
+      }
+    )
+
+    console.log('tempFiles:', tempFiles)
+
+    const filePath = `${ImageBaseUrl}/omniAppraisalApi/Uploads/SupportFiles/${tempFiles?.filePath}`
+    console.log('filePath:', filePath) 
+    setFile(tempFiles===undefined? null:filePath)
   }
 
   const handleCancel = () => {
-    setIsModalOpen(false)
+    setIsFileModalOpen(false)
     setFile(null)
+    setDeliverableId(null)
   }
 
   const handleChange = (deliverableId: any, value: any, field: any) => {
@@ -130,7 +154,7 @@ const ActualPage = ({
           : actualValues[recordId].actual,
       deliverableId: recordId,
       referenceId: checkActive?.referenceId,
-      employeeId: parseInt(currentUser?.id),
+      employeeId: title==="linemanager" ? employeeId: parseInt(currentUser?.id),
       individualComment:
         actualValues[recordId]?.individualComment === undefined
           ? ''
@@ -195,24 +219,29 @@ const ActualPage = ({
   })
 
   const handleUpload = () => {
-    // Handle file upload logic here (e.g., send file to a server)
     if (selectedFile) {
-      // Example: You can use fetch or any library to handle file upload
       const formData = new FormData()
-      formData.append('file', selectedFile)
+      formData.append('ImageFile', selectedFile)
+      formData.append('deliverableId', deliverableId)
+      formData.append('employeeId', currentUser?.id)
+      formData.append('referenceId', referenceId)
 
-      // Example: Replace with your API endpoint
-      fetch('your-upload-endpoint', {
-        method: 'POST',
-        body: formData,
-      })
+      console.log('formData:', Object.fromEntries(formData))
+      axios
+        .post(`${Api_Endpoint}/SupportFiles`, formData)
         .then((response) => {
-          // Handle response
+          console.log('response:', response)
+          message.success('File uploaded successfully')
+          handleCancel()
         })
         .catch((error) => {
           // Handle error
         })
     }
+  }
+
+  function isBlobOrMediaSource(file:any) {
+    return (file instanceof Blob) || (file instanceof MediaSource);
   }
 
   const columns: any = [
@@ -287,26 +316,27 @@ const ActualPage = ({
       },
     },
     {
-      title: 'Actual',
+      title: 'Self-Assessment',
       fixed: 'right',
       width: 160,
       render: (record: any) => {
         const actual = allApraisalActual?.data?.find((item: any) => {
           return (
             item?.deliverableId === record?.id &&
-            item?.employeeId?.toString() === employeeId &&
+            item?.employeeId?.toString()  === employeeId&&
             item?.referenceId === referenceId
           )
         })
         return (
           <>
             <input
-              disabled={title === 'final' || title === 'hr' ? true : false}
+              disabled={title === 'final' || title === 'hr' || (actual?.status?.trim() ==="submitted" && title===undefined) || title==="linemanager" ? true : false}
               onFocus={onFocus}
               onBlur={onBlur}
               type='number'
               min='0'
-              value={actual?.actual}
+              value={actual?.oldActual === null || actual?.oldActual === undefined ? 
+                actual?.actual: actual?.actual=== null || actual?.actual === undefined?0 : actual?.oldActual}
               onChange={(e) => handleChange(record?.id, e.target.value, 'actual')}
               className='form-control '
               style={{
@@ -317,6 +347,39 @@ const ActualPage = ({
         )
       },
     },
+    {
+      title: 'Actual',
+      fixed: 'right',
+      width: 160,
+      render: (record: any) => {
+        const actual = allApraisalActual?.data?.find((item: any) => {
+          return (
+            item?.deliverableId === record?.id &&
+            item?.employeeId?.toString()  === employeeId &&
+            item?.referenceId === referenceId
+          )
+        })
+        console.log('actual:', actual)
+        return (
+          <>
+            <input
+              disabled={title === 'final' || title === 'hr' || (actual?.status?.trim() ==="submitted" && title===undefined) ? true : false}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              type='number'
+              min='0'
+              defaultValue={actual?.actual===null||actual?.actual===undefined?0:actual?.actual}
+              onChange={(e) => handleChange(record?.id, e.target.value, 'actual')}
+              className='form-control '
+              style={{
+                border: isFocused ? '1px solid green' : '1px solid #ccc',
+              }}
+            />
+          </>
+        )
+      },
+    },
+    
     // {
     //   title:"Individual Comment",
     //   fixed: 'right',
@@ -392,8 +455,8 @@ const ActualPage = ({
         return (
           <>
             {/* <SupportFile title={title} deliverableId={record} /> */}
-            <button onClick={showModal} className='btn btn-light-info btn-sm'>
-              {title === 'final' || title === 'hr' ? 'View' : 'Upload a File'}
+            <button onClick={() => showFileModal(record)} className='btn btn-light-info btn-sm'>
+              {title === 'final' || title === 'hr' || title==='linemanager' ? 'View' : 'Upload a File'}
             </button>
           </>
         )
@@ -424,9 +487,9 @@ const ActualPage = ({
   ]
 
   if (checkActive?.tag?.trim() === 'setting') {
-    columns.splice(4, 3)
+    columns.splice(4, 4)
   } else if (checkActive?.tag?.trim() === 'actual') {
-    columns.splice(5, 1)
+    columns.splice(6, 1)
   }
 
   const filteredDeliverables = allObjectiveDeliverables?.data.filter(
@@ -482,7 +545,7 @@ const ActualPage = ({
               </p>
             </div>
           )}
-          {title === 'hr' ? (
+          {title === 'hr'|| checkActive?.tag?.trim() === 'setting' ? (
             ''
           ) : (
             <div>
@@ -508,7 +571,7 @@ const ActualPage = ({
 
       <Modal
         title={'Supporting Files'}
-        open={isModalOpen}
+        open={isFileModalOpen}
         onCancel={handleCancel}
         closable={true}
         width={800}
@@ -516,7 +579,13 @@ const ActualPage = ({
           <Button key='back' onClick={handleCancel}>
             Cancel
           </Button>,
-          <Button key='submit' type='primary' htmlType='submit' disabled={!file}>
+          <Button
+            key='submit'
+            type='primary'
+            htmlType='submit'
+            onClick={handleUpload}
+            disabled={!file}
+          >
             Submit
           </Button>,
         ]}
@@ -529,14 +598,14 @@ const ActualPage = ({
             <div>
               <iframe
                 title='pdfViewer'
-                src={URL.createObjectURL(file)}
+                src={isBlobOrMediaSource(file)?URL.createObjectURL(file):file}
                 width='100%'
                 height='600px'
               ></iframe>
             </div>
           )}
           <div className='d-flex mt-10 justify-content-center items-center'>
-            {title === 'final' || title === 'hr' ? (
+            {title === 'final' || title === 'linemanager' ? (
               ''
             ) : (
               <>

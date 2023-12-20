@@ -7,6 +7,7 @@ import { Header } from './Header'
 import { Topbar } from './Topbar'
 import { DefaultTitle } from './page-title/DefaultTitle'
 import { useAuth } from '../../../../app/modules/auth'
+import { companyNasme } from '../../../../app/services/ApiCalls'
 
 export function HeaderWrapper() {
   const {config, classes, attributes} = useLayout()
@@ -41,7 +42,7 @@ export function HeaderWrapper() {
         {!aside.display && (
           <div className='d-flex align-items-center flex-grow-1 flex-lg-grow-0'>
             <Link to={currentUser?.isAdmin?.trim() === "yes"?'/dashboard':'parameterEntry'} className='d-lg-none'>
-              <h3 style={{color:"#009EF7"}}>OMNI PMS</h3>
+              <h3 style={{color:"red"}}>{companyNasme}</h3>
               {/* <h3 style={{color:"#009EF7"}}>OMNI PMS</h3> */}
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}
@@ -54,9 +55,7 @@ export function HeaderWrapper() {
         {aside.display && (
           <div className='d-flex align-items-center flex-grow-1 flex-lg-grow-0'>
             <Link to={currentUser?.isAdmin?.trim() === "yes"?'/dashboard':'parameterEntry'} className='d-lg-none'>
-
-            {/* <h3 style={{color:"#009EF7"}}>OMNI PMS</h3> */}
-            <h3 style={{color:"#009EF7"}}>OMNI PMS</h3>
+            <h3 style={{color:"#009EF7"}}>{companyNasme}</h3>
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}
 
               {/* <img alt='Logo' src={toAbsoluteUrl('/media/logos/default-small.svg')} className='h-30px' /> */}

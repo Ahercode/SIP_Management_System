@@ -10,7 +10,7 @@ import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {useForm} from 'react-hook-form'
 import {send} from 'process'
-import {getOverallAchievement, getOverallAchievementForSame, sendEmail} from '../../../services/CommonService'
+import {getOverallAchievement, getOverallAchievementForSame, getParameterAchievement, getParameterAchievementSame, sendEmail} from '../../../services/CommonService'
 
 const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
   const {currentUser} = useAuth()
@@ -63,12 +63,12 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
 //     setSelectedOption(event.target.value)
 //   }
 
-  if (title === 'hr') {
+  if (title === 'hr' || title === 'linemanager') {
     referenceId = referenceId
-    employeeId = employeeId
+    employeeId = parseInt(employeeId)
   } else {
     referenceId = localStorage.getItem('actualReferenceId')
-    employeeId = currentUser?.id
+    employeeId = parseInt(currentUser?.id)
   }
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
@@ -76,7 +76,7 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
   })
 
   const finalCommentByEmployee = finalComment?.data?.find((item: any) => {
-    return item?.employeeId === parseInt(employeeId) && item?.referenceId === referenceId
+    return item?.employeeId === employeeId && item?.referenceId === referenceId
   })
 
   const currentEmployee = allEmployees?.data?.find((item: any) => {
@@ -120,8 +120,6 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
     )
     .map((param: any) => param?.id)
 
-    
-
   const parameterIdSet = new Set(activeParameters)
   const sameParameterIdSet = new Set(sameParatmeter?.map((param: any) => param?.id))
 
@@ -133,64 +131,27 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
         sameParameterIdSet?.has(obj.parameterId)
   )
 
-  const objectiveWeights = objectivesData?.map((objective: any) => {
+  // console.log("objectivesData", objectivesData)
+  console.log("employeeId", employeeId)
+  
+  const ListActualIds = objectivesData?.map((objective: any) => {
     const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
       (deliverable: any) => deliverable?.objectiveId === objective?.id
     )
-
     const deliverableWeight = deliverablesInObjective?.map((deliverable: any) => {
       const actual = allApraisalActual?.data?.find(
-        (actual: any) => actual?.deliverableId === deliverable?.id
+        (actual: any) => 
+        actual?.deliverableId === deliverable?.id && 
+        actual?.employeeId === employeeId && 
+        actual?.referenceId === checkActive?.referenceId
       )
       return actual?.id
     })
     return deliverableWeight
   })
 
-  const actualIds = objectiveWeights?.flat()
+  const actualIds = ListActualIds?.flat()
 
-  const getParameterAchievement = (parameterId: any) => {
-    const objectivesInParameter = allAppraisalobjective?.data.filter(
-      (obj: any) =>
-        parameterId === obj?.parameterId &&
-        obj?.employeeId === employeeId?.toString() &&
-        obj?.referenceId === checkActive?.referenceId
-    )
-    const objectivesInSameParameter = allAppraisalobjective?.data.filter(
-      (obj: any) => sameParameter?.id === obj?.parameterId
-    )
-    const objectiveWeights = (
-      sameParameter?.id === parameterId ? objectivesInSameParameter : objectivesInParameter
-    )
-      ?.map((objective: any) => {
-        const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
-          (deliverable: any) => deliverable?.objectiveId === objective?.id
-        )
-
-        const deliverableWeight = deliverablesInObjective
-          ?.map((deliverable: any) => {
-            const actual = allApraisalActual?.data?.find(
-              (actual: any) =>
-                actual?.deliverableId === deliverable?.id &&
-                actual?.employeeId?.toString() === employeeId?.toString() &&
-                actual?.referenceId === checkActive?.referenceId
-            )
-
-            const actualValue =
-              actual?.actual === null || actual?.actual === undefined
-                ? 0
-                : Math.round((actual?.actual / deliverable?.target) * 100)
-            return actualValue * (deliverable?.subWeight / 100)
-          })
-          .reduce((a: any, b: any) => a + b, 0)
-          .toFixed(2)
-        const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight
-        return finalWeight * (objective?.weight / 100)
-      })
-      .reduce((a: any, b: any) => a + b, 0)
-      .toFixed(2)
-    return objectiveWeights
-  }
 
   const OnSubmit = () => {
     const data = {
@@ -200,15 +161,18 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
     }
 
     if (actualIds?.length === 0) {
-      message.error("You can't at this time, please contact your supervisor")
+      message.error("Your appraisal is empty, you can't submit")
     } else {
       axios
         .post(`${Api_Endpoint}/ApraisalActuals/UpdateStatus`, data)
         .then((res) => {
           message.success('Successfully Submitted')
           sendEmail(
-            currentUserLineManager,
-            `your direct report ${currentUser?.firstName} ${currentUser?.surname} has submitted their self evaluation`
+            {
+              record: currentUserLineManager,
+              body: `Your Appraisee ${currentEmployee?.firstName} ${currentEmployee?.surname} has submitted their appraisal`,
+              subject: 'Appraisal Submission',
+            }
           )
         })
         .catch((err) => {
@@ -242,9 +206,7 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
       })
   })
 
-  useEffect(() => {}, [employeeId, title])
-
-  const overallAchievement = getOverallAchievement(
+  const overAllScore = (parseFloat(getOverallAchievement(
     {
       parameterData: activeParameterName,
       objectiveData: allAppraisalobjective?.data,
@@ -253,7 +215,21 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
       employeeId: employeeId,
       referenceId: referenceId,
     }
-  )
+  )) + 
+  parseFloat(getOverallAchievementForSame(
+    {
+      parameterData: sameParatmeter,
+      objectiveData: allAppraisalobjective?.data,
+      deliverableData: allObjectiveDeliverables?.data,
+      actualData: allApraisalActual?.data,
+      employeeId: employeeId,
+      referenceId: referenceId,
+    }
+  )))?.toFixed(2)
+
+  useEffect(() => {}, [employeeId, title])
+
+  const overallAchievement = parseFloat(overAllScore)
 
   const performanceRating =
     overallAchievement < 50 ? (
@@ -278,11 +254,11 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
         backgroundColor: 'white',
         padding: '20px',
         borderRadius: '5px',
-        boxShadow: title === 'final' || title === 'hr' ? '' : '2px 2px 15px rgba(0,0,0,0.08)',
+        boxShadow: title === 'final' || title === 'hr' || title === 'linemanager' ? '' : '2px 2px 15px rgba(0,0,0,0.08)',
       }}
     >
       <div className='d-flex flex-direction-row align-items-center justify-content-between align-content-center'>
-        {title === 'final' || title === 'hr' ? (
+        {title === 'final' || title === 'hr' || title === 'linemanager' ? (
           ''
         ) : (
           <div className='d-flex flex-direction-row align-items-center justify-content-between align-content-center'>
@@ -302,7 +278,7 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
           </div>
         )}
         <div>
-          {title === 'final' || title === 'hr' ? (
+          {title === 'final' || title === 'hr' || title === 'linemanager'? (
             ''
           ) : (
             <a onClick={OnSubmit} className='btn btn-success btn-sm'>
@@ -311,38 +287,26 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
           )}
         </div>
       </div>
-      <div className={title === 'hr' || title === 'final' ? '' : `mt-8`}>
-        <span className='text-gray-600 fw-bold fs-2'>
-          Overall Achievement:{' '}
-          <span className='badge fs-4 badge-light-primary'>{parseFloat(getOverallAchievement(
-            {
-              parameterData: activeParameterName,
-              objectiveData: allAppraisalobjective?.data,
-              deliverableData: allObjectiveDeliverables?.data,
-              actualData: allApraisalActual?.data,
-              employeeId: employeeId,
-              referenceId: referenceId,
-            }
-          )) + 
-          
-          parseFloat(getOverallAchievementForSame(
-            {
-              parameterData: sameParatmeter,
-              objectiveData: allAppraisalobjective?.data,
-              deliverableData: allObjectiveDeliverables?.data,
-              actualData: allApraisalActual?.data,
-              employeeId: employeeId,
-              referenceId: referenceId,
-            }
-          ))}</span>{' '}
-        </span>
+      {
+        checkActive?.tag?.trim() === "setting"?
+        <div style={{ marginTop:"-50px"}}>
 
-        <span className='text-gray-600 ms-5 fw-bold fs-2'>
-          Performance Rate:
-          {performanceRating}
-        </span>
-      </div>
-      <div></div>
+        </div>
+        :
+        <div className={title === 'hr' || title === 'final' || checkActive?.tag?.trim() === "setting" ? '' : `mt-8`}>
+          <span className='fs-3 fw-bold text-gray-600'>
+            Working on: <span className='fs-3 fw-bold text-black'>{checkActive?.description}</span>
+          </span>
+          <span className='text-gray-600 ms-5 fw-bold fs-2'>
+            Overall Achievement: {' '}
+            <span className='badge fs-4 badge-light-primary'>{overAllScore}</span>{' '}
+          </span>
+          <span className='text-gray-600 ms-5 fw-bold fs-2'>
+            Performance Rate:
+            {performanceRating}
+          </span>
+        </div>
+      }
       {allActiveParameters?.map((param: any) => (
         <div className='align-items-start mt-11'>
           <div className='d-flex flex-direction-row align-items-center justify-content-start align-content-center'>
@@ -354,10 +318,37 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
           {checkActive?.tag?.trim() === 'settings' ? null : (
             <p className='badge badge-light-info fw-bold fs-3 mt-2'>
               Achievement:{' '}
-              <span style={{color: 'ActiveCaption', paddingLeft: '10px'}}>
+              {
+                param?.tag?.trim() === "same"?
+                <span style={{color: 'ActiveCaption', paddingLeft: '10px'}}>
                 {' '}
-                {getParameterAchievement(param?.id)}
-              </span>
+                
+                {getParameterAchievementSame(
+                  {
+                    parameterId: param?.id,
+                    objectiveData: allAppraisalobjective?.data,
+                    deliverableData: allObjectiveDeliverables?.data,
+                    actualData: allApraisalActual?.data,
+                    employeeId: employeeId,
+                    referenceId: referenceId,
+                  }
+                )}
+              </span>:
+              <span style={{color: 'ActiveCaption', paddingLeft: '10px'}}>
+              {' '}
+              
+              {getParameterAchievement(
+                {
+                  parameterId: param?.id,
+                  objectiveData: allAppraisalobjective?.data,
+                  deliverableData: allObjectiveDeliverables?.data,
+                  actualData: allApraisalActual?.data,
+                  employeeId: employeeId,
+                  referenceId: referenceId,
+                }
+              )}
+            </span>
+              }
             </p>
           )}
           {objectivesData?.map((item: any) =>
@@ -383,18 +374,19 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
       ))}
       <br />
       <hr />
-
+      {
+        checkActive?.tag?.trim() === "setting"?"":
       <div className='mb-10 mt-10'>
         <div>
           <label className='fs-3 fw-bold form-label'>Employee's comments</label>
           <textarea
-            disabled={title === 'final' || title === 'hr' ? true : false}
+            disabled={title === 'final' || title === 'linemanager' || title==="hr"  ? true : false}
             rows={1}
             {...register('finalComment1')}
             className='form-control'
-            defaultValue={finalCommentByEmployee?.finalComment1}
+            value={finalCommentByEmployee?.finalComment1}
           />
-          {title === 'final' || title === 'hr' ? (
+          {title === 'final' || title === 'linemanager' || title==="hr" ? (
             ''
           ) : (
             <button onClick={saveEmployeeComment} className='mt-3 btn btn-light-success btn-sm'>
@@ -405,7 +397,7 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
         <div>
           <p className='fs-3 mt-10 fw-bold form-label'>Line Manager's comments</p>
           <button onClick={handleFinalComment} className=' btn btn-light-info btn-sm'>
-            {title === 'final' || title === 'hr' ? 'Your final comments' : 'View comments'}
+            {title === 'final' || title === 'hr'|| title === 'linemanager' ? 'Your final comments' : 'View comments'}
           </button>
         </div>
         <Modal
@@ -427,10 +419,10 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
               <label className=' form-label'>Major Achievements</label>
               <textarea
                 {...register('achievement')}
-                value={actualToUpdate?.achievement}
+                defaultValue={finalCommentByEmployee?.achievement}
                 onChange={handleFinalChange}
                 disabled={
-                  title !== 'hr' || currentLocation === 'appraisal-performance' ? true : false
+                  title !== 'linemanager' || currentLocation === 'appraisal-performance' ? true : false
                 }
                 rows={1}
                 className='form-control '
@@ -442,10 +434,10 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
               </label>
               <textarea
                 {...register('strength')}
-                value={actualToUpdate?.strength}
+                defaultValue={finalCommentByEmployee?.strength}
                 onChange={handleFinalChange}
                 disabled={
-                  title !== 'hr' || currentLocation === 'appraisal-performance' ? true : false
+                  title !== 'linemanager' || currentLocation === 'appraisal-performance' ? true : false
                 }
                 rows={1}
                 className='form-control '
@@ -457,10 +449,10 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
               </label>
               <textarea
                 {...register('weakness')}
-                value={actualToUpdate?.weakness}
+                defaultValue={finalCommentByEmployee?.weakness}
                 onChange={handleFinalChange}
                 disabled={
-                  title !== 'hr' || currentLocation === 'appraisal-performance' ? true : false
+                  title !== 'linemanager' || currentLocation === 'appraisal-performance' ? true : false
                 }
                 rows={1}
                 className='form-control '
@@ -474,16 +466,29 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
               </label>
               <textarea
                 {...register('improvement')}
-                value={actualToUpdate?.improvement}
+                defaultValue={finalCommentByEmployee?.improvement}
                 onChange={handleFinalChange}
                 disabled={
-                  title !== 'hr' || currentLocation === 'appraisal-performance' ? true : false
+                  title !== 'linemanager' || currentLocation === 'appraisal-performance' ? true : false
                 }
                 rows={1}
                 className='form-control '
               />
             </div>
-            {title !== 'hr' || currentLocation === 'appraisal-performance' ? (
+            <div className='mb-7'>
+                  <label className=' form-label'>HODs / Supervisor’s Final Comments</label>
+                  <textarea
+                    {...register('hodcomment')}
+                    defaultValue={finalCommentByEmployee?.hodcomment}
+                    onChange={handleFinalChange}
+                    disabled={
+                      title !== 'linemanager' || currentLocation === 'appraisal-performance' ? true : false
+                    }
+                    rows={1}
+                    className='form-control '
+                  />
+                </div>
+            {/* {title !== 'linemanager' || currentLocation === 'appraisal-performance' ? (
               ''
             ) : (
               <>
@@ -491,21 +496,22 @@ const ActualMasterPage = ({employeeId, title, referenceId}: any) => {
                   <label className=' form-label'>HODs / Supervisor’s Final Comments</label>
                   <textarea
                     {...register('hodcomment')}
-                    value={actualToUpdate?.hodcomment}
+                    defaultValue={finalCommentByEmployee?.hodcomment}
                     onChange={handleFinalChange}
                     disabled={
-                      title !== 'hr' || currentLocation === 'appraisal-performance' ? true : false
+                      title !== 'linemanager' || currentLocation === 'appraisal-performance' ? true : false
                     }
                     rows={1}
                     className='form-control '
                   />
                 </div>
               </>
-            )}
+            )} */}
             <hr />
           </form>
         </Modal>
       </div>
+      }
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { KTSVG, toAbsoluteUrl } from '../../../helpers'
 import { useLayout } from '../../core'
 import { AsideMenu } from './AsideMenu'
 import { useAuth } from '../../../../app/modules/auth'
+import { companyNasme } from '../../../../app/services/ApiCalls'
 
 const AsideDefault: FC = () => {
   const {config, classes} = useLayout()
@@ -39,7 +40,7 @@ const AsideDefault: FC = () => {
         {/* begin::Logo */}
         {aside.theme === 'dark' && (
           <Link to={currentUser?.isAdmin?.trim() === "yes"?'/hr-dashboard':'parameterEntry'}>
-               <h3 style={{color:"#f2f2f2"}}>OMNI PMS</h3>
+               <h3 style={{color:"#f2f2f2"}}>{companyNasme}</h3>
           </Link>
         )}
         {aside.theme === 'light' && (

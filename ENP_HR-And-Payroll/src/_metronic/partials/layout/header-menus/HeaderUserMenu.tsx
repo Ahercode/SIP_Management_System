@@ -32,6 +32,10 @@ const HeaderUserMenu: FC = () => {
         </div>
       </div>
       <div className='separator my-2'></div>
+      {/* <div className='menu-item px-5 '>
+       
+       <ChangePasswordModal/> 
+      </div> */}
 
       {/*<div className='menu-item px-5'>*/}
       {/*  <Link to={'/crafted/pages/profile'} className='menu-link px-5'>*/}

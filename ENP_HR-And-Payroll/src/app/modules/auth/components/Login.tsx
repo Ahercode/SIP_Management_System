@@ -2,14 +2,12 @@
 import clsx from 'clsx'
 import { useFormik } from 'formik'
 import { useState } from 'react'
-import { useQuery } from 'react-query'
 import { Button, Modal, message } from 'antd'
-import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
-import { fetchDocument } from '../../../services/ApiCalls'
 import { useAuth } from '../core/Auth'
 import { login, parseJwt } from '../core/_requests'
+import ForgotPasswordModal from './ForgotPasswordModal'
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -101,8 +99,6 @@ export function Login() {
     // }
     
   })
-  // const { data: userApplications } = useQuery('userApplications', () => fetchDocument(`userApplications`), { cacheTime: 5000 })
-  // const { data: allCompanies } = useQuery('companies', () => fetchDocument(`companies`), { cacheTime: 5000 })
 
 
  
@@ -224,7 +220,8 @@ export function Login() {
           </div>
         )}
         <br></br>
-        <a style={{color:"blue", cursor:"pointer", fontWeight:"600"}} onClick={showModal}>Forgot your password?</a>
+        <ForgotPasswordModal />
+        {/* <a onClick={showModal}>Forgot your password?</a> */}
       </div>
 
       <div className='text-center'>

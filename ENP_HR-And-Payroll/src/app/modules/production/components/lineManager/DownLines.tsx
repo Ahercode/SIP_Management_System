@@ -10,7 +10,7 @@ import axios from "axios"
 import { check } from "prettier"
 import { getOverallAchievement, getOverallAchievementForSame } from "../../../../services/CommonService"
 
-const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalobjective}: any) => {
+const DownLines = ({ filteredByLineManger, referenceId, loading, allEmployees, allAppraisalobjective}: any) => {
 
     const { data: allDepartments } = useQuery('departments', () => fetchDocument(`departments`), { cacheTime: 10000 })
     const { data: allJobTitles } = useQuery('jobTitles', () => fetchDocument(`jobTitles`), { cacheTime: 10000 })
@@ -22,33 +22,25 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const [employeeData, setEmployeeData] = useState<any>({})
-    // const [objectivesData, setObjectivesData] = useState<any>([])
     const queryClient = useQueryClient()
-
     const department = getFieldName(employeeData?.departmentId, allDepartments?.data)
-    const parametersData = parameters?.data?.filter((item: any) => item?.appraisalId === 12)
-
+    
     const checkActive = allReviewdates?.data?.find((item: any) => {
-        return item?.isActive?.trim() === "active"
+        return item?.isActive?.trim() === "active" && item?.referenceId === referenceId
     })
-
+    
     const convertToArray = checkActive?.referenceId.split("-")
-
+    
     const appraisalId = convertToArray?.[1]
+
     const activeParameterName = parameters?.data?.filter((item: any) => {
         return item?.appraisalId?.toString() === appraisalId
-      }
-    )
+    })
+
+    const parametersData = parameters?.data?.filter((item: any) => item?.appraisalId === appraisalId)
+
     const sameParameter = allParameters?.data?.filter((item: any) => item?.tag?.trim() === 'same')
     
-    const showObjectivesView = (record: any) => {
-        setIsModalOpen(true)
-        const employee = allEmployees?.data?.find((item: any) => item.employeeId === record?.employeeId)
-        const objectiveByEMployee = allAppraisalobjective?.data?.filter((item: any) => (item.employeeId) === record?.id.toString())
-        // setObjectivesData(objectiveByEMployee)
-        setEmployeeData(employee)
-   
-    }
 
     const handleCancel = () => {
         setIsModalOpen(false)
@@ -76,37 +68,6 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
             return <Tag color="pink">Not Started</Tag>;
         }
     })
-
-//  const getOverallAchievement = (employeeId:any) => {
-//     const overAllWeight = activeParameterName?.map((param: any) => {
-//         const objectivesInParameter = allAppraisalobjective?.data.filter((obj:any) =>
-//         param?.id ===obj?.parameterId && 
-//         obj?.employeeId === employeeId?.toString() && 
-//         obj?.referenceId === checkActive?.referenceId)
-
-//         const objectiveWeights = objectivesInParameter?.map((objective:any) => {
-//             const deliverablesInObjective = allObjectiveDeliverables?.data.filter(
-//                 (deliverable:any) => deliverable?.objectiveId === objective?.id
-//             );
-
-//             const deliverableWeight = deliverablesInObjective?.map((deliverable:any) => {
-//                 const actual = allApraisalActual?.data?.find((actual:any) => actual?.deliverableId === deliverable?.id)
-
-//                 const actualValue = actual?.actual === null || actual?.actual === undefined ? 0 : 
-//                         Math.round((actual?.actual/deliverable?.target)*100)
-//                     return actualValue * (deliverable?.subWeight/100)
-
-//             }).reduce((a: any, b: any) => a + b, 0).toFixed(2)
-//                 const finalWeight = deliverableWeight > 120 ? 120 : deliverableWeight;
-//             return  finalWeight * (objective?.weight/100)
-//         })?.reduce((a: any, b: any) => a + b, 0).toFixed(2)
-//         return parseFloat(objectiveWeights)
-//     })
-//     const totalAchievement = overAllWeight?.reduce((a: any, b: any) => a + b, 0).toFixed(2);
-//     return totalAchievement
-// }
-
-
 
     const columns: any = [
         {
@@ -161,10 +122,8 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                 return (
                     <>
                     <p>
-
-                    
                         {
-                            parseFloat(getOverallAchievement(
+                            (parseFloat(getOverallAchievement(
                                 {
                                     parameterData: activeParameterName,
                                     objectiveData: allAppraisalobjective?.data,
@@ -182,7 +141,7 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                                         referenceId: checkActive?.referenceId
                                     }
                                 )
-                            )
+                            ))?.toFixed(2)
                         }
                         </p>
                     </>
@@ -192,15 +151,28 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         {
             title: "Performance Rating",
             render: (_:any, record:any) => {
-                const overallAchievement = getOverallAchievement(
-                    {
-                        parameterData: activeParameterName,
-                        objectiveData: allAppraisalobjective?.data,
-                        deliverableData: allObjectiveDeliverables?.data,
-                        actualData: allApraisalActual?.data,
-                        employeeId: record?.id,
-                        referenceId: checkActive?.referenceId
-                    }
+                const overallAchievement = parseFloat(
+                    getOverallAchievement(
+                        {
+                            parameterData: activeParameterName,
+                            objectiveData: allAppraisalobjective?.data,
+                            deliverableData: allObjectiveDeliverables?.data,
+                            actualData: allApraisalActual?.data,
+                            employeeId: record?.id,
+                            referenceId: checkActive?.referenceId
+                        }
+                    )
+                )+ parseFloat(
+                    getOverallAchievementForSame(
+                        {
+                            parameterData: sameParameter,
+                            objectiveData: allAppraisalobjective?.data,
+                            deliverableData: allObjectiveDeliverables?.data,
+                            actualData: allApraisalActual?.data,
+                            employeeId: record?.id,
+                            referenceId: checkActive?.referenceId
+                        }
+                    )
                 )
                 if(overallAchievement >= 90){
                     return <Tag color="success">Excellent</Tag>
@@ -225,24 +197,8 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                 }
             }
         }
-
-        // {
-        //     title: 'Action',
-        //     fixed: 'right',
-        //     width: 100,
-        //     render: (record: any) => (
-        //         <button disabled={
-        //             getEmployeeStatus(record).props.children === "Submitted for Amendment"||
-        //             getEmployeeStatus(record).props.children === "Not Started"
-        //             } onClick={() => showObjectivesView(record)} 
-        //             className={record?.status === "amend" ? 'btn btn-bg-secondary btn-sm' : 'btn btn-light-info btn-sm'}>
-        //             Amend
-        //         </button>
-        //     ),
-        // },
     ]
 
-    // add a key to dataByID
     const allDownlines = filteredByLineManger?.map((item: any) => {
         return {
             ...item,
@@ -287,7 +243,6 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
                         dataSource={allDownlines}
                         scroll={{ y: `calc(100vh - 250px)` }}
                         expandable={{
-                            // rowExpandable: (record) => record?.id,
                             expandedRowRender: (record) => <p key={record?.id} style={{ margin: 0 }}>{record.comment}
                             </p>,
                         }}
@@ -319,7 +274,5 @@ const DownLines = ({ filteredByLineManger, loading, allEmployees, allAppraisalob
         </>
     )
 }
-
-
 
 export { DownLines }

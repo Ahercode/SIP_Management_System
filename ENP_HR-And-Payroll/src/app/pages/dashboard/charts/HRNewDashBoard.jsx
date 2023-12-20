@@ -3,25 +3,24 @@ import '../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analy
 import '../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-analytics.light.css'
 import '../../../../../node_modules/@devexpress/analytics-core/dist/css/dx-querybuilder.css'
 import '../../../../../node_modules/devexpress-dashboard/dist/css/dx-dashboard.light.css'
-
+import {DashBoardUrl} from '../../../services/ApiCalls'
 import { DashboardControl} from 'devexpress-dashboard-react';
   
 const HRNewDashBoard = () => {
 
     return (
-        <div style={{width: '100%', height: '80vh'}}>
+        <div style={{width: '100%', height: '80vh'}}> 
             <DashboardControl
                 id='web-dashboard'
                 style={{height: '100%'}}
-                // endpoint='https://demos.devexpress.com/services/dashboard/api'
-                endpoint='http://109.169.12.107/dashboard/dashboardcontrol'
-                // endpoint='https://app.sipconsult.net/egolfdashboard/dashboardcontrol'
+                endpoint={`${DashBoardUrl}/dashboardcontrol`}
                 workingMode='ViewerOnly'
                 dashboardId='appraisal'
             ></DashboardControl>
         </div>  
     )
 }
+
 const EmployeeDetailReport = () => {
 
     return (
@@ -29,9 +28,7 @@ const EmployeeDetailReport = () => {
             <DashboardControl
                 id='web-dashboard'
                 style={{height: '100%'}}
-                // endpoint='https://demos.devexpress.com/services/dashboard/api'
-                endpoint='http://109.169.12.107/dashboard/dashboardcontrol'
-                // endpoint='https://app.sipconsult.net/egolfdashboard/dashboardcontrol'
+                endpoint='https://app.sipconsult.net/egolfdashboard/dashboardcontrol'
                 workingMode='ViewerOnly'
                 dashboardId='employeeDetails'
             ></DashboardControl>

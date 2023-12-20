@@ -227,10 +227,11 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
         postData(item)
     })
 
-    const checkActive = allReviewdates?.data?.filter((item: any) => {
-        return item?.isActive?.trim() === "active"
-    })
-    const checkActiveDate = allReviewdates?.data?.filter((item: any) => {
+    // const checkActive = allReviewdates?.data?.filter((item: any) => {
+    //     return item?.isActive?.trim() === "active"
+    // })
+
+    const checkActiveDate = allReviewdates?.data?.find((item: any) => {
         return item?.isActive?.trim() === "active" && item?.referenceId === referenceId
     })
 
@@ -302,8 +303,9 @@ const ReviewDateComponent = ({ referenceId, selectedAppraisalType, employeesInDa
 
         const item = {
             data: {
-                subject: `${checkActive[0]?.description}`,
+                subject: checkActiveDate?.description,
                 formLink: `${FormsBaseUrl}`,
+                formName: checkActiveDate?.description,
                 recipients: employeeMailAndName
             },
             url: 'appraisalperftransactions/sendMail',
