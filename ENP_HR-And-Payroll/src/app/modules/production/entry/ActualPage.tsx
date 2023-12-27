@@ -497,6 +497,7 @@ const ActualPage = ({
   const filteredDeliverables = allObjectiveDeliverables?.data.filter(
     (deliverable: any) => parseInt(deliverable.objectiveId) === objectiveId
   )
+  
   useEffect(() => {}, [allApraisalActual?.data, actualToUpdate])
 
   return (
