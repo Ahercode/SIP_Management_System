@@ -121,6 +121,7 @@ const PerformanceBoard = () => {
                         loading={objectivesLoading} 
                         employeeWhoSubmitted={employeesWithSubmittedApprovedRejectedObjectives} 
                         location="View Details"
+                        reference={reference}
                     />
                 </>
             ),

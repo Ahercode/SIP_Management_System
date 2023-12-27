@@ -486,6 +486,8 @@ const ActualPage = ({
     },
   ]
 
+  console.log('checkActive:', checkActive?.tag?.trim())
+
   if (checkActive?.tag?.trim() === 'setting') {
     columns.splice(4, 4)
   } else if (checkActive?.tag?.trim() === 'actual') {
@@ -509,7 +511,8 @@ const ActualPage = ({
         className='border border-gray-400 mt-4'
       >
         <div className='mb-5 d-flex justify-content-between align-items-center align-content-center'>
-          {checkActive?.tag?.trim() === 'setting' ? null : (
+          {/* {checkActive?.tag?.trim() === 'setting' ? null : ( */}
+          {(
             <div>
               <span>
                 <span className='text-gray-600 fw-bold fs-3' style={{color: 'ActiveCaption'}}>

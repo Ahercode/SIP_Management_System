@@ -1,27 +1,26 @@
-import {PrinterOutlined} from '@ant-design/icons'
-import {Button, Modal, Skeleton, Space, Table, Tag, message} from 'antd'
-import {useEffect, useState} from 'react'
-import {set, useForm} from 'react-hook-form'
-import {useMutation, useQuery, useQueryClient} from 'react-query'
-import {useParams} from 'react-router-dom'
-import {Api_Endpoint, fetchDocument, updateItem} from '../../../../services/ApiCalls'
-import {getFieldName, getSupervisorData} from '../ComponentsFactory'
-import {AppraisalObjectivesComponent} from '../appraisalForms/AppraisalObjectivesComponent'
-import {AppraisalPrintHeader, PrintComponent} from '../appraisalForms/AppraisalPdfPrintView'
-import {AppraisalFormContent, AppraisalFormHeader} from '../appraisalForms/FormTemplateComponent'
+import { Button, Modal, Skeleton, Space, Table, Tag, message } from 'antd'
 import axios from 'axios'
-import {useAuth} from '../../../auth'
-import {getOverallAchievement, getOverallAchievementForSame, sendEmail} from '../../../../services/CommonService'
-import {ActualMasterPage} from '../../entry/ActualMasterPage'
 import Papa from 'papaparse'
-import { parse } from 'path'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useParams } from 'react-router-dom'
+import { Api_Endpoint, fetchDocument, updateItem } from '../../../../services/ApiCalls'
+import { getOverallAchievement, getOverallAchievementForSame, sendEmail } from '../../../../services/CommonService'
+import { useAuth } from '../../../auth'
+import { ActualMasterPage } from '../../entry/ActualMasterPage'
+import { getFieldName, getSupervisorData } from '../ComponentsFactory'
+import { AppraisalPrintHeader, PrintComponent } from '../appraisalForms/AppraisalPdfPrintView'
+import { AppraisalFormHeader } from '../appraisalForms/FormTemplateComponent'
 
 const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, location, tag}: any) => {
   // const NotificationsComponent = ({ loading, filter, filteredByObjectives }: any) => {
 
   const {data: allEmployees} = useQuery('employees', () => fetchDocument(`employees`), {
-    cacheTime: 5000,
+    cacheTime: 10000,
   })
+
+  const { data: allAppraisalGrades, isLoading } = useQuery('appraisalGrades', () => fetchDocument(`AppraisalGrades`), { cacheTime: 10000 })
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [approvedStatus, setApprovedStatus] = useState<any>(false)
@@ -30,6 +29,10 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
   const [componentData, setComponentData] = useState<any>()
   const [commentModalOpen, setCommentModalOpen] = useState(false)
   const [comment, setComment] = useState('')
+  const [selectedReference, setSelectedReference] = useState<any>(null)
+  const [selectedDepartment, setSelectedDepartment] = useState<any>("all")
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null)
+  const [selectedGrade, setSelectedGrade] = useState<any>(null)
   const {reset, register, handleSubmit} = useForm()
   const {data: parameters} = useQuery('parameters', () => fetchDocument(`parameters`), {
     cacheTime: 10000,
@@ -39,6 +42,7 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
   const [showPritntPreview, setShowPrintPreview] = useState(false)
   const {currentUser} = useAuth()
   const tenantId = localStorage.getItem('tenant')
+  const currentLocation = window.location.pathname.split('/')[4]
 
   const param: any = useParams()
   const {data: allDepartments} = useQuery('departments', () => fetchDocument(`Departments`), {
@@ -68,6 +72,9 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
     () => fetchDocument(`Paygroups/tenant/${tenantId}`),
     {cacheTime: 10000}
   )
+  const {data: allPeriods} = useQuery('periods', () => fetchDocument(`periods`), {cacheTime: 10000})
+
+
   const {data: allAppraisalobjective} = useQuery(
     'appraisalObjectives',
     () => fetchDocument('AppraisalObjective'),
@@ -95,21 +102,24 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
     allEmployees,
     allOrganograms,
   })
+  
+  const reference = allAppraisalsPerfTrans?.data?.find((item: any) => {
+    return item?.id === parseInt(selectedReference)
+  }
+  )
 
-  // const actualReferenceId  = localStorage.getItem("actualReferenceId")
+  console.log("reference", reference)
 
-  // const employeeReferenceIds = allAppraTranItems?.data
-  //   ?.filter((item: any) => item?.employeeId === currentUser?.id)
-  //   ?.map((item: any) => item?.appraisalPerfTranId)
-
-  // const employeesReference = allAppraisalsPerfTrans?.data.filter(
-  //   (item: any) => item?.status?.trim() === 'active'
-  //   // employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active")
-  // )
+  const newReferenceId = currentLocation === 'appraisal-performance'? reference?.referenceId: referenceId
 
   const checkActive = allReviewdates?.data?.find((item: any) => {
-    return item?.isActive?.trim() === 'active' && item?.referenceId === referenceId
+    return item?.isActive?.trim() === 'active' && item?.referenceId === newReferenceId
   })
+
+  const activeReference = allAppraisalsPerfTrans?.data?.filter((item: any) => {
+    return item.status?.trim() === 'active'
+  })
+
 
   const convertToArray = checkActive?.referenceId.split('-')
 
@@ -119,6 +129,36 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
     (item: any) => item.appraisalId?.toString() === appraisalId
   )
   const sameParameter = allParameters?.data?.filter((item: any) => item?.tag?.trim() === 'same')
+
+  const appraisalTranItem = allAppraisalsPerfTrans?.data?.find((item: any) => {
+    return item.id === parseInt(selectedReference)
+  })
+
+  const allAppraisalTranItems = allAppraTranItems?.data?.filter((item: any) => {
+    return item.appraisalPerfTranId === parseInt(selectedReference)
+  })
+
+  // get all employees from appraisalTranItem
+  const emplyeesByPaygroup: any = allEmployees?.data?.filter((item: any) => {
+    return item.paygroupId === parseInt(appraisalTranItem?.paygroupId)
+  })
+
+  const idSet = new Set(allAppraisalTranItems?.map((item: any) => parseInt(item.employeeId)))
+
+  const employeesByDepartment = allEmployees?.data?.filter((item: any) => {
+    return item.departmentId === parseInt(selectedDepartment)
+  })
+
+  const empData = selectedDepartment === 'all' ? allEmployees?.data : employeesByDepartment
+
+  const employeesFromTransaction = empData?.filter((item: any) => {
+    return idSet.has(item.id)
+  })
+
+  const dataWithFullName = employeesFromTransaction?.map((item: any) => ({
+    ...item,
+    firstName: item?.firstName + ' ' + item?.surname,
+  }))
 
   const handleCommentModalCancel = () => {
     setCommentModalOpen(false)
@@ -475,14 +515,83 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
 
   return (
     <>
-      <div className='d-flex justify-content-end mb-4'>
-        <button 
-          disabled={componentData?.length === 0}
-          className='btn btn-light-info btn-sm' onClick={handlePrint}>
-            Export
-        </button>
+      <div style={{gap: "15px"}} className={`d-flex ${currentLocation === 'appraisal-performance'? "justify-content-between": "justify-content-end"} align-items-center mb-4`}>
+        {
+          currentLocation === 'appraisal-performance'?
+          <>
+          <div className='mb-7'>
+              <label htmlFor='exampleFormControlInput1' className=' form-label'>
+                Reference{' '}
+              </label>
+              <select
+                value={selectedReference}
+                onChange={(e) => setSelectedReference(e.target.value)}
+                className='form-select form-select-solid'
+                aria-label='Select example'
+              >
+                <option value='select reference'>Select reference</option>
+                {activeReference?.map((item: any) => (
+                  <option value={item.id}>
+                    {getFieldName(item?.paygroupId, allPaygroups?.data)} -{' '}
+                    {getFieldName(item?.appraisalTypeId, allAppraisals?.data)} -{' '}
+                    {getFieldName(item?.startPeriod, allPeriods?.data)} -{' '}
+                    {getFieldName(item?.endPeriod, allPeriods?.data)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className=' mb-7'>
+              <label htmlFor='exampleFormControlInput1' className=' form-label'>
+                Department{' '}
+              </label>
+              <select
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)}
+                className='form-select form-select-solid'
+                aria-label='Select example'
+              >
+                <option value='all'>All</option>
+                {allDepartments?.data?.map((item: any) => (
+                  <option value={item.id}>
+                    {item?.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          <div className='mb-7'>
+              <label htmlFor='exampleFormControlInput1' className=' form-label'>
+                Performance Rating{' '}
+              </label>
+              <select
+                value={selectedGrade}
+                onChange={(e) => setSelectedGrade(e.target.value)}
+                className='form-select form-select-solid'
+                aria-label='Select example'
+              >
+                <option value='all'>All</option>
+                {
+                  allAppraisalGrades?.data?.map((item:any)=>(
+                    <option>{item?.grade}</option>
+                  ))
+                }
+              </select>
+            </div>
+            </>:null
+        }
+        <div>
+          <button 
+            disabled={
+              dataWithFullName?.length === 0||
+              dataWithFullName === undefined || 
+              dataWithFullName === null 
+            }
+            className='btn btn-light-info btn-sm' onClick={handlePrint}>
+              Export
+          </button>
+        </div>
       </div>
-      {loading ? <Skeleton active /> : <Table columns={columns} dataSource={componentData} />}
+      {loading ? <Skeleton active /> : <Table columns={columns} 
+        dataSource={currentLocation === 'appraisal-performance'?dataWithFullName:componentData} />}
 
       <Modal
         open={isModalOpen}
@@ -543,7 +652,7 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
             // checkActive?.tag?.trim() === "final" ?
 
             <ActualMasterPage
-              title='linemanager'
+              title={ currentLocation === 'appraisal-performance'? "hr": "linemanager"}
               employeeId={employeeData?.id?.toString()}
               referenceId={checkActive?.referenceId}
             />
@@ -601,4 +710,5 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
   )
 }
 
-export {NotificationsComponent}
+export { NotificationsComponent }
+

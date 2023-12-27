@@ -22,8 +22,8 @@ const AppraisalGrade = () => {
     let [appraisalName, setAppraisalName] = useState<any>("")
 
     const tenantId = localStorage.getItem('tenant')
-    const { data: tableData, isLoading } = useQuery('appraisalGrades', () => fetchDocument(`AppraisalGrades`), { cacheTime: 5000 })
-    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 5000 })
+    const { data: tableData, isLoading } = useQuery('appraisalGrades', () => fetchDocument(`AppraisalGrades`), { cacheTime: 10000 })
+    const { data: allAppraisals } = useQuery('appraisals', () => fetchDocument('appraisals'), { cacheTime: 10000 })
     const queryClient = useQueryClient()
     const showModal = () => {
       setIsModalOpen(true)
