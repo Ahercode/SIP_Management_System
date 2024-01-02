@@ -360,7 +360,6 @@ const OnSubmit = handleSubmit(async (values) => {
                   (getEmployeeStatus() === "Approved" || 
                   getEmployeeStatus() === "Amend"||
                   getEmployeeStatus() === "Submitted" ||
-                  getEmployeeStatus() === "Rejected" ||
                   selectedReference === "" ||
                   selectedReference === undefined          
                   ) && 

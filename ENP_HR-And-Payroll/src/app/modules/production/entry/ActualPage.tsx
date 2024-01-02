@@ -363,10 +363,12 @@ const ActualPage = ({
         return (
           <>
             <input
-              disabled={title === 'final' || title === 'hr' || (actual?.status?.trim() ==="submitted" && title===undefined) ? true : false}
+              disabled={title === 'final' || title === 'hr' || 
+                (actual?.status?.trim() ==="submitted" && title===undefined) || 
+                record?.tag?.trim() ==="prob"? true : false}
               onFocus={onFocus}
               onBlur={onBlur}
-              type='number'
+              type='number' 
               min='0'
               defaultValue={actual?.actual===null||actual?.actual===undefined?0:actual?.actual}
               onChange={(e) => handleChange(record?.id, e.target.value, 'actual')}

@@ -118,13 +118,16 @@ const EmployeeObjectiveEntry = () => {
       fixed: 'right',
       width: 100,
       render: (record: any) => (
+        console.log("record", record),
         <Space size='middle'>
           <Link to={`/deliverableEntry/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Deliverables</span>
           </Link>
+
+          
           {
             // record?.status === "submitted"|| record?.status === "approved" ? " ": 
-            checkActive?.tag?.trim()==="final" || param?.parameterId === sameParameter?.id?.toString() ?"":
+            checkActive?.tag?.trim()==="final" || param?.parameterId === sameParameter?.id?.toString()|| record?.tag?.trim() ==="prob"  ?"":
             <>
               <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
                 Update

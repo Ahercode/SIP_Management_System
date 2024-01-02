@@ -10,8 +10,6 @@ import { set } from "react-hook-form";
 import { getFieldName } from "../ComponentsFactory";
 
 const NotificationsBoard = () => {
-
-    
     const { currentUser } = useAuth()
     const tenantId = localStorage.getItem('tenant')
     // const [employeesWithSubmittedObjectives, setEmployeesWithSubmittedObjectives] = useState<any>([])
@@ -28,9 +26,14 @@ const NotificationsBoard = () => {
     )?.map((item: any) => item?.appraisalPerfTranId)
     
     const employeesReference = allAppraisalsPerfTrans?.data.filter((item: any) => 
-        employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active" 
-        )
+         item?.status?.trim() === "active" 
     )
+
+    // This is to get only the active reference for the current user
+    // const employeesReference = allAppraisalsPerfTrans?.data.filter((item: any) => 
+    //     employeeReferenceIds?.some((id: any) =>  item?.id === id && item?.status?.trim() === "active" 
+    //     )
+    // )
 
     const [selectedReference, setSelectedReference] = useState<any>(employeesReference?.[0]?.referenceId);
 
@@ -62,7 +65,6 @@ const NotificationsBoard = () => {
         )
         // setEmployeesWithSubmittedObjectives(employeesWithSubmittedObjectives)
     }
-
 
     const allSubmittedApprovedObjectives = appraisalObjective?.data?.filter((item: any) => {
         return item?.status === 'submitted' || item?.status ==="approved" || item?.status ==="rejected" || item?.status ==="amend"
@@ -113,7 +115,9 @@ const NotificationsBoard = () => {
             key: '2',
             label: <>
                 <Badge count={employeesWithSubmittedObjectives?.length} showZero={true} title="Awaiting approval" size="small">
-                    <span>Approvals</span>
+                    <span>
+                        Approvals
+                    </span>
                 </Badge>
             </>,
             children: (

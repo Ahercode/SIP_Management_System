@@ -155,10 +155,34 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
     return idSet.has(item.id)
   })
 
+  const getEmployeeStatus = (employeeId: any) => {
+    const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
+      return (
+        parseInt(item?.employeeId) === employeeId?.id &&
+        item?.referenceId === checkActive?.referenceId
+      )
+    })
+
+    if (allSubmittedObjectives?.some((obj: any) => obj?.status?.trim() === 'submitted')) {
+      return <Tag color='warning'>Submitted</Tag>
+    } else if (allSubmittedObjectives?.some((obj: any) => obj?.status?.trim() === 'rejected')) {
+      return <Tag color='error'>Rejected</Tag>
+    } else if (allSubmittedObjectives?.some((obj: any) => obj?.status?.trim() === 'approved')) {
+      return <Tag color='success'>Approved</Tag>
+    } else if (allSubmittedObjectives?.some((obj: any) => obj?.status?.trim() === 'drafted')) {
+      return <Tag color='warning'>Drafted</Tag>
+    } else {
+      return <Tag color='pink'>Not Started</Tag>
+    }
+  }
+
   const dataWithFullName = employeesFromTransaction?.map((item: any) => ({
     ...item,
     firstName: item?.firstName + ' ' + item?.surname,
+    rating: getEmployeeStatus(item)?.props?.children,
   }))
+
+  console.log("dataWithFullName", dataWithFullName)
 
   const handleCommentModalCancel = () => {
     setCommentModalOpen(false)
@@ -311,26 +335,7 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
     loadData()
   }, [parameters?.data, employeeData, employeeWhoSubmitted])
 
-  const getEmployeeStatus = (employeeId: any) => {
-    const allSubmittedObjectives = allAppraisalobjective?.data?.filter((item: any) => {
-      return (
-        parseInt(item?.employeeId) === employeeId?.id &&
-        item?.referenceId === checkActive?.referenceId
-      )
-    })
-
-    if (allSubmittedObjectives?.some((obj: any) => obj.status === 'submitted')) {
-      return <Tag color='warning'>Submitted</Tag>
-    } else if (allSubmittedObjectives?.some((obj: any) => obj.status === 'rejected')) {
-      return <Tag color='error'>Rejected</Tag>
-    } else if (allSubmittedObjectives?.some((obj: any) => obj.status === 'approved')) {
-      return <Tag color='success'>Approved</Tag>
-    } else if (allSubmittedObjectives?.some((obj: any) => obj.status === 'drafted')) {
-      return <Tag color='warning'>Drafted</Tag>
-    } else {
-      return <Tag color='pink'>Not Started</Tag>
-    }
-  }
+  
 
   const handleCancel = () => {
     setIsModalOpen(false)
@@ -348,7 +353,6 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
     {
       title: 'Approval Status',
       dataIndex: 'status',
-      key: 'id',
       render: (_: any, record: any) => {
         return getEmployeeStatus(record)
       },
@@ -556,6 +560,24 @@ const NotificationsComponent = ({loading, employeeWhoSubmitted, referenceId, loc
                     {item?.name}
                   </option>
                 ))}
+              </select>
+            </div>
+          <div className='mb-7'>
+              <label htmlFor='exampleFormControlInput1' className=' form-label'>
+                Status{' '}
+              </label>
+              <select
+                // value={selectedGrade}
+                // onChange={(e) => setSelectedGrade(e.target.value)}
+                className='form-select form-select-solid'
+                aria-label='Select example'
+              >
+                <option value='all'>All</option>
+                <option value='Submitted'>Submitted</option>
+                <option value='Rejected'>Rejected</option>
+                <option value='Approved'>Approved</option>
+                <option value='Drafted'>Drafted</option>
+                <option value='Not Started'>Not Started</option>
               </select>
             </div>
           <div className='mb-7'>

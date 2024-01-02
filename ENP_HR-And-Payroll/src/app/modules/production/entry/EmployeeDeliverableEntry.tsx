@@ -190,7 +190,7 @@ const EmployeeDeliverableEntry = () => {
       fixed: 'right',
       width: 100,
       render: (record: any) =>
-        checkActive?.tag?.trim() === 'final' ? (
+        checkActive?.tag?.trim() === 'final'|| record?.tag?.trim() === "same" || record?.tag?.trim() ==="prob" ? (
           ''
         ) : (
           <Space size='middle'>
