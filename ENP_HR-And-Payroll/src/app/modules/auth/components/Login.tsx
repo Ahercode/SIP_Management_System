@@ -75,19 +75,19 @@ export function Login() {
           return companyId === values.tenantId
         })
         
-        if(!comCheck)
-        {
-          setStatus("You can't access this application, contact your Administrator!")
-          setSubmitting(false)
-          setLoading(false)
-        }
+        // if(!comCheck)
+        // {
+        //   setStatus("You can't access this application, contact your Administrator!")
+        //   setSubmitting(false)
+        //   setLoading(false)
+        // }
 
-        if(!comCheck)
-        {
-          setStatus("You can't access this company, contact your Administrator!")
-          setSubmitting(false)
-          setLoading(false)
-        }
+        // if(!comCheck)
+        // {
+        //   setStatus("You can't access this company, contact your Administrator!")
+        //   setSubmitting(false)
+        //   setLoading(false)
+        // }
       
       } catch (error) {
         console.error(error)

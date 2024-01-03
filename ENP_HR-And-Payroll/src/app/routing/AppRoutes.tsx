@@ -47,9 +47,9 @@ const AppRoutes: FC = () => {
   const hasApp = userApp?.find((applicationId: any) => applicationId === '10')
 
 
-  const comCheck = newCompanyNames?.some((companyId:any)=>{
-    return companyId === tenant?.toLowerCase()
-  })
+  // const comCheck = newCompanyNames?.some((companyId:any)=>{
+  //   return companyId === tenant?.toLowerCase()
+  // })
 
   const expiringDate: any = currentUser?.exp
   const dateObj: any = new Date(expiringDate * 1000);
@@ -69,7 +69,7 @@ const AppRoutes: FC = () => {
             }
           />
 
-          {currentUser && hasApp && comCheck && tenant && (dateObj > Date.now()) ? (
+          {currentUser && hasApp  && tenant && (dateObj > Date.now()) ? (
             <>
               <Route path='/*' element={<PrivateRoutes />} />
               <Route index element={<Navigate to='/hr-dashboard' />} />
