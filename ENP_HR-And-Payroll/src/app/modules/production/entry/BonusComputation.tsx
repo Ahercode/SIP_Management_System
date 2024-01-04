@@ -296,7 +296,7 @@ const BonusComputation = ({employeeData, title}:any) => {
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h3>
-                    Bonus Formula: <br></br> <span className="text-gray-600">Bonus Target * ((Group Achievement * Group Weight + Individual Achievement * Individual Weight)) *Annual Salary * Payout Ratio</span>
+                    Bonus Formular: <br></br> <span className="text-gray-600">Bonus Target * ((Group Achievement * Group Weight + Individual Achievement * Individual Weight)) *Annual Salary * Payout Ratio</span>
                     <br></br><span className="pt-6 fs-4 fw-bold text-danger">Note: no bonus for employees with achievement below 59</span>
                 </h3>
                 <div>
