@@ -26,7 +26,7 @@
             if (!themeMode) {
                 if (defaultThemeMode === "system") {
                     themeMode =
-                        window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+                        window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light";
                 } else {
                     themeMode = defaultThemeMode;
                 }
