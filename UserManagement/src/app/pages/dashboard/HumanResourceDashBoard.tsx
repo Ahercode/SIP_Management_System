@@ -1,13 +1,6 @@
 
-import react, {FC} from 'react'
-import {useIntl} from 'react-intl'
 import {PageTitle} from '../../../_metronic/layout/core'
-import { HRChart } from './charts/HRChart'
-import { TestChart } from './charts/TestChart'
-import { useQuery } from 'react-query'
-import { Button, Input, Space, Table } from 'antd'
 import { User } from '../../modules/production/components/User/User'
-
 
 
 const columns: any = [

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchDocument, postItem } from '../../../../services/ApiCalls'
+import { deleteData, fetchData, postItem } from '../../../../services/ApiCalls'
 
 
 const UserRole = () => {
@@ -25,10 +25,10 @@ const UserRole = () => {
   const [userID, setUserID] = useState<any>("")
 
 
-    const {data:allUserRoles} = useQuery('userRoles',() => fetchDocument('UserRoles'), {cacheTime:5000})
-    const {data: userCompanies} = useQuery('userCompanies',() => fetchDocument('UserCompanies'), {cacheTime:5000})
-    const {data:allUsers} = useQuery('users',() => fetchDocument('Users'), {cacheTime:5000})
-    const {data:roles} = useQuery('roles',() => fetchDocument('Roles'), {cacheTime:5000})
+    const {data:allUserRoles} = useQuery('userRoles',() => fetchData('UserRoles'), {cacheTime:5000})
+    const {data: userCompanies} = useQuery('userCompanies',() => fetchData('UserCompanies'), {cacheTime:5000})
+    const {data:allUsers} = useQuery('users',() => fetchData('Users'), {cacheTime:5000})
+    const {data:roles} = useQuery('roles',() => fetchData('Roles'), {cacheTime:5000})
   
 
   const showModal = () => {
@@ -43,7 +43,7 @@ const UserRole = () => {
     setIsModalOpen(false)
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['users'], data);
       loadData()
@@ -112,7 +112,7 @@ const UserRole = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument('UserRoles')
+      const response = await fetchData('UserRoles')
       setGridData(response.data)
       setLoading(false)
     } catch (error) {

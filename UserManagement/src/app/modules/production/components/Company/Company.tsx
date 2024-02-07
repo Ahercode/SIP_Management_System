@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { deleteData, fetchData, postItem, updateData } from '../../../../services/ApiCalls'
 
 const Companies = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -42,7 +42,7 @@ const Companies = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['Companies', tempData], data);
       loadData()
@@ -107,8 +107,8 @@ const Companies = () => {
   ]
 
 
-  const {data:companies} = useQuery('companies',() => fetchDocument('Companies'), {cacheTime:5000})
-  const {data:Applications} = useQuery('applications',() => fetchDocument('Applications'), {cacheTime:5000})
+  const {data:companies} = useQuery('companies',() => fetchData('Companies'), {cacheTime:5000})
+  const {data:Applications} = useQuery('applications',() => fetchData('Applications'), {cacheTime:5000})
 
   const getApplication= async (id:any) =>{
     let newName=null
@@ -122,7 +122,7 @@ const Companies = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument('Companies')
+      const response = await fetchData('Companies')
       setGridData(response.data)
       setLoading(false)
     } catch (error) {
@@ -158,7 +158,7 @@ const Companies = () => {
   }
 
   const queryClient = useQueryClient()
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['Companies', tempData], data);
       reset()

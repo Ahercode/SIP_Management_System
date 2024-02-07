@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { Api_Endpoint, deleteData, fetchData, postItem, updateData } from '../../../../services/ApiCalls'
 
 const Applications = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -21,7 +21,7 @@ const Applications = () => {
   const [tempData, setTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
 
-  const {data:allApplications} = useQuery('applications',() => fetchDocument('Applications'), {cacheTime:5000})
+  const {data:allApplications} = useQuery('applications',() => fetchData('Applications'), {cacheTime:5000})
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -43,7 +43,7 @@ const Applications = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['applications', tempData], data);
       loadData()
@@ -99,7 +99,7 @@ const Applications = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument('Applications')
+      const response = await fetchData('Applications')
       setGridData(response.data)
       setLoading(false)
     } catch (error) {
@@ -130,7 +130,7 @@ const Applications = () => {
   }
 
   const queryClient = useQueryClient()
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['applications', tempData], data);
       reset()

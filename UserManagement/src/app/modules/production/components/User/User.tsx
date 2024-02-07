@@ -1,26 +1,24 @@
-import { Button, Input, Modal, Space, Table, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { Button, Input, Modal, Space, Table, message, Tooltip } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link} from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument, fetchUsers, postItem, updateItem } from '../../../../services/ApiCalls'
-import { AUTH_LOCAL_STORAGE_KEY, useAuth } from '../../../auth'
+import { Api_Endpoint, deleteData, fetchUsers, postItem, updateData } from '../../../../services/ApiCalls'
+
 import axios from 'axios'
+import {UserDto} from './models/_userModels'
+import {ColumnProps} from '../GlobalHelpers/GlobalModel'
+
+
 
 const User = () => {
   const [gridData, setGridData] = useState<any>([])
   const [beforeSearch, setBeforeSearch] = useState([])
   const [loading, setLoading] = useState(false)
-  const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { register, reset, handleSubmit } = useForm()
-  const param: any = useParams();
-  const navigate = useNavigate();
-  const [test, setUserInfo] = useState<any>(null)
-  const { saveAuth, setCurrentUser } = useAuth()
   const [tempData, setTempData] = useState<any>()
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const queryClient = useQueryClient()
@@ -28,10 +26,6 @@ const User = () => {
   const genderList = ['MALE', 'FEMALE']
   const showModal = () => {
     setIsModalOpen(true)
-  }
-
-  const handleOk = () => {
-    setIsModalOpen(false)
   }
 
   const handleCancel = () => {
@@ -46,9 +40,9 @@ const User = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData } = useMutation(deleteData, {
     onSuccess: (data) => {
-      // queryClient.setQueryData(['users', tempData], data);
+      queryClient.invalidateQueries('users')
       loadData()
     },
     onError: (error) => {
@@ -56,7 +50,7 @@ const User = () => {
     }
   })
 
-  const handleDelete = (element: any) => {
+  const handleDelete = (element: UserDto) => {
     const item = {
       url: 'Users',
       data: element
@@ -64,7 +58,7 @@ const User = () => {
     deleteData(item)
   }
 
-  const columns: any = [
+  const columns : ColumnProps[] = [
     {
       title: 'Username',
       dataIndex: 'username',
@@ -123,22 +117,18 @@ const User = () => {
       title: 'Action',
       fixed: 'right',
       width: 100,
-      render: (_: any, record: any) => (
+      render: (_: any, record: UserDto) => (
         <Space size='middle'>
           <Link to={`/user-applications/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Applications</span>
           </Link>
-          {/* <Link to={`/user-companies/${record.id}`}>
-            <span className='btn btn-light-info btn-sm'>Companies</span>
-          </Link> */}
-          {/* <Link to={`/user-roles/${record.id}`}>
-            <span className='btn btn-light-info btn-sm'>Roles</span>
-          </Link> */}
-          <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
-            Update
-          </a>
+          <Tooltip title={"Update"} color={'gold'}>
+            <a onClick={() => showUpdateModal(record)} className='btn btn-light-warning btn-sm'>
+              <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-2' />
+            </a>
+          </Tooltip>
           <a onClick={() => handleDelete(record)} className='btn btn-light-danger btn-sm'>
-            Delete
+            <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
           </a>
         </Space>
       ),
@@ -173,7 +163,7 @@ const User = () => {
   })
 
   const globalSearch = (searchValue: string) => {
-    const searchResult = allUsers?.data?.filter((item: any) => {
+    const searchResult = allUsers?.data?.filter((item: UserDto) => {
       return (
         Object.values(item).join('').toLowerCase().includes(searchValue?.toLowerCase())
       )
@@ -189,9 +179,8 @@ const User = () => {
   }
 
 
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateData, {
     onSuccess: (data) => {
-      // queryClient.setQueryData(['users', tempData], data);
       reset()
       setTempData({})
       loadData()
@@ -204,7 +193,7 @@ const User = () => {
     }
   })
 
-  const handleUpdate = (e: any) => {
+  const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault()
     // object item to be passed down to updateItem function 
     if (tempData.firstName.length >= 3) {
@@ -248,11 +237,9 @@ const User = () => {
 
   const { mutate: postData, isLoading: postLoading } = useMutation(postItem, {
     onSuccess: (data) => {
-      // queryClient.setQueryData(['users', tempData], data);
       reset()
       setTempData({})
       queryClient.invalidateQueries('users')
-      // loadData()
       setIsModalOpen(false)
     },
     onError: (error) => {

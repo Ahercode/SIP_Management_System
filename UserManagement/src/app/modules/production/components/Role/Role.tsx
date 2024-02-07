@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { deleteData, fetchData, postItem, updateData } from '../../../../services/ApiCalls'
 
 const Roles = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -22,7 +22,7 @@ const Roles = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
 
 
-  const {data:allRoles} = useQuery('roles',() => fetchDocument('Roles'), {cacheTime:5000})
+  const {data:allRoles} = useQuery('roles',() => fetchData('Roles'), {cacheTime:5000})
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -44,7 +44,7 @@ const Roles = () => {
     setTempData({ ...tempData, [event.target.name]: event.target.value });
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['roles', tempData], data);
       loadData()
@@ -111,7 +111,7 @@ const Roles = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument('Roles')
+      const response = await fetchData('Roles')
       setGridData(response.data)
       setLoading(false)
     } catch (error) {
@@ -143,7 +143,7 @@ const Roles = () => {
   }
 
   const queryClient = useQueryClient()
-  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateItem, {
+  const { isLoading: updateLoading, mutate: updateData } = useMutation(updateData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['roles', tempData], data);
       reset()

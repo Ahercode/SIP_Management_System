@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchDocument, postItem } from '../../../../services/ApiCalls'
+import { deleteData, fetchData, postItem } from '../../../../services/ApiCalls'
 
 const UserCompany = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -22,10 +22,10 @@ const UserCompany = () => {
   const queryClient = useQueryClient()
   const [userID, setUserID] = useState<any>("")
 
-    const {data: userCompanies} = useQuery('userCompanies',() => fetchDocument('UserCompanies'), {cacheTime:5000})
-    const {data: userApplications} = useQuery('userApplications',() => fetchDocument('UserApplications'), {cacheTime:5000})
-    const {data: allUsers} = useQuery('users',() => fetchDocument('Users'), {cacheTime:5000})
-    const {data: companies} = useQuery('companies',() => fetchDocument('Companies'), {cacheTime:5000})
+    const {data: userCompanies} = useQuery('userCompanies',() => fetchData('UserCompanies'), {cacheTime:5000})
+    const {data: userApplications} = useQuery('userApplications',() => fetchData('UserApplications'), {cacheTime:5000})
+    const {data: allUsers} = useQuery('users',() => fetchData('Users'), {cacheTime:5000})
+    const {data: companies} = useQuery('companies',() => fetchData('Companies'), {cacheTime:5000})
   
 
     // console.log("User ID",userID);
@@ -45,7 +45,7 @@ const UserCompany = () => {
     setIsModalOpen(false)
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['userCompanies'], data);
       loadData()
@@ -117,7 +117,7 @@ const UserCompany = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument('UserCompanies')
+      const response = await fetchData('UserCompanies')
       setGridData(response.data)
       setLoading(false)
     } catch (error) {

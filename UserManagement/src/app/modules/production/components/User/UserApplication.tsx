@@ -5,17 +5,14 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { Api_Endpoint, deleteItem, fetchDocument, postItem } from '../../../../services/ApiCalls'
-import { ENP_URL } from '../../urls'
+import { Api_Endpoint, deleteData, fetchData, postItem } from '../../../../services/ApiCalls'
+
 
 const UserApplication = () => {
   const [gridData, setGridData] = useState<any>([])
   const [beforeSearch, setBeforeSearch] = useState([])
   const [loading, setLoading] = useState(false)
-  const [searchText, setSearchText] = useState('')
-  let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
-  const [img, setImg] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {register, reset, handleSubmit} = useForm()
   const param:any  = useParams();
@@ -37,7 +34,7 @@ const UserApplication = () => {
     setIsModalOpen(false)
   }
 
-  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteItem, {
+  const { mutate: deleteData, isLoading: deleteLoading } = useMutation(deleteData, {
     onSuccess: (data) => {
       queryClient.setQueryData(['applications', data], data);
       loadData()
@@ -93,10 +90,10 @@ const UserApplication = () => {
 
   console.log()
 
-  const {data:Applications} = useQuery('applications',() => fetchDocument('Applications'), {cacheTime:5000})
-  const {data:userApplications} = useQuery('user-applications',() => fetchDocument('UserApplications'), {cacheTime:5000})
-  const {data:allUsers} = useQuery('users',() => fetchDocument('Users'), {cacheTime:5000})
-  const {data:roles} = useQuery('roles',() => fetchDocument('Roles'), {cacheTime:5000})
+  const {data:Applications} = useQuery('applications',() => fetchData('Applications'), {cacheTime:5000})
+  const {data:userApplications} = useQuery('user-applications',() => fetchData('UserApplications'), {cacheTime:5000})
+  const {data:allUsers} = useQuery('users',() => fetchData('Users'), {cacheTime:5000})
+  const {data:roles} = useQuery('roles',() => fetchData('Roles'), {cacheTime:5000})
 
   const loadData = async () => {
     setLoading(true)

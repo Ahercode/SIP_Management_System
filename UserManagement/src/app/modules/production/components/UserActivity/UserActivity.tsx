@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { KTCardBody, KTSVG } from '../../../../../_metronic/helpers'
-import { deleteItem, fetchDocument, postItem, updateItem } from '../../../../services/ApiCalls'
+import { deleteData, fetchData, postItem, updateData } from '../../../../services/ApiCalls'
 
 const UserActivity = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -15,7 +15,7 @@ const UserActivity = () => {
 
 
 
-  const {data: UserActivity, isLoading} = useQuery('userActivity',() => fetchDocument('UserActivity'), {cacheTime:5000})
+  const {data: UserActivity, isLoading} = useQuery('userActivity',() => fetchData('UserActivity'), {cacheTime:5000})
   
   const columns: any = [
     {
@@ -103,7 +103,7 @@ const UserActivity = () => {
   const loadData = async () => {
     setLoading(true)
     try {
-      const response = await fetchDocument('UserActivity')
+      const response = await fetchData('UserActivity')
       setGridData(response.data)
       setLoading(false)
     } catch (error) {
